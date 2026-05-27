@@ -1,0 +1,12 @@
+{
+  "projects": {
+    "default": "vocotable"
+  },
+  "targets": {
+    "vocotable": {
+      "hosting": {
+        "biteperk": ["biteperk"]
+      }
+    }
+  }
+}
