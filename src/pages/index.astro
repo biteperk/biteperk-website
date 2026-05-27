@@ -1,0 +1,483 @@
+---
+import StarMark from "../components/StarMark.astro";
+
+const title = "Biteperk — voice + AI tools for hospitality";
+const description =
+  "Biteperk builds software for restaurants. Starting with the phone. We make VocoTable, the AI host that answers every booking call. Made in Sydney.";
+const url = "https://biteperk.com.au";
+const phone = "0450 011 140";
+const phoneHref = "tel:+61450011140";
+const email = "hello@biteperk.com.au";
+const emailHref = "mailto:hello@biteperk.com.au";
+const vocotableUrl = "https://vocotable.web.app";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0a0b0d" />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={url} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style is:global>
+      :root {
+        --bp-ink: #0a0b0d;
+        --bp-ink2: #101216;
+        --bp-surface: #15171c;
+        --bp-green: #1a4d1a;
+        --bp-green-light: #4a8a48;
+        --bp-gold: #f5c418;
+        --bp-gold-dark: #d9aa0e;
+        --bp-white: #ffffff;
+        --bp-mist: #9aa1ad;
+        --bp-line: rgba(255, 255, 255, 0.10);
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        background: var(--bp-ink);
+        color: var(--bp-white);
+        -webkit-font-smoothing: antialiased;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+    </style>
+    <style>
+      .wrap {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 0 28px;
+      }
+
+      /* NAV */
+      .nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 50;
+        backdrop-filter: blur(12px);
+        background: rgba(10, 11, 13, 0.65);
+        border-bottom: 1px solid transparent;
+        transition: border-color 0.3s, background 0.3s;
+      }
+      .nav.scrolled {
+        background: rgba(10, 11, 13, 0.95);
+        border-bottom: 1px solid var(--bp-line);
+      }
+      .nav-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 72px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        cursor: default;
+      }
+      .brand-name {
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: -0.4px;
+      }
+      .brand-name .perk {
+        color: var(--bp-gold);
+        font-style: italic;
+        font-weight: 700;
+      }
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .lnk {
+        font-size: 14px;
+        font-weight: 500;
+        color: #c0c5ce;
+        padding: 10px 14px;
+        transition: color 0.2s;
+      }
+      .lnk:hover {
+        color: #fff;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        background: linear-gradient(135deg, var(--bp-gold), var(--bp-gold-dark));
+        color: #1a0f04;
+        padding: 14px 26px;
+        border-radius: 100px;
+        font-weight: 700;
+        font-size: 15px;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+        transition: transform 0.15s, box-shadow 0.2s;
+        box-shadow: 0 8px 30px rgba(245, 196, 24, 0.18);
+      }
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 38px rgba(245, 196, 24, 0.32);
+      }
+      .btn-ghost {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        color: #fff;
+        padding: 14px 26px;
+        border-radius: 100px;
+        font-weight: 600;
+        font-size: 15px;
+        background: transparent;
+        cursor: pointer;
+        font-family: inherit;
+        transition: background 0.2s, border-color 0.2s;
+      }
+      .btn-ghost:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.35);
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        border: 1px solid var(--bp-line);
+        border-radius: 100px;
+        padding: 8px 16px;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: #e6e9ee;
+        background: rgba(255, 255, 255, 0.03);
+      }
+      .pill .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--bp-gold);
+        box-shadow: 0 0 10px var(--bp-gold);
+      }
+
+      /* HERO */
+      .hero {
+        position: relative;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        padding: 130px 0 80px;
+        overflow: hidden;
+      }
+      .hero-bg {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(60% 80% at 25% 35%, rgba(26, 77, 26, 0.35), transparent 70%),
+          radial-gradient(50% 60% at 80% 70%, rgba(245, 196, 24, 0.12), transparent 75%);
+        z-index: 0;
+      }
+      .hero .wrap {
+        position: relative;
+        z-index: 1;
+      }
+      .hero-content {
+        max-width: 760px;
+      }
+      .hero-title {
+        font-size: clamp(48px, 8vw, 92px);
+        font-weight: 800;
+        line-height: 1.02;
+        letter-spacing: -2.5px;
+        margin: 22px 0 26px;
+      }
+      .hero-title .gold {
+        color: var(--bp-gold);
+      }
+      .sub {
+        font-size: 19px;
+        line-height: 1.6;
+        color: #d5d9e0;
+        max-width: 580px;
+      }
+      .hero-cta {
+        margin-top: 38px;
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+      .hero-meta {
+        margin-top: 56px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, max-content));
+        gap: 36px 52px;
+      }
+      .stat .n {
+        font-size: 22px;
+        font-weight: 700;
+        color: #fff;
+      }
+      .stat .l {
+        font-size: 12px;
+        letter-spacing: 1.6px;
+        text-transform: uppercase;
+        color: var(--bp-mist);
+        margin-top: 4px;
+      }
+
+      /* Product strip — single VocoTable card for now, room for more */
+      .product-strip {
+        padding: 90px 0;
+        border-top: 1px solid var(--bp-line);
+        background: var(--bp-ink2);
+      }
+      .product-eyebrow {
+        font-size: 13px;
+        letter-spacing: 2.5px;
+        text-transform: uppercase;
+        color: #c9a072;
+        font-weight: 600;
+      }
+      .product-card {
+        margin-top: 28px;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 36px;
+        align-items: center;
+        padding: 36px 40px;
+        border: 1px solid var(--bp-line);
+        border-radius: 22px;
+        background: linear-gradient(160deg, rgba(245, 196, 24, 0.06), var(--bp-surface) 60%);
+        transition: border-color 0.25s, transform 0.25s;
+      }
+      .product-card:hover {
+        border-color: rgba(245, 196, 24, 0.35);
+        transform: translateY(-2px);
+      }
+      .product-name {
+        font-size: 32px;
+        font-weight: 800;
+        letter-spacing: -0.8px;
+      }
+      .product-name .table {
+        font-weight: 300;
+        color: var(--bp-mist);
+      }
+      .product-desc {
+        margin-top: 10px;
+        font-size: 16px;
+        color: #d5d9e0;
+        line-height: 1.55;
+        max-width: 580px;
+      }
+      .product-tags {
+        margin-top: 14px;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .product-tag {
+        font-size: 11.5px;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        color: var(--bp-mist);
+        padding: 5px 11px;
+        border: 1px solid var(--bp-line);
+        border-radius: 100px;
+      }
+
+      /* FOOTER */
+      footer {
+        border-top: 1px solid var(--bp-line);
+        padding: 48px 0 32px;
+      }
+      .foot-inner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+      .foot-contact {
+        display: flex;
+        gap: 18px;
+        flex-wrap: wrap;
+        font-size: 14px;
+        color: var(--bp-mist);
+      }
+      .foot-contact a:hover {
+        color: #fff;
+      }
+      .foot-bottom {
+        margin-top: 28px;
+        padding-top: 20px;
+        border-top: 1px solid var(--bp-line);
+        font-size: 12.5px;
+        color: var(--bp-mist);
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      @media (max-width: 760px) {
+        .lnk {
+          display: none;
+        }
+        .nav-links {
+          gap: 8px;
+        }
+        .product-card {
+          grid-template-columns: 1fr;
+        }
+        .hero {
+          padding-top: 110px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="nav" id="nav">
+      <div class="wrap nav-inner">
+        <div class="brand" aria-label="Biteperk home">
+          <StarMark size={38} />
+          <span class="brand-name">bite<span class="perk">perk</span></span>
+        </div>
+        <div class="nav-links">
+          <a class="lnk" href={vocotableUrl} rel="noopener">VocoTable</a>
+          <a class="lnk" href={emailHref}>Contact</a>
+          <a class="btn" href={phoneHref}>Call us · {phone}</a>
+        </div>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <div class="hero-bg"></div>
+      <div class="wrap">
+        <div class="hero-content">
+          <span class="pill">
+            <span class="dot"></span>
+            Sydney, Australia
+          </span>
+          <h1 class="hero-title">
+            We build <span class="gold">voice + AI</span><br />
+            tools for hospitality.
+          </h1>
+          <p class="sub">
+            Restaurants and venues lose bookings every day to a phone that nobody can pick up.
+            Biteperk fixes that — one product at a time. Made in Sydney, deployed in Sydney,
+            answering Sydney calls.
+          </p>
+          <div class="hero-cta">
+            <a class="btn" href={vocotableUrl} rel="noopener">Meet VocoTable →</a>
+            <a class="btn-ghost" href={emailHref}>Get in touch</a>
+          </div>
+          <div class="hero-meta">
+            <div class="stat">
+              <div class="n">1</div>
+              <div class="l">live product</div>
+            </div>
+            <div class="stat">
+              <div class="n">24/7</div>
+              <div class="l">always on the line</div>
+            </div>
+            <div class="stat">
+              <div class="n">AU</div>
+              <div class="l">data stays local</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="product-strip" id="products">
+      <div class="wrap">
+        <div class="product-eyebrow">Currently shipping</div>
+        <a class="product-card" href={vocotableUrl} rel="noopener" aria-label="VocoTable — voice AI for restaurant bookings">
+          <div>
+            <div class="product-name">
+              Voco<span class="table">Table</span>
+            </div>
+            <p class="product-desc">
+              The AI phone host for restaurants. Bella answers every call in a warm Australian
+              voice, books the table, and never sleeps — built for Sydney venues that don't want
+              to lose a Friday-night booking because nobody could reach the phone.
+            </p>
+            <div class="product-tags">
+              <span class="product-tag">Voice AI</span>
+              <span class="product-tag">Restaurants</span>
+              <span class="product-tag">$80/mo flat</span>
+              <span class="product-tag">No lock-in</span>
+            </div>
+          </div>
+          <span class="btn" aria-hidden="true">Visit →</span>
+        </a>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap">
+        <div class="foot-inner">
+          <div class="brand">
+            <StarMark size={32} />
+            <span class="brand-name" style="font-size:17px;">
+              bite<span class="perk">perk</span>
+            </span>
+          </div>
+          <div class="foot-contact">
+            <a href={phoneHref}>{phone}</a>
+            <a href={emailHref}>{email}</a>
+          </div>
+        </div>
+        <div class="foot-bottom">
+          <div>© {new Date().getFullYear()} Biteperk Pty Ltd. All rights reserved.</div>
+          <div>Sydney, Australia · ABN coming soon</div>
+        </div>
+      </div>
+    </footer>
+
+    <script is:inline>
+      // Nav background flips opaque past 40px scroll.
+      const nav = document.getElementById("nav");
+      const onScroll = () => nav?.classList.toggle("scrolled", window.scrollY > 40);
+      window.addEventListener("scroll", onScroll, { passive: true });
+      onScroll();
+    </script>
+  </body>
+</html>
