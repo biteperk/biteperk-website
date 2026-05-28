@@ -1,0 +1,146 @@
+---
+/**
+ * Site footer. 3-column nav + brand blurb + bottom bar with ABN/locale.
+ * Column links are data-driven so adding a page only requires a one-line
+ * edit here, not a search across every footer in the repo.
+ */
+import StarMark from "./StarMark.astro";
+import { site } from "../data/site";
+
+const year = new Date().getFullYear();
+
+type FootLink = { label: string; href: string; external?: boolean };
+const cols: ReadonlyArray<{ heading: string; links: ReadonlyArray<FootLink> }> = [
+  {
+    heading: "Product",
+    links: [
+      { label: "VocoTable", href: site.vocotableUrl, external: true },
+      { label: "How it works", href: `${site.vocotableUrl}#how`, external: true },
+      { label: "Pricing", href: `${site.vocotableUrl}#pricing`, external: true },
+    ],
+  },
+  {
+    heading: "Company",
+    links: [
+      { label: "Contact", href: "/#contact" },
+      { label: "Email", href: site.email.href },
+      { label: "Phone", href: site.phone.href },
+    ],
+  },
+  {
+    heading: "Get in touch",
+    links: [
+      { label: site.phone.display, href: site.phone.href },
+      { label: site.email.display, href: site.email.href },
+      { label: "biteperk.com.au", href: site.url, external: true },
+    ],
+  },
+];
+---
+
+<footer>
+  <div class="wrap">
+    <div class="foot-inner">
+      <div>
+        <div class="brand">
+          <StarMark size={32} />
+          <span class="brand-name foot-brand-name">
+            bite<span class="perk">perk</span>
+          </span>
+        </div>
+        <p class="foot-brand-text">
+          Biteperk builds voice and AI tools for hospitality. Our first product, VocoTable,
+          answers every restaurant call in a warm Australian voice. Made in Sydney.
+        </p>
+      </div>
+      <div class="foot-cols">
+        {
+          cols.map((col) => (
+            <div class="foot-col">
+              <h4>{col.heading}</h4>
+              {col.links.map((link) => (
+                <a
+                  href={link.href}
+                  rel={link.external ? "noopener" : undefined}
+                  target={link.external ? "_blank" : undefined}
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          ))
+        }
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <div>© {year} Biteperk Pty Ltd. All rights reserved.</div>
+      <div>{site.address.city}, {site.address.country} · Voice + AI for hospitality</div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  footer {
+    border-top: 1px solid var(--bp-line);
+    padding: 56px 0 36px;
+    background: var(--bp-ink);
+  }
+  .foot-inner {
+    display: grid;
+    grid-template-columns: 1.2fr 2fr;
+    gap: 48px;
+  }
+  .foot-brand-name {
+    font-size: 17px;
+  }
+  .foot-brand-text {
+    color: var(--bp-mist);
+    font-size: 14px;
+    line-height: 1.65;
+    margin-top: 14px;
+    max-width: 380px;
+  }
+  .foot-cols {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+  .foot-col h4 {
+    font-size: 12.5px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #f0f2f6;
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+  .foot-col a {
+    display: block;
+    font-size: 14px;
+    color: var(--bp-mist);
+    margin-bottom: 10px;
+    transition: color 0.2s;
+  }
+  .foot-col a:hover {
+    color: #fff;
+  }
+  .foot-bottom {
+    margin-top: 44px;
+    padding-top: 22px;
+    border-top: 1px solid var(--bp-line);
+    font-size: 12.5px;
+    color: var(--bp-mist);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  @media (max-width: 980px) {
+    .foot-inner {
+      grid-template-columns: 1fr;
+    }
+    .foot-cols {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

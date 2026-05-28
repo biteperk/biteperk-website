@@ -1,0 +1,99 @@
+---
+/**
+ * Base layout — every page on biteperk.com.au extends this.
+ *
+ * Responsibilities:
+ *   - <head>: charset, viewport, theme-color, font preconnect, favicon, SEO
+ *   - Skip-link for keyboard users
+ *   - Sticky <Nav> across all pages
+ *   - <main> slot for page content
+ *   - <Footer> across all pages
+ *   - Sticky-nav scroll listener + scroll-reveal IntersectionObserver
+ *
+ * Pages pass `title`, optional `description`, optional `path` (for canonical
+ * override), optional `preloadImage` (to push critical hero image on home).
+ */
+import "../styles/global.css";
+import SEO from "../components/SEO.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+
+interface Props {
+  title: string;
+  description?: string;
+  path?: string;
+  /** Absolute path under /public to preload (e.g. "/bella/portrait.png") */
+  preloadImage?: string;
+}
+
+const { title, description, path, preloadImage } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0a0b0d" />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    {preloadImage && <link rel="preload" as="image" href={preloadImage} />}
+
+    <SEO title={title} description={description} path={path}>
+      <slot name="jsonld" slot="jsonld" />
+    </SEO>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Nav />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+
+    <script is:inline>
+      // Sticky-nav scroll state. Reattaches on BFCache restore so the
+      // .scrolled class is correct when navigating back from another page.
+      (() => {
+        const apply = () => {
+          const nav = document.getElementById("nav");
+          if (!nav) return;
+          nav.classList.toggle("scrolled", window.scrollY > 40);
+        };
+        window.addEventListener("scroll", apply, { passive: true });
+        window.addEventListener("pageshow", apply);
+        apply();
+      })();
+
+      // Reveal-on-scroll. CSS handles prefers-reduced-motion, but we still
+      // short-circuit JS to avoid attaching observers for nothing.
+      (() => {
+        const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const els = document.querySelectorAll(".reveal");
+        if (reduce || !("IntersectionObserver" in window)) {
+          els.forEach((el) => el.classList.add("is-in"));
+          return;
+        }
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const e of entries) {
+              if (e.isIntersecting) {
+                e.target.classList.add("is-in");
+                io.unobserve(e.target);
+              }
+            }
+          },
+          { threshold: 0, rootMargin: "0px 0px -8% 0px" }
+        );
+        els.forEach((el) => io.observe(el));
+      })();
+    </script>
+  </body>
+</html>
