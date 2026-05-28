@@ -36,6 +36,24 @@ export interface ProductFAQ {
   readonly a: string;
 }
 
+export interface PricingTier {
+  readonly id: string;
+  readonly name: string;
+  readonly description: string;
+  /** Display amount, e.g. "$80" or "Let's talk". Use `null` for contact-style. */
+  readonly amount: string;
+  readonly cadence?: string;
+  /** Mark a single tier as the recommended pick. */
+  readonly featured?: boolean;
+  /** Optional badge above the tier name (e.g. "OUR PICK"). */
+  readonly badge?: string;
+  /** Bullet features. The first bullet may be an "Everything in X, plus:" reference. */
+  readonly features: ReadonlyArray<string>;
+  readonly cta: { readonly label: string; readonly href: string };
+  /** Footer note under the CTA (e.g. "Live in 48 hours", "Or call 0450…"). */
+  readonly footer?: string;
+}
+
 export interface Product {
   readonly slug: string;
   readonly name: string;
@@ -56,10 +74,11 @@ export interface Product {
   readonly metrics?: ReadonlyArray<ProductMetric>;
   readonly faq?: ReadonlyArray<ProductFAQ>;
   readonly pricing?: {
+    readonly eyebrow?: string;
     readonly headline: string;
-    readonly amount: string;
-    readonly cadence: string;
-    readonly notes: ReadonlyArray<string>;
+    readonly lede?: string;
+    readonly tiers: ReadonlyArray<PricingTier>;
+    readonly footnote?: string;
   };
   readonly seo: {
     readonly title: string;
@@ -107,15 +126,89 @@ const vocotable: Product = {
     { label: "flat pricing", value: "$80/mo", hint: "no per-cover fees" },
   ],
   pricing: {
-    headline: "One flat rate. No surprises.",
-    amount: "$80",
-    cadence: "per month",
-    notes: [
-      "Unlimited inbound calls",
-      "No per-cover or per-booking fees",
-      "No lock-in contract — month to month",
-      "Cancel any time, your bookings stay yours",
+    eyebrow: "Pricing",
+    headline: "Honest pricing. Pick what fits.",
+    lede: "Same Bella in every plan. Pay only for the bookings volume and the integrations you actually need.",
+    tiers: [
+      {
+        id: "solo",
+        name: "Solo",
+        description: "For a single restaurant getting started with AI calls.",
+        amount: "$80",
+        cadence: "/month",
+        features: [
+          "Up to 300 booked tables per month",
+          "1 phone number, 1 location",
+          "24/7 answering in natural Australian voice (Bella)",
+          "Live booking into your dashboard",
+          "Transcripts & call recordings",
+          "Basic analytics & no-show tracking",
+          "Unlimited dashboard users",
+          "Email support, business hours",
+          "After 300 bookings, you'll be invited to upgrade — no surprise charge",
+        ],
+        cta: { label: "Start with Solo →", href: `${site.vocotableUrl}/?plan=solo` },
+        footer: "Live in 48 hours",
+      },
+      {
+        id: "pro",
+        name: "Pro",
+        description: "For busy restaurants that want every call answered.",
+        amount: "$150",
+        cadence: "/month",
+        featured: true,
+        badge: "Our pick",
+        features: [
+          "Unlimited bookings, 24/7",
+          "1 phone number, 1 location",
+          "Everything in Solo, plus:",
+          "SMS booking confirmations to guests",
+          "Integrations: Cal.com, OpenTable, ResDiary",
+          "Custom greeting & menu prompts",
+          "Deeper analytics, call-quality reports, peak-hour insights",
+          "Priority Sydney support, 7 days a week",
+        ],
+        cta: { label: "Start with Pro →", href: `${site.vocotableUrl}/?plan=pro` },
+        footer: "Live in 48 hours",
+      },
+      {
+        id: "group",
+        name: "Group",
+        description: "For small restaurant groups with 2–3 locations.",
+        amount: "$250",
+        cadence: "/month",
+        features: [
+          "Up to 3 locations in one dashboard",
+          "Per-site phone numbers & host configuration",
+          "Everything in Pro, plus:",
+          "Multi-location reporting & roll-up analytics",
+          "Cross-location guest history",
+          "Dedicated account manager",
+          "99.9% uptime SLA",
+          "Priority onboarding — we set it up for you",
+        ],
+        cta: { label: "Start with Group →", href: `${site.vocotableUrl}/?plan=group` },
+        footer: "Live in 48 hours",
+      },
+      {
+        id: "enterprise",
+        name: "Enterprise",
+        description: "For groups with 4+ locations, custom voices, or bespoke integrations.",
+        amount: "Let's talk",
+        features: [
+          "Unlimited locations & numbers",
+          "Custom voice persona (your accent, your tone)",
+          "Multilingual options (en-AU, zh, vi, ko, ja…)",
+          "API access & custom integrations",
+          "Dedicated success engineer",
+          "Bespoke SLA & 24×7 incident response",
+          "Custom onboarding, training & playbooks",
+        ],
+        cta: { label: "Book a 20-min call →", href: "/contact/?plan=enterprise" },
+        footer: `Or call ${site.phone.display}`,
+      },
     ],
+    footnote: "Every plan is month-to-month. No lock-in. Your bookings stay yours, always.",
   },
   faq: [
     {
