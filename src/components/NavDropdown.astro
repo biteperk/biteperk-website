@@ -1,17 +1,16 @@
 ---
 /**
- * Desktop Products dropdown.
+ * Products mega-menu.
  *
- * Native disclosure pattern using <details>/<summary>, then enhanced
- * with click-outside-to-close. Keyboard:
- *   - Enter / Space on trigger toggles open
- *   - Arrow keys cycle items
- *   - ESC closes and returns focus to the trigger
+ * Native disclosure (<details>/<summary>) that opens into a wide 2x2
+ * panel of product cards — name + status pill + tagline + arrow.
+ * Closes on click-outside and on ESC; arrow keys cycle the menu items.
  *
- * Mobile screens hide the trigger entirely (<= 980px) — the mobile menu
- * handles product nav there.
+ * Mobile screens (<= 980px) hide the trigger; the mobile menu takes
+ * over Products navigation there.
  */
 import { products, statusLabel, productUrl } from "@/data/products";
+import { site } from "@/data/site";
 
 const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
 function isActive(href: string): boolean {
@@ -21,43 +20,56 @@ function isActive(href: string): boolean {
 const onProducts = pathname === "/products" || pathname.startsWith("/products/");
 ---
 
-<details class="nav-dd" data-nav-dropdown>
+<details class="megamenu" data-nav-dropdown>
   <summary
-    class:list={["lnk", "nav-dd-trigger", { active: onProducts }]}
+    class:list={["lnk", "megamenu-trigger", { active: onProducts }]}
     aria-haspopup="true"
   >
     Products
-    <svg class="nav-dd-chev" viewBox="0 0 12 12" width="10" height="10" aria-hidden="true">
+    <svg class="megamenu-chev" viewBox="0 0 12 12" width="10" height="10" aria-hidden="true">
       <path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
   </summary>
-  <div class="nav-dd-panel" role="menu">
-    <a class="nav-dd-item nav-dd-all" href="/products/" role="menuitem" aria-current={pathname === "/products" ? "page" : undefined}>
-      <div class="nav-dd-item-title">All products</div>
-      <div class="nav-dd-item-sub">Four products. One mission.</div>
-    </a>
-    {products.map((p) => (
-      <a
-        class="nav-dd-item"
-        href={productUrl(p)}
-        role="menuitem"
-        aria-current={isActive(productUrl(p)) ? "page" : undefined}
-      >
-        <div class="nav-dd-item-row">
-          <span class="nav-dd-item-title">{p.name}</span>
-          <span class:list={["nav-dd-item-pill", `is-${p.status}`]}>{statusLabel(p.status)}</span>
-        </div>
-        <div class="nav-dd-item-sub">{p.tagline}</div>
+
+  <div class="megamenu-panel" role="menu">
+    <div class="megamenu-grid">
+      {products.map((p) => (
+        <a
+          class:list={["megamenu-card", `is-${p.status}`, { active: isActive(productUrl(p)) }]}
+          href={productUrl(p)}
+          role="menuitem"
+          aria-current={isActive(productUrl(p)) ? "page" : undefined}
+        >
+          <div class="megamenu-card-head">
+            <span class="megamenu-card-name">
+              <span class="prefix">{p.wordmark.prefix}</span><span class="suffix">{p.wordmark.suffix}</span>
+            </span>
+            <span class:list={["megamenu-pill", `is-${p.status}`]}>{statusLabel(p.status)}</span>
+          </div>
+          <p class="megamenu-card-tag">{p.tagline}</p>
+          <span class="megamenu-card-arrow" aria-hidden="true">→</span>
+        </a>
+      ))}
+    </div>
+
+    <footer class="megamenu-foot">
+      <a class="megamenu-foot-link" href="/products/" role="menuitem">
+        <span>See the full catalogue</span>
+        <span aria-hidden="true">→</span>
       </a>
-    ))}
+      <a class="megamenu-foot-link" href={site.phone.href} role="menuitem">
+        <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true">
+          <path d="M3.4 2.5C3 2.9 2.9 3.6 3.2 4.2c1.4 3 3.6 5.2 6.6 6.6.6.3 1.3.2 1.7-.2l.9-.9c.3-.3.3-.8 0-1.1l-1.5-1.5c-.3-.3-.8-.3-1.1 0l-.6.6c-1.5-.7-2.7-1.9-3.4-3.4l.6-.6c.3-.3.3-.8 0-1.1L4.9 1.1c-.3-.3-.8-.3-1.1 0z" fill="currentColor"/>
+        </svg>
+        <span>Talk to us · {site.phone.display}</span>
+      </a>
+    </footer>
   </div>
 </details>
 
 <style>
-  .nav-dd {
-    position: relative;
-  }
-  .nav-dd-trigger {
+  .megamenu { position: relative; }
+  .megamenu-trigger {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -65,95 +77,161 @@ const onProducts = pathname === "/products" || pathname.startsWith("/products/")
     list-style: none;
     user-select: none;
   }
-  .nav-dd-trigger::-webkit-details-marker { display: none; }
-  .nav-dd-trigger::marker { content: ""; }
-  .nav-dd-trigger.active { color: var(--white); }
-  .nav-dd-chev {
+  .megamenu-trigger::-webkit-details-marker { display: none; }
+  .megamenu-trigger::marker { content: ""; }
+  .megamenu-chev {
     transition: transform var(--dur-fast) var(--ease-out);
   }
-  .nav-dd[open] .nav-dd-chev { transform: rotate(180deg); }
+  .megamenu[open] .megamenu-chev { transform: rotate(180deg); }
 
-  .nav-dd-panel {
+  .megamenu-panel {
     position: absolute;
-    top: calc(100% + 8px);
-    left: 0;
-    min-width: 320px;
+    top: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 640px;
+    max-width: calc(100vw - 32px);
     background: rgba(17, 19, 23, 0.96);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
     border: 1px solid var(--line);
-    border-radius: var(--r-lg);
-    padding: 8px;
-    box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.75);
+    border-radius: var(--r-xl);
+    padding: 16px;
+    box-shadow:
+      0 32px 80px -20px rgba(0, 0, 0, 0.75),
+      0 0 0 1px rgba(245, 196, 24, 0.04);
     z-index: var(--z-dropdown);
-    animation: dd-in 180ms var(--ease-out);
+    animation: megamenu-in 220ms var(--ease-out);
   }
-  @keyframes dd-in {
-    from { opacity: 0; transform: translateY(-4px); }
-    to   { opacity: 1; transform: none; }
+  @keyframes megamenu-in {
+    from { opacity: 0; transform: translate(-50%, -8px); }
+    to   { opacity: 1; transform: translate(-50%, 0); }
   }
   @media (prefers-reduced-motion: reduce) {
-    .nav-dd-panel { animation: none; }
+    .megamenu-panel { animation: none; }
   }
 
-  .nav-dd-item {
+  .megamenu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .megamenu-card {
+    position: relative;
     display: block;
-    padding: 12px 14px;
+    padding: 16px 18px;
     border-radius: var(--r-md);
-    transition: background var(--dur-fast) var(--ease-out);
+    border: 1px solid transparent;
+    transition:
+      background var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out),
+      transform var(--dur-fast) var(--ease-out);
   }
-  .nav-dd-item:hover,
-  .nav-dd-item[aria-current="page"] {
+  .megamenu-card:hover,
+  .megamenu-card.active,
+  .megamenu-card:focus-visible {
     background: rgba(255, 255, 255, 0.04);
+    border-color: color-mix(in srgb, var(--gold) 18%, transparent);
   }
-  .nav-dd-item-row {
+  .megamenu-card:hover .megamenu-card-arrow {
+    transform: translateX(3px);
+    opacity: 1;
+  }
+  .megamenu-card-head {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 10px;
   }
-  .nav-dd-item-title {
-    color: var(--white);
-    font-weight: 600;
-    font-size: 14px;
+  .megamenu-card-name {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 1px;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1;
   }
-  .nav-dd-item-sub {
-    margin-top: 4px;
-    color: var(--mist);
-    font-size: 12.5px;
-    line-height: 1.4;
+  .megamenu-card-name .prefix { color: var(--white); }
+  .megamenu-card-name .suffix { color: var(--mist); font-weight: 300; }
+  .megamenu-card-tag {
+    margin-top: 8px;
+    color: var(--mist-2);
+    font-size: 13px;
+    line-height: 1.45;
+    max-width: 24ch;
   }
-  .nav-dd-all { border-bottom: 1px solid var(--line); margin-bottom: 4px; padding-bottom: 14px; }
-  .nav-dd-all .nav-dd-item-title { color: var(--gold); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; }
+  .megamenu-card-arrow {
+    position: absolute;
+    right: 18px;
+    bottom: 16px;
+    color: var(--gold);
+    font-size: 16px;
+    opacity: 0;
+    transition: transform var(--dur-fast) var(--ease-out), opacity var(--dur-fast) var(--ease-out);
+  }
 
-  .nav-dd-item-pill {
+  /* Status pills inside cards */
+  .megamenu-pill {
     font-size: 9.5px;
-    letter-spacing: 1px;
+    letter-spacing: 1.1px;
     text-transform: uppercase;
-    font-weight: 600;
-    padding: 3px 7px;
+    font-weight: 700;
+    padding: 3px 8px;
     border-radius: var(--r-pill);
     white-space: nowrap;
   }
-  .nav-dd-item-pill.is-live { background: var(--gold); color: #1a0f04; }
-  .nav-dd-item-pill.is-in-development {
-    background: rgba(245, 196, 24, 0.1);
+  .megamenu-pill.is-live { background: var(--gold); color: #1a0f04; }
+  .megamenu-pill.is-in-development {
     color: var(--gold);
-    border: 1px solid color-mix(in srgb, var(--gold) 30%, transparent);
+    background: rgba(245, 196, 24, 0.08);
+    border: 1px solid color-mix(in srgb, var(--gold) 32%, transparent);
   }
-  .nav-dd-item-pill.is-concept {
-    background: rgba(255, 255, 255, 0.04);
+  .megamenu-pill.is-concept {
     color: var(--mist-2);
+    background: rgba(255, 255, 255, 0.03);
     border: 1px solid var(--line);
   }
 
+  /* Footer row */
+  .megamenu-foot {
+    margin-top: 8px;
+    padding: 8px 8px 4px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .megamenu-foot-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: var(--r-md);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--mist-2);
+    letter-spacing: 0.2px;
+    transition: color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+  }
+  .megamenu-foot-link:first-child { color: var(--gold); }
+  .megamenu-foot-link:hover {
+    color: var(--white);
+    background: rgba(255, 255, 255, 0.04);
+  }
+  .megamenu-foot-link svg { color: var(--gold); }
+
   @media (max-width: 980px) {
-    .nav-dd { display: none; }
+    .megamenu { display: none; }
+  }
+  @media (max-width: 720px) {
+    .megamenu-grid { grid-template-columns: 1fr; }
   }
 </style>
 
 <script>
-  // Click-outside + ESC close for the desktop dropdown.
   (function () {
     function init() {
       document.querySelectorAll<HTMLDetailsElement>("details[data-nav-dropdown]").forEach((dd) => {
@@ -166,8 +244,23 @@ const onProducts = pathname === "/products" || pathname.startsWith("/products/")
         dd.addEventListener("keydown", (e) => {
           if (e.key === "Escape" && dd.open) {
             dd.open = false;
-            const trig = dd.querySelector<HTMLElement>("summary");
-            trig?.focus();
+            dd.querySelector<HTMLElement>("summary")?.focus();
+          }
+        });
+        // Hover-open on desktop pointers — the disclosure stays
+        // keyboard-friendly (click/Enter still works) but mouse users
+        // get the expected mega-menu hover-to-reveal.
+        const trigger = dd.querySelector<HTMLElement>("summary");
+        let hoverTimer: ReturnType<typeof setTimeout> | undefined;
+        dd.addEventListener("mouseenter", () => {
+          if (window.matchMedia("(hover: hover)").matches) {
+            hoverTimer = setTimeout(() => { dd.open = true; }, 60);
+          }
+        });
+        dd.addEventListener("mouseleave", () => {
+          if (hoverTimer) clearTimeout(hoverTimer);
+          if (window.matchMedia("(hover: hover)").matches) {
+            dd.open = false;
           }
         });
       });
