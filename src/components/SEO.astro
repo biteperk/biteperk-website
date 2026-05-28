@@ -1,0 +1,44 @@
+---
+/**
+ * SEO meta tags + Open Graph + canonical + JSON-LD slot.
+ *
+ * Every page renders <SEO> inside <Base>'s head slot. The canonical URL is
+ * derived from `Astro.url`, falling back to the `path` prop for builds that
+ * resolve URLs lazily.
+ */
+import { site } from "../data/site";
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Path relative to site root, e.g. "/pricing". Used to build canonical URL. */
+  path?: string;
+  /** OG image absolute path (defaults to /og/default.png — add the file before launch). */
+  ogImage?: string;
+}
+
+const { title, description = site.description, path, ogImage = "/og/default.png" } = Astro.props;
+
+const canonicalPath = path ?? new URL(Astro.request.url).pathname;
+const canonical = new URL(canonicalPath, site.url).toString();
+const ogImageAbs = new URL(ogImage, site.url).toString();
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content={site.name} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImageAbs} />
+<meta property="og:locale" content="en_AU" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImageAbs} />
+
+<slot name="jsonld" />

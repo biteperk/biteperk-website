@@ -119,3 +119,6 @@ vite.config.ts.timestamp-*
 
 # TernJS port file
 .tern-port
+
+# Claude Code local config
+.claude/
