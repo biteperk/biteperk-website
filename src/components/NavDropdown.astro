@@ -75,10 +75,20 @@ const onProducts = pathname === "/products" || pathname.startsWith("/products/")
     gap: 6px;
     cursor: pointer;
     list-style: none;
+    list-style-type: none;
     user-select: none;
   }
-  .megamenu-trigger::-webkit-details-marker { display: none; }
-  .megamenu-trigger::marker { content: ""; }
+  /* Belt-and-braces: hide the disclosure marker on every browser. */
+  .megamenu-trigger::-webkit-details-marker {
+    display: none !important;
+  }
+  .megamenu-trigger::marker {
+    content: "" !important;
+    display: none;
+  }
+  /* Some browsers render the marker via ::before when list-item — kill it. */
+  .megamenu > summary::-webkit-details-marker { display: none !important; }
+  details.megamenu summary { list-style: none; }
   .megamenu-chev {
     transition: transform var(--dur-fast) var(--ease-out);
   }
