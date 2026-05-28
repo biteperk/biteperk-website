@@ -1,0 +1,301 @@
+---
+import Base from "@/layouts/Base.astro";
+import SectionHeader from "@/components/SectionHeader.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import { site } from "@/data/site";
+import { products } from "@/data/products";
+
+const title = "Contact — Biteperk";
+const description =
+  "Talk to Biteperk in Sydney. Call 0450 011 140 (9am–9pm AEST) or email hello@biteperk.com.au. We answer every message — usually within a few hours.";
+---
+
+<Base title={title} description={description} path="/contact/" ogImage="/og/contact.png">
+  <section class="contact-hero">
+    <div class="contact-glow" aria-hidden="true"></div>
+    <div class="wrap">
+      <div class="contact-top">
+        <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Contact" }]} />
+      </div>
+      <SectionHeader
+        eyebrow="Talk to a human"
+        lede="We work with a small number of venues at a time. Whether you want to talk about VocoTable, a future product, or just the missed-call problem — say hello."
+      >
+        <Fragment slot="headline">
+          One conversation away
+          <br />
+          from <span class="gold">a quieter Friday night.</span>
+        </Fragment>
+      </SectionHeader>
+    </div>
+  </section>
+
+  <section class="contact-grid-wrap">
+    <div class="wrap">
+      <div class="contact-grid">
+        {/* Direct contact column */}
+        <aside class="contact-side reveal">
+          <div class="contact-side-block">
+            <div class="contact-side-l">Call us</div>
+            <a class="contact-side-v" href={site.phone.href}>{site.phone.display}</a>
+            <div class="contact-side-h">9am – 9pm AEST, every day</div>
+          </div>
+          <div class="contact-side-block">
+            <div class="contact-side-l">Email</div>
+            <a class="contact-side-v" href={site.email.href}>{site.email.display}</a>
+            <div class="contact-side-h">We reply, usually within a few hours.</div>
+          </div>
+          <div class="contact-side-block">
+            <div class="contact-side-l">Find us</div>
+            <div class="contact-side-v">{site.address.city}, {site.address.country}</div>
+            <div class="contact-side-h">Local team. Local data. Local hours.</div>
+          </div>
+        </aside>
+
+        {/* Form column */}
+        <form
+          class="contact-form reveal"
+          method="post"
+          action="https://formspree.io/f/your-id-here"
+          aria-label="Contact form"
+        >
+          <noscript>
+            <div class="contact-noscript">
+              For a faster reply, email <a href={site.email.href}>{site.email.display}</a> directly.
+            </div>
+          </noscript>
+
+          {/* Honeypot — bots fill it; humans don't see it. */}
+          <div class="contact-honey" aria-hidden="true">
+            <label>
+              Please leave this field empty
+              <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" />
+            </label>
+          </div>
+
+          <div class="contact-row">
+            <div class="contact-field">
+              <label for="cf-name">Your name <span aria-hidden="true">*</span></label>
+              <input id="cf-name" name="name" type="text" required autocomplete="name" />
+            </div>
+            <div class="contact-field">
+              <label for="cf-email">Email <span aria-hidden="true">*</span></label>
+              <input id="cf-email" name="email" type="email" required autocomplete="email" />
+            </div>
+          </div>
+
+          <div class="contact-row">
+            <div class="contact-field">
+              <label for="cf-venue">Your venue</label>
+              <input
+                id="cf-venue"
+                name="venue"
+                type="text"
+                placeholder="e.g. Natalia's Bistro"
+                autocomplete="organization"
+              />
+            </div>
+            <div class="contact-field">
+              <label for="cf-product">About</label>
+              <select id="cf-product" name="product">
+                <option value="">— pick one —</option>
+                <option value="general">General enquiry</option>
+                {products.map((p) => (
+                  <option value={p.slug}>{p.name}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div class="contact-field">
+            <label for="cf-message">Message <span aria-hidden="true">*</span></label>
+            <textarea
+              id="cf-message"
+              name="message"
+              rows="5"
+              required
+              placeholder="What would you want VocoTable (or its next sibling) to do for your venue?"
+            ></textarea>
+          </div>
+
+          <button class="btn contact-submit" type="submit">Send message →</button>
+          <p class="contact-fineprint">
+            By submitting, you agree we can reply to your message.
+            We never share your details and we'll delete the message once we've followed up.
+          </p>
+        </form>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .contact-hero {
+    padding: clamp(120px, 14vw, 180px) 0 clamp(56px, 7vw, 80px);
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--line);
+  }
+  .contact-glow {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(40% 50% at 80% 0%, rgba(245, 196, 24, 0.16), transparent 70%);
+  }
+  .contact-hero .wrap { position: relative; z-index: 1; }
+  .contact-top { margin-bottom: 28px; }
+
+  .contact-grid-wrap { padding-block: var(--space-section); background: var(--ink-0); }
+  .contact-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr);
+    gap: 64px;
+    align-items: start;
+  }
+  @media (max-width: 860px) {
+    .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+  }
+
+  .contact-side { display: grid; gap: 32px; }
+  .contact-side-block {
+    padding: 24px 24px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--ink-1);
+  }
+  .contact-side-l {
+    font-size: 11.5px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--mist);
+    font-weight: 600;
+  }
+  .contact-side-v {
+    margin-top: 8px;
+    display: block;
+    font-size: clamp(20px, 2vw, 24px);
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.02em;
+  }
+  a.contact-side-v:hover { color: var(--gold); }
+  .contact-side-h {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--mist);
+  }
+
+  .contact-form {
+    padding: 32px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-xl);
+    background:
+      linear-gradient(160deg, rgba(245, 196, 24, 0.03), transparent 50%),
+      var(--ink-1);
+  }
+  .contact-noscript {
+    margin-bottom: 18px;
+    padding: 14px 18px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--ink-2);
+    color: var(--text);
+    font-size: 14px;
+  }
+  .contact-noscript a { color: var(--gold); }
+
+  .contact-honey {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .contact-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 18px;
+  }
+  @media (max-width: 540px) {
+    .contact-row { grid-template-columns: 1fr; }
+  }
+
+  .contact-field label {
+    display: block;
+    font-size: 12.5px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--mist);
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .contact-field label span { color: var(--gold); }
+  .contact-field input,
+  .contact-field select,
+  .contact-field textarea {
+    width: 100%;
+    background: var(--ink-2);
+    color: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    padding: 14px 16px;
+    font-family: inherit;
+    font-size: 15px;
+    line-height: 1.5;
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      background var(--dur-fast) var(--ease-out);
+  }
+  .contact-field textarea {
+    resize: vertical;
+    min-height: 140px;
+  }
+  .contact-field input:focus,
+  .contact-field select:focus,
+  .contact-field textarea:focus {
+    border-color: var(--gold);
+    background: var(--ink-3);
+  }
+  .contact-field input::placeholder,
+  .contact-field textarea::placeholder {
+    color: #5b6470;
+  }
+
+  .contact-field { margin-bottom: 22px; }
+  .contact-row + .contact-field,
+  .contact-row + .contact-row { margin-top: 0; }
+
+  .contact-submit {
+    margin-top: 10px;
+  }
+  .contact-fineprint {
+    margin-top: 18px;
+    font-size: 12.5px;
+    color: var(--mist);
+    line-height: 1.5;
+  }
+</style>
+
+<script>
+  (function () {
+    function init() {
+      const form = document.querySelector<HTMLFormElement>(".contact-form");
+      if (!form) return;
+      form.addEventListener("submit", () => {
+        // Let the action="" submit normally if no JS-side fetch endpoint is wired.
+        // If you want a JS fetch instead, swap this for a fetch() and prevent default.
+        const btn = form.querySelector<HTMLButtonElement>(".contact-submit");
+        if (btn) {
+          btn.setAttribute("aria-busy", "true");
+          btn.textContent = "Sending…";
+        }
+        // Honour native submit — the page will navigate to Formspree's response.
+      });
+    }
+    init();
+    document.addEventListener("astro:page-load", init);
+  })();
+</script>

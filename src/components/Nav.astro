@@ -1,43 +1,49 @@
 ---
 /**
- * Sticky top nav. Reads `Astro.url.pathname` so we can highlight the active
- * page link. Hidden link row on screens < 980px (matches the original
- * single-page behaviour — mobile nav is a P2 follow-up).
+ * Sticky top nav.
+ *
+ * Desktop: logo · Products (dropdown) · Contact · persistent Call pill.
+ * Mobile (<= 980px): logo · hamburger → MobileMenu overlay.
+ *
+ * Sticky state is toggled by src/scripts/nav.ts (adds .scrolled past
+ * 12px of scroll).
  */
-import StarMark from "./StarMark.astro";
-import { site, navLinks } from "../data/site";
+import StarMark from "@/components/StarMark.astro";
+import NavDropdown from "@/components/NavDropdown.astro";
+import MobileMenu from "@/components/MobileMenu.astro";
+import { site } from "@/data/site";
+import { primaryNav } from "@/data/nav";
 
 const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
-
 function isActive(href: string): boolean {
-  if (href.startsWith("http")) return false;
-  // Anchor-only links (e.g. "/#contact") never highlight as active
-  if (href.startsWith("/#")) return false;
-  const normalised = href.replace(/\/$/, "") || "/";
-  return pathname === normalised;
+  const n = href.replace(/\/$/, "") || "/";
+  return pathname === n || pathname.startsWith(n + "/");
 }
+
+// All non-products primary links — Products is rendered as a dropdown.
+const nonProductLinks = primaryNav.filter((l) => l.href !== "/products/");
 ---
 
-<nav class="nav" id="nav" aria-label="Primary">
+<nav class="nav" id="nav" aria-label="Primary" transition:persist>
   <div class="wrap nav-inner">
     <a class="brand" href="/" aria-label="Biteperk home">
       <StarMark size={38} />
       <span class="brand-name">bite<span class="perk">perk</span></span>
     </a>
+
     <div class="nav-links">
-      {
-        navLinks.map((link) => (
-          <a
-            class="lnk"
-            href={link.href}
-            rel={link.external ? "noopener" : undefined}
-            target={link.external ? "_blank" : undefined}
-            aria-current={isActive(link.href) ? "page" : undefined}
-          >
-            {link.label}
-          </a>
-        ))
-      }
+      <NavDropdown />
+      {nonProductLinks.map((link) => (
+        <a
+          class:list={["lnk", { active: isActive(link.href) }]}
+          href={link.href}
+          rel={link.external ? "noopener" : undefined}
+          target={link.external ? "_blank" : undefined}
+          aria-current={isActive(link.href) ? "page" : undefined}
+        >
+          {link.label}
+        </a>
+      ))}
       <a
         class="btn nav-call"
         href={site.phone.href}
@@ -48,8 +54,21 @@ function isActive(href: string): boolean {
         <span class="nav-call-short" aria-hidden="true">Call</span>
       </a>
     </div>
+
+    <button
+      type="button"
+      class="nav-burger"
+      data-mobile-menu-trigger
+      aria-controls="mobile-menu"
+      aria-expanded="false"
+      aria-label="Open menu"
+    >
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
+
+<MobileMenu />
 
 <style>
   .nav {
@@ -57,64 +76,88 @@ function isActive(href: string): boolean {
     top: 0;
     left: 0;
     right: 0;
-    z-index: 50;
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    background: rgba(10, 11, 13, 0.65);
+    z-index: var(--z-nav);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background: rgba(10, 11, 13, 0.55);
     border-bottom: 1px solid transparent;
     transition:
-      border-color 0.3s ease,
-      background 0.3s ease;
+      border-color var(--dur-base) var(--ease-out),
+      background var(--dur-base) var(--ease-out);
+    padding-top: env(safe-area-inset-top);
   }
   .nav.scrolled {
-    background: rgba(10, 11, 13, 0.95);
-    border-bottom: 1px solid var(--bp-line);
+    background: rgba(10, 11, 13, 0.92);
+    border-bottom: 1px solid var(--line-gold);
   }
   .nav-inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
     height: 72px;
+    gap: 24px;
   }
   .nav-links {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
   }
   .lnk {
     font-size: 14px;
     font-weight: 500;
     color: #c0c5ce;
     padding: 10px 14px;
-    transition: color 0.2s;
+    border-radius: var(--r-md);
+    transition: color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+    position: relative;
   }
   .lnk:hover,
+  .lnk.active,
   .lnk[aria-current="page"] {
-    color: #fff;
+    color: var(--white);
+  }
+  .lnk.active::after,
+  .lnk[aria-current="page"]::after {
+    content: "";
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 6px;
+    height: 1.5px;
+    background: var(--gold);
+    border-radius: 2px;
   }
 
-  /* Responsive nav CTA: full phone number on roomy screens, "Call" on phones */
-  .nav-call-short {
+  .nav-call-short { display: none; }
+  .nav-call { padding: 12px 20px; font-size: 14px; }
+
+  .nav-burger {
     display: none;
+    width: 44px;
+    height: 44px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    border-radius: var(--r-pill);
   }
+  .nav-burger span {
+    width: 20px;
+    height: 1.6px;
+    background: var(--white);
+    border-radius: 2px;
+    transition: transform var(--dur-base) var(--ease-out), opacity var(--dur-base) var(--ease-out);
+  }
+  .nav-burger[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-burger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+  .nav-burger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
   @media (max-width: 980px) {
-    .nav-links .lnk {
-      display: none;
-    }
+    .nav-links { display: none; }
+    .nav-burger { display: inline-flex; }
   }
-
   @media (max-width: 560px) {
-    .nav-call-full {
-      display: none;
-    }
-    .nav-call-short {
-      display: inline;
-    }
-    /* Tighten the gold pill on small screens — same visual weight, less width */
-    .nav-call {
-      padding: 12px 18px;
-      font-size: 14px;
-    }
+    .nav-call-full { display: none; }
+    .nav-call-short { display: inline; }
   }
 </style>

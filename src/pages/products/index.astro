@@ -1,0 +1,204 @@
+---
+import Base from "@/layouts/Base.astro";
+import SectionHeader from "@/components/SectionHeader.astro";
+import ProductCard from "@/components/ProductCard.astro";
+import Cta from "@/components/Cta.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import { products, statusLabel, type ProductStatus } from "@/data/products";
+import { site } from "@/data/site";
+
+const title = "Products — Biteperk";
+const description =
+  "Four products. One mission. VocoTable is live; VocoOrder, VocoConcierge and VocoDrive are next. Voice + AI for Australian hospitality.";
+
+type FilterValue = "all" | ProductStatus;
+const statuses: ReadonlyArray<FilterValue> = ["all", "live", "in-development", "concept"];
+
+function chipLabel(s: FilterValue): string {
+  return s === "all" ? "All" : statusLabel(s);
+}
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: site.url },
+    { "@type": "ListItem", position: 2, name: "Products", item: `${site.url}/products/` },
+  ],
+};
+---
+
+<Base title={title} description={description} path="/products/" ogImage="/og/products.png">
+  <script
+    is:inline
+    type="application/ld+json"
+    slot="jsonld"
+    set:html={JSON.stringify(breadcrumbJsonLd)}
+  />
+
+  <section class="prod-index">
+    <div class="prod-index-glow" aria-hidden="true"></div>
+    <div class="wrap">
+      <div class="prod-index-top">
+        <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Products" }]} />
+      </div>
+      <SectionHeader
+        eyebrow="The catalogue"
+        lede="One mission — keep restaurant teams on the floor while the unglamorous bits (the phone, the bookings, the no-shows) take care of themselves."
+      >
+        <Fragment slot="headline">
+          Four products.
+          <br />
+          <span class="gold">One mission.</span>
+        </Fragment>
+      </SectionHeader>
+
+      <div class="prod-index-filters reveal" role="tablist" aria-label="Filter products by status">
+        {statuses.map((s) => (
+          <button
+            type="button"
+            class="filter-chip"
+            data-filter={s}
+            aria-pressed={s === "all" ? "true" : "false"}
+            role="tab"
+          >
+            {chipLabel(s)}
+          </button>
+        ))}
+      </div>
+
+      <div class="prod-index-grid reveal" id="products-grid">
+        {products.map((p) => (
+          <div class="prod-cell" data-status={p.status}>
+            <ProductCard product={p} variant="tile" />
+          </div>
+        ))}
+      </div>
+
+      <div class="prod-honesty reveal">
+        <div class="prod-honesty-card">
+          <div class="eyebrow">What we're not building</div>
+          <p>
+            We don't build generic AI agents. We don't build platforms. We don't build for industries we don't know.
+            Biteperk is hospitality, in Sydney. Everything else stays out of the catalogue.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Cta
+    eyebrow="Have a venue?"
+    headline="Tell us what you'd want next."
+    lede="Our roadmap follows the venues we work with. If there's a phone-shaped problem we haven't named yet, we'd love to hear it."
+  />
+</Base>
+
+<style>
+  .prod-index {
+    position: relative;
+    padding: clamp(120px, 14vw, 180px) 0 var(--space-section);
+    overflow: hidden;
+    border-bottom: 1px solid var(--line);
+  }
+  .prod-index-glow {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(40% 50% at 80% 0%, rgba(245, 196, 24, 0.12), transparent 70%),
+      radial-gradient(40% 50% at 0% 100%, rgba(26, 77, 26, 0.25), transparent 70%);
+  }
+  .prod-index .wrap { position: relative; z-index: 1; }
+  .prod-index-top { margin-bottom: 32px; }
+
+  .prod-index-filters {
+    margin-top: 48px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .filter-chip {
+    padding: 10px 18px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--line);
+    color: var(--mist);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition:
+      color var(--dur-fast) var(--ease-out),
+      background var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out);
+  }
+  .filter-chip:hover { color: var(--white); border-color: var(--line-strong); }
+  .filter-chip[aria-pressed="true"] {
+    background: var(--gold);
+    color: #1a0f04;
+    border-color: var(--gold);
+  }
+
+  .prod-index-grid {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  .prod-cell.is-hidden { display: none; }
+  @media (max-width: 720px) {
+    .prod-index-grid { grid-template-columns: 1fr; }
+  }
+
+  .prod-honesty { margin-top: 96px; }
+  .prod-honesty-card {
+    max-width: 720px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 40px 32px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: linear-gradient(160deg, rgba(245, 196, 24, 0.04), transparent 60%), var(--ink-1);
+  }
+  .prod-honesty-card p {
+    margin-top: 14px;
+    color: var(--text);
+    line-height: 1.65;
+  }
+</style>
+
+<script>
+  // Filter chips — toggle visibility, sync to ?status= query string.
+  (function () {
+    function init() {
+      const chips = document.querySelectorAll<HTMLButtonElement>(".filter-chip");
+      const cells = document.querySelectorAll<HTMLElement>(".prod-cell");
+      if (chips.length === 0 || cells.length === 0) return;
+
+      function apply(status: string) {
+        chips.forEach((c) =>
+          c.setAttribute("aria-pressed", c.dataset.filter === status ? "true" : "false")
+        );
+        cells.forEach((cell) => {
+          const match = status === "all" || cell.dataset.status === status;
+          cell.classList.toggle("is-hidden", !match);
+        });
+        const url = new URL(window.location.href);
+        if (status === "all") url.searchParams.delete("status");
+        else url.searchParams.set("status", status);
+        history.replaceState(null, "", url.toString());
+      }
+
+      chips.forEach((chip) => {
+        chip.addEventListener("click", () => apply(chip.dataset.filter ?? "all"));
+      });
+
+      // Apply ?status= from URL on load.
+      const initial = new URL(window.location.href).searchParams.get("status") ?? "all";
+      const valid = ["all", "live", "in-development", "concept"];
+      apply(valid.includes(initial) ? initial : "all");
+    }
+    init();
+    document.addEventListener("astro:page-load", init);
+  })();
+</script>

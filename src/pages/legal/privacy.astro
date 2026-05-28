@@ -1,0 +1,139 @@
+---
+import Base from "@/layouts/Base.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import { site } from "@/data/site";
+
+const title = "Privacy policy — Biteperk";
+const description =
+  "How Biteperk collects, uses, and stores information. Plain English, Australian Privacy Act compliant.";
+---
+
+<Base title={title} description={description} path="/legal/privacy/">
+  <article class="legal">
+    <div class="wrap">
+      <Breadcrumbs items={[
+        { label: "Home", href: "/" },
+        { label: "Legal", href: "/legal/privacy/" },
+        { label: "Privacy" },
+      ]} />
+      <header class="legal-head">
+        <h1>Privacy policy</h1>
+        <p class="legal-updated">Last updated <time datetime={site.legalLastUpdated}>{site.legalLastUpdated}</time></p>
+      </header>
+
+      <section>
+        <h2>Who we are</h2>
+        <p>
+          Biteperk Pty Ltd ("Biteperk", "we", "us") is an Australian company based in {site.address.city}.
+          We build voice and AI tools for hospitality. This policy explains how we handle information when
+          you visit {site.url} or use one of our products.
+        </p>
+      </section>
+
+      <section>
+        <h2>What we collect</h2>
+        <p>
+          When you contact us through the website, we collect the name, email, venue and message you provide.
+          That's it. The website itself does not run third-party analytics or advertising trackers.
+        </p>
+        <p>
+          When you use VocoTable, our product collects the audio and metadata necessary to take the booking —
+          phone number, requested time, party size, and the conversation itself. We keep audio only as long as
+          needed to confirm the booking and resolve any disputes, then delete it.
+        </p>
+      </section>
+
+      <section>
+        <h2>Where data lives</h2>
+        <p>
+          Customer data is stored in Australia. We use cloud providers (such as Google Cloud and Firebase)
+          with data residency configured to Australian regions. We do not transfer call recordings outside
+          Australia.
+        </p>
+      </section>
+
+      <section>
+        <h2>How we use it</h2>
+        <p>
+          We use the information you give us to reply to you, to operate the products you've chosen, and to
+          improve them. We do not sell information. We do not share it with advertisers. We never use customer
+          conversations to train models outside Biteperk.
+        </p>
+      </section>
+
+      <section>
+        <h2>Your rights</h2>
+        <p>
+          Under the Australian Privacy Act, you can ask to access, correct, or delete your information. Email
+          <a href={site.email.href}>{site.email.display}</a> and we'll respond within 30 days — usually much
+          sooner.
+        </p>
+      </section>
+
+      <section>
+        <h2>Security</h2>
+        <p>
+          We use industry-standard practices: encrypted transit, encrypted storage, least-privilege access,
+          and continuous monitoring. No system is perfect; if you spot a problem, please email us before
+          posting it publicly so we can fix it quickly.
+        </p>
+      </section>
+
+      <section>
+        <h2>Updates</h2>
+        <p>
+          We'll update this policy as the business changes. Material changes will be noted at the top with a
+          new "last updated" date.
+        </p>
+      </section>
+
+      <section>
+        <h2>Contact</h2>
+        <p>
+          Privacy questions: <a href={site.email.href}>{site.email.display}</a> or call
+          <a href={site.phone.href}>{site.phone.display}</a> (9am–9pm AEST).
+        </p>
+      </section>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .legal {
+    padding: clamp(120px, 14vw, 180px) 0 var(--space-section);
+    background: var(--ink-0);
+  }
+  .legal .wrap { max-width: 720px; }
+  .legal-head { margin-top: 32px; }
+  .legal h1 {
+    font-size: clamp(40px, 5vw, 64px);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    color: var(--white);
+  }
+  .legal-updated {
+    margin-top: 14px;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--mist);
+    font-weight: 600;
+  }
+  .legal section { margin-top: 48px; }
+  .legal h2 {
+    font-size: clamp(20px, 2vw, 24px);
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.01em;
+    margin-bottom: 14px;
+  }
+  .legal p {
+    color: var(--text);
+    line-height: 1.7;
+    margin-bottom: 14px;
+    max-width: 70ch;
+  }
+  .legal a { color: var(--gold); }
+  .legal a:hover { text-decoration: underline; }
+</style>

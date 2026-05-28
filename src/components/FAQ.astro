@@ -1,0 +1,78 @@
+---
+/**
+ * FAQ accordion. Uses native <details>/<summary> so it works without JS
+ * and is keyboard-complete by default.
+ *
+ * Items are passed as an array — kept dumb so JSON-LD FAQPage can be
+ * generated from the same source on the page side.
+ */
+interface FaqItem {
+  q: string;
+  a: string;
+}
+interface Props {
+  items: ReadonlyArray<FaqItem>;
+}
+const { items } = Astro.props;
+---
+
+<div class="faq">
+  {items.map((item) => (
+    <details class="faq-item">
+      <summary class="faq-q">
+        <span>{item.q}</span>
+        <span class="faq-chev" aria-hidden="true">
+          <svg viewBox="0 0 16 16" width="14" height="14">
+            <path d="M3 6l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </span>
+      </summary>
+      <div class="faq-a">{item.a}</div>
+    </details>
+  ))}
+</div>
+
+<style>
+  .faq {
+    display: grid;
+    gap: 12px;
+    max-width: 820px;
+    margin-inline: auto;
+  }
+  .faq-item {
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--ink-1);
+    transition: border-color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+  }
+  .faq-item[open] {
+    border-color: color-mix(in srgb, var(--gold) 30%, var(--line));
+  }
+  .faq-q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 22px;
+    cursor: pointer;
+    list-style: none;
+    font-weight: 600;
+    color: var(--white);
+    font-size: 16px;
+  }
+  .faq-q::-webkit-details-marker { display: none; }
+  .faq-chev {
+    color: var(--mist);
+    transition: transform var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out);
+  }
+  .faq-item[open] .faq-chev {
+    transform: rotate(180deg);
+    color: var(--gold);
+  }
+  .faq-a {
+    padding: 0 22px 22px;
+    color: var(--text);
+    line-height: 1.65;
+    font-size: 15.5px;
+  }
+</style>

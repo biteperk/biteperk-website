@@ -1,0 +1,63 @@
+---
+/**
+ * Serif pull-quote. Used at most once per long page — visual breath,
+ * signals craft, no decorative type elsewhere.
+ */
+interface Props {
+  quote: string;
+  author: string;
+  role?: string;
+}
+const { quote, author, role } = Astro.props;
+---
+
+<figure class="pull">
+  <span class="pull-mark" aria-hidden="true">“</span>
+  <blockquote class="pull-q">{quote}</blockquote>
+  <figcaption class="pull-cap">
+    <span class="pull-author">{author}</span>
+    {role && <span class="pull-role">{role}</span>}
+  </figcaption>
+</figure>
+
+<style>
+  .pull {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+    padding-inline: 16px;
+  }
+  .pull-mark {
+    display: block;
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: 80px;
+    line-height: 0.5;
+    color: var(--gold);
+    margin-bottom: 24px;
+  }
+  .pull-q {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: clamp(24px, 3vw, 36px);
+    line-height: 1.35;
+    letter-spacing: -0.005em;
+    color: var(--white);
+  }
+  .pull-cap {
+    margin-top: 32px;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+  }
+  .pull-author {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--white);
+  }
+  .pull-role {
+    font-size: 13px;
+    color: var(--mist);
+  }
+</style>

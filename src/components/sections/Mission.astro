@@ -1,0 +1,33 @@
+---
+/**
+ * Mission block — "Our craft". Kept tight; one statement of principle.
+ */
+import SectionHeader from "@/components/SectionHeader.astro";
+---
+
+<section class="mission">
+  <div class="wrap">
+    <SectionHeader eyebrow="Our craft">
+      <Fragment slot="headline">
+        Hospitality lives in the details.
+        <br />
+        <span class="mist">So does our software.</span>
+      </Fragment>
+      <Fragment slot="lede">
+        We build a small, careful catalogue of voice and AI tools that solve real
+        front-of-house problems. No buzzword roadmaps, no platform pitches. Just software
+        that helps restaurant teams keep doing what they do best — taking care of guests —
+        while the unglamorous bits (the phone, the bookings, the no-shows) take care of
+        themselves.
+      </Fragment>
+    </SectionHeader>
+  </div>
+</section>
+
+<style>
+  .mission {
+    padding-block: var(--space-section);
+    border-top: 1px solid var(--line);
+    background: var(--ink-0);
+  }
+</style>

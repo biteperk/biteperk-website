@@ -1,0 +1,79 @@
+---
+import Base from "@/layouts/Base.astro";
+import StarMark from "@/components/StarMark.astro";
+
+const title = "Not found — Biteperk";
+const description = "We couldn't find that page. Here are a few useful places to go.";
+---
+
+<Base title={title} description={description} path="/404">
+  <section class="nf">
+    <div class="nf-glow" aria-hidden="true"></div>
+    <div class="wrap">
+      <div class="nf-inner">
+        <div class="nf-mark"><StarMark size={56} /></div>
+        <p class="eyebrow nf-eyebrow">404 · Page not found</p>
+        <h1 class="nf-h">This page is having a quiet night.</h1>
+        <p class="nf-sub">
+          We couldn't find what you were looking for. Try one of these instead — or call us if you'd
+          rather hear an Australian voice.
+        </p>
+        <div class="nf-cta">
+          <a class="btn" href="/">Back to home</a>
+          <a class="btn-ghost" href="/products/">See the products</a>
+          <a class="btn-ghost" href="/contact/">Get in touch</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    min-height: 80vh;
+    min-height: 80svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 140px 0 100px;
+    position: relative;
+    overflow: hidden;
+  }
+  .nf-glow {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(50% 60% at 50% 30%, rgba(245, 196, 24, 0.18), transparent 70%);
+  }
+  .nf-inner {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .nf-mark { display: flex; justify-content: center; margin-bottom: 24px; }
+  .nf-eyebrow { display: block; }
+  .nf-h {
+    margin-top: 22px;
+    font-size: clamp(40px, 5vw, 64px);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    color: var(--white);
+  }
+  .nf-sub {
+    margin-top: 22px;
+    color: var(--text);
+    font-size: var(--fs-lede);
+    line-height: 1.5;
+  }
+  .nf-cta {
+    margin-top: 36px;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+</style>

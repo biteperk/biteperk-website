@@ -1,0 +1,9 @@
+/* TEAM */
+   Biteperk
+   Site: https://biteperk.com.au
+   Made in: Sydney, Australia
+
+/* SITE */
+   Built with: Astro, vanilla CSS, vanilla TypeScript
+   Hosted on: Firebase Hosting (australia-southeast1)
+   No third-party analytics. No advertising trackers. No bullshit.

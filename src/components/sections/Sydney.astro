@@ -1,0 +1,163 @@
+---
+/**
+ * Sydney block — the brand's soul. Two-column narrative + key meta.
+ */
+---
+
+<section class="sydney">
+  <div class="sydney-bg" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="sydney-grid">
+      <div class="reveal">
+        <div class="eyebrow">Sydney, end to end</div>
+        <h2>
+          Built here.
+          <br />
+          <span class="gold">Answered here.</span>
+        </h2>
+        <p class="sydney-body">
+          Every line of Biteperk code is written, deployed and supported from Sydney. Our
+          servers live in Australian data centres, the phone numbers are Australian, and the
+          voice that greets your guests sounds like one of them. We're an AI company that
+          behaves like a neighbourhood business — because the restaurants we serve are
+          neighbourhood businesses too.
+        </p>
+        <div class="sydney-meta">
+          <div>
+            <div class="meta-n">100%</div>
+            <div class="meta-l">made in Sydney</div>
+          </div>
+          <div>
+            <div class="meta-n">AU</div>
+            <div class="meta-l">data residency</div>
+          </div>
+          <div>
+            <div class="meta-n">9 am – 9 pm</div>
+            <div class="meta-l">human support, AEST</div>
+          </div>
+        </div>
+      </div>
+      <div class="reveal">
+        <div class="sydney-card">
+          <div class="sydney-card-title">Why this matters for restaurants</div>
+          <p class="sydney-card-text">
+            AI built for a different market tends to feel that way. Bella was trained on
+            Australian English from the start, knows what BYO means, doesn't ask for a zip
+            code, and gets "tomorrow night, eight o'clock for four" without three rounds of
+            confirmation.
+          </p>
+          <div class="sydney-card-list">
+            <div class="sydney-card-list-item">Natural AU accent, not localised offshore</div>
+            <div class="sydney-card-list-item">Sydney suburbs spelt and pronounced right</div>
+            <div class="sydney-card-list-item">Privacy Act compliant, hosted in AU</div>
+            <div class="sydney-card-list-item">Direct phone support during service hours</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .sydney {
+    padding-block: var(--space-section);
+    position: relative;
+    background: var(--ink-0);
+    overflow: hidden;
+    border-top: 1px solid var(--line);
+  }
+  .sydney-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(50% 60% at 50% 40%, rgba(26, 77, 26, 0.32), transparent 70%);
+  }
+  .sydney .wrap { position: relative; z-index: 1; }
+  .sydney-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 72px;
+    align-items: center;
+  }
+  .sydney h2 {
+    font-size: var(--fs-h2);
+    font-weight: 800;
+    line-height: var(--lh-display);
+    letter-spacing: -0.025em;
+    margin-top: 16px;
+    color: var(--white);
+  }
+  .sydney h2 .gold { color: var(--gold); }
+  .sydney-body {
+    margin-top: 28px;
+    color: var(--text);
+    line-height: 1.7;
+  }
+  .sydney-meta {
+    margin-top: 38px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 22px;
+  }
+  .meta-n {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .meta-l {
+    font-size: 11.5px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--mist);
+    margin-top: 8px;
+    font-weight: 500;
+  }
+  .sydney-card {
+    position: relative;
+    border-radius: var(--r-lg);
+    padding: 48px 40px;
+    border: 1px solid var(--line);
+    background: linear-gradient(160deg, rgba(26, 77, 26, 0.16), var(--ink-1) 70%);
+    box-shadow:
+      0 24px 60px -20px rgba(0, 0, 0, 0.55),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+  .sydney-card-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.02em;
+  }
+  .sydney-card-text {
+    margin-top: 14px;
+    color: var(--mist-2);
+    line-height: 1.65;
+  }
+  .sydney-card-list {
+    margin-top: 22px;
+    display: grid;
+    gap: 12px;
+  }
+  .sydney-card-list-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text);
+    font-size: 14.5px;
+  }
+  .sydney-card-list-item::before {
+    content: "";
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--gold);
+    flex: 0 0 5px;
+  }
+  @media (max-width: 980px) {
+    .sydney-grid { grid-template-columns: 1fr; gap: 56px; }
+    .sydney-card { padding: 36px 28px; }
+  }
+</style>

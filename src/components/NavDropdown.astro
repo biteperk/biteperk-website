@@ -1,0 +1,178 @@
+---
+/**
+ * Desktop Products dropdown.
+ *
+ * Native disclosure pattern using <details>/<summary>, then enhanced
+ * with click-outside-to-close. Keyboard:
+ *   - Enter / Space on trigger toggles open
+ *   - Arrow keys cycle items
+ *   - ESC closes and returns focus to the trigger
+ *
+ * Mobile screens hide the trigger entirely (<= 980px) — the mobile menu
+ * handles product nav there.
+ */
+import { products, statusLabel, productUrl } from "@/data/products";
+
+const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
+function isActive(href: string): boolean {
+  const n = href.replace(/\/$/, "") || "/";
+  return pathname === n || pathname.startsWith(n + "/");
+}
+const onProducts = pathname === "/products" || pathname.startsWith("/products/");
+---
+
+<details class="nav-dd" data-nav-dropdown>
+  <summary
+    class:list={["lnk", "nav-dd-trigger", { active: onProducts }]}
+    aria-haspopup="true"
+  >
+    Products
+    <svg class="nav-dd-chev" viewBox="0 0 12 12" width="10" height="10" aria-hidden="true">
+      <path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </summary>
+  <div class="nav-dd-panel" role="menu">
+    <a class="nav-dd-item nav-dd-all" href="/products/" role="menuitem" aria-current={pathname === "/products" ? "page" : undefined}>
+      <div class="nav-dd-item-title">All products</div>
+      <div class="nav-dd-item-sub">Four products. One mission.</div>
+    </a>
+    {products.map((p) => (
+      <a
+        class="nav-dd-item"
+        href={productUrl(p)}
+        role="menuitem"
+        aria-current={isActive(productUrl(p)) ? "page" : undefined}
+      >
+        <div class="nav-dd-item-row">
+          <span class="nav-dd-item-title">{p.name}</span>
+          <span class:list={["nav-dd-item-pill", `is-${p.status}`]}>{statusLabel(p.status)}</span>
+        </div>
+        <div class="nav-dd-item-sub">{p.tagline}</div>
+      </a>
+    ))}
+  </div>
+</details>
+
+<style>
+  .nav-dd {
+    position: relative;
+  }
+  .nav-dd-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+  }
+  .nav-dd-trigger::-webkit-details-marker { display: none; }
+  .nav-dd-trigger::marker { content: ""; }
+  .nav-dd-trigger.active { color: var(--white); }
+  .nav-dd-chev {
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+  .nav-dd[open] .nav-dd-chev { transform: rotate(180deg); }
+
+  .nav-dd-panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    min-width: 320px;
+    background: rgba(17, 19, 23, 0.96);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: 8px;
+    box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.75);
+    z-index: var(--z-dropdown);
+    animation: dd-in 180ms var(--ease-out);
+  }
+  @keyframes dd-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nav-dd-panel { animation: none; }
+  }
+
+  .nav-dd-item {
+    display: block;
+    padding: 12px 14px;
+    border-radius: var(--r-md);
+    transition: background var(--dur-fast) var(--ease-out);
+  }
+  .nav-dd-item:hover,
+  .nav-dd-item[aria-current="page"] {
+    background: rgba(255, 255, 255, 0.04);
+  }
+  .nav-dd-item-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .nav-dd-item-title {
+    color: var(--white);
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .nav-dd-item-sub {
+    margin-top: 4px;
+    color: var(--mist);
+    font-size: 12.5px;
+    line-height: 1.4;
+  }
+  .nav-dd-all { border-bottom: 1px solid var(--line); margin-bottom: 4px; padding-bottom: 14px; }
+  .nav-dd-all .nav-dd-item-title { color: var(--gold); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; }
+
+  .nav-dd-item-pill {
+    font-size: 9.5px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 3px 7px;
+    border-radius: var(--r-pill);
+    white-space: nowrap;
+  }
+  .nav-dd-item-pill.is-live { background: var(--gold); color: #1a0f04; }
+  .nav-dd-item-pill.is-in-development {
+    background: rgba(245, 196, 24, 0.1);
+    color: var(--gold);
+    border: 1px solid color-mix(in srgb, var(--gold) 30%, transparent);
+  }
+  .nav-dd-item-pill.is-concept {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--mist-2);
+    border: 1px solid var(--line);
+  }
+
+  @media (max-width: 980px) {
+    .nav-dd { display: none; }
+  }
+</style>
+
+<script>
+  // Click-outside + ESC close for the desktop dropdown.
+  (function () {
+    function init() {
+      document.querySelectorAll<HTMLDetailsElement>("details[data-nav-dropdown]").forEach((dd) => {
+        if (dd.dataset.bound === "1") return;
+        dd.dataset.bound = "1";
+        document.addEventListener("click", (e) => {
+          if (!dd.open) return;
+          if (!dd.contains(e.target as Node)) dd.open = false;
+        });
+        dd.addEventListener("keydown", (e) => {
+          if (e.key === "Escape" && dd.open) {
+            dd.open = false;
+            const trig = dd.querySelector<HTMLElement>("summary");
+            trig?.focus();
+          }
+        });
+      });
+    }
+    init();
+    document.addEventListener("astro:page-load", init);
+  })();
+</script>

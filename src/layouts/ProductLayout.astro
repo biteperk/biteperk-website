@@ -1,0 +1,190 @@
+---
+/**
+ * Shared chrome for /products/[slug] pages.
+ *
+ * Provides:
+ *   - Base layout
+ *   - Per-product JSON-LD (Product / SoftwareApplication + BreadcrumbList
+ *     + FAQPage when FAQ items are present)
+ *   - Hero with status pill + dual CTA
+ *   - Slot for the bespoke page body
+ *   - Universal Cta at the bottom
+ *
+ * Pages don't have to render the hero themselves — they fill the
+ * `<slot />` with whatever sections suit the product's status.
+ */
+import Base from "@/layouts/Base.astro";
+import StatusPill from "@/components/StatusPill.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import Cta from "@/components/Cta.astro";
+import type { Product } from "@/data/products";
+import { site } from "@/data/site";
+
+interface Props {
+  product: Product;
+}
+const { product } = Astro.props;
+const path = `/products/${product.slug}/`;
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: site.url },
+    { "@type": "ListItem", position: 2, name: "Products", item: `${site.url}/products/` },
+    { "@type": "ListItem", position: 3, name: product.name, item: `${site.url}${path}` },
+  ],
+};
+
+const productJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: product.name,
+  description: product.summary,
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Web, Phone",
+  brand: { "@type": "Organization", name: site.name },
+  ...(product.pricing && {
+    offers: {
+      "@type": "Offer",
+      price: product.pricing.amount.replace(/[^0-9.]/g, ""),
+      priceCurrency: "AUD",
+      availability: "https://schema.org/InStock",
+    },
+  }),
+};
+
+const faqJsonLd = product.faq && product.faq.length > 0
+  ? {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: product.faq.map((item) => ({
+        "@type": "Question",
+        name: item.q,
+        acceptedAnswer: { "@type": "Answer", text: item.a },
+      })),
+    }
+  : null;
+---
+
+<Base
+  title={product.seo.title}
+  description={product.seo.description}
+  path={path}
+  ogImage={`/og/${product.slug}.png`}
+>
+  <Fragment slot="jsonld">
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(productJsonLd)} />
+    {faqJsonLd && (
+      <script is:inline type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
+    )}
+  </Fragment>
+
+  <header class="prod-hero">
+    <div class="prod-hero-glow" aria-hidden="true" style={`--accent:${product.accent}`}></div>
+    <div class="wrap">
+      <Breadcrumbs items={[
+        { label: "Home", href: "/" },
+        { label: "Products", href: "/products/" },
+        { label: product.name },
+      ]} />
+      <div class="prod-hero-row">
+        <div class="prod-hero-name">
+          <span class="prefix">{product.wordmark.prefix}</span><span class="suffix">{product.wordmark.suffix}</span>
+        </div>
+        <StatusPill status={product.status} />
+      </div>
+      <h1 class="prod-hero-h">{product.hero.headline}</h1>
+      <p class="prod-hero-sub">{product.hero.sub}</p>
+      <div class="prod-hero-cta">
+        <a
+          class="btn"
+          href={product.hero.primaryCta.href}
+          rel={product.hero.primaryCta.href.startsWith("http") ? "noopener" : undefined}
+          target={product.hero.primaryCta.href.startsWith("http") ? "_blank" : undefined}
+        >{product.hero.primaryCta.label}</a>
+        {product.hero.secondaryCta && (
+          <a class="btn-ghost" href={product.hero.secondaryCta.href}>
+            {product.hero.secondaryCta.label}
+          </a>
+        )}
+      </div>
+    </div>
+  </header>
+
+  <slot />
+
+  <Cta
+    eyebrow={`Try ${product.name}`}
+    headline={product.status === "live"
+      ? `Bring ${product.name} to your venue.`
+      : `Want to be first to use ${product.name}?`}
+    lede={product.status === "live"
+      ? "Most venues are live within a week. Talk to us about a 15-minute walkthrough or just call the number and hear it for yourself."
+      : "Join the waitlist and we'll bring you in early. We'd rather start with a small group of venues that genuinely need the product than open the gates."}
+    primary={product.status === "live" && product.externalUrl
+      ? { label: `Open ${product.name} →`, href: product.externalUrl }
+      : { label: `Call us · ${site.phone.display}`, href: site.phone.href }}
+    secondary={{ label: `Email ${site.email.display}`, href: site.email.href }}
+  />
+</Base>
+
+<style>
+  .prod-hero {
+    position: relative;
+    padding: clamp(120px, 16vw, 200px) 0 clamp(64px, 8vw, 96px);
+    overflow: hidden;
+    border-bottom: 1px solid var(--line);
+  }
+  .prod-hero-glow {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(50% 60% at 80% 0%, var(--accent), transparent 70%),
+      radial-gradient(40% 50% at 0% 100%, rgba(26, 77, 26, 0.25), transparent 70%);
+  }
+  .prod-hero .wrap { position: relative; z-index: 1; }
+  .prod-hero-row {
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .prod-hero-name {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 2px;
+    font-size: clamp(40px, 5vw, 72px);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+  .prod-hero-name .prefix { color: var(--white); }
+  .prod-hero-name .suffix { color: var(--mist); font-weight: 300; }
+  .prod-hero-h {
+    margin-top: 28px;
+    font-size: var(--fs-h2);
+    font-weight: 800;
+    line-height: var(--lh-display);
+    letter-spacing: -0.025em;
+    max-width: 18ch;
+    color: var(--white);
+  }
+  .prod-hero-sub {
+    margin-top: 22px;
+    color: var(--text);
+    font-size: var(--fs-lede);
+    line-height: var(--lh-lede);
+    max-width: 60ch;
+  }
+  .prod-hero-cta {
+    margin-top: 36px;
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+</style>
