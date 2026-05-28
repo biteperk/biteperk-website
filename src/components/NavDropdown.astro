@@ -95,8 +95,12 @@ const onProducts = pathname === "/products" || pathname.startsWith("/products/")
   .megamenu[open] .megamenu-chev { transform: rotate(180deg); }
 
   .megamenu-panel {
+    /* The panel sits flush against the trigger (top: 100%) so cursor
+       traversal from summary → panel never crosses an empty rect.
+       Visual gap is the panel's own padding-top — keeps the menu
+       hoverable without the "menu closes before I can click" bug. */
     position: absolute;
-    top: calc(100% + 12px);
+    top: 100%;
     left: 50%;
     transform: translateX(-50%);
     width: 640px;
@@ -106,7 +110,12 @@ const onProducts = pathname === "/products" || pathname.startsWith("/products/")
     -webkit-backdrop-filter: blur(24px) saturate(140%);
     border: 1px solid var(--line);
     border-radius: var(--r-xl);
-    padding: 16px;
+    /* Top padding doubles as the visual gap between the trigger and
+       the cards — it's part of the panel's bounding box so the cursor
+       never falls off the hover surface. */
+    padding: 28px 16px 16px;
+    margin-top: 4px;
+    background-clip: padding-box;
     box-shadow:
       0 32px 80px -20px rgba(0, 0, 0, 0.75),
       0 0 0 1px rgba(245, 196, 24, 0.04);
@@ -242,34 +251,80 @@ const onProducts = pathname === "/products" || pathname.startsWith("/products/")
 </style>
 
 <script>
+  /**
+   * Mega-menu open/close logic.
+   *
+   * Hover-open with a forgiving 220ms close timer so the cursor can
+   * traverse the visual gap between trigger and panel without the
+   * menu disappearing. Click and keyboard (Enter / Space / ESC)
+   * paths are preserved for touch + a11y.
+   */
   (function () {
+    const CLOSE_DELAY = 220;
+
     function init() {
       document.querySelectorAll<HTMLDetailsElement>("details[data-nav-dropdown]").forEach((dd) => {
         if (dd.dataset.bound === "1") return;
         dd.dataset.bound = "1";
+
+        const panel = dd.querySelector<HTMLElement>(".megamenu-panel");
+        const trigger = dd.querySelector<HTMLElement>("summary");
+        let closeTimer: ReturnType<typeof setTimeout> | undefined;
+        const hasHover = () =>
+          typeof window.matchMedia === "function" &&
+          window.matchMedia("(hover: hover)").matches;
+
+        const cancelClose = () => {
+          if (closeTimer) {
+            clearTimeout(closeTimer);
+            closeTimer = undefined;
+          }
+        };
+        const open = () => {
+          cancelClose();
+          dd.open = true;
+        };
+        const scheduleClose = () => {
+          cancelClose();
+          closeTimer = setTimeout(() => {
+            dd.open = false;
+            closeTimer = undefined;
+          }, CLOSE_DELAY);
+        };
+
+        // Click anywhere outside closes the menu immediately.
         document.addEventListener("click", (e) => {
           if (!dd.open) return;
-          if (!dd.contains(e.target as Node)) dd.open = false;
+          if (!dd.contains(e.target as Node)) {
+            cancelClose();
+            dd.open = false;
+          }
         });
+
+        // ESC closes and returns focus to the trigger.
         dd.addEventListener("keydown", (e) => {
           if (e.key === "Escape" && dd.open) {
+            cancelClose();
             dd.open = false;
-            dd.querySelector<HTMLElement>("summary")?.focus();
+            trigger?.focus();
           }
         });
-        // Hover-open on desktop pointers — the disclosure stays
-        // keyboard-friendly (click/Enter still works) but mouse users
-        // get the expected mega-menu hover-to-reveal.
-        const trigger = dd.querySelector<HTMLElement>("summary");
-        let hoverTimer: ReturnType<typeof setTimeout> | undefined;
-        dd.addEventListener("mouseenter", () => {
-          if (window.matchMedia("(hover: hover)").matches) {
-            hoverTimer = setTimeout(() => { dd.open = true; }, 60);
-          }
-        });
-        dd.addEventListener("mouseleave", () => {
-          if (hoverTimer) clearTimeout(hoverTimer);
-          if (window.matchMedia("(hover: hover)").matches) {
+
+        // Hover behaviour on pointer devices only.
+        const onEnter = () => { if (hasHover()) open(); };
+        const onLeave = () => { if (hasHover()) scheduleClose(); };
+
+        dd.addEventListener("mouseenter", onEnter);
+        dd.addEventListener("mouseleave", onLeave);
+        panel?.addEventListener("mouseenter", onEnter);
+        panel?.addEventListener("mouseleave", onLeave);
+
+        // Tap on a product card or footer link closes the menu so the
+        // visitor lands cleanly on the new page after navigation.
+        panel?.addEventListener("click", (e) => {
+          const link = (e.target as HTMLElement).closest("a");
+          if (link) {
+            cancelClose();
             dd.open = false;
           }
         });
