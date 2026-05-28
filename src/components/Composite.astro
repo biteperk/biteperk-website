@@ -20,8 +20,13 @@ interface Props {
 
 const { name, alt, priority = false, class: extraClass } = Astro.props;
 
+// Bump this when re-generating composites so browsers fetch fresh AVIFs
+// past the 1y immutable cache. Cheaper than renaming files; only this
+// one file changes.
+const v = "v2";
 const desktop = `/images/composites/${name}-desktop`;
 const mobile = `/images/composites/${name}-mobile`;
+const qs = `?${v}`;
 const loading = priority ? "eager" : "lazy";
 const fetchpriority = priority ? "high" : "auto";
 const decoding = priority ? "sync" : "async";
@@ -29,13 +34,13 @@ const decoding = priority ? "sync" : "async";
 
 <figure class:list={["composite", `is-${name}`, extraClass]}>
   <picture>
-    <source media="(min-width: 768px)" type="image/avif" srcset={`${desktop}.avif`} />
-    <source media="(min-width: 768px)" type="image/webp" srcset={`${desktop}.webp`} />
-    <source media="(min-width: 768px)" srcset={`${desktop}.png`} />
-    <source type="image/avif" srcset={`${mobile}.avif`} />
-    <source type="image/webp" srcset={`${mobile}.webp`} />
+    <source media="(min-width: 768px)" type="image/avif" srcset={`${desktop}.avif${qs}`} />
+    <source media="(min-width: 768px)" type="image/webp" srcset={`${desktop}.webp${qs}`} />
+    <source media="(min-width: 768px)" srcset={`${desktop}.png${qs}`} />
+    <source type="image/avif" srcset={`${mobile}.avif${qs}`} />
+    <source type="image/webp" srcset={`${mobile}.webp${qs}`} />
     <img
-      src={`${mobile}.png`}
+      src={`${mobile}.png${qs}`}
       alt={alt}
       loading={loading}
       fetchpriority={fetchpriority}
