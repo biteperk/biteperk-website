@@ -1,0 +1,104 @@
+---
+/**
+ * Hero venue marquee — a thin row of hospitality thumbnails that gives
+ * the visitor an instant "this is hospitality" beat before they scroll.
+ *
+ * Static row on desktop (≥ 760px), horizontal scroll-snap on mobile so
+ * every photo is reachable without a keyboard trap. The whole row is a
+ * single link to /products/ so it functions as discovery, not décor.
+ */
+import ImageBlock from "@/components/ImageBlock.astro";
+
+const tiles = [
+  { slug: "sydney-cafe-morning", alt: "Sydney café interior, morning amber light." },
+  { slug: "empty-tables-evening", alt: "Empty restaurant tables before evening service, candles lit." },
+  { slug: "pour-shot", alt: "Wine pour, low-key dramatic light." },
+  { slug: "kitchen-rush", alt: "Busy kitchen during service, tickets at the pass." },
+  { slug: "restaurant-host", alt: "Front-of-house host in a dim restaurant." },
+  { slug: "coffee-window", alt: "Café service window with morning light." },
+] as const;
+---
+
+<aside class="marquee reveal" aria-labelledby="marquee-eyebrow">
+  <div class="wrap">
+    <div class="marquee-head">
+      <span class="eyebrow" id="marquee-eyebrow">Built for Sydney's restaurants</span>
+      <a class="marquee-link" href="/products/">
+        See the catalogue
+        <span aria-hidden="true">→</span>
+      </a>
+    </div>
+    <div class="marquee-row" role="list">
+      {tiles.map((t) => (
+        <a class="marquee-tile" href="/products/" aria-label={`Open product catalogue — context photo: ${t.alt}`} role="listitem">
+          <ImageBlock slug={t.slug} alt={t.alt} aspect="1 / 1" widths="(min-width:1024px) 12vw, 30vw" />
+        </a>
+      ))}
+    </div>
+  </div>
+</aside>
+
+<style>
+  .marquee {
+    padding-block: clamp(48px, 6vw, 80px);
+    border-top: 1px solid var(--line);
+    background: linear-gradient(180deg, transparent, rgba(255,255,255,0.02) 60%, transparent);
+  }
+  .marquee-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
+  }
+  .marquee-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--gold);
+    font-weight: 600;
+    font-size: 13.5px;
+    padding: 4px 0;
+    transition: gap var(--dur-base) var(--ease-out);
+  }
+  .marquee-link:hover { gap: 12px; }
+
+  .marquee-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 14px;
+  }
+  .marquee-tile {
+    display: block;
+    border-radius: var(--r-md);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    transition:
+      transform var(--dur-base) var(--ease-out),
+      border-color var(--dur-base) var(--ease-out),
+      box-shadow var(--dur-base) var(--ease-out);
+  }
+  .marquee-tile :global(.image-block) { border-radius: 0; }
+  .marquee-tile:hover,
+  .marquee-tile:focus-visible {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--gold) 35%, var(--line));
+    box-shadow: 0 14px 32px -16px rgba(245, 196, 24, 0.32);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-tile:hover, .marquee-tile:focus-visible { transform: none; }
+  }
+
+  @media (max-width: 760px) {
+    .marquee-row {
+      grid-template-columns: none;
+      grid-auto-flow: column;
+      grid-auto-columns: 42%;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 8px;
+    }
+    .marquee-tile { scroll-snap-align: start; }
+  }
+</style>

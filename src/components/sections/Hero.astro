@@ -3,7 +3,11 @@
  * Home hero — preserved cinematic dark + gold treatment.
  *
  * The Bella portrait is preloaded by Base.astro on the home route.
+ * Below the hero copy + stats sits the HeroMarquee — a row of venue
+ * thumbnails that anchors the visitor in hospitality context before
+ * they scroll into the rest of the page.
  */
+import HeroMarquee from "@/components/HeroMarquee.astro";
 ---
 
 <header class="hero">
@@ -49,6 +53,7 @@
       </figure>
     </div>
   </div>
+  <HeroMarquee />
 </header>
 
 <style>

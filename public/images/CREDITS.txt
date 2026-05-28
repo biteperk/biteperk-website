@@ -74,3 +74,28 @@ sydney-skyline-night
   Photographer: Dan Freeman
   Original:     https://unsplash.com/photos/SzWBPqg6Vss
   Brief:        Sydney skyline at night with harbour reflection
+
+busy-service-night
+  Photographer: Louis Hansel
+  Original:     https://unsplash.com/photos/qREZGOkkOdY
+  Brief:        Full restaurant during service, candle-lit, busy tables
+
+sydney-cafe-street
+  Photographer: Toa Heftiba
+  Original:     https://unsplash.com/photos/4xe-yVFJCvw
+  Brief:        Café street view, awning + signage, golden hour
+
+bar-cocktail-action
+  Photographer: Edward Howell
+  Original:     https://unsplash.com/photos/u3WmDyKGsrY
+  Brief:        Cocktail pour in a low-lit bar, hand visible
+
+table-set-candles
+  Photographer: Rod Long
+  Original:     https://unsplash.com/photos/oZsP-od1jOM
+  Brief:        Close-up of a set restaurant table with candles + cutlery
+
+staff-hands-tray
+  Photographer: Louis Hansel
+  Original:     https://unsplash.com/photos/7QChbqDes6w
+  Brief:        Hands of service staff carrying a tray
