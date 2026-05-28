@@ -1,7 +1,9 @@
 ---
 /**
- * Sydney block — the brand's soul. Two-column narrative + key meta.
+ * Sydney block — the brand's soul. Two-column narrative on the left, a
+ * framed Sydney-harbour photo on the right with a single-line caption.
  */
+import ImageBlock from "@/components/ImageBlock.astro";
 ---
 
 <section class="sydney">
@@ -37,21 +39,18 @@
           </div>
         </div>
       </div>
-      <div class="reveal">
-        <div class="sydney-card">
-          <div class="sydney-card-title">Why this matters for restaurants</div>
-          <p class="sydney-card-text">
-            AI built for a different market tends to feel that way. Bella was trained on
-            Australian English from the start, knows what BYO means, doesn't ask for a zip
-            code, and gets "tomorrow night, eight o'clock for four" without three rounds of
-            confirmation.
-          </p>
-          <div class="sydney-card-list">
-            <div class="sydney-card-list-item">Natural AU accent, not localised offshore</div>
-            <div class="sydney-card-list-item">Sydney suburbs spelt and pronounced right</div>
-            <div class="sydney-card-list-item">Privacy Act compliant, hosted in AU</div>
-            <div class="sydney-card-list-item">Direct phone support during service hours</div>
-          </div>
+      <div class="reveal sydney-photo-col">
+        <div class="sydney-photo">
+          <ImageBlock
+            slug="sydney-harbour-dusk"
+            alt="Sydney harbour at dusk, with the harbour bridge in silhouette against a golden sky."
+            aspect="4 / 5"
+            widths="(min-width: 1024px) 40vw, 100vw"
+          />
+          <figcaption class="sydney-photo-cap">
+            <span class="sydney-photo-tag">Sydney · AEST</span>
+            <span class="sydney-photo-line">Where every Biteperk call lands.</span>
+          </figcaption>
         </div>
       </div>
     </div>
@@ -115,49 +114,48 @@
     margin-top: 8px;
     font-weight: 500;
   }
-  .sydney-card {
+  .sydney-photo-col { position: relative; }
+  .sydney-photo {
     position: relative;
     border-radius: var(--r-lg);
-    padding: 48px 40px;
+    overflow: hidden;
     border: 1px solid var(--line);
-    background: linear-gradient(160deg, rgba(26, 77, 26, 0.16), var(--ink-1) 70%);
     box-shadow:
-      0 24px 60px -20px rgba(0, 0, 0, 0.55),
+      0 32px 80px -20px rgba(0, 0, 0, 0.6),
       inset 0 1px 0 rgba(255, 255, 255, 0.05);
   }
-  .sydney-card-title {
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--white);
-    letter-spacing: -0.02em;
+  .sydney-photo :global(.image-block) {
+    border-radius: 0;
   }
-  .sydney-card-text {
-    margin-top: 14px;
-    color: var(--mist-2);
-    line-height: 1.65;
-  }
-  .sydney-card-list {
-    margin-top: 22px;
-    display: grid;
-    gap: 12px;
-  }
-  .sydney-card-list-item {
+  .sydney-photo-cap {
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    right: 20px;
     display: flex;
-    align-items: center;
-    gap: 12px;
-    color: var(--text);
-    font-size: 14.5px;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px 16px;
+    background: rgba(10, 11, 13, 0.65);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
   }
-  .sydney-card-list-item::before {
-    content: "";
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--gold);
-    flex: 0 0 5px;
+  .sydney-photo-tag {
+    font-size: 10.5px;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+  }
+  .sydney-photo-line {
+    font-size: 14px;
+    color: var(--white);
+    font-weight: 600;
+    letter-spacing: -0.01em;
   }
   @media (max-width: 980px) {
     .sydney-grid { grid-template-columns: 1fr; gap: 56px; }
-    .sydney-card { padding: 36px 28px; }
   }
 </style>

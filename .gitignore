@@ -111,6 +111,12 @@ vite.config.ts.timestamp-*
 !.yarn/sdks
 !.yarn/versions
 
+# Image pipeline intermediates
+# raw/ holds Unsplash masters — re-fetch with `npm run images:fetch` when needed
+public/images/raw/
+# Composite PNGs are intermediate — only AVIF/WebP variants are served
+public/images/composites/*.png
+
 # Editor / OS junk
 .DS_Store
 .vscode/

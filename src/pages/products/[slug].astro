@@ -3,7 +3,39 @@ import ProductLayout from "@/layouts/ProductLayout.astro";
 import FAQ from "@/components/FAQ.astro";
 import PullQuote from "@/components/PullQuote.astro";
 import StarMark from "@/components/StarMark.astro";
+import Composite from "@/components/Composite.astro";
+import ImageBlock from "@/components/ImageBlock.astro";
+import Illustration from "@/components/Illustration.astro";
 import { products, type Product } from "@/data/products";
+
+// Slug-keyed ambient photo for in-development / concept products.
+const ambientBySlug: Record<string, { slug: string; alt: string }> = {
+  vocoorder: {
+    slug: "kitchen-rush",
+    alt: "Kitchen rush during service, tickets piling on a printer.",
+  },
+  vococoncierge: {
+    slug: "restaurant-host",
+    alt: "Front-of-house host scene in a dim restaurant.",
+  },
+  vocodrive: {
+    slug: "coffee-window",
+    alt: "Café service window at morning, warm amber light.",
+  },
+};
+
+// Per-feature illustration mapping. Caps the family at six icons.
+const featureIcon = (productSlug: string, idx: number) => {
+  const map: Record<string, Array<"phone-wave" | "calendar-tick" | "pin-au" | "shield" | "ticket" | "clock-247">> = {
+    vocotable: ["phone-wave", "calendar-tick", "pin-au", "shield"],
+    vocoorder: ["phone-wave", "ticket", "clock-247"],
+    vococoncierge: ["phone-wave", "calendar-tick", "shield"],
+    vocodrive: ["clock-247", "pin-au", "ticket"],
+  };
+  return map[productSlug]?.[idx] ?? "phone-wave";
+};
+
+const stepIcons = ["phone-wave", "clock-247", "calendar-tick", "ticket"] as const;
 
 export async function getStaticPaths() {
   return products.map((p) => ({ params: { slug: p.slug }, props: { product: p } }));
@@ -17,13 +49,40 @@ const isConcept = product.status === "concept";
 ---
 
 <ProductLayout product={product}>
+  {/* ── Hero visual ─────────────────────────────────────────────── */}
+  <section class="p-section p-hero-visual">
+    <div class="wrap">
+      <div class="reveal">
+        {product.slug === "vocotable" ? (
+          <Composite
+            name="vocotable-hero"
+            alt="A dim restaurant interior with two VocoTable cards floating: an incoming call from 0411 234 567 with Bella answering, and a confirmed booking for Friday 8:00pm, four guests, Sarah."
+            priority
+          />
+        ) : (
+          ambientBySlug[product.slug] && (
+            <ImageBlock
+              slug={ambientBySlug[product.slug].slug}
+              alt={ambientBySlug[product.slug].alt}
+              aspect="16 / 10"
+              priority
+            />
+          )
+        )}
+      </div>
+    </div>
+  </section>
+
   {/* ── Features (every product) ────────────────────────────────── */}
   <section class="p-section">
     <div class="wrap">
       <div class="p-feats reveal">
         {product.features.map((f, i) => (
           <article class="p-feat">
-            <div class="p-feat-n" aria-hidden="true">0{i + 1}</div>
+            <div class="p-feat-head">
+              <Illustration name={featureIcon(product.slug, i)} size={40} />
+              <div class="p-feat-n" aria-hidden="true">0{i + 1}</div>
+            </div>
             <h3>{f.title}</h3>
             {f.body && <p>{f.body}</p>}
           </article>
@@ -42,22 +101,34 @@ const isConcept = product.status === "concept";
         </div>
         <ol class="p-how-list reveal">
           <li>
-            <div class="p-how-num">1</div>
+            <div class="p-how-row">
+              <div class="p-how-num">1</div>
+              <Illustration name={stepIcons[0]} size={36} />
+            </div>
             <h3>Forward your number</h3>
             <p>Point your venue's phone to your VocoTable number. Takes five minutes with your provider.</p>
           </li>
           <li>
-            <div class="p-how-num">2</div>
+            <div class="p-how-row">
+              <div class="p-how-num">2</div>
+              <Illustration name={stepIcons[1]} size={36} />
+            </div>
             <h3>Bella answers, every time</h3>
             <p>Calls land in a warm Australian voice — no menus, no hold music, no missed Friday nights.</p>
           </li>
           <li>
-            <div class="p-how-num">3</div>
+            <div class="p-how-row">
+              <div class="p-how-num">3</div>
+              <Illustration name={stepIcons[2]} size={36} />
+            </div>
             <h3>Live availability check</h3>
             <p>Bella checks your diary in real time and offers a table that actually exists.</p>
           </li>
           <li>
-            <div class="p-how-num">4</div>
+            <div class="p-how-row">
+              <div class="p-how-num">4</div>
+              <Illustration name={stepIcons[3]} size={36} />
+            </div>
             <h3>Booking written to your screen</h3>
             <p>Confirmed reservation appears on your dashboard, no copy-paste, no clashes.</p>
           </li>
@@ -187,12 +258,27 @@ const isConcept = product.status === "concept";
     transition: border-color var(--dur-base) var(--ease-out);
   }
   .p-feat:hover { border-color: color-mix(in srgb, var(--gold) 30%, var(--line)); }
+  .p-feat-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
   .p-feat-n {
     font-size: 12px;
     letter-spacing: 2px;
     color: var(--gold);
     font-weight: 700;
-    margin-bottom: 18px;
+  }
+  .p-how-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .p-hero-visual {
+    padding-block: clamp(40px, 5vw, 72px);
+    border-top: 0;
   }
   .p-feat h3 {
     font-size: 19px;

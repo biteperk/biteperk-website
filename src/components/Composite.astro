@@ -1,0 +1,71 @@
+---
+/**
+ * Marketing composite — photo + UI-overlay card, rendered at build time
+ * by scripts/generate-images.mjs.
+ *
+ * Routes between desktop and mobile variants via <picture media="…">.
+ * Each variant ships as PNG + AVIF + WebP so the live site stays light.
+ *
+ * Props:
+ *   - name      Composite name: home-in-the-wild / vocotable-hero / footer-mood-band
+ *   - alt       Required alt text
+ *   - priority  Eager + fetchpriority=high (for LCP candidate)
+ */
+interface Props {
+  name: "home-in-the-wild" | "vocotable-hero" | "footer-mood-band";
+  alt: string;
+  priority?: boolean;
+  class?: string;
+}
+
+const { name, alt, priority = false, class: extraClass } = Astro.props;
+
+const desktop = `/images/composites/${name}-desktop`;
+const mobile = `/images/composites/${name}-mobile`;
+const loading = priority ? "eager" : "lazy";
+const fetchpriority = priority ? "high" : "auto";
+const decoding = priority ? "sync" : "async";
+---
+
+<figure class:list={["composite", `is-${name}`, extraClass]}>
+  <picture>
+    <source media="(min-width: 768px)" type="image/avif" srcset={`${desktop}.avif`} />
+    <source media="(min-width: 768px)" type="image/webp" srcset={`${desktop}.webp`} />
+    <source media="(min-width: 768px)" srcset={`${desktop}.png`} />
+    <source type="image/avif" srcset={`${mobile}.avif`} />
+    <source type="image/webp" srcset={`${mobile}.webp`} />
+    <img
+      src={`${mobile}.png`}
+      alt={alt}
+      loading={loading}
+      fetchpriority={fetchpriority}
+      decoding={decoding}
+    />
+  </picture>
+</figure>
+
+<style>
+  .composite {
+    margin: 0;
+    width: 100%;
+    display: block;
+    border-radius: var(--r-xl);
+    overflow: hidden;
+    background: var(--ink-1);
+    box-shadow: var(--shadow-card);
+    isolation: isolate;
+  }
+  .composite picture,
+  .composite img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .composite img {
+    object-fit: cover;
+  }
+  .composite.is-footer-mood-band {
+    border-radius: 0;
+    box-shadow: none;
+  }
+</style>

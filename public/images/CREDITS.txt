@@ -1,0 +1,76 @@
+Biteperk photo credits
+=====================
+
+All photos sourced under the Unsplash License (https://unsplash.com/license).
+Photos have been colour-graded for site consistency. Originals are at the
+URLs below.
+
+restaurant-evening
+  Photographer: Patrick Tomasso
+  Original:     https://unsplash.com/photos/Oaqk7qqNh_c
+  Brief:        Dim restaurant interior, candlelit tables
+
+sydney-harbour-dusk
+  Photographer: Photoholgic
+  Original:     https://unsplash.com/photos/HwBNbWbjPpk
+  Brief:        Sydney harbour at dusk with bridge silhouette
+
+phone-on-bar
+  Photographer: Jonas Leupe
+  Original:     https://unsplash.com/photos/Em9SauavhKE
+  Brief:        Mobile phone on a wooden bar counter
+
+hands-headset
+  Photographer: Mimi Thian
+  Original:     https://unsplash.com/photos/ZKBzlifgkgw
+  Brief:        Hands adjusting a headset, low key
+
+reservation-book
+  Photographer: Aaron Burden
+  Original:     https://unsplash.com/photos/y02jEX_B0O0
+  Brief:        Open notebook with pen, paper texture
+
+restaurant-pass
+  Photographer: Jay Wennington
+  Original:     https://unsplash.com/photos/N_Y88TWmGwA
+  Brief:        Kitchen pass with prepared dish
+
+restaurant-host
+  Photographer: Louis Hansel
+  Original:     https://unsplash.com/photos/qREZGOkkOdY
+  Brief:        Front-of-house host scene
+
+kitchen-rush
+  Photographer: Louis Hansel
+  Original:     https://unsplash.com/photos/dxIuhpkdHHM
+  Brief:        Busy kitchen service moment
+
+coffee-window
+  Photographer: Toa Heftiba
+  Original:     https://unsplash.com/photos/rb-WrM5_3a4
+  Brief:        Coffee shop service window with morning light
+
+sydney-cafe-morning
+  Photographer: Brooke Cagle
+  Original:     https://unsplash.com/photos/uxXHfTrAU0o
+  Brief:        Café interior, morning amber light
+
+pour-shot
+  Photographer: Mae Mu
+  Original:     https://unsplash.com/photos/yA-OOaENvxg
+  Brief:        Drink pour, low-key dramatic light
+
+empty-tables-evening
+  Photographer: Stefan Johnson
+  Original:     https://unsplash.com/photos/-pwT7nz1Lec
+  Brief:        Empty restaurant tables, dim warm light
+
+pizza-pass
+  Photographer: Aurélien Lemasson-Théobald
+  Original:     https://unsplash.com/photos/m5GiI16fxlw
+  Brief:        Pizza emerging on a pass
+
+sydney-skyline-night
+  Photographer: Dan Freeman
+  Original:     https://unsplash.com/photos/SzWBPqg6Vss
+  Brief:        Sydney skyline at night with harbour reflection
