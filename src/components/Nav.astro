@@ -38,8 +38,14 @@ function isActive(href: string): boolean {
           </a>
         ))
       }
-      <a class="btn" href={site.phone.href} data-cta="bella-call">
-        Call us · {site.phone.display}
+      <a
+        class="btn nav-call"
+        href={site.phone.href}
+        data-cta="bella-call"
+        aria-label={`Call Biteperk on ${site.phone.display}`}
+      >
+        <span class="nav-call-full" aria-hidden="true">Call us · {site.phone.display}</span>
+        <span class="nav-call-short" aria-hidden="true">Call</span>
       </a>
     </div>
   </div>
@@ -87,9 +93,28 @@ function isActive(href: string): boolean {
     color: #fff;
   }
 
+  /* Responsive nav CTA: full phone number on roomy screens, "Call" on phones */
+  .nav-call-short {
+    display: none;
+  }
+
   @media (max-width: 980px) {
     .nav-links .lnk {
       display: none;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .nav-call-full {
+      display: none;
+    }
+    .nav-call-short {
+      display: inline;
+    }
+    /* Tighten the gold pill on small screens — same visual weight, less width */
+    .nav-call {
+      padding: 12px 18px;
+      font-size: 14px;
     }
   }
 </style>
