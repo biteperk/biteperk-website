@@ -1,0 +1,124 @@
+/*
+ * Mega-menu — Layer 1 (global critical CSS).
+ *
+ * These rules are intentionally UNSCOPED. They guarantee that the
+ * Products mega-menu can never fall into document flow regardless of
+ * which build's HTML or CSS bundle a browser may have cached. The
+ * scoped polish (animation, gold-tinted borders, hover micro-states)
+ * lives in NavDropdown.astro's <style> block — if that scoped layer
+ * fails to apply, the menu still floats correctly with this layer.
+ *
+ * Imported once by Base.astro so every page gets it.
+ */
+
+/* Root — establishes the positioning context for the panel. */
+.megamenu {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* The button trigger inherits .lnk styling from Nav.astro; we only
+   guarantee here that it is a button, not a list-item, and that it
+   reveals nothing from a browser default. */
+.megamenu-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+.megamenu-trigger:focus-visible {
+  outline: 2px solid var(--gold, #f5c418);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+/* The floating panel. Without this layer applying the menu falls into
+   the document flow and looks like a wall of stacked links. */
+.megamenu-panel {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 640px;
+  max-width: calc(100vw - 32px);
+  z-index: 60;
+  background: #111317;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 28px 16px 16px;
+  margin-top: 4px;
+  box-shadow: 0 32px 80px -20px rgba(0, 0, 0, 0.75);
+}
+.megamenu-panel[hidden] {
+  display: none;
+}
+
+/* Items grid. Plain 2-up; the scoped layer adds hover affordances. */
+.megamenu-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.megamenu-card {
+  position: relative;
+  display: block;
+  padding: 16px 18px;
+  border-radius: 14px;
+  color: inherit;
+  text-decoration: none;
+}
+.megamenu-card:focus-visible {
+  outline: 2px solid var(--gold, #f5c418);
+  outline-offset: 2px;
+}
+
+/* Footer row at the bottom of the panel. */
+.megamenu-foot {
+  margin-top: 8px;
+  padding: 8px 8px 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.megamenu-foot-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Mobile (≤ 980px): the desktop nav cluster (including this menu) is
+   hidden — MobileMenu.astro handles Products there. */
+@media (max-width: 980px) {
+  .megamenu {
+    display: none;
+  }
+}
+
+/* One-column at very narrow widths in case the menu is ever shown
+   below 720px (currently it's hidden by the mobile rule above, but
+   defensive). */
+@media (max-width: 720px) {
+  .megamenu-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Reduced motion: no animation, instant state changes. */
+@media (prefers-reduced-motion: reduce) {
+  .megamenu-panel {
+    animation: none !important;
+    transition: none !important;
+  }
+}
