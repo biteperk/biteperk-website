@@ -1,0 +1,92 @@
+---
+/**
+ * StatusPill — labels a product's lifecycle stage.
+ *
+ * Three variants:
+ *   - live: filled gold, miniature star, "Live" label
+ *   - in-development: gold outline with a slow-pulsing dot, "In development"
+ *   - concept: mist outline, "Concept"
+ *
+ * Colour is always reinforced with text + an icon — never colour alone.
+ */
+import type { ProductStatus } from "@/data/products";
+import { statusLabel } from "@/data/products";
+
+interface Props {
+  status: ProductStatus;
+  size?: "sm" | "md";
+}
+
+const { status, size = "md" } = Astro.props;
+const label = statusLabel(status);
+---
+
+<span class:list={["pill-status", `is-${status}`, `size-${size}`]} aria-label={`Status: ${label}`}>
+  <span class="pill-status-icon" aria-hidden="true">
+    {status === "live" && (
+      <svg viewBox="0 0 12 12" width="10" height="10">
+        <polygon points="6,1 7.4,4.5 11,4.5 8.1,6.8 9.3,10.4 6,8.3 2.7,10.4 3.9,6.8 1,4.5 4.6,4.5" fill="currentColor" />
+      </svg>
+    )}
+    {status === "in-development" && <span class="pill-status-dot"></span>}
+    {status === "concept" && (
+      <svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="6" cy="6" r="3.5" />
+      </svg>
+    )}
+  </span>
+  <span>{label}</span>
+</span>
+
+<style>
+  .pill-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: var(--r-pill);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .pill-status.size-sm {
+    font-size: 10px;
+    padding: 3px 8px;
+    letter-spacing: 1px;
+  }
+  .pill-status-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 12px;
+    height: 12px;
+  }
+  .pill-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: bp-pulse 2.6s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pill-status-dot { animation: none; }
+  }
+
+  .pill-status.is-live {
+    background: var(--gold);
+    color: #1a0f04;
+  }
+  .pill-status.is-in-development {
+    background: rgba(245, 196, 24, 0.08);
+    color: var(--gold);
+    border: 1px solid color-mix(in srgb, var(--gold) 40%, transparent);
+  }
+  .pill-status.is-concept {
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--mist-2);
+    border: 1px solid var(--line);
+  }
+</style>

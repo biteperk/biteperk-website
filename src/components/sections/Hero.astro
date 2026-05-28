@@ -1,0 +1,214 @@
+---
+/**
+ * Home hero — preserved cinematic dark + gold treatment.
+ *
+ * The Bella portrait is preloaded by Base.astro on the home route.
+ */
+---
+
+<header class="hero">
+  <div class="hero-stage" aria-hidden="true">
+    <div class="hero-stage-grid"></div>
+    <div class="hero-stage-glow"></div>
+  </div>
+  <div class="wrap hero-grid">
+    <div class="hero-text">
+      <span class="pill">
+        <span class="dot"></span>
+        Sydney, Australia
+      </span>
+      <h1 class="hero-title">
+        We build <span class="gold">voice + AI</span><br />
+        for hospitality.
+      </h1>
+      <p class="sub">
+        Restaurants and venues lose bookings every day to a phone that nobody can pick up.
+        Biteperk fixes that — one product at a time. Made in Sydney, deployed in Sydney,
+        answering Sydney calls.
+      </p>
+      <div class="hero-cta">
+        <a class="btn" href="/products/vocotable/">Meet VocoTable →</a>
+        <a class="btn-ghost" href="/contact/">Get in touch</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <figure class="hero-card">
+        <div class="hero-card-halo" aria-hidden="true"></div>
+        <img
+          src="/bella/portrait.png"
+          alt="Bella, Biteperk's voice agent — illustrated with headset and an Australian-flag backdrop."
+          class="hero-card-img"
+          width="640"
+          height="800"
+          fetchpriority="high"
+        />
+        <figcaption class="hero-card-caption">
+          <span class="hero-card-caption-dot" aria-hidden="true"></span>
+          Live · 24/7
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</header>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    padding: 140px 0 100px;
+    overflow: hidden;
+  }
+  .hero-stage {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .hero-stage-glow {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(50% 60% at 80% 40%, rgba(245, 196, 24, 0.16), transparent 70%),
+      radial-gradient(40% 50% at 20% 70%, rgba(26, 77, 26, 0.32), transparent 70%);
+  }
+  .hero-stage-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: radial-gradient(60% 70% at 30% 50%, #000 0%, transparent 70%);
+    -webkit-mask-image: radial-gradient(60% 70% at 30% 50%, #000 0%, transparent 70%);
+    opacity: 0.4;
+  }
+  .hero .wrap {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: clamp(40px, 7vw, 88px);
+    align-items: center;
+  }
+  .hero-text { max-width: 600px; }
+  .hero-title {
+    font-size: var(--fs-h1);
+    font-weight: 800;
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+    margin: 22px 0 26px;
+    color: var(--white);
+  }
+  .hero-title .gold { color: var(--gold); }
+  .sub {
+    font-size: var(--fs-lede);
+    line-height: 1.6;
+    color: var(--text);
+    max-width: 540px;
+    font-weight: 400;
+  }
+  .hero-cta {
+    margin-top: 38px;
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .hero-visual {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .hero-card {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    aspect-ratio: 4 / 5;
+    border-radius: var(--r-xl);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: var(--bp-surface);
+    box-shadow:
+      0 32px 80px -20px rgba(0, 0, 0, 0.75),
+      inset 0 1px 0 rgba(255, 255, 255, 0.07);
+    transition:
+      transform 0.5s var(--ease-soft),
+      box-shadow 0.5s ease;
+    isolation: isolate;
+  }
+  .hero-card:hover {
+    transform: translateY(-6px);
+    box-shadow:
+      0 40px 100px -20px rgba(0, 0, 0, 0.8),
+      0 16px 38px -8px rgba(245, 196, 24, 0.18);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-card:hover { transform: none; }
+  }
+  .hero-card-halo {
+    position: absolute;
+    inset: -22%;
+    z-index: -1;
+    background:
+      radial-gradient(45% 45% at 60% 50%, rgba(245, 196, 24, 0.32), transparent 65%),
+      radial-gradient(50% 50% at 30% 70%, rgba(26, 77, 26, 0.42), transparent 70%);
+    filter: blur(34px);
+  }
+  .hero-card-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 100% center;
+    transform: scale(1.45);
+    transform-origin: 78% 58%;
+  }
+  .hero-card-caption {
+    position: absolute;
+    left: 18px;
+    bottom: 18px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 14px;
+    border-radius: var(--r-pill);
+    background: rgba(10, 11, 13, 0.72);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--line);
+    font-size: 11.5px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: #f0f2f6;
+  }
+  .hero-card-caption-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 14px var(--gold);
+    animation: bp-pulse 2.4s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-card-caption-dot { animation: none; }
+  }
+
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 56px; }
+    .hero-visual { order: -1; }
+    .hero-card { max-width: 340px; aspect-ratio: 4 / 4.6; }
+  }
+  @media (max-width: 560px) {
+    .hero { padding: 120px 0 80px; }
+  }
+</style>

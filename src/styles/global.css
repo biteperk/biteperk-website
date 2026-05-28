@@ -1,29 +1,16 @@
 /*
  * Biteperk global styles.
- * Loaded once by `Base.astro`. Contains design tokens, reset, base
- * typography, and shared utilities used on more than one page/component.
  *
- * Edit tokens here only. Page- and component-specific styles live in
- * their respective .astro files and are scoped by Astro.
+ * Loaded once by `Base.astro`. Imports tokens, applies the reset, sets
+ * base typography, and exposes a small utility layer used by more than
+ * one component.
+ *
+ * Page- and component-specific styles live in their respective .astro
+ * files and are scoped by Astro. The only shared design variables are
+ * in tokens.css.
  */
 
-:root {
-  --bp-ink: #0a0b0d;
-  --bp-ink2: #0e1014;
-  --bp-surface: #14171c;
-  --bp-surface-elev: #181c22;
-  --bp-green-deep: #0e2f12;
-  --bp-green: #1a4d1a;
-  --bp-green-light: #4a8a48;
-  --bp-gold: #f5c418;
-  --bp-gold-amber: #ffb840;
-  --bp-gold-dark: #d9aa0e;
-  --bp-white: #ffffff;
-  --bp-mist: #9aa1ad;
-  --bp-mist-2: #b8bec8;
-  --bp-line: rgba(255, 255, 255, 0.08);
-  --bp-line-strong: rgba(255, 255, 255, 0.14);
-}
+@import "./tokens.css";
 
 *,
 *::before,
@@ -33,17 +20,34 @@
   padding: 0;
 }
 
-html {
+:where(html) {
   scroll-behavior: smooth;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(html) {
+    scroll-behavior: auto;
+  }
 }
 
 body {
-  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", sans-serif;
-  background: var(--bp-ink);
-  color: var(--bp-white);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  font-feature-settings: "ss01", "cv11";
+  background: var(--ink-0);
+  color: var(--white);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
+  min-height: 100svh;
+  text-rendering: optimizeLegibility;
+}
+
+body.no-scroll {
+  overflow: hidden;
 }
 
 a {
@@ -51,19 +55,50 @@ a {
   text-decoration: none;
 }
 
-img {
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+img,
+svg,
+video {
   max-width: 100%;
   display: block;
 }
 
-/* Skip link for keyboard users — visually hidden until focused */
+img {
+  height: auto;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+::selection {
+  background: var(--gold);
+  color: #1a0f04;
+}
+
+/* ── Skip link ──────────────────────────────────────────────────── */
 .skip-link {
   position: absolute;
   left: -9999px;
   top: 0;
-  z-index: 100;
+  z-index: var(--z-modal);
   padding: 12px 18px;
-  background: var(--bp-gold);
+  background: var(--gold);
   color: #1a0f04;
   font-weight: 700;
   border-radius: 0 0 8px 0;
@@ -72,17 +107,27 @@ img {
   left: 0;
 }
 
-/* Scroll-reveal hook used by `.reveal` markers + Base.astro IntersectionObserver */
+/* ── Container ──────────────────────────────────────────────────── */
+.wrap {
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding-inline: var(--container-pad);
+}
+
+/* ── Reveal-on-scroll hook ─────────────────────────────────────── */
 .reveal {
   opacity: 0;
   transform: translateY(28px);
   transition:
-    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity var(--dur-reveal) var(--ease-out),
+    transform var(--dur-reveal) var(--ease-out);
+  will-change: opacity, transform;
 }
 .reveal.is-in {
   opacity: 1;
   transform: none;
+  will-change: auto;
 }
 @media (prefers-reduced-motion: reduce) {
   .reveal,
@@ -93,83 +138,85 @@ img {
   }
 }
 
-/* Container — every page uses .wrap */
-.wrap {
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 0 28px;
-}
-
-/* Brand mark + wordmark — used in nav and footer */
+/* ── Brand mark + wordmark ─────────────────────────────────────── */
 .brand {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 12px;
-  cursor: default;
 }
 .brand-name {
   font-size: 20px;
   font-weight: 700;
   letter-spacing: -0.4px;
+  color: var(--white);
 }
 .brand-name .perk {
-  color: var(--bp-gold);
+  color: var(--gold);
   font-style: italic;
   font-weight: 700;
 }
 
-/* Buttons — primary (gold) and ghost */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  background: linear-gradient(135deg, var(--bp-gold), var(--bp-gold-dark));
-  color: #1a0f04;
-  padding: 14px 26px;
-  border-radius: 100px;
-  font-weight: 700;
-  font-size: 15px;
-  border: none;
-  cursor: pointer;
-  font-family: inherit;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-  box-shadow: 0 8px 28px rgba(245, 196, 24, 0.18);
-}
-.btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 38px rgba(245, 196, 24, 0.32);
-}
+/* ── Buttons — primary (gold) and ghost ────────────────────────── */
+.btn,
 .btn-ghost {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 9px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  color: #fff;
   padding: 14px 26px;
-  border-radius: 100px;
-  font-weight: 600;
+  border-radius: var(--r-pill);
+  font-weight: 700;
   font-size: 15px;
-  background: transparent;
-  cursor: pointer;
   font-family: inherit;
+  cursor: pointer;
+  text-align: center;
+  white-space: nowrap;
   transition:
-    background 0.2s,
-    border-color 0.2s;
+    transform var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out),
+    background var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out);
+  min-height: 44px;
+}
+.btn {
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color: #1a0f04;
+  border: none;
+  box-shadow: var(--shadow-btn);
+}
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-btn-hover);
+}
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-ghost {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: var(--white);
+  background: transparent;
+  font-weight: 600;
 }
 .btn-ghost:hover {
   background: rgba(255, 255, 255, 0.05);
   border-color: rgba(255, 255, 255, 0.35);
 }
 
-/* Pill — eyebrow chip with a pulsing dot */
+@media (prefers-reduced-motion: reduce) {
+  .btn:hover,
+  .btn-ghost:hover {
+    transform: none;
+  }
+}
+
+/* ── Pill — eyebrow chip with a pulsing dot ────────────────────── */
 .pill {
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  border: 1px solid var(--bp-line);
-  border-radius: 100px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
   padding: 8px 16px;
   font-size: 12px;
   font-weight: 600;
@@ -182,28 +229,67 @@ img {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--bp-gold);
-  box-shadow: 0 0 12px var(--bp-gold);
+  background: var(--gold);
+  box-shadow: 0 0 12px var(--gold);
   animation: bp-pulse 2.6s ease-in-out infinite;
 }
 
 @keyframes bp-pulse {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.55;
-    transform: scale(0.86);
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.55; transform: scale(0.86); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pill .dot,
+  .dot {
+    animation: none;
   }
 }
 
-/* Eyebrow — small uppercase label used above headings */
+/* ── Eyebrow ───────────────────────────────────────────────────── */
 .eyebrow {
   font-size: 13px;
   letter-spacing: 3px;
   text-transform: uppercase;
-  color: var(--bp-gold);
+  color: var(--gold);
   font-weight: 600;
+}
+
+/* ── Lede text ─────────────────────────────────────────────────── */
+.lede {
+  font-size: var(--fs-lede);
+  line-height: var(--lh-lede);
+  color: var(--mist-2);
+  max-width: 60ch;
+}
+
+/* ── Surfaces ──────────────────────────────────────────────────── */
+.surface-1 { background: var(--ink-1); }
+.surface-2 { background: var(--ink-2); }
+.surface-3 { background: var(--ink-3); }
+
+/* ── Section rhythm ────────────────────────────────────────────── */
+.section {
+  padding-block: var(--space-section);
+  position: relative;
+}
+
+/* ── Tabular numerals where digits animate ─────────────────────── */
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* ── Visually hidden ───────────────────────────────────────────── */
+.visually-hidden,
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }

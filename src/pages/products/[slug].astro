@@ -1,0 +1,355 @@
+---
+import ProductLayout from "@/layouts/ProductLayout.astro";
+import FAQ from "@/components/FAQ.astro";
+import PullQuote from "@/components/PullQuote.astro";
+import StarMark from "@/components/StarMark.astro";
+import { products, type Product } from "@/data/products";
+
+export async function getStaticPaths() {
+  return products.map((p) => ({ params: { slug: p.slug }, props: { product: p } }));
+}
+
+interface Props { product: Product }
+const { product } = Astro.props;
+
+const isLive = product.status === "live";
+const isConcept = product.status === "concept";
+---
+
+<ProductLayout product={product}>
+  {/* ── Features (every product) ────────────────────────────────── */}
+  <section class="p-section">
+    <div class="wrap">
+      <div class="p-feats reveal">
+        {product.features.map((f, i) => (
+          <article class="p-feat">
+            <div class="p-feat-n" aria-hidden="true">0{i + 1}</div>
+            <h3>{f.title}</h3>
+            {f.body && <p>{f.body}</p>}
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {/* ── How it works (VocoTable only for now) ───────────────────── */}
+  {product.slug === "vocotable" && (
+    <section class="p-section p-how">
+      <div class="wrap">
+        <div class="p-how-head reveal">
+          <span class="eyebrow">How Bella works</span>
+          <h2 class="p-h2">Four steps from a missed call to a confirmed booking.</h2>
+        </div>
+        <ol class="p-how-list reveal">
+          <li>
+            <div class="p-how-num">1</div>
+            <h3>Forward your number</h3>
+            <p>Point your venue's phone to your VocoTable number. Takes five minutes with your provider.</p>
+          </li>
+          <li>
+            <div class="p-how-num">2</div>
+            <h3>Bella answers, every time</h3>
+            <p>Calls land in a warm Australian voice — no menus, no hold music, no missed Friday nights.</p>
+          </li>
+          <li>
+            <div class="p-how-num">3</div>
+            <h3>Live availability check</h3>
+            <p>Bella checks your diary in real time and offers a table that actually exists.</p>
+          </li>
+          <li>
+            <div class="p-how-num">4</div>
+            <h3>Booking written to your screen</h3>
+            <p>Confirmed reservation appears on your dashboard, no copy-paste, no clashes.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+  )}
+
+  {/* ── Metrics row ─────────────────────────────────────────────── */}
+  {product.metrics && product.metrics.length > 0 && (
+    <section class="p-section p-metrics">
+      <div class="wrap">
+        <div class="p-metrics-grid reveal">
+          {product.metrics.map((m) => (
+            <div class="p-metric">
+              <div class="p-metric-v tabular">{m.value}</div>
+              <div class="p-metric-l">{m.label}</div>
+              {m.hint && <div class="p-metric-hint">{m.hint}</div>}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {/* ── Pricing (VocoTable only) ────────────────────────────────── */}
+  {product.pricing && (
+    <section class="p-section p-pricing">
+      <div class="wrap">
+        <div class="p-pricing-card reveal">
+          <div class="p-pricing-mark"><StarMark size={36} /></div>
+          <div class="eyebrow">Pricing</div>
+          <h2 class="p-h2">{product.pricing.headline}</h2>
+          <div class="p-pricing-amount">
+            <span class="p-pricing-n">{product.pricing.amount}</span>
+            <span class="p-pricing-cad">{product.pricing.cadence}</span>
+          </div>
+          <ul class="p-pricing-notes">
+            {product.pricing.notes.map((n) => (
+              <li><span aria-hidden="true">✓</span>{n}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  )}
+
+  {/* ── Testimonial (VocoTable) ─────────────────────────────────── */}
+  {product.slug === "vocotable" && (
+    <section class="p-section p-quote">
+      <div class="wrap">
+        <div class="reveal">
+          <PullQuote
+            quote="We used to lose tables every Friday night just because nobody could reach the phone. Bella picks up every single call — and the bookings just appear on our screen. It paid for itself in the first week."
+            author="Natalia"
+            role="Owner · Natalia's Bistro, Sydney"
+          />
+        </div>
+      </div>
+    </section>
+  )}
+
+  {/* ── In-development / Concept body ──────────────────────────── */}
+  {!isLive && (
+    <section class="p-section p-dev">
+      <div class="wrap">
+        <div class="p-dev-card reveal">
+          <div class="eyebrow">
+            {isConcept ? "Concept stage" : "In development"}
+          </div>
+          <h2 class="p-h2">
+            {isConcept
+              ? `${product.name} is a concept we're testing aloud.`
+              : `${product.name} is being built right now.`}
+          </h2>
+          <p class="p-dev-body">
+            {isConcept
+              ? "There's no code yet — just the shape of a problem we keep hearing. If you'd find it useful, tell us. We'll bring you in when there's something to see."
+              : "We're working with a small group of venues to shape it. Join the waitlist and you'll be among the first to try it when it ships."}
+          </p>
+        </div>
+      </div>
+    </section>
+  )}
+
+  {/* ── FAQ (every product that has one) ────────────────────────── */}
+  {product.faq && product.faq.length > 0 && (
+    <section class="p-section p-faq">
+      <div class="wrap">
+        <div class="p-faq-head reveal">
+          <span class="eyebrow">Common questions</span>
+          <h2 class="p-h2">Answered plainly.</h2>
+        </div>
+        <div class="reveal" style="margin-top:40px">
+          <FAQ items={product.faq} />
+        </div>
+      </div>
+    </section>
+  )}
+</ProductLayout>
+
+<style>
+  .p-section {
+    padding-block: clamp(72px, 8vw, 120px);
+    border-top: 1px solid var(--line);
+  }
+  .p-h2 {
+    font-size: var(--fs-h2);
+    font-weight: 800;
+    line-height: var(--lh-display);
+    letter-spacing: -0.025em;
+    color: var(--white);
+    margin-top: 16px;
+  }
+
+  /* Features grid */
+  .p-feats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 32px;
+  }
+  .p-feat {
+    padding: 28px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--ink-1);
+    transition: border-color var(--dur-base) var(--ease-out);
+  }
+  .p-feat:hover { border-color: color-mix(in srgb, var(--gold) 30%, var(--line)); }
+  .p-feat-n {
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    font-weight: 700;
+    margin-bottom: 18px;
+  }
+  .p-feat h3 {
+    font-size: 19px;
+    color: var(--white);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .p-feat p {
+    margin-top: 10px;
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 14.5px;
+  }
+
+  /* How it works */
+  .p-how-list {
+    list-style: none;
+    margin: 56px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 32px;
+  }
+  .p-how-list li {
+    padding: 32px 24px;
+    border-radius: var(--r-lg);
+    border: 1px solid var(--line);
+    background:
+      linear-gradient(160deg, rgba(245, 196, 24, 0.04), transparent 60%),
+      var(--ink-1);
+  }
+  .p-how-num {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: #1a0f04;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 16px;
+  }
+  .p-how-list h3 { margin-top: 18px; font-size: 17px; color: var(--white); font-weight: 700; }
+  .p-how-list p { margin-top: 8px; color: var(--text); font-size: 14.5px; line-height: 1.55; }
+
+  /* Metrics */
+  .p-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 32px;
+    text-align: center;
+  }
+  .p-metric-v {
+    font-size: clamp(40px, 4.5vw, 64px);
+    font-weight: 800;
+    color: var(--gold);
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+  .p-metric-l {
+    margin-top: 14px;
+    font-size: 11.5px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--mist);
+    font-weight: 600;
+  }
+  .p-metric-hint {
+    margin-top: 6px;
+    font-size: 12.5px;
+    color: var(--mist-2);
+  }
+
+  /* Pricing */
+  .p-pricing-card {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 56px 40px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-xl);
+    background:
+      radial-gradient(60% 60% at 50% 0%, rgba(245, 196, 24, 0.08), transparent 70%),
+      var(--ink-1);
+    position: relative;
+  }
+  .p-pricing-mark {
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ink-0);
+    padding: 4px 8px;
+    border-radius: var(--r-pill);
+  }
+  .p-pricing-amount {
+    margin-top: 32px;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .p-pricing-n {
+    font-size: clamp(64px, 8vw, 96px);
+    font-weight: 800;
+    color: var(--white);
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+  .p-pricing-cad { font-size: 16px; color: var(--mist); }
+  .p-pricing-notes {
+    list-style: none;
+    padding: 0;
+    margin: 32px auto 0;
+    display: grid;
+    gap: 12px;
+    text-align: left;
+    max-width: 360px;
+  }
+  .p-pricing-notes li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text);
+    font-size: 15px;
+  }
+  .p-pricing-notes li span {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(245, 196, 24, 0.14);
+    color: var(--gold);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
+  /* In-development / Concept */
+  .p-dev-card {
+    max-width: 720px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 48px 32px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--ink-1);
+  }
+  .p-dev-body {
+    margin-top: 18px;
+    color: var(--text);
+    line-height: 1.65;
+    font-size: 16px;
+  }
+
+  /* FAQ */
+  .p-faq-head { text-align: center; }
+</style>

@@ -1,0 +1,197 @@
+---
+/**
+ * Full-screen mobile menu.
+ *
+ * Trigger lives in Nav.astro. Open/close + focus trap + scroll lock all
+ * handled by src/scripts/mobile-menu.ts.
+ */
+import StarMark from "@/components/StarMark.astro";
+import { products, statusLabel, productUrl } from "@/data/products";
+import { primaryNav } from "@/data/nav";
+import { site } from "@/data/site";
+
+const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
+function isActive(href: string): boolean {
+  const n = href.replace(/\/$/, "") || "/";
+  return pathname === n || pathname.startsWith(n + "/");
+}
+---
+
+<div
+  id="mobile-menu"
+  class="mm"
+  data-mobile-menu
+  hidden
+  role="dialog"
+  aria-modal="true"
+  aria-label="Site navigation"
+>
+  <div class="mm-backdrop" data-mobile-menu-backdrop aria-hidden="true"></div>
+  <div class="mm-panel">
+    <div class="mm-header">
+      <a class="brand" href="/" aria-label="Biteperk home">
+        <StarMark size={32} />
+        <span class="brand-name">bite<span class="perk">perk</span></span>
+      </a>
+      <button
+        class="mm-close"
+        data-mobile-menu-close
+        aria-label="Close menu"
+        type="button"
+      >
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+          <path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+        </svg>
+      </button>
+    </div>
+
+    <nav class="mm-body" aria-label="Mobile">
+      <div class="mm-section">
+        <div class="mm-heading">Products</div>
+        {products.map((p) => (
+          <a
+            class:list={["mm-link", "mm-product", { active: isActive(productUrl(p)) }]}
+            href={productUrl(p)}
+          >
+            <span class="mm-product-name">{p.name}</span>
+            <span class:list={["mm-product-pill", `is-${p.status}`]}>{statusLabel(p.status)}</span>
+          </a>
+        ))}
+        <a class:list={["mm-link", "mm-all", { active: pathname === "/products" }]} href="/products/">
+          All products →
+        </a>
+      </div>
+
+      <div class="mm-section">
+        <div class="mm-heading">Company</div>
+        {primaryNav.filter((l) => l.href !== "/products/").map((link) => (
+          <a class:list={["mm-link", { active: isActive(link.href) }]} href={link.href}>
+            {link.label}
+          </a>
+        ))}
+      </div>
+
+      <div class="mm-cta">
+        <a class="btn mm-call" href={site.phone.href}>Call us · {site.phone.display}</a>
+        <a class="btn-ghost" href={site.email.href}>Email hello@biteperk.com.au</a>
+      </div>
+    </nav>
+  </div>
+</div>
+
+<style>
+  .mm {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-overlay);
+  }
+  .mm[hidden] { display: none; }
+  .mm-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 11, 13, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    opacity: 0;
+    transition: opacity var(--dur-base) var(--ease-out);
+  }
+  .mm.is-open .mm-backdrop { opacity: 1; }
+
+  .mm-panel {
+    position: absolute;
+    inset: 0;
+    background: var(--ink-0);
+    display: flex;
+    flex-direction: column;
+    transform: translateY(8px);
+    opacity: 0;
+    transition:
+      transform var(--dur-base) var(--ease-out),
+      opacity var(--dur-base) var(--ease-out);
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .mm.is-open .mm-panel {
+    transform: none;
+    opacity: 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mm-panel { transition: none; transform: none; }
+    .mm-backdrop { transition: none; }
+  }
+
+  .mm-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--line);
+  }
+  .mm-close {
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--r-pill);
+    color: var(--white);
+  }
+  .mm-close:hover { background: rgba(255,255,255,0.04); }
+
+  .mm-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 22px 32px;
+  }
+  .mm-section { margin-bottom: 28px; }
+  .mm-heading {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--mist);
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .mm-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 4px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--white);
+    border-bottom: 1px solid var(--line);
+  }
+  .mm-link.active { color: var(--gold); }
+  .mm-link:last-child { border-bottom: 0; }
+  .mm-all { color: var(--gold); font-size: 14px; letter-spacing: 1px; text-transform: uppercase; padding-top: 18px; }
+
+  .mm-product { font-size: 17px; }
+  .mm-product-pill {
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: var(--r-pill);
+  }
+  .mm-product-pill.is-live { background: var(--gold); color: #1a0f04; }
+  .mm-product-pill.is-in-development { color: var(--gold); border: 1px solid color-mix(in srgb, var(--gold) 30%, transparent); }
+  .mm-product-pill.is-concept { color: var(--mist-2); border: 1px solid var(--line); }
+
+  .mm-cta {
+    margin-top: 24px;
+    display: grid;
+    gap: 12px;
+  }
+  .mm-cta .btn,
+  .mm-cta .btn-ghost {
+    width: 100%;
+    justify-content: center;
+  }
+
+  @media (min-width: 981px) {
+    .mm { display: none; }
+  }
+</style>

@@ -1,0 +1,49 @@
+---
+/**
+ * Breadcrumb trail, kept simple. Renders <nav aria-label="Breadcrumb">.
+ */
+interface Crumb {
+  label: string;
+  href?: string;
+}
+interface Props {
+  items: ReadonlyArray<Crumb>;
+}
+const { items } = Astro.props;
+---
+
+<nav class="crumbs" aria-label="Breadcrumb">
+  <ol>
+    {items.map((c, i) => (
+      <li>
+        {c.href && i < items.length - 1 ? (
+          <a href={c.href}>{c.label}</a>
+        ) : (
+          <span aria-current="page">{c.label}</span>
+        )}
+        {i < items.length - 1 && <span class="sep" aria-hidden="true">/</span>}
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  .crumbs ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    font-size: 12.5px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--mist);
+  }
+  .crumbs li { display: inline-flex; align-items: center; gap: 8px; }
+  .crumbs a { color: var(--mist); transition: color var(--dur-fast) var(--ease-out); }
+  .crumbs a:hover { color: var(--white); }
+  .crumbs [aria-current="page"] { color: var(--white); }
+  .sep { opacity: 0.5; }
+</style>

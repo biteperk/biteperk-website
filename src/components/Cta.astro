@@ -1,0 +1,76 @@
+---
+/**
+ * Page-end CTA block. Eyebrow + headline + dual action.
+ */
+import { site } from "@/data/site";
+
+interface Props {
+  eyebrow?: string;
+  headline?: string;
+  lede?: string;
+  primary?: { label: string; href: string };
+  secondary?: { label: string; href: string };
+}
+const {
+  eyebrow = "Talk to a human",
+  headline = "Let's see what we can build for your venue.",
+  lede = "We work with a small number of restaurants at a time. If you want to talk — about VocoTable, about a future product, or just about the missed-call problem — say hello.",
+  primary = { label: `Call us · ${site.phone.display}`, href: site.phone.href },
+  secondary = { label: `Email ${site.email.display}`, href: site.email.href },
+} = Astro.props;
+---
+
+<section class="cta-block">
+  <div class="cta-glow" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="reveal cta-inner">
+      <span class="pill">
+        <span class="dot"></span>
+        {eyebrow}
+      </span>
+      <h2 class="cta-h">{headline}</h2>
+      {lede && <p class="cta-lede lede">{lede}</p>}
+      <div class="cta-actions">
+        <a class="btn" href={primary.href}>{primary.label}</a>
+        <a class="btn-ghost" href={secondary.href}>{secondary.label}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-block {
+    padding-block: var(--space-section);
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+  }
+  .cta-glow {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: radial-gradient(50% 60% at 50% 30%, rgba(245, 196, 24, 0.22), transparent 70%);
+    pointer-events: none;
+  }
+  .cta-block .wrap { position: relative; z-index: 1; }
+  .cta-inner { max-width: 720px; margin: 0 auto; }
+  .cta-h {
+    font-size: var(--fs-h2);
+    font-weight: 800;
+    line-height: var(--lh-display);
+    letter-spacing: -0.025em;
+    margin-top: 22px;
+    color: var(--white);
+  }
+  .cta-lede {
+    margin: 22px auto 0;
+    color: var(--text);
+  }
+  .cta-actions {
+    margin-top: 36px;
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+</style>

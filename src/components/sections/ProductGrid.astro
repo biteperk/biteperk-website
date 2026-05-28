@@ -1,0 +1,82 @@
+---
+/**
+ * Home page product grid — VocoTable spotlighted as the feature, then
+ * the upcoming products in a 3-up row.
+ */
+import SectionHeader from "@/components/SectionHeader.astro";
+import ProductCard from "@/components/ProductCard.astro";
+import { products, getProduct } from "@/data/products";
+
+const vocotable = getProduct("vocotable");
+const upcoming = products.filter((p) => p.slug !== "vocotable");
+---
+
+<section class="grid-section" id="products">
+  <div class="wrap">
+    <SectionHeader
+      eyebrow="The catalogue"
+      lede="Four products. One mission — keep restaurant teams on the floor while the phone, the bookings, and the no-shows quietly handle themselves."
+    >
+      <Fragment slot="headline">
+        One product live today.
+        <br />
+        <span class="gold">More on the way.</span>
+      </Fragment>
+    </SectionHeader>
+
+    <div class="feature-wrap reveal">
+      {vocotable && <ProductCard product={vocotable} variant="feature" />}
+    </div>
+
+    <div class="grid-tiles reveal">
+      {upcoming.map((p) => <ProductCard product={p} variant="tile" />)}
+    </div>
+
+    <div class="grid-foot reveal">
+      <a class="lnk-arrow" href="/products/">
+        See the full product catalogue
+        <span aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .grid-section {
+    padding-block: var(--space-section);
+    background: linear-gradient(180deg, var(--ink-0) 0%, #0e1014 100%);
+    border-top: 1px solid var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+  .feature-wrap {
+    margin-top: 64px;
+  }
+  .grid-tiles {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  @media (max-width: 980px) {
+    .grid-tiles { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 640px) {
+    .grid-tiles { grid-template-columns: 1fr; }
+  }
+  .grid-foot {
+    margin-top: 56px;
+    text-align: center;
+  }
+  .lnk-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--gold);
+    font-weight: 600;
+    font-size: 15px;
+    padding: 8px 4px;
+    transition: gap var(--dur-base) var(--ease-out);
+  }
+  .lnk-arrow:hover { gap: 14px; }
+</style>

@@ -3,20 +3,23 @@
  * Base layout — every page on biteperk.com.au extends this.
  *
  * Responsibilities:
- *   - <head>: charset, viewport, theme-color, font preconnect, favicon, SEO
+ *   - <head>: charset, viewport, theme-color, font preload, favicon, SEO
  *   - Skip-link for keyboard users
  *   - Sticky <Nav> across all pages
  *   - <main> slot for page content
  *   - <Footer> across all pages
- *   - Sticky-nav scroll listener + scroll-reveal IntersectionObserver
+ *   - Astro View Transitions wired sitewide
+ *   - Loads scripts/{reveal,nav,mobile-menu,counter}.ts as deferred modules
  *
- * Pages pass `title`, optional `description`, optional `path` (for canonical
- * override), optional `preloadImage` (to push critical hero image on home).
+ * Pages pass `title`, optional `description`, optional `path` (canonical
+ * override), optional `preloadImage` (push critical hero image on home),
+ * optional `ogImage` (per-page Open Graph card).
  */
-import "../styles/global.css";
-import SEO from "../components/SEO.astro";
-import Nav from "../components/Nav.astro";
-import Footer from "../components/Footer.astro";
+import "@/styles/global.css";
+import SEO from "@/components/SEO.astro";
+import Nav from "@/components/Nav.astro";
+import Footer from "@/components/Footer.astro";
+import { ClientRouter } from "astro:transitions";
 
 interface Props {
   title: string;
@@ -24,76 +27,60 @@ interface Props {
   path?: string;
   /** Absolute path under /public to preload (e.g. "/bella/portrait.png") */
   preloadImage?: string;
+  /** Per-page OG image, defaults to /og/default.png */
+  ogImage?: string;
+  /** Skip the global Nav (e.g. on the 404 page if a custom chrome is wanted). */
+  hideNav?: boolean;
 }
 
-const { title, description, path, preloadImage } = Astro.props;
+const {
+  title,
+  description,
+  path,
+  preloadImage,
+  ogImage,
+  hideNav = false,
+} = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en-AU">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#0a0b0d" />
     <meta name="format-detection" content="telephone=no" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&display=swap"
       rel="stylesheet"
     />
-    {preloadImage && <link rel="preload" as="image" href={preloadImage} />}
+    {preloadImage && <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />}
 
-    <SEO title={title} description={description} path={path}>
+    <SEO title={title} description={description} path={path} ogImage={ogImage}>
       <slot name="jsonld" slot="jsonld" />
     </SEO>
+
+    <ClientRouter fallback="animate" />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
-    <Nav />
+    {!hideNav && <Nav />}
     <main id="main">
       <slot />
     </main>
     <Footer />
 
-    <script is:inline>
-      // Sticky-nav scroll state. Reattaches on BFCache restore so the
-      // .scrolled class is correct when navigating back from another page.
-      (() => {
-        const apply = () => {
-          const nav = document.getElementById("nav");
-          if (!nav) return;
-          nav.classList.toggle("scrolled", window.scrollY > 40);
-        };
-        window.addEventListener("scroll", apply, { passive: true });
-        window.addEventListener("pageshow", apply);
-        apply();
-      })();
-
-      // Reveal-on-scroll. CSS handles prefers-reduced-motion, but we still
-      // short-circuit JS to avoid attaching observers for nothing.
-      (() => {
-        const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        const els = document.querySelectorAll(".reveal");
-        if (reduce || !("IntersectionObserver" in window)) {
-          els.forEach((el) => el.classList.add("is-in"));
-          return;
-        }
-        const io = new IntersectionObserver(
-          (entries) => {
-            for (const e of entries) {
-              if (e.isIntersecting) {
-                e.target.classList.add("is-in");
-                io.unobserve(e.target);
-              }
-            }
-          },
-          { threshold: 0, rootMargin: "0px 0px -8% 0px" }
-        );
-        els.forEach((el) => io.observe(el));
-      })();
+    <script>
+      import "@/scripts/reveal.ts";
+      import "@/scripts/nav.ts";
+      import "@/scripts/mobile-menu.ts";
+      import "@/scripts/counter.ts";
     </script>
   </body>
 </html>

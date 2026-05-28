@@ -1,0 +1,133 @@
+---
+import Base from "@/layouts/Base.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import { site } from "@/data/site";
+
+const title = "Terms of service — Biteperk";
+const description =
+  "Plain-English terms of service for Biteperk's website and products.";
+---
+
+<Base title={title} description={description} path="/legal/terms/">
+  <article class="legal">
+    <div class="wrap">
+      <Breadcrumbs items={[
+        { label: "Home", href: "/" },
+        { label: "Legal", href: "/legal/terms/" },
+        { label: "Terms" },
+      ]} />
+      <header class="legal-head">
+        <h1>Terms of service</h1>
+        <p class="legal-updated">Last updated <time datetime={site.legalLastUpdated}>{site.legalLastUpdated}</time></p>
+      </header>
+
+      <section>
+        <h2>Agreement</h2>
+        <p>
+          By using {site.url} or any Biteperk product, you agree to these terms. If you're using a Biteperk
+          product on behalf of a business, you're confirming you have authority to do so on its behalf.
+        </p>
+      </section>
+
+      <section>
+        <h2>What we provide</h2>
+        <p>
+          Biteperk publishes information about its products through this website. Specific products
+          (VocoTable, and future products in this catalogue) have their own service agreements that govern
+          usage and pricing. Where those agreements conflict with these terms, the product-specific agreement
+          wins.
+        </p>
+      </section>
+
+      <section>
+        <h2>Acceptable use</h2>
+        <p>
+          Don't break the law with our products. Don't try to disrupt or reverse-engineer the services.
+          Don't use Biteperk to harass or impersonate others. We can suspend or terminate access if these
+          things happen.
+        </p>
+      </section>
+
+      <section>
+        <h2>Pricing and billing</h2>
+        <p>
+          VocoTable is currently $80 AUD per month, flat, with no per-cover fees and no lock-in. Pricing for
+          future products will be disclosed on their respective pages before sign-up.
+        </p>
+      </section>
+
+      <section>
+        <h2>No warranty</h2>
+        <p>
+          The website is provided "as is". We work hard to keep things working — and our paying customers
+          have specific commitments in their product agreements — but the marketing website itself comes
+          with no warranty.
+        </p>
+      </section>
+
+      <section>
+        <h2>Liability</h2>
+        <p>
+          To the extent permitted by Australian law, our liability for any claim arising from your use of
+          this website is limited to AUD $100. Customer agreements for paid products contain their own,
+          appropriately scaled limitations.
+        </p>
+      </section>
+
+      <section>
+        <h2>Governing law</h2>
+        <p>
+          These terms are governed by the laws of New South Wales, Australia. Any disputes will be heard in
+          NSW courts.
+        </p>
+      </section>
+
+      <section>
+        <h2>Contact</h2>
+        <p>
+          Questions about these terms: <a href={site.email.href}>{site.email.display}</a>.
+        </p>
+      </section>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .legal {
+    padding: clamp(120px, 14vw, 180px) 0 var(--space-section);
+    background: var(--ink-0);
+  }
+  .legal .wrap { max-width: 720px; }
+  .legal-head { margin-top: 32px; }
+  .legal h1 {
+    font-size: clamp(40px, 5vw, 64px);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    color: var(--white);
+  }
+  .legal-updated {
+    margin-top: 14px;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--mist);
+    font-weight: 600;
+  }
+  .legal section { margin-top: 48px; }
+  .legal h2 {
+    font-size: clamp(20px, 2vw, 24px);
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.01em;
+    margin-bottom: 14px;
+  }
+  .legal p {
+    color: var(--text);
+    line-height: 1.7;
+    margin-bottom: 14px;
+    max-width: 70ch;
+  }
+  .legal a { color: var(--gold); }
+  .legal a:hover { text-decoration: underline; }
+</style>

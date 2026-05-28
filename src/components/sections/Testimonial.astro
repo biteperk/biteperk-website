@@ -1,0 +1,28 @@
+---
+/**
+ * Testimonial section. One serif pull-quote — the brand's only
+ * decorative type, used at most once per long page.
+ */
+import PullQuote from "@/components/PullQuote.astro";
+---
+
+<section class="testimonial">
+  <div class="wrap">
+    <div class="reveal">
+      <PullQuote
+        quote="We used to lose tables every Friday night just because nobody could reach the phone. Bella picks up every single call — and the bookings just appear on our screen. It paid for itself in the first week."
+        author="Natalia"
+        role="Owner · Natalia's Bistro, Sydney"
+      />
+    </div>
+  </div>
+</section>
+
+<style>
+  .testimonial {
+    padding-block: var(--space-section);
+    background: #0e1014;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+</style>

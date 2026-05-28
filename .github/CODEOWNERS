@@ -1,0 +1,8 @@
+# Owners review every PR touching anything in the repo by default.
+*       @skalaliya
+
+# High-impact files — extra-careful review.
+/src/data/             @skalaliya
+/firebase.json         @skalaliya
+/.github/workflows/    @skalaliya
+/astro.config.mjs      @skalaliya

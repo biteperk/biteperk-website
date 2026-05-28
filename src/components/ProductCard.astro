@@ -1,0 +1,182 @@
+---
+/**
+ * Product card. Two variants:
+ *   - tile (default): used on /products and the home grid. Square-ish.
+ *   - feature: used to spotlight a single product (currently VocoTable
+ *              on the home page). Wider, more copy, includes features.
+ */
+import type { Product } from "@/data/products";
+import { productUrl } from "@/data/products";
+import StatusPill from "@/components/StatusPill.astro";
+
+interface Props {
+  product: Product;
+  variant?: "tile" | "feature";
+}
+const { product, variant = "tile" } = Astro.props;
+const href = productUrl(product);
+---
+
+<a class:list={["product-card", `variant-${variant}`, `is-${product.status}`]} href={href} aria-label={`Open ${product.name}`}>
+  <div class="product-card-glow" aria-hidden="true" style={`--accent:${product.accent}`}></div>
+  <div class="product-card-head">
+    <div class="product-card-name">
+      <span class="prefix">{product.wordmark.prefix}</span><span class="suffix">{product.wordmark.suffix}</span>
+    </div>
+    <StatusPill status={product.status} size={variant === "tile" ? "sm" : "md"} />
+  </div>
+  <p class="product-card-tag">{product.tagline}</p>
+  <p class="product-card-sum">{product.summary}</p>
+
+  {variant === "feature" && (
+    <ul class="product-card-feats">
+      {product.features.slice(0, 4).map((f) => (
+        <li>
+          <span class="check" aria-hidden="true">✓</span>
+          <span>{f.title}</span>
+        </li>
+      ))}
+    </ul>
+  )}
+
+  <div class="product-card-cta">
+    <span class="product-card-cta-text">
+      {product.status === "live" ? "Explore the product" : product.status === "in-development" ? "See what we're building" : "See the vision"}
+    </span>
+    <span class="product-card-arrow" aria-hidden="true">→</span>
+  </div>
+</a>
+
+<style>
+  .product-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 32px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-xl);
+    background:
+      linear-gradient(160deg, rgba(255,255,255,0.02), transparent 60%),
+      var(--ink-1);
+    isolation: isolate;
+    transition:
+      transform var(--dur-base) var(--ease-out),
+      border-color var(--dur-base) var(--ease-out),
+      box-shadow var(--dur-base) var(--ease-out);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    color: var(--white);
+  }
+  .product-card:hover,
+  .product-card:focus-visible {
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--gold) 22%, var(--line));
+    box-shadow: var(--shadow-card-hover);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .product-card:hover, .product-card:focus-visible { transform: none; }
+  }
+
+  .product-card-glow {
+    position: absolute;
+    inset: -30%;
+    z-index: -1;
+    background: radial-gradient(40% 40% at 100% 0%, var(--accent), transparent 70%);
+    opacity: 0.5;
+    transition: opacity var(--dur-base) var(--ease-out);
+  }
+  .product-card:hover .product-card-glow { opacity: 0.85; }
+
+  .product-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+  .product-card-name {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 2px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+  .product-card-name .prefix { color: var(--white); }
+  .product-card-name .suffix { color: var(--mist); font-weight: 300; }
+
+  .product-card-tag {
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+  }
+  .product-card-sum {
+    color: var(--text);
+    line-height: 1.55;
+  }
+  .product-card-feats {
+    list-style: none;
+    padding: 0;
+    margin-top: 8px;
+    display: grid;
+    gap: 12px;
+  }
+  .product-card-feats li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    color: var(--text);
+    font-size: 15px;
+  }
+  .product-card-feats .check {
+    flex: 0 0 22px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(245, 196, 24, 0.14);
+    color: var(--gold);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 13px;
+    margin-top: 1px;
+  }
+
+  .product-card-cta {
+    margin-top: auto;
+    padding-top: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 600;
+    border-top: 1px solid var(--line);
+  }
+  .product-card-arrow {
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+  .product-card:hover .product-card-arrow,
+  .product-card:focus-visible .product-card-arrow {
+    transform: translateX(4px);
+  }
+
+  /* tile sizing */
+  .variant-tile { min-height: 280px; }
+  .variant-tile .product-card-name { font-size: clamp(22px, 2.6vw, 30px); }
+
+  /* feature sizing */
+  .variant-feature { padding: 48px; }
+  .variant-feature .product-card-name { font-size: clamp(34px, 4vw, 52px); }
+  .variant-feature .product-card-sum { font-size: var(--fs-lede); line-height: 1.55; }
+
+  @media (max-width: 640px) {
+    .product-card { padding: 28px 24px; }
+    .variant-feature { padding: 32px 24px; }
+  }
+</style>
