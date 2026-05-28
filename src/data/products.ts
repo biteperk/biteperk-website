@@ -73,15 +73,15 @@ const vocotable: Product = {
   wordmark: { prefix: "Voco", suffix: "Table" },
   tagline: "The AI phone host for restaurants.",
   summary:
-    "Bella picks up every call in a warm Australian voice, checks live table availability, and books the reservation while your team stays on the floor.",
+    "Bella answers every call in a warm Australian voice, books the table, and never sleeps — the AI phone host built for Sydney restaurants.",
   status: "live",
   accent: "rgba(245, 196, 24, 0.32)",
   externalUrl: site.vocotableUrl,
   hero: {
-    headline: "Every call. Every time. Every guest booked.",
-    sub: "VocoTable answers in a warm Australian voice, checks availability against your live diary, and writes the booking straight into your dashboard. Twenty-four hours a day.",
-    primaryCta: { label: "Open VocoTable →", href: site.vocotableUrl },
-    secondaryCta: { label: "Book a 15-minute walkthrough", href: "/contact/" },
+    headline: "Never miss another booking.",
+    sub: "Bella answers every call in a warm Australian voice, books the table, and never sleeps — the AI phone host built for Sydney restaurants.",
+    primaryCta: { label: "Start your free week →", href: site.vocotableUrl },
+    secondaryCta: { label: "Hear Bella live", href: `${site.vocotableUrl}#meet-bella` },
   },
   features: [
     {
@@ -102,9 +102,9 @@ const vocotable: Product = {
     },
   ],
   metrics: [
-    { label: "uptime", value: "99.9%", hint: "monitored 24/7" },
-    { label: "answer time", value: "1.2s", hint: "median pickup" },
-    { label: "languages", value: "AU EN", hint: "trained locally" },
+    { label: "always on", value: "24/7", hint: "every call answered" },
+    { label: "answer time", value: "<1s", hint: "Bella never holds" },
+    { label: "flat pricing", value: "$80/mo", hint: "no per-cover fees" },
   ],
   pricing: {
     headline: "One flat rate. No surprises.",
