@@ -37,10 +37,10 @@ const catalogue = [
   },
   {
     slug: "sydney-harbour-dusk",
-    id: "photo-1506905925346-21bda4d32df4",
-    photographer: "Photoholgic",
-    url: "https://unsplash.com/photos/HwBNbWbjPpk",
-    brief: "Sydney harbour at dusk with bridge silhouette",
+    id: "photo-1523428096881-5bd79d043006",
+    photographer: "Dan Freeman",
+    url: "https://unsplash.com/photos/SzWBPqg6Vss",
+    brief: "Sydney Opera House and harbour bridge — the iconic frame",
   },
   {
     slug: "phone-on-bar",

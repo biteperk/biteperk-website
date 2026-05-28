@@ -11,9 +11,9 @@ restaurant-evening
   Brief:        Dim restaurant interior, candlelit tables
 
 sydney-harbour-dusk
-  Photographer: Photoholgic
-  Original:     https://unsplash.com/photos/HwBNbWbjPpk
-  Brief:        Sydney harbour at dusk with bridge silhouette
+  Photographer: Dan Freeman
+  Original:     https://unsplash.com/photos/SzWBPqg6Vss
+  Brief:        Sydney Opera House and harbour bridge — the iconic frame
 
 phone-on-bar
   Photographer: Jonas Leupe
