@@ -1,26 +1,47 @@
 ---
 /**
- * Mission block — "Our craft". Kept tight; one statement of principle.
+ * Mission block — "Our craft". Manifesto on the left, a portrait-
+ * orientation photo of an open reservation book on the right so the
+ * statement of principle has somewhere to land.
  */
 import SectionHeader from "@/components/SectionHeader.astro";
+import ImageBlock from "@/components/ImageBlock.astro";
 ---
 
 <section class="mission">
   <div class="wrap">
-    <SectionHeader eyebrow="Our craft">
-      <Fragment slot="headline">
-        Hospitality lives in the details.
-        <br />
-        <span class="mist">So does our software.</span>
-      </Fragment>
-      <Fragment slot="lede">
-        We build a small, careful catalogue of voice and AI tools that solve real
-        front-of-house problems. No buzzword roadmaps, no platform pitches. Just software
-        that helps restaurant teams keep doing what they do best — taking care of guests —
-        while the unglamorous bits (the phone, the bookings, the no-shows) take care of
-        themselves.
-      </Fragment>
-    </SectionHeader>
+    <div class="mission-grid">
+      <div class="reveal mission-copy">
+        <SectionHeader eyebrow="Our craft" reveal={false}>
+          <Fragment slot="headline">
+            Hospitality lives in the details.
+            <br />
+            <span class="mist">So does our software.</span>
+          </Fragment>
+          <Fragment slot="lede">
+            We build a small, careful catalogue of voice and AI tools that solve real
+            front-of-house problems. No buzzword roadmaps, no platform pitches. Just software
+            that helps restaurant teams keep doing what they do best — taking care of guests —
+            while the unglamorous bits (the phone, the bookings, the no-shows) take care of
+            themselves.
+          </Fragment>
+        </SectionHeader>
+      </div>
+      <div class="reveal mission-photo-col">
+        <figure class="mission-photo">
+          <ImageBlock
+            slug="reservation-book"
+            alt="An open reservation diary with hand-written bookings — the way restaurants actually run."
+            aspect="4 / 5"
+            widths="(min-width: 1024px) 40vw, 100vw"
+          />
+          <figcaption class="mission-photo-cap">
+            <span class="mission-photo-tag">The way restaurants actually run</span>
+            <span class="mission-photo-sub">Pen, paper, and the phone that won't stop ringing.</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -29,5 +50,56 @@ import SectionHeader from "@/components/SectionHeader.astro";
     padding-block: var(--space-section);
     border-top: 1px solid var(--line);
     background: var(--ink-0);
+  }
+  .mission-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: 72px;
+    align-items: center;
+  }
+  .mission-copy { max-width: 540px; }
+  .mission-photo-col { position: relative; }
+  .mission-photo {
+    position: relative;
+    margin: 0;
+    border-radius: var(--r-xl);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    box-shadow:
+      0 32px 80px -20px rgba(0, 0, 0, 0.65),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+  .mission-photo :global(.image-block) { border-radius: 0; }
+  .mission-photo-cap {
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px 16px;
+    background: rgba(10, 11, 13, 0.7);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+  }
+  .mission-photo-tag {
+    font-size: 10.5px;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+  }
+  .mission-photo-sub {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.4;
+  }
+
+  @media (max-width: 980px) {
+    .mission-grid { grid-template-columns: 1fr; gap: 48px; }
+    .mission-photo-col { order: -1; }
   }
 </style>

@@ -2,16 +2,34 @@
 /**
  * Home page product grid — VocoTable spotlighted as the feature, then
  * the upcoming products in a 3-up row.
+ *
+ * A 3-image context strip sits above the section header so the
+ * catalogue lands on a photographic floor instead of plain ink.
  */
 import SectionHeader from "@/components/SectionHeader.astro";
 import ProductCard from "@/components/ProductCard.astro";
+import ImageBlock from "@/components/ImageBlock.astro";
 import { products, getProduct } from "@/data/products";
 
 const vocotable = getProduct("vocotable");
 const upcoming = products.filter((p) => p.slug !== "vocotable");
+
+const stripPhotos = [
+  { slug: "table-set-candles", alt: "" },
+  { slug: "busy-service-night", alt: "" },
+  { slug: "bar-cocktail-action", alt: "" },
+] as const;
 ---
 
 <section class="grid-section" id="products">
+  <div class="grid-strip" aria-hidden="true">
+    {stripPhotos.map((p) => (
+      <div class="grid-strip-cell">
+        <ImageBlock slug={p.slug} alt={p.alt} aspect="16 / 9" widths="34vw" rounded={false} />
+      </div>
+    ))}
+    <div class="grid-strip-scrim"></div>
+  </div>
   <div class="wrap">
     <SectionHeader
       eyebrow="The catalogue"
@@ -48,6 +66,40 @@ const upcoming = products.filter((p) => p.slug !== "vocotable");
     border-top: 1px solid var(--line);
     position: relative;
     overflow: hidden;
+  }
+  .grid-strip {
+    position: relative;
+    height: clamp(160px, 18vw, 240px);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    margin-bottom: clamp(48px, 6vw, 80px);
+    overflow: hidden;
+  }
+  .grid-strip-cell {
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+  }
+  .grid-strip-cell :global(.image-block) {
+    height: 100%;
+    aspect-ratio: auto !important;
+    border-radius: 0;
+  }
+  .grid-strip-cell :global(.image-block img) {
+    height: 100%;
+    object-fit: cover;
+  }
+  .grid-strip-scrim {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(10, 11, 13, 0.4) 0%, rgba(10, 11, 13, 0.2) 30%, rgba(10, 11, 13, 1) 95%),
+      linear-gradient(90deg, rgba(10, 11, 13, 0.5) 0%, rgba(10, 11, 13, 0) 50%, rgba(10, 11, 13, 0.5) 100%);
+    pointer-events: none;
+  }
+  @media (max-width: 760px) {
+    .grid-strip { grid-template-columns: repeat(3, 1fr); height: 140px; }
   }
   .feature-wrap {
     margin-top: 64px;

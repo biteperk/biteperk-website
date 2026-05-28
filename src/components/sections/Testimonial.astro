@@ -1,12 +1,24 @@
 ---
 /**
- * Testimonial section. One serif pull-quote — the brand's only
- * decorative type, used at most once per long page.
+ * Testimonial section. Serif pull-quote sitting over a wide ambient
+ * restaurant photo with a heavy scrim so the quote stays AA-readable.
+ * Mobile drops the bg photo (line measure crowds at narrow widths).
  */
 import PullQuote from "@/components/PullQuote.astro";
+import ImageBlock from "@/components/ImageBlock.astro";
 ---
 
 <section class="testimonial">
+  <div class="testimonial-bg" aria-hidden="true">
+    <ImageBlock
+      slug="empty-tables-evening"
+      alt=""
+      aspect="21 / 9"
+      widths="100vw"
+      rounded={false}
+    />
+    <div class="testimonial-bg-scrim"></div>
+  </div>
   <div class="wrap">
     <div class="reveal">
       <PullQuote
@@ -20,9 +32,44 @@ import PullQuote from "@/components/PullQuote.astro";
 
 <style>
   .testimonial {
+    position: relative;
     padding-block: var(--space-section);
-    background: #0e1014;
     border-top: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
+    background: #0e1014;
+    overflow: hidden;
+  }
+  .testimonial-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .testimonial-bg :global(.image-block) {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto !important;
+    background-position: center;
+  }
+  .testimonial-bg :global(.image-block img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .testimonial-bg-scrim {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(60% 60% at 50% 50%, rgba(10, 11, 13, 0.65), rgba(10, 11, 13, 0.92) 80%),
+      linear-gradient(180deg, rgba(10, 11, 13, 0.6) 0%, rgba(10, 11, 13, 0.8) 100%);
+  }
+  .testimonial .wrap {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Mobile: drop the photo for tighter type. */
+  @media (max-width: 768px) {
+    .testimonial-bg { display: none; }
   }
 </style>

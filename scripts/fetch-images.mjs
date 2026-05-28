@@ -126,6 +126,41 @@ const catalogue = [
     url: "https://unsplash.com/photos/SzWBPqg6Vss",
     brief: "Sydney skyline at night with harbour reflection",
   },
+  {
+    slug: "busy-service-night",
+    id: "photo-1559339352-11d035aa65de",
+    photographer: "Louis Hansel",
+    url: "https://unsplash.com/photos/qREZGOkkOdY",
+    brief: "Full restaurant during service, candle-lit, busy tables",
+  },
+  {
+    slug: "sydney-cafe-street",
+    id: "photo-1521017432531-fbd92d768814",
+    photographer: "Toa Heftiba",
+    url: "https://unsplash.com/photos/4xe-yVFJCvw",
+    brief: "Café street view, awning + signage, golden hour",
+  },
+  {
+    slug: "bar-cocktail-action",
+    id: "photo-1514362545857-3bc16c4c7d1b",
+    photographer: "Edward Howell",
+    url: "https://unsplash.com/photos/u3WmDyKGsrY",
+    brief: "Cocktail pour in a low-lit bar, hand visible",
+  },
+  {
+    slug: "table-set-candles",
+    id: "photo-1424847651672-bf20a4b0982b",
+    photographer: "Rod Long",
+    url: "https://unsplash.com/photos/oZsP-od1jOM",
+    brief: "Close-up of a set restaurant table with candles + cutlery",
+  },
+  {
+    slug: "staff-hands-tray",
+    id: "photo-1559925393-8be0ec4767c8",
+    photographer: "Louis Hansel",
+    url: "https://unsplash.com/photos/7QChbqDes6w",
+    brief: "Hands of service staff carrying a tray",
+  },
 ];
 
 const FETCH_W = 2000;
