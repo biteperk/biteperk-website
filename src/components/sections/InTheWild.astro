@@ -1,0 +1,94 @@
+---
+/**
+ * Home page "In the wild" section. Restaurant scene composite with a
+ * floating booking card, side copy, and a secondary CTA.
+ *
+ * Sits between ProductGrid and Mission.
+ */
+import Composite from "@/components/Composite.astro";
+---
+
+<section class="wild">
+  <div class="wild-bg" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="wild-grid">
+      <div class="wild-copy reveal">
+        <span class="eyebrow">In the wild</span>
+        <h2 class="wild-h">
+          A real venue.
+          <br />
+          <span class="gold">A real booking.</span>
+        </h2>
+        <p class="wild-lede lede">
+          When the phone rings at 8pm on a Friday, Bella picks up in a warm
+          Australian voice, checks your live diary, and writes the booking
+          straight into your dashboard — no menus, no hold music, no missed
+          tables.
+        </p>
+        <a class="lnk-arrow" href="/products/vocotable/">
+          See how VocoTable works
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+      <div class="wild-visual reveal">
+        <Composite
+          name="home-in-the-wild"
+          alt="A dim restaurant interior at service time, with a floating VocoTable booking card reading 'Booked · Friday 8:00pm · 4 guests · Sarah'."
+        />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .wild {
+    position: relative;
+    padding-block: var(--space-section);
+    background: var(--ink-0);
+    border-top: 1px solid var(--line);
+    overflow: hidden;
+  }
+  .wild-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(40% 50% at 80% 20%, rgba(245, 196, 24, 0.1), transparent 70%);
+  }
+  .wild .wrap { position: relative; z-index: 1; }
+
+  .wild-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 72px;
+    align-items: center;
+  }
+  .wild-copy { max-width: 480px; }
+  .wild-h {
+    margin-top: 16px;
+    font-size: var(--fs-h2);
+    font-weight: 800;
+    line-height: var(--lh-display);
+    letter-spacing: -0.025em;
+    color: var(--white);
+  }
+  .wild-h .gold { color: var(--gold); }
+  .wild-lede { margin-top: 22px; }
+
+  .lnk-arrow {
+    margin-top: 32px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--gold);
+    font-weight: 600;
+    font-size: 15px;
+    padding: 8px 0;
+    transition: gap var(--dur-base) var(--ease-out);
+  }
+  .lnk-arrow:hover { gap: 14px; }
+
+  @media (max-width: 980px) {
+    .wild-grid { grid-template-columns: 1fr; gap: 48px; }
+  }
+</style>

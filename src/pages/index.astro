@@ -3,10 +3,12 @@ import Base from "@/layouts/Base.astro";
 import Hero from "@/components/sections/Hero.astro";
 import TrustRow from "@/components/sections/TrustRow.astro";
 import ProductGrid from "@/components/sections/ProductGrid.astro";
+import InTheWild from "@/components/sections/InTheWild.astro";
 import Mission from "@/components/sections/Mission.astro";
 import Sydney from "@/components/sections/Sydney.astro";
 import Testimonial from "@/components/sections/Testimonial.astro";
 import Cta from "@/components/Cta.astro";
+import FooterMood from "@/components/sections/FooterMood.astro";
 import { site } from "@/data/site";
 
 const title = "Biteperk — Voice + AI for hospitality, made in Sydney";
@@ -55,8 +57,10 @@ const organizationJsonLd = {
   <Hero />
   <TrustRow />
   <ProductGrid />
+  <InTheWild />
   <Mission />
   <Sydney />
   <Testimonial />
   <Cta />
+  <FooterMood />
 </Base>

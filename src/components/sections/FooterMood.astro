@@ -1,0 +1,47 @@
+---
+/**
+ * Full-bleed Sydney mood band immediately above the footer.
+ *
+ * Two responsive variants (desktop 21:9, mobile 3:2) rendered at build
+ * time by scripts/generate-images.mjs. Photo carries its own scrim
+ * gradient baked in so footer text remains AA-readable.
+ */
+import Composite from "@/components/Composite.astro";
+---
+
+<section class="mood" aria-hidden="true">
+  <Composite name="footer-mood-band" alt="" />
+  <div class="mood-overlay">
+    <div class="wrap">
+      <span class="mood-tag">Made in Sydney.</span>
+    </div>
+  </div>
+</section>
+
+<style>
+  .mood {
+    position: relative;
+    border-top: 1px solid var(--line);
+    overflow: hidden;
+    background: var(--ink-0);
+  }
+  .mood :global(.composite) {
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .mood-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(180deg, rgba(10,11,13,0.6) 0%, rgba(10,11,13,0.2) 50%, rgba(10,11,13,0.9) 100%);
+    pointer-events: none;
+  }
+  .mood-tag {
+    font-size: clamp(20px, 2vw, 28px);
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.01em;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.6);
+  }
+</style>
