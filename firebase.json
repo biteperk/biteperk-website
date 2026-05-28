@@ -4,7 +4,6 @@
     "public": "dist",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "cleanUrls": true,
-    "trailingSlash": false,
     "redirects": [
       { "source": "/vocotable", "destination": "/products/vocotable/", "type": 301 },
       { "source": "/vocoorder", "destination": "/products/vocoorder/", "type": 301 },
