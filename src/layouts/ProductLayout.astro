@@ -44,14 +44,22 @@ const productJsonLd = {
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web, Phone",
   brand: { "@type": "Organization", name: site.name },
-  ...(product.pricing && {
-    offers: {
-      "@type": "Offer",
-      price: product.pricing.amount.replace(/[^0-9.]/g, ""),
-      priceCurrency: "AUD",
-      availability: "https://schema.org/InStock",
-    },
-  }),
+  ...(product.pricing && product.pricing.tiers.length > 0 && (() => {
+    const priced = product.pricing.tiers
+      .map((t) => Number(t.amount.replace(/[^0-9.]/g, "")))
+      .filter((n) => Number.isFinite(n) && n > 0);
+    if (priced.length === 0) return {};
+    return {
+      offers: {
+        "@type": "AggregateOffer",
+        priceCurrency: "AUD",
+        lowPrice: Math.min(...priced).toString(),
+        highPrice: Math.max(...priced).toString(),
+        offerCount: product.pricing.tiers.length.toString(),
+        availability: "https://schema.org/InStock",
+      },
+    };
+  })()),
 };
 
 const faqJsonLd = product.faq && product.faq.length > 0
