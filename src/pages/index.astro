@@ -10,6 +10,15 @@ import Testimonial from "@/components/sections/Testimonial.astro";
 import Cta from "@/components/Cta.astro";
 import FooterMood from "@/components/sections/FooterMood.astro";
 import FAQ from "@/components/FAQ.astro";
+import { getCollection } from "astro:content";
+
+// Latest guides — surfaces the content engine from the homepage (internal
+// links from the highest-authority page + a freshness signal for crawlers).
+const latestGuides = (await getCollection("blog", ({ data }) => !data.draft))
+  .sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime())
+  .slice(0, 3);
+const fmtGuideDate = (d: Date) =>
+  new Intl.DateTimeFormat("en-AU", { day: "numeric", month: "short", year: "numeric" }).format(d);
 
 const title = "Biteperk — Voice + AI for Australian hospitality, made in Sydney";
 const description =
@@ -78,6 +87,37 @@ const faqJsonLd = {
   <Sydney />
   <Testimonial />
 
+  {latestGuides.length > 0 && (
+    <section class="home-guides">
+      <div class="wrap">
+        <div class="home-guides-head reveal">
+          <div>
+            <span class="eyebrow">From the guides</span>
+            <h2 class="home-guides-h">Plain-English help for a busy phone.</h2>
+          </div>
+          <a class="home-guides-all" href="/blog/">All guides →</a>
+        </div>
+        <ul class="home-guides-grid reveal">
+          {latestGuides.map((post) => (
+            <li>
+              <a class="home-guide" href={`/blog/${post.id}/`}>
+                <div class="home-guide-meta">
+                  <time datetime={post.data.publishDate.toISOString().slice(0, 10)}>
+                    {fmtGuideDate(post.data.publishDate)}
+                  </time>
+                  {post.data.tags[0] && <span class="home-guide-tag">{post.data.tags[0]}</span>}
+                </div>
+                <h3 class="home-guide-title">{post.data.title}</h3>
+                <p class="home-guide-desc">{post.data.description}</p>
+                <span class="home-guide-read">Read →</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
   <section class="home-faq">
     <div class="wrap">
       <div class="home-faq-head reveal">
@@ -99,6 +139,102 @@ const faqJsonLd = {
 </Base>
 
 <style>
+  .home-guides {
+    padding-block: var(--space-section);
+    border-top: 1px solid var(--line);
+    background: var(--ink-0);
+  }
+  .home-guides-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .home-guides-h {
+    font-size: var(--fs-h2);
+    font-weight: 800;
+    line-height: var(--lh-display);
+    letter-spacing: -0.025em;
+    color: var(--white);
+    margin-top: 14px;
+    max-width: 18ch;
+  }
+  .home-guides-all {
+    color: var(--gold);
+    font-weight: 700;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+  .home-guides-all:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .home-guides-grid {
+    list-style: none;
+    padding: 0;
+    margin: 44px 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+  }
+  .home-guide {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 26px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--ink-1);
+    transition:
+      transform var(--dur-base) var(--ease-out),
+      border-color var(--dur-base) var(--ease-out);
+  }
+  .home-guide:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--gold) 26%, var(--line));
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .home-guide:hover { transform: none; }
+  }
+  .home-guide-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 11.5px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    color: var(--mist);
+  }
+  .home-guide-tag {
+    padding: 2px 9px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--line);
+    color: var(--mist-2);
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+  .home-guide-title {
+    margin-top: 14px;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+    color: var(--white);
+  }
+  .home-guide:hover .home-guide-title { color: var(--gold); }
+  .home-guide-desc {
+    margin-top: 10px;
+    color: var(--text);
+    font-size: 13.5px;
+    line-height: 1.55;
+    flex: 1;
+  }
+  .home-guide-read {
+    margin-top: 18px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.3px;
+  }
+
   .home-faq {
     padding-block: var(--space-section);
     border-top: 1px solid var(--line);
