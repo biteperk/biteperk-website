@@ -6,9 +6,9 @@ import ImageBlock from "@/components/ImageBlock.astro";
 import { site } from "@/data/site";
 import { products } from "@/data/products";
 
-const title = "Contact — Biteperk";
+const title = "Contact Biteperk — Restaurant voice AI, Sydney & Australia-wide";
 const description =
-  "Talk to Biteperk in Sydney. Call 0450 011 140 (9am–9pm AEST) or email hello@biteperk.com.au. We answer every message — usually within a few hours.";
+  "Talk to Biteperk at Level 1, 477 Pitt Street, Haymarket NSW. Call 0450 011 140 (Mon–Fri, 9am–5pm AEST) or email hello@biteperk.com.au. We answer every message — usually within a few hours.";
 ---
 
 <Base title={title} description={description} path="/contact/" ogImage="/og/contact.png">
@@ -42,7 +42,7 @@ const description =
         />
         <div class="contact-strip-tag">
           <span class="dot" aria-hidden="true"></span>
-          Sydney · 9am – 9pm AEST
+          Haymarket, Sydney · Mon–Fri 9am–5pm AEST
         </div>
       </div>
     </div>
@@ -56,7 +56,7 @@ const description =
           <div class="contact-side-block">
             <div class="contact-side-l">Call us</div>
             <a class="contact-side-v" href={site.phone.href}>{site.phone.display}</a>
-            <div class="contact-side-h">9am – 9pm AEST, every day</div>
+            <div class="contact-side-h">{site.hours.display}</div>
           </div>
           <div class="contact-side-block">
             <div class="contact-side-l">Email</div>
@@ -65,7 +65,15 @@ const description =
           </div>
           <div class="contact-side-block">
             <div class="contact-side-l">Find us</div>
-            <div class="contact-side-v">{site.address.city}, {site.address.country}</div>
+            <a
+              class="contact-side-v contact-side-addr"
+              href={site.address.mapsUrl}
+              rel="noopener"
+              target="_blank"
+            >
+              {site.address.street}<br />
+              {site.address.locality} {site.address.region} {site.address.postalCode}
+            </a>
             <div class="contact-side-h">Local team. Local data. Local hours.</div>
           </div>
         </aside>
@@ -239,6 +247,10 @@ const description =
     letter-spacing: -0.02em;
   }
   a.contact-side-v:hover { color: var(--gold); }
+  .contact-side-addr {
+    font-size: clamp(16px, 1.6vw, 19px);
+    line-height: 1.45;
+  }
   .contact-side-h {
     margin-top: 8px;
     font-size: 13px;

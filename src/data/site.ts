@@ -19,9 +19,28 @@ export type SiteData = {
   readonly vocotableUrl: string;
   readonly abn: string;
   readonly address: {
+    /** Street line incl. unit/level, e.g. "Level 1, 477 Pitt Street". */
+    readonly street: string;
+    /** Suburb — what Google and Australia Post call the locality. */
+    readonly locality: string;
+    /** Metro the suburb sits in; used for "Made in {city}" branding. */
     readonly city: string;
+    readonly region: string;
+    readonly postalCode: string;
     readonly country: string;
+    readonly countryCode: string;
     readonly locale: string;
+    /** Pin for LocalBusiness geo schema — match your Google Business Profile. */
+    readonly geo: { readonly lat: number; readonly lng: number };
+    readonly mapsUrl: string;
+  };
+  /** Company contact hours. Drives visible copy + OpeningHoursSpecification. */
+  readonly hours: {
+    readonly display: string;
+    /** schema.org DayOfWeek names. */
+    readonly days: readonly string[];
+    readonly opens: string;
+    readonly closes: string;
   };
   readonly social: { readonly linkedin: string };
   /** ISO date string for "last updated" rendering on legal pages. */
@@ -37,7 +56,25 @@ export const site: SiteData = {
   email: { display: "hello@biteperk.com.au", href: "mailto:hello@biteperk.com.au" },
   vocotableUrl: "https://vocotable.biteperk.com.au",
   abn: "TODO",
-  address: { city: "Sydney", country: "Australia", locale: "en-AU" },
+  address: {
+    street: "Level 1, 477 Pitt Street",
+    locality: "Haymarket",
+    city: "Sydney",
+    region: "NSW",
+    postalCode: "2000",
+    country: "Australia",
+    countryCode: "AU",
+    locale: "en-AU",
+    geo: { lat: -33.8806, lng: 151.2043 },
+    mapsUrl:
+      "https://www.google.com/maps/search/?api=1&query=Level%201%2C%20477%20Pitt%20Street%2C%20Haymarket%20NSW%202000",
+  },
+  hours: {
+    display: "Mon–Fri, 9am–5pm AEST",
+    days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+    opens: "09:00",
+    closes: "17:00",
+  },
   social: { linkedin: "https://www.linkedin.com/company/biteperk" },
   legalLastUpdated: "2026-05-28",
 };

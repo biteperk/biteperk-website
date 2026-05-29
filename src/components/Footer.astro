@@ -26,6 +26,14 @@ const hasAbn = site.abn !== "TODO";
           Biteperk builds voice and AI tools for hospitality. Our first product, VocoTable,
           answers every restaurant call in a warm Australian voice. Made in Sydney.
         </p>
+        <address class="foot-address">
+          <a href={site.address.mapsUrl} rel="noopener" target="_blank">
+            {site.address.street}<br />
+            {site.address.locality} {site.address.region} {site.address.postalCode}
+          </a>
+          <a href={site.phone.href}>{site.phone.display}</a>
+          <a href={site.email.href}>{site.email.display}</a>
+        </address>
       </div>
       <div class="foot-cols">
         {footerColumns.map((col) => (
@@ -77,6 +85,22 @@ const hasAbn = site.abn !== "TODO";
     line-height: 1.65;
     margin-top: 16px;
     max-width: 340px;
+  }
+  .foot-address {
+    font-style: normal;
+    margin-top: 20px;
+    display: grid;
+    gap: 4px;
+  }
+  .foot-address a {
+    color: var(--mist);
+    font-size: 13.5px;
+    line-height: 1.55;
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  .foot-address a:hover,
+  .foot-address a:focus-visible {
+    color: var(--white);
   }
   .foot-cols {
     display: grid;
