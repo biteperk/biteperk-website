@@ -1,9 +1,21 @@
 {
+  "functions": [
+    { "source": "functions", "codebase": "biteperk-website", "runtime": "nodejs20" }
+  ],
+  "firestore": [
+    { "database": "biteperk-leads", "rules": "firestore.rules", "indexes": "firestore.indexes.json" }
+  ],
   "hosting": {
     "target": "biteperk",
     "public": "dist",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "cleanUrls": true,
+    "rewrites": [
+      {
+        "source": "/api/contact",
+        "function": { "functionId": "contactForm", "region": "australia-southeast1" }
+      }
+    ],
     "redirects": [
       { "source": "/vocotable", "destination": "/products/vocotable/", "type": 301 },
       { "source": "/vocoorder", "destination": "/products/vocoorder/", "type": 301 },
@@ -24,7 +36,7 @@
           { "key": "X-Frame-Options", "value": "DENY" },
           {
             "key": "Content-Security-Policy",
-            "value": "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline'; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://formspree.io; form-action 'self' https://formspree.io; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests"
+            "value": "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline'; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests"
           }
         ]
       },

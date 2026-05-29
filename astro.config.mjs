@@ -32,7 +32,13 @@ export default defineConfig({
       serialize(item) {
         if (item.url === "https://biteperk.com.au/") item.priority = 1.0;
         else if (item.url.includes("/products/")) item.priority = 0.9;
-        else if (item.url.includes("/legal/")) item.priority = 0.4;
+        else if (item.url.endsWith("/sydney/")) item.priority = 0.9;
+        else if (item.url === "https://biteperk.com.au/blog/") item.priority = 0.8;
+        else if (item.url.includes("/blog/")) {
+          // Individual guides: fresher content, crawl more often.
+          item.priority = 0.7;
+          item.changefreq = "weekly";
+        } else if (item.url.includes("/legal/")) item.priority = 0.4;
         else item.priority = 0.7;
         return item;
       },

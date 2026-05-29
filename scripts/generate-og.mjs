@@ -302,6 +302,17 @@ const cards = [
     headline: "One conversation away from a quieter Friday night.",
     showBella: false,
   },
+  {
+    file: "sydney.png",
+    eyebrow: "AI for Sydney restaurants",
+    headline: "Never miss another Sydney booking.",
+  },
+  {
+    file: "blog.png",
+    eyebrow: "Guides",
+    headline: "Field notes for a busier, calmer floor.",
+    showBella: false,
+  },
 ];
 
 for (const c of cards) {

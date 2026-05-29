@@ -20,6 +20,7 @@ import "@/styles/megamenu.css";
 import SEO from "@/components/SEO.astro";
 import Nav from "@/components/Nav.astro";
 import Footer from "@/components/Footer.astro";
+import { siteGraph } from "@/data/schema";
 import { ClientRouter } from "astro:transitions";
 
 interface Props {
@@ -66,6 +67,9 @@ const {
     <SEO title={title} description={description} path={path} ogImage={ogImage}>
       <slot name="jsonld" slot="jsonld" />
     </SEO>
+
+    {/* Sitewide brand graph (Organization + WebSite), linked by @id. */}
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(siteGraph)} />
 
     <ClientRouter fallback="animate" />
   </head>

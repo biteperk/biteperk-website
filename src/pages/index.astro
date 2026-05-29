@@ -9,60 +9,59 @@ import Sydney from "@/components/sections/Sydney.astro";
 import Testimonial from "@/components/sections/Testimonial.astro";
 import Cta from "@/components/Cta.astro";
 import FooterMood from "@/components/sections/FooterMood.astro";
-import { site } from "@/data/site";
+import FAQ from "@/components/FAQ.astro";
+import { getCollection } from "astro:content";
+
+// Latest guides — surfaces the content engine from the homepage (internal
+// links from the highest-authority page + a freshness signal for crawlers).
+const latestGuides = (await getCollection("blog", ({ data }) => !data.draft))
+  .sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime())
+  .slice(0, 3);
+const fmtGuideDate = (d: Date) =>
+  new Intl.DateTimeFormat("en-AU", { day: "numeric", month: "short", year: "numeric" }).format(d);
 
 const title = "Biteperk — Voice + AI for Australian hospitality, made in Sydney";
 const description =
   "Biteperk builds voice and AI tools that help Australian restaurants stay on the floor while the phone takes care of itself. VocoTable is live; VocoOrder, VocoConcierge and VocoDrive are next.";
 
-const telephone = site.phone.href.replace("tel:", "");
+// Homepage FAQ — written around what restaurant owners actually search
+// ("can AI answer my phone", "how much", "is my data safe"). Doubles as
+// FAQPage structured data and as answer fodder for AI search engines.
+const homeFaqs = [
+  {
+    q: "Can AI really answer my restaurant's phone?",
+    a: "Yes. VocoTable, our live product, answers every inbound call in a warm Australian voice, checks real availability, and writes the booking straight to your dashboard — no hold music, no menus, no missed Friday nights. It runs 24/7 and answers in under a second.",
+  },
+  {
+    q: "Does Biteperk work for restaurants outside Sydney?",
+    a: "Absolutely. We're built and supported from Sydney, but VocoTable works for any restaurant or venue across Australia — Melbourne, Brisbane, Perth, Adelaide and regional towns included. The voice is trained on Australian English and gets local suburb names right.",
+  },
+  {
+    q: "How much does it cost to have AI answer restaurant calls in Australia?",
+    a: "VocoTable starts at a flat $80/month with no per-cover or per-call fees, and plans scale up for busier venues and multi-location groups. Most venues recover the cost from the bookings saved in the first week.",
+  },
+  {
+    q: "Will my callers know they're talking to an AI?",
+    a: "Bella sounds natural and local, and she's upfront and polite. Guests get a fast, friendly answer and a confirmed table — which beats a phone ringing out to voicemail during service.",
+  },
+  {
+    q: "How is my booking and call data handled?",
+    a: "Audio is processed in Australia, stored only as long as needed to confirm the booking, and never used to train outside models. Biteperk is Privacy Act compliant and your bookings always stay yours.",
+  },
+  {
+    q: "How quickly can I get set up?",
+    a: "Most venues are live within 48 hours. You forward your existing number to your VocoTable line — about five minutes with your phone provider — and Bella starts answering.",
+  },
+];
 
-const organizationJsonLd = {
+const faqJsonLd = {
   "@context": "https://schema.org",
-  "@type": "Organization",
-  "@id": `${site.url}/#organization`,
-  name: site.name,
-  legalName: "Biteperk Pty Ltd",
-  url: site.url,
-  logo: `${site.url}/favicon.svg`,
-  image: `${site.url}/og/home.png`,
-  description,
-  email: site.email.href.replace("mailto:", ""),
-  telephone,
-  sameAs: [site.social.linkedin],
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: site.address.street,
-    addressLocality: site.address.locality,
-    addressRegion: site.address.region,
-    postalCode: site.address.postalCode,
-    addressCountry: site.address.countryCode,
-  },
-  geo: {
-    "@type": "GeoCoordinates",
-    latitude: site.address.geo.lat,
-    longitude: site.address.geo.lng,
-  },
-  hasMap: site.address.mapsUrl,
-  areaServed: { "@type": "Country", name: "Australia" },
-  openingHoursSpecification: [
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: [...site.hours.days],
-      opens: site.hours.opens,
-      closes: site.hours.closes,
-    },
-  ],
-  contactPoint: [
-    {
-      "@type": "ContactPoint",
-      telephone,
-      email: site.email.href.replace("mailto:", ""),
-      contactType: "customer service",
-      areaServed: "AU",
-      availableLanguage: ["en-AU"],
-    },
-  ],
+  "@type": "FAQPage",
+  mainEntity: homeFaqs.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
 };
 ---
 
@@ -77,7 +76,7 @@ const organizationJsonLd = {
     is:inline
     type="application/ld+json"
     slot="jsonld"
-    set:html={JSON.stringify(organizationJsonLd)}
+    set:html={JSON.stringify(faqJsonLd)}
   />
 
   <Hero />
@@ -87,6 +86,176 @@ const organizationJsonLd = {
   <Mission />
   <Sydney />
   <Testimonial />
+
+  {latestGuides.length > 0 && (
+    <section class="home-guides">
+      <div class="wrap">
+        <div class="home-guides-head reveal">
+          <div>
+            <span class="eyebrow">From the guides</span>
+            <h2 class="home-guides-h">Plain-English help for a busy phone.</h2>
+          </div>
+          <a class="home-guides-all" href="/blog/">All guides →</a>
+        </div>
+        <ul class="home-guides-grid reveal">
+          {latestGuides.map((post) => (
+            <li>
+              <a class="home-guide" href={`/blog/${post.id}/`}>
+                <div class="home-guide-meta">
+                  <time datetime={post.data.publishDate.toISOString().slice(0, 10)}>
+                    {fmtGuideDate(post.data.publishDate)}
+                  </time>
+                  {post.data.tags[0] && <span class="home-guide-tag">{post.data.tags[0]}</span>}
+                </div>
+                <h3 class="home-guide-title">{post.data.title}</h3>
+                <p class="home-guide-desc">{post.data.description}</p>
+                <span class="home-guide-read">Read →</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <section class="home-faq">
+    <div class="wrap">
+      <div class="home-faq-head reveal">
+        <span class="eyebrow">Common questions</span>
+        <h2 class="home-faq-h">Restaurant owners ask us these.</h2>
+        <p class="lede home-faq-lede">
+          Straight answers about letting an AI answer your phone — what it costs,
+          how it sounds, and where your data lives.
+        </p>
+      </div>
+      <div class="reveal home-faq-body">
+        <FAQ items={homeFaqs} />
+      </div>
+    </div>
+  </section>
+
   <Cta />
   <FooterMood />
 </Base>
+
+<style>
+  .home-guides {
+    padding-block: var(--space-section);
+    border-top: 1px solid var(--line);
+    background: var(--ink-0);
+  }
+  .home-guides-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .home-guides-h {
+    font-size: var(--fs-h2);
+    font-weight: 800;
+    line-height: var(--lh-display);
+    letter-spacing: -0.025em;
+    color: var(--white);
+    margin-top: 14px;
+    max-width: 18ch;
+  }
+  .home-guides-all {
+    color: var(--gold);
+    font-weight: 700;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+  .home-guides-all:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .home-guides-grid {
+    list-style: none;
+    padding: 0;
+    margin: 44px 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+  }
+  .home-guide {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 26px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--ink-1);
+    transition:
+      transform var(--dur-base) var(--ease-out),
+      border-color var(--dur-base) var(--ease-out);
+  }
+  .home-guide:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--gold) 26%, var(--line));
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .home-guide:hover { transform: none; }
+  }
+  .home-guide-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 11.5px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    color: var(--mist);
+  }
+  .home-guide-tag {
+    padding: 2px 9px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--line);
+    color: var(--mist-2);
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+  .home-guide-title {
+    margin-top: 14px;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+    color: var(--white);
+  }
+  .home-guide:hover .home-guide-title { color: var(--gold); }
+  .home-guide-desc {
+    margin-top: 10px;
+    color: var(--text);
+    font-size: 13.5px;
+    line-height: 1.55;
+    flex: 1;
+  }
+  .home-guide-read {
+    margin-top: 18px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.3px;
+  }
+
+  .home-faq {
+    padding-block: var(--space-section);
+    border-top: 1px solid var(--line);
+    background: var(--ink-0);
+  }
+  .home-faq-head {
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .home-faq-h {
+    font-size: var(--fs-h2);
+    font-weight: 800;
+    line-height: var(--lh-display);
+    letter-spacing: -0.025em;
+    color: var(--white);
+    margin-top: 16px;
+  }
+  .home-faq-lede {
+    margin: 20px auto 0;
+    text-align: center;
+  }
+  .home-faq-body { margin-top: 48px; }
+</style>

@@ -1,0 +1,412 @@
+---
+/**
+ * /sydney/ — local landing page.
+ *
+ * A rankable page for Sydney-intent searches ("AI phone answering for
+ * Sydney restaurants", "AI receptionist Sydney restaurant"). It is NOT a
+ * thin doorway page: it carries genuine local content (the missed-call
+ * problem during a Sydney service, suburbs served, local support promise)
+ * and links through to the live product.
+ *
+ * Structured data: Service (provider → Organization @id) + BreadcrumbList
+ * + FAQPage, so the page can earn a local rich result and feed AI answers.
+ */
+import Base from "@/layouts/Base.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import FAQ from "@/components/FAQ.astro";
+import Cta from "@/components/Cta.astro";
+import ImageBlock from "@/components/ImageBlock.astro";
+import { site } from "@/data/site";
+import { ORG_ID } from "@/data/schema";
+
+const path = "/sydney/";
+const title = "AI phone answering for Sydney restaurants · Biteperk";
+const description =
+  "Stop losing Sydney bookings to a phone nobody can reach. Biteperk's VocoTable answers every restaurant call in a warm Australian voice, checks availability, and books the table — 24/7. Built, hosted and supported in Sydney.";
+
+// Suburbs we name explicitly — real local relevance without spinning up a
+// thin page per suburb.
+const suburbs = [
+  "Sydney CBD", "Surry Hills", "Newtown", "Darlinghurst", "Potts Point",
+  "Bondi", "Paddington", "Chippendale", "Haymarket", "Marrickville",
+  "Glebe", "Redfern", "Manly", "Balmain", "Leichhardt", "Parramatta",
+];
+
+const localFaqs = [
+  {
+    q: "Do you only work with restaurants in Sydney?",
+    a: "Sydney is home — we're built, hosted and supported here — but VocoTable works for restaurants and venues right across Australia. Sydney venues just get the bonus of a team in the same time zone who knows the local suburbs and the rhythm of a Sydney Friday night.",
+  },
+  {
+    q: "How does AI phone answering work for a Sydney restaurant?",
+    a: "You forward your existing venue number to your VocoTable line — about five minutes with Telstra, Optus or your VoIP provider. From then on, Bella answers every call in a natural Australian voice, checks your live availability, and writes the booking straight to your dashboard. No app for guests to download, no menus, no hold music.",
+  },
+  {
+    q: "Will the voice sound local?",
+    a: "Yes. Bella is trained on Australian English and tuned for local place names, so she pronounces the suburbs and streets your guests mention correctly — no overseas-call-centre feel.",
+  },
+  {
+    q: "Where is my call and booking data stored?",
+    a: "In Australia. Audio is processed onshore, kept only as long as needed to confirm the booking, and never used to train outside models. Biteperk is Privacy Act compliant and your bookings always stay yours.",
+  },
+  {
+    q: "What does it cost?",
+    a: "VocoTable starts at a flat $80/month with no per-cover or per-call fees, scaling up for busier venues and multi-location groups. Most Sydney venues make it back from the bookings they stop missing in the first week.",
+  },
+];
+
+const serviceJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  name: "AI phone answering for Sydney restaurants",
+  serviceType: "AI phone answering and reservation booking",
+  description,
+  provider: { "@id": ORG_ID },
+  areaServed: {
+    "@type": "City",
+    name: "Sydney",
+    containedInPlace: { "@type": "State", name: "New South Wales" },
+  },
+  audience: { "@type": "BusinessAudience", name: "Restaurants, cafés and venues" },
+  url: `${site.url}${path}`,
+  offers: {
+    "@type": "Offer",
+    priceCurrency: "AUD",
+    price: "80",
+    priceSpecification: {
+      "@type": "UnitPriceSpecification",
+      price: "80",
+      priceCurrency: "AUD",
+      unitText: "MONTH",
+    },
+    availability: "https://schema.org/InStock",
+  },
+};
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: site.url },
+    { "@type": "ListItem", position: 2, name: "AI for Sydney restaurants", item: `${site.url}${path}` },
+  ],
+};
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: localFaqs.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+};
+---
+
+<Base title={title} description={description} path={path} ogImage="/og/sydney.png">
+  <Fragment slot="jsonld">
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(serviceJsonLd)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
+  </Fragment>
+
+  {/* ── Hero ─────────────────────────────────────────────────────── */}
+  <section class="syd-hero">
+    <div class="syd-hero-glow" aria-hidden="true"></div>
+    <div class="wrap">
+      <div class="syd-top">
+        <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Sydney" }]} />
+      </div>
+      <div class="syd-hero-grid">
+        <div class="reveal">
+          <span class="pill">
+            <span class="dot"></span>
+            Sydney, NSW
+          </span>
+          <h1 class="syd-h1">
+            AI phone answering for
+            <span class="gold"> Sydney restaurants.</span>
+          </h1>
+          <p class="syd-sub lede">
+            Every night, Sydney venues lose tables to a phone nobody can reach during service.
+            Biteperk's VocoTable answers every call in a warm Australian voice, checks your
+            availability, and books the table — 24/7. Built, hosted and supported right here.
+          </p>
+          <div class="syd-cta">
+            <a class="btn" href="/products/vocotable/">See how VocoTable works →</a>
+            <a class="btn-ghost" href={site.phone.href}>Call us · {site.phone.display}</a>
+          </div>
+          <ul class="syd-trust">
+            <li><span class="gold">100%</span> made in Sydney</li>
+            <li><span class="gold">AU</span> data residency</li>
+            <li><span class="gold">9am–9pm</span> human support, AEST</li>
+          </ul>
+        </div>
+        <div class="reveal syd-hero-photo">
+          <ImageBlock
+            slug="sydney-cafe-morning"
+            alt="A Sydney café in the morning, warm light through the windows, ready for service."
+            aspect="4 / 5"
+            widths="(min-width: 1024px) 40vw, 100vw"
+            priority
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ── The problem ──────────────────────────────────────────────── */}
+  <section class="syd-section">
+    <div class="wrap">
+      <div class="syd-split">
+        <div class="reveal">
+          <span class="eyebrow">The missed-call problem</span>
+          <h2 class="syd-h2">A ringing phone during a Sydney service is a booking walking next door.</h2>
+          <p class="syd-body">
+            At 7:30 on a Friday, your floor staff are carrying plates, not picking up the phone.
+            Every unanswered call is a table that books somewhere else — and in a city with as much
+            choice as Sydney, callers rarely ring back. A handful of missed calls a week quietly
+            adds up to thousands of dollars a month in lost covers.
+          </p>
+          <p class="syd-body">
+            Voicemail doesn't fix it. Diners want an answer now, not a callback after the kitchen
+            has closed. That's the gap VocoTable was built to close.
+          </p>
+        </div>
+        <div class="reveal syd-split-photo">
+          <ImageBlock
+            slug="busy-service-night"
+            alt="A busy restaurant during evening service, staff focused on the floor."
+            aspect="4 / 3"
+            widths="(min-width: 1024px) 46vw, 100vw"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ── How it helps ─────────────────────────────────────────────── */}
+  <section class="syd-section syd-how">
+    <div class="wrap">
+      <div class="syd-how-head reveal">
+        <span class="eyebrow">How Biteperk helps</span>
+        <h2 class="syd-h2">Bella answers, so your team can stay on the floor.</h2>
+      </div>
+      <div class="syd-cards reveal">
+        <article class="syd-card">
+          <h3>Every call answered, 24/7</h3>
+          <p>Lunch rush, last orders, the Monday a staff member calls in sick — Bella picks up every time, in under a second, no hold music.</p>
+        </article>
+        <article class="syd-card">
+          <h3>A voice that sounds local</h3>
+          <p>Trained on Australian English and tuned for Sydney suburbs and street names, so callers get a warm, familiar answer — not an overseas script.</p>
+        </article>
+        <article class="syd-card">
+          <h3>Bookings, straight to your screen</h3>
+          <p>Bella checks live availability and writes confirmed reservations to your dashboard. No double-bookings, no copy-paste, no lost notes.</p>
+        </article>
+        <article class="syd-card">
+          <h3>Your data stays in Australia</h3>
+          <p>Onshore processing, Privacy Act compliant, audio kept only as long as needed. Local team, local data, local hours.</p>
+        </article>
+      </div>
+      <div class="syd-how-cta reveal">
+        <a class="btn" href="/products/vocotable/">Explore VocoTable →</a>
+        <a class="btn-ghost" href="/contact/">Book a 15-minute walkthrough</a>
+      </div>
+    </div>
+  </section>
+
+  {/* ── Suburbs served ───────────────────────────────────────────── */}
+  <section class="syd-section syd-areas">
+    <div class="wrap">
+      <div class="reveal">
+        <span class="eyebrow">Across Greater Sydney</span>
+        <h2 class="syd-h2">From the CBD to the inner west to the beaches.</h2>
+        <p class="syd-body syd-areas-lede">
+          We work with restaurants, cafés and venues right across Sydney — and Australia-wide.
+          A few of the neighbourhoods our callers ring from:
+        </p>
+        <ul class="syd-chips">
+          {suburbs.map((s) => <li>{s}</li>)}
+        </ul>
+        <p class="syd-areas-note">
+          Outside Sydney? VocoTable works anywhere in Australia — <a href="/products/vocotable/">see the product</a>
+          or <a href="/contact/">get in touch</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {/* ── FAQ ──────────────────────────────────────────────────────── */}
+  <section class="syd-section syd-faq">
+    <div class="wrap">
+      <div class="syd-how-head reveal">
+        <span class="eyebrow">Sydney questions</span>
+        <h2 class="syd-h2">Answered plainly.</h2>
+      </div>
+      <div class="reveal" style="margin-top:40px">
+        <FAQ items={localFaqs} />
+      </div>
+    </div>
+  </section>
+
+  <Cta
+    eyebrow="Talk to a Sydney team"
+    headline="Stop losing Sydney bookings to a busy line."
+    lede="Most venues are live within 48 hours. Talk to us about a 15-minute walkthrough, or just call the number and hear Bella for yourself."
+    primary={{ label: `Call us · ${site.phone.display}`, href: site.phone.href }}
+    secondary={{ label: "See VocoTable", href: "/products/vocotable/" }}
+  />
+</Base>
+
+<style>
+  .syd-hero {
+    position: relative;
+    padding: clamp(120px, 14vw, 180px) 0 clamp(56px, 7vw, 88px);
+    overflow: hidden;
+    border-bottom: 1px solid var(--line);
+  }
+  .syd-hero-glow {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(46% 56% at 82% 8%, rgba(245, 196, 24, 0.16), transparent 70%),
+      radial-gradient(40% 50% at 0% 100%, rgba(26, 77, 26, 0.28), transparent 70%);
+  }
+  .syd-hero .wrap { position: relative; z-index: 1; }
+  .syd-top { margin-bottom: 28px; }
+  .syd-hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: clamp(40px, 6vw, 72px);
+    align-items: center;
+  }
+  .syd-h1 {
+    margin-top: 22px;
+    font-size: var(--fs-h1);
+    font-weight: 800;
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    color: var(--white);
+    max-width: 14ch;
+  }
+  .syd-h1 .gold { color: var(--gold); }
+  .syd-sub { margin-top: 24px; color: var(--text); max-width: 56ch; }
+  .syd-cta {
+    margin-top: 36px;
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .syd-trust {
+    margin-top: 36px;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    font-size: 13.5px;
+    color: var(--mist);
+  }
+  .syd-trust .gold { color: var(--gold); font-weight: 800; font-size: 16px; margin-right: 4px; }
+
+  .syd-hero-photo {
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-card);
+  }
+  .syd-hero-photo :global(.image-block) { border-radius: 0; }
+
+  .syd-section {
+    padding-block: var(--space-section);
+    border-top: 1px solid var(--line);
+  }
+  .syd-h2 {
+    font-size: var(--fs-h2);
+    font-weight: 800;
+    line-height: var(--lh-display);
+    letter-spacing: -0.025em;
+    color: var(--white);
+    margin-top: 16px;
+    max-width: 20ch;
+  }
+  .syd-body {
+    margin-top: 22px;
+    color: var(--text);
+    line-height: 1.7;
+    max-width: 60ch;
+  }
+
+  .syd-split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(40px, 5vw, 64px);
+    align-items: center;
+  }
+  .syd-split-photo {
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-card);
+  }
+  .syd-split-photo :global(.image-block) { border-radius: 0; }
+
+  .syd-how-head { text-align: center; max-width: 760px; margin: 0 auto; }
+  .syd-how-head .syd-h2 { margin-inline: auto; }
+  .syd-cards {
+    margin-top: 48px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+  }
+  .syd-card {
+    padding: 28px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--ink-1);
+    transition: border-color var(--dur-base) var(--ease-out);
+  }
+  .syd-card:hover { border-color: color-mix(in srgb, var(--gold) 30%, var(--line)); }
+  .syd-card h3 { font-size: 18px; color: var(--white); font-weight: 700; letter-spacing: -0.01em; }
+  .syd-card p { margin-top: 10px; color: var(--text); line-height: 1.6; font-size: 14.5px; }
+  .syd-how-cta {
+    margin-top: 44px;
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .syd-areas-lede { margin-bottom: 28px; }
+  .syd-chips {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .syd-chips li {
+    padding: 9px 16px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--line);
+    background: var(--ink-1);
+    color: var(--mist-2);
+    font-size: 13.5px;
+    font-weight: 500;
+  }
+  .syd-areas-note { margin-top: 28px; color: var(--mist); font-size: 14.5px; }
+  .syd-areas-note a { color: var(--gold); }
+  .syd-areas-note a:hover { text-decoration: underline; }
+
+  @media (max-width: 980px) {
+    .syd-hero-grid { grid-template-columns: 1fr; gap: 48px; }
+    .syd-hero-photo { order: -1; max-width: 420px; }
+    .syd-split { grid-template-columns: 1fr; gap: 40px; }
+    .syd-h1, .syd-h2 { max-width: none; }
+  }
+</style>
