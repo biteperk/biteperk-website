@@ -9,60 +9,50 @@ import Sydney from "@/components/sections/Sydney.astro";
 import Testimonial from "@/components/sections/Testimonial.astro";
 import Cta from "@/components/Cta.astro";
 import FooterMood from "@/components/sections/FooterMood.astro";
-import { site } from "@/data/site";
+import FAQ from "@/components/FAQ.astro";
 
 const title = "Biteperk — Voice + AI for Australian hospitality, made in Sydney";
 const description =
   "Biteperk builds voice and AI tools that help Australian restaurants stay on the floor while the phone takes care of itself. VocoTable is live; VocoOrder, VocoConcierge and VocoDrive are next.";
 
-const telephone = site.phone.href.replace("tel:", "");
+// Homepage FAQ — written around what restaurant owners actually search
+// ("can AI answer my phone", "how much", "is my data safe"). Doubles as
+// FAQPage structured data and as answer fodder for AI search engines.
+const homeFaqs = [
+  {
+    q: "Can AI really answer my restaurant's phone?",
+    a: "Yes. VocoTable, our live product, answers every inbound call in a warm Australian voice, checks real availability, and writes the booking straight to your dashboard — no hold music, no menus, no missed Friday nights. It runs 24/7 and answers in under a second.",
+  },
+  {
+    q: "Does Biteperk work for restaurants outside Sydney?",
+    a: "Absolutely. We're built and supported from Sydney, but VocoTable works for any restaurant or venue across Australia — Melbourne, Brisbane, Perth, Adelaide and regional towns included. The voice is trained on Australian English and gets local suburb names right.",
+  },
+  {
+    q: "How much does it cost to have AI answer restaurant calls in Australia?",
+    a: "VocoTable starts at a flat $80/month with no per-cover or per-call fees, and plans scale up for busier venues and multi-location groups. Most venues recover the cost from the bookings saved in the first week.",
+  },
+  {
+    q: "Will my callers know they're talking to an AI?",
+    a: "Bella sounds natural and local, and she's upfront and polite. Guests get a fast, friendly answer and a confirmed table — which beats a phone ringing out to voicemail during service.",
+  },
+  {
+    q: "How is my booking and call data handled?",
+    a: "Audio is processed in Australia, stored only as long as needed to confirm the booking, and never used to train outside models. Biteperk is Privacy Act compliant and your bookings always stay yours.",
+  },
+  {
+    q: "How quickly can I get set up?",
+    a: "Most venues are live within 48 hours. You forward your existing number to your VocoTable line — about five minutes with your phone provider — and Bella starts answering.",
+  },
+];
 
-const organizationJsonLd = {
+const faqJsonLd = {
   "@context": "https://schema.org",
-  "@type": "Organization",
-  "@id": `${site.url}/#organization`,
-  name: site.name,
-  legalName: "Biteperk Pty Ltd",
-  url: site.url,
-  logo: `${site.url}/favicon.svg`,
-  image: `${site.url}/og/home.png`,
-  description,
-  email: site.email.href.replace("mailto:", ""),
-  telephone,
-  sameAs: [site.social.linkedin],
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: site.address.street,
-    addressLocality: site.address.locality,
-    addressRegion: site.address.region,
-    postalCode: site.address.postalCode,
-    addressCountry: site.address.countryCode,
-  },
-  geo: {
-    "@type": "GeoCoordinates",
-    latitude: site.address.geo.lat,
-    longitude: site.address.geo.lng,
-  },
-  hasMap: site.address.mapsUrl,
-  areaServed: { "@type": "Country", name: "Australia" },
-  openingHoursSpecification: [
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: [...site.hours.days],
-      opens: site.hours.opens,
-      closes: site.hours.closes,
-    },
-  ],
-  contactPoint: [
-    {
-      "@type": "ContactPoint",
-      telephone,
-      email: site.email.href.replace("mailto:", ""),
-      contactType: "customer service",
-      areaServed: "AU",
-      availableLanguage: ["en-AU"],
-    },
-  ],
+  "@type": "FAQPage",
+  mainEntity: homeFaqs.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
 };
 ---
 
@@ -77,7 +67,7 @@ const organizationJsonLd = {
     is:inline
     type="application/ld+json"
     slot="jsonld"
-    set:html={JSON.stringify(organizationJsonLd)}
+    set:html={JSON.stringify(faqJsonLd)}
   />
 
   <Hero />
@@ -87,6 +77,49 @@ const organizationJsonLd = {
   <Mission />
   <Sydney />
   <Testimonial />
+
+  <section class="home-faq">
+    <div class="wrap">
+      <div class="home-faq-head reveal">
+        <span class="eyebrow">Common questions</span>
+        <h2 class="home-faq-h">Restaurant owners ask us these.</h2>
+        <p class="lede home-faq-lede">
+          Straight answers about letting an AI answer your phone — what it costs,
+          how it sounds, and where your data lives.
+        </p>
+      </div>
+      <div class="reveal home-faq-body">
+        <FAQ items={homeFaqs} />
+      </div>
+    </div>
+  </section>
+
   <Cta />
   <FooterMood />
 </Base>
+
+<style>
+  .home-faq {
+    padding-block: var(--space-section);
+    border-top: 1px solid var(--line);
+    background: var(--ink-0);
+  }
+  .home-faq-head {
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .home-faq-h {
+    font-size: var(--fs-h2);
+    font-weight: 800;
+    line-height: var(--lh-display);
+    letter-spacing: -0.025em;
+    color: var(--white);
+    margin-top: 16px;
+  }
+  .home-faq-lede {
+    margin: 20px auto 0;
+    text-align: center;
+  }
+  .home-faq-body { margin-top: 48px; }
+</style>
