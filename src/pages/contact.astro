@@ -4,7 +4,6 @@ import SectionHeader from "@/components/SectionHeader.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import ImageBlock from "@/components/ImageBlock.astro";
 import { site } from "@/data/site";
-import { products } from "@/data/products";
 
 const title = "Contact Biteperk — Restaurant voice AI, Sydney & Australia-wide";
 const description =
@@ -82,7 +81,7 @@ const description =
         <form
           class="contact-form reveal"
           method="post"
-          action="https://formspree.io/f/your-id-here"
+          action="/api/contact"
           aria-label="Contact form"
         >
           <noscript>
@@ -102,11 +101,11 @@ const description =
           <div class="contact-row">
             <div class="contact-field">
               <label for="cf-name">Your name <span aria-hidden="true">*</span></label>
-              <input id="cf-name" name="name" type="text" required autocomplete="name" />
+              <input id="cf-name" name="name" type="text" required maxlength="200" autocomplete="name" />
             </div>
             <div class="contact-field">
               <label for="cf-email">Email <span aria-hidden="true">*</span></label>
-              <input id="cf-email" name="email" type="email" required autocomplete="email" />
+              <input id="cf-email" name="email" type="email" required maxlength="320" autocomplete="email" />
             </div>
           </div>
 
@@ -117,6 +116,7 @@ const description =
                 id="cf-venue"
                 name="venue"
                 type="text"
+                maxlength="200"
                 placeholder="e.g. Natalia's Bistro"
                 autocomplete="organization"
               />
@@ -124,11 +124,7 @@ const description =
             <div class="contact-field">
               <label for="cf-product">About</label>
               <select id="cf-product" name="product">
-                <option value="">— pick one —</option>
-                <option value="general">General enquiry</option>
-                {products.map((p) => (
-                  <option value={p.slug}>{p.name}</option>
-                ))}
+                <option value="vocotable">VocoTable</option>
               </select>
             </div>
           </div>
@@ -140,11 +136,13 @@ const description =
               name="message"
               rows="5"
               required
+              maxlength="5000"
               placeholder="What would you want VocoTable (or its next sibling) to do for your venue?"
             ></textarea>
           </div>
 
           <button class="btn contact-submit" type="submit">Send message →</button>
+          <p class="contact-status" role="status" aria-live="polite" hidden></p>
           <p class="contact-fineprint">
             By submitting, you agree we can reply to your message.
             We never share your details and we'll delete the message once we've followed up.
@@ -348,22 +346,126 @@ const description =
     color: var(--mist);
     line-height: 1.5;
   }
+
+  .contact-status {
+    margin-top: 16px;
+    padding: 12px 16px;
+    border-radius: var(--r-md);
+    font-size: 14px;
+    line-height: 1.5;
+    border: 1px solid var(--line);
+  }
+  .contact-status[hidden] { display: none; }
+  .contact-status.is-error {
+    color: #ffd2cf;
+    background: rgba(220, 70, 60, 0.12);
+    border-color: rgba(220, 70, 60, 0.35);
+  }
+  .contact-status a { color: var(--gold); }
+
+  .contact-success {
+    padding: 40px 32px;
+    text-align: center;
+  }
+  .contact-success h2 {
+    margin: 0 0 12px;
+    font-size: clamp(22px, 3vw, 28px);
+    letter-spacing: -0.02em;
+    color: var(--white);
+  }
+  .contact-success p {
+    margin: 0;
+    color: var(--mist);
+    line-height: 1.6;
+  }
 </style>
 
 <script>
   (function () {
     function init() {
       const form = document.querySelector<HTMLFormElement>(".contact-form");
-      if (!form) return;
-      form.addEventListener("submit", () => {
-        // Let the action="" submit normally if no JS-side fetch endpoint is wired.
-        // If you want a JS fetch instead, swap this for a fetch() and prevent default.
-        const btn = form.querySelector<HTMLButtonElement>(".contact-submit");
+      // Guard against double-binding when astro:page-load re-runs on a persisted node.
+      if (!form || form.dataset.bound === "1") return;
+      form.dataset.bound = "1";
+
+      const btn = form.querySelector<HTMLButtonElement>(".contact-submit");
+      const status = form.querySelector<HTMLParagraphElement>(".contact-status");
+      const btnLabel = btn ? btn.textContent : "Send message →";
+      let busy = false;
+
+      function showError(msg: string) {
+        if (!status) return;
+        status.classList.add("is-error");
+        status.innerHTML = msg;
+        status.hidden = false;
+      }
+
+      function showSuccess() {
+        form.innerHTML =
+          '<div class="contact-success">' +
+          "<h2>Thanks — we'll be in touch.</h2>" +
+          "<p>Your message has reached the Biteperk team. We usually reply within a " +
+          "few hours during business hours (Mon–Fri, 9am–5pm AEST).</p>" +
+          "</div>";
+      }
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (busy) return; // double-submit guard
+        busy = true;
+
+        if (status) {
+          status.hidden = true;
+          status.classList.remove("is-error");
+        }
         if (btn) {
           btn.setAttribute("aria-busy", "true");
+          btn.disabled = true;
           btn.textContent = "Sending…";
         }
-        // Honour native submit — the page will navigate to Formspree's response.
+
+        const fd = new FormData(form);
+        const payload: Record<string, string> = {};
+        fd.forEach((v, k) => {
+          payload[k] = typeof v === "string" ? v : "";
+        });
+
+        try {
+          const res = await fetch("/api/contact", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          let body: { ok?: boolean; error?: string } = {};
+          try {
+            body = await res.json();
+          } catch {
+            // Non-JSON (e.g. an HTML error page) — treat as failure below.
+          }
+
+          if (res.ok && body.ok) {
+            showSuccess();
+            return; // form is gone; nothing left to re-enable
+          }
+
+          showError(
+            (body.error || "Sorry — something went wrong.") +
+              ' You can also email us at <a href="mailto:hello@biteperk.com.au">hello@biteperk.com.au</a>.'
+          );
+        } catch {
+          showError(
+            'Network error — please try again, or email us at ' +
+              '<a href="mailto:hello@biteperk.com.au">hello@biteperk.com.au</a>.'
+          );
+        } finally {
+          busy = false;
+          if (btn) {
+            btn.removeAttribute("aria-busy");
+            btn.disabled = false;
+            btn.textContent = btnLabel;
+          }
+        }
       });
     }
     init();

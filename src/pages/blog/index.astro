@@ -1,0 +1,228 @@
+---
+/**
+ * /blog/ — the Guides hub.
+ *
+ * Lists every published post, cornerstone (featured) first, then newest.
+ * Emits Blog + BreadcrumbList structured data. Drafts are excluded.
+ */
+import Base from "@/layouts/Base.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import Cta from "@/components/Cta.astro";
+import { getCollection } from "astro:content";
+import { site } from "@/data/site";
+import { WEBSITE_ID } from "@/data/schema";
+
+const path = "/blog/";
+const title = "Guides for restaurant owners — Biteperk";
+const description =
+  "Practical, plain-English guides on missed calls, AI phone answering, bookings and running a busy restaurant phone — written for Australian venues by the team behind VocoTable.";
+
+const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort((a, b) => {
+  if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+  return b.data.publishDate.getTime() - a.data.publishDate.getTime();
+});
+
+const fmt = (d: Date) =>
+  new Intl.DateTimeFormat("en-AU", { day: "numeric", month: "long", year: "numeric" }).format(d);
+const iso = (d: Date) => d.toISOString().slice(0, 10);
+
+const blogJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "@id": `${site.url}${path}#blog`,
+  name: "Biteperk Guides",
+  description,
+  url: `${site.url}${path}`,
+  inLanguage: "en-AU",
+  isPartOf: { "@id": WEBSITE_ID },
+  blogPost: posts.map((p) => ({
+    "@type": "BlogPosting",
+    headline: p.data.title,
+    description: p.data.description,
+    datePublished: iso(p.data.publishDate),
+    url: `${site.url}/blog/${p.id}/`,
+  })),
+};
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: site.url },
+    { "@type": "ListItem", position: 2, name: "Guides", item: `${site.url}${path}` },
+  ],
+};
+---
+
+<Base title={title} description={description} path={path} ogImage="/og/blog.png">
+  <Fragment slot="jsonld">
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(blogJsonLd)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
+  </Fragment>
+
+  <section class="blog-hero">
+    <div class="blog-hero-glow" aria-hidden="true"></div>
+    <div class="wrap">
+      <div class="blog-top">
+        <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Guides" }]} />
+      </div>
+      <span class="eyebrow">Guides</span>
+      <h1 class="blog-h1">Field notes for a <span class="gold">busier, calmer floor.</span></h1>
+      <p class="lede blog-lede">
+        Practical, no-jargon guides on the unglamorous bits — the phone, the missed calls,
+        the bookings — written for Australian restaurants by the team behind VocoTable.
+      </p>
+    </div>
+  </section>
+
+  <section class="blog-list-wrap">
+    <div class="wrap">
+      {posts.length === 0 ? (
+        <p class="blog-empty">First guides are on the way. In the meantime, <a href="/contact/">say hello</a>.</p>
+      ) : (
+        <ul class="blog-grid">
+          {posts.map((post) => (
+            <li class="blog-cell reveal">
+              <a class="blog-card" href={`/blog/${post.id}/`}>
+                {post.data.featured && <span class="blog-card-flag">Start here</span>}
+                <div class="blog-card-meta">
+                  <time datetime={iso(post.data.publishDate)}>{fmt(post.data.publishDate)}</time>
+                  {post.data.tags[0] && <span class="blog-card-tag">{post.data.tags[0]}</span>}
+                </div>
+                <h2 class="blog-card-title">{post.data.title}</h2>
+                <p class="blog-card-desc">{post.data.description}</p>
+                <span class="blog-card-read">Read the guide →</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </section>
+
+  <Cta
+    eyebrow="Have a venue?"
+    headline="Rather skip the reading and just hear it?"
+    lede="VocoTable answers a real restaurant phone in a warm Australian voice. Call us and listen, or book a 15-minute walkthrough."
+  />
+</Base>
+
+<style>
+  .blog-hero {
+    position: relative;
+    padding: clamp(120px, 14vw, 180px) 0 clamp(40px, 5vw, 64px);
+    overflow: hidden;
+    border-bottom: 1px solid var(--line);
+  }
+  .blog-hero-glow {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(44% 56% at 78% 0%, rgba(245, 196, 24, 0.14), transparent 70%);
+  }
+  .blog-hero .wrap { position: relative; z-index: 1; }
+  .blog-top { margin-bottom: 28px; }
+  .blog-h1 {
+    margin-top: 18px;
+    font-size: var(--fs-h1);
+    font-weight: 800;
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    color: var(--white);
+    max-width: 16ch;
+  }
+  .blog-h1 .gold { color: var(--gold); }
+  .blog-lede { margin-top: 24px; }
+
+  .blog-list-wrap { padding-block: var(--space-section); background: var(--ink-0); }
+  .blog-empty { color: var(--mist); }
+  .blog-empty a { color: var(--gold); }
+
+  .blog-grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+  }
+  .blog-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 28px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background:
+      linear-gradient(160deg, rgba(255, 255, 255, 0.02), transparent 55%),
+      var(--ink-1);
+    box-shadow: var(--shadow-card);
+    transition:
+      transform var(--dur-base) var(--ease-out),
+      border-color var(--dur-base) var(--ease-out),
+      box-shadow var(--dur-base) var(--ease-out);
+  }
+  .blog-card:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--gold) 26%, var(--line));
+    box-shadow: var(--shadow-card-hover);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .blog-card:hover { transform: none; }
+  }
+  .blog-card-flag {
+    position: absolute;
+    top: -10px;
+    left: 24px;
+    padding: 4px 12px;
+    border-radius: var(--r-pill);
+    font-size: 10.5px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    font-weight: 700;
+    background: var(--gold);
+    color: #1a0f04;
+  }
+  .blog-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    letter-spacing: 0.4px;
+    color: var(--mist);
+    text-transform: uppercase;
+  }
+  .blog-card-tag {
+    padding: 3px 10px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--line);
+    color: var(--mist-2);
+    letter-spacing: 1px;
+    font-size: 10.5px;
+  }
+  .blog-card-title {
+    margin-top: 16px;
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: var(--white);
+  }
+  .blog-card:hover .blog-card-title { color: var(--gold); }
+  .blog-card-desc {
+    margin-top: 12px;
+    color: var(--text);
+    font-size: 14.5px;
+    line-height: 1.6;
+    flex: 1;
+  }
+  .blog-card-read {
+    margin-top: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.3px;
+  }
+</style>
