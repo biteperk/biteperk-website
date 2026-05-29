@@ -21,9 +21,14 @@ export const WEBSITE_ID = `${site.url}/#website`;
 const telephone = site.phone.href.replace("tel:", "");
 const email = site.email.href.replace("mailto:", "");
 
-/** The company. Full NAP + geo + hours so it can anchor local results. */
+/**
+ * The company. Typed as both Organization and LocalBusiness so Google can
+ * treat Biteperk as a real, physically-located business (Haymarket) AND as
+ * the brand/publisher behind the site. Full NAP + geo + hours + priceRange
+ * are what let it anchor local results and a knowledge panel.
+ */
 export const organizationNode = {
-  "@type": "Organization",
+  "@type": ["Organization", "LocalBusiness"],
   "@id": ORG_ID,
   name: site.name,
   legalName: "Biteperk Pty Ltd",
@@ -36,6 +41,8 @@ export const organizationNode = {
   description: site.description,
   email,
   telephone,
+  priceRange: "$$",
+  currenciesAccepted: "AUD",
   sameAs: [site.social.linkedin],
   address: {
     "@type": "PostalAddress",
