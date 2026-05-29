@@ -11,27 +11,53 @@ import Cta from "@/components/Cta.astro";
 import FooterMood from "@/components/sections/FooterMood.astro";
 import { site } from "@/data/site";
 
-const title = "Biteperk — Voice + AI for hospitality, made in Sydney";
+const title = "Biteperk — Voice + AI for Australian hospitality, made in Sydney";
 const description =
-  "Biteperk builds voice and AI tools that help restaurants stay on the floor while the phone takes care of itself. VocoTable is live; VocoOrder, VocoConcierge and VocoDrive are next.";
+  "Biteperk builds voice and AI tools that help Australian restaurants stay on the floor while the phone takes care of itself. VocoTable is live; VocoOrder, VocoConcierge and VocoDrive are next.";
+
+const telephone = site.phone.href.replace("tel:", "");
 
 const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
+  "@id": `${site.url}/#organization`,
   name: site.name,
+  legalName: "Biteperk Pty Ltd",
   url: site.url,
   logo: `${site.url}/favicon.svg`,
+  image: `${site.url}/og/home.png`,
   description,
+  email: site.email.href.replace("mailto:", ""),
+  telephone,
   sameAs: [site.social.linkedin],
   address: {
     "@type": "PostalAddress",
-    addressLocality: site.address.city,
-    addressCountry: "AU",
+    streetAddress: site.address.street,
+    addressLocality: site.address.locality,
+    addressRegion: site.address.region,
+    postalCode: site.address.postalCode,
+    addressCountry: site.address.countryCode,
   },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: site.address.geo.lat,
+    longitude: site.address.geo.lng,
+  },
+  hasMap: site.address.mapsUrl,
+  areaServed: { "@type": "Country", name: "Australia" },
+  openingHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: [...site.hours.days],
+      opens: site.hours.opens,
+      closes: site.hours.closes,
+    },
+  ],
   contactPoint: [
     {
       "@type": "ContactPoint",
-      telephone: site.phone.href.replace("tel:", ""),
+      telephone,
+      email: site.email.href.replace("mailto:", ""),
       contactType: "customer service",
       areaServed: "AU",
       availableLanguage: ["en-AU"],
