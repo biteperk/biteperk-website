@@ -59,7 +59,7 @@ const breadcrumbJsonLd = {
 };
 ---
 
-<Base title={`${post.data.title} · Biteperk`} description={post.data.description} path={path} ogImage={ogImage}>
+<Base title={`${post.data.seoTitle ?? post.data.title} · Biteperk`} description={post.data.description} path={path} ogImage={ogImage}>
   <Fragment slot="jsonld">
     <script is:inline type="application/ld+json" set:html={JSON.stringify(articleJsonLd)} />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
