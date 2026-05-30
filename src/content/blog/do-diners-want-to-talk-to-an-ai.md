@@ -1,5 +1,6 @@
 ---
 title: "Do diners actually want to talk to an AI on the phone?"
+seoTitle: "Do diners want to talk to an AI on the phone?"
 description: "The biggest worry restaurant owners have about an AI phone host: won't guests hate it? Here's what diners actually care about — and when a voice agent helps or hurts."
 publishDate: 2026-05-30
 tags: ["Customer experience", "AI receptionist", "FAQ"]
