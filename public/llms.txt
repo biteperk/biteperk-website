@@ -11,7 +11,7 @@
 - VocoTable pricing (AUD, flat monthly, no per-call or per-cover fees): Solo $80/month (up to 300 covers, 1 venue), Pro $150/month (unlimited covers — "Our pick"), Group $250/month (up to 3 venues), Enterprise custom (4+ venues). Free week trial; month-to-month, no lock-in.
 - Setup: works with a venue's existing phone number — just forward calls. No new hardware, no installation, no IT. Most venues are live the same day.
 - The AI voice ("Bella") speaks natural Australian English and gets local suburb/street names right — not an overseas call centre.
-- Data/privacy: Australian data residency; Privacy Act compliant; call audio stays in-house and is not sold. (See the privacy policy for specifics.)
+- Data/privacy: Australian data residency (audio processed in Australia); Privacy Act compliant; call audio is kept only as long as needed to confirm the booking, then deleted; never used to train AI models outside Biteperk; your bookings and data stay yours and are exported within 24 hours if you cancel. (See the privacy policy for specifics.)
 
 ## Products
 
