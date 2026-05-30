@@ -15,8 +15,14 @@ import { glob } from "astro/loaders";
 const blog = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./src/content/blog" }),
   schema: z.object({
-    /** Page <title> and H1. Keep the primary keyword near the front. */
+    /** Page H1 + card heading. Keep the primary keyword near the front. */
     title: z.string(),
+    /**
+     * Optional shorter <title> for search results (kept ≤ ~60 chars before
+     * the " · Biteperk" suffix). Falls back to `title` when omitted. Use it
+     * when the on-page H1 reads better long but would truncate in SERPs.
+     */
+    seoTitle: z.string().optional(),
     /** Meta description + card excerpt. ~150–160 chars. */
     description: z.string(),
     publishDate: z.coerce.date(),
