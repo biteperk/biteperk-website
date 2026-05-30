@@ -1,5 +1,6 @@
 ---
 title: "Why an Australian voice matters on your restaurant's phone"
+seoTitle: "Why an Australian voice matters on the phone"
 description: "Diners can tell within a second when a call has gone offshore. Here's why a genuinely local voice — accent, place names, and data — changes how guests feel about your venue."
 publishDate: 2026-05-29
 tags: ["Brand", "Customer experience", "Australian"]
