@@ -13,9 +13,12 @@ interface Props {
   align?: "start" | "center";
   /** Whether to mark this header as a `.reveal` so it animates in. */
   reveal?: boolean;
+  /** Heading level for the headline. Use "h1" when this is the page's
+   * primary heading (e.g. a page hero); defaults to "h2" for sections. */
+  as?: "h1" | "h2";
 }
 
-const { eyebrow, headline, lede, align = "start", reveal = true } = Astro.props;
+const { eyebrow, headline, lede, align = "start", reveal = true, as: Heading = "h2" } = Astro.props;
 const classes = ["section-header", `align-${align}`, reveal && "reveal"]
   .filter(Boolean)
   .join(" ");
@@ -27,9 +30,9 @@ const classes = ["section-header", `align-${align}`, reveal && "reveal"]
       <span class="eyebrow">{eyebrow}</span>
     </div>
   )}
-  <h2 class="section-header-h">
+  <Heading class="section-header-h">
     {headline ? headline : <slot name="headline" />}
-  </h2>
+  </Heading>
   {(lede || Astro.slots.has("lede")) && (
     <p class="section-header-lede lede">
       {lede ? lede : <slot name="lede" />}
