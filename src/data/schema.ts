@@ -17,6 +17,10 @@ import { site } from "./site";
 
 export const ORG_ID = `${site.url}/#organization`;
 export const WEBSITE_ID = `${site.url}/#website`;
+/** Stable @id for the one Voco product (defined on /products/, referenced by the per-capability pages). */
+export const VOCO_ID = `${site.url}/products/#voco`;
+/** Stable @id for a per-capability SoftwareApplication "edition" of Voco. */
+export const vocoEditionId = (slug: string) => `${site.url}/products/${slug}/#software`;
 
 const telephone = site.phone.href.replace("tel:", "");
 const email = site.email.href.replace("mailto:", "");
@@ -101,3 +105,76 @@ export const siteGraph = {
   "@context": "https://schema.org",
   "@graph": [organizationNode, websiteNode],
 };
+
+/**
+ * Build a FAQPage node for a page that carries its own Q&A list. `isPartOf`
+ * links it to the sitewide WebSite by @id so Google merges it into the one
+ * entity graph (same pattern the page-level BreadcrumbList/Article nodes use).
+ *
+ * The page emits the returned object as JSON-LD via the Base `jsonld` slot.
+ */
+export function buildFaqPage(
+  faqs: ReadonlyArray<{ readonly q: string; readonly a: string }>,
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    isPartOf: { "@id": WEBSITE_ID },
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
+}
+
+/**
+ * Build the Voco SoftwareApplication node for the /products overview.
+ *
+ * Voco is ONE product. This single node — as opposed to the four per-capability
+ * SoftwareApplication nodes on the /products/<slug>/ pages — is what tells
+ * Google the brand sells one product (with capabilities), not four. Linked to
+ * the Organization (publisher) and WebSite (isPartOf) by @id so it merges into
+ * the one sitewide entity graph.
+ *
+ * `offers` is derived only from real prices passed in by the page (the live
+ * capability's tiers) — never fabricated. `featureList` should list live
+ * features only, so the structured data doesn't overpromise unshipped work.
+ */
+export function buildVocoApplication(opts: {
+  readonly description: string;
+  readonly featureList: ReadonlyArray<string>;
+  /** Numeric AUD prices already parsed from the live capability's tiers. */
+  readonly prices?: ReadonlyArray<number>;
+  /** @ids of the per-capability "edition" nodes (build with `vocoEditionId(slug)`). */
+  readonly editionIds?: ReadonlyArray<string>;
+}) {
+  const priced = (opts.prices ?? []).filter((n) => Number.isFinite(n) && n > 0);
+  const parts = opts.editionIds ?? [];
+  return {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "@id": VOCO_ID,
+    name: "Voco",
+    url: `${site.url}/products/`,
+    description: opts.description,
+    applicationCategory: "BusinessApplication",
+    operatingSystem: "Web, Phone",
+    featureList: [...opts.featureList],
+    publisher: { "@id": ORG_ID },
+    isPartOf: { "@id": WEBSITE_ID },
+    ...(parts.length > 0 ? { hasPart: parts.map((id) => ({ "@id": id })) } : {}),
+    ...(priced.length > 0
+      ? {
+          offers: {
+            "@type": "AggregateOffer",
+            priceCurrency: "AUD",
+            lowPrice: Math.min(...priced).toString(),
+            highPrice: Math.max(...priced).toString(),
+            offerCount: priced.length.toString(),
+            availability: "https://schema.org/InStock",
+          },
+        }
+      : {}),
+  };
+}

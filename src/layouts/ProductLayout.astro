@@ -19,6 +19,7 @@ import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import Cta from "@/components/Cta.astro";
 import type { Product } from "@/data/products";
 import { site } from "@/data/site";
+import { VOCO_ID, vocoEditionId } from "@/data/schema";
 
 interface Props {
   product: Product;
@@ -39,10 +40,13 @@ const breadcrumbJsonLd = {
 const productJsonLd = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
+  "@id": vocoEditionId(product.slug),
   name: product.name,
   description: product.summary,
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web, Phone",
+  // This capability page is an edition of the one Voco product.
+  isPartOf: { "@id": VOCO_ID },
   brand: { "@type": "Organization", name: site.name },
   ...(product.pricing && product.pricing.tiers.length > 0 && (() => {
     const priced = product.pricing.tiers

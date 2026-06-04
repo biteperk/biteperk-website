@@ -20,6 +20,16 @@ import { site } from "./site";
 
 export type ProductStatus = "live" | "in-development" | "concept";
 
+/**
+ * Packaging role within the Voco product line. Orthogonal to `status`:
+ *   - `core`  — Voco itself; every restaurant gets it (currently the Table
+ *               capability / bookings, which is `live`).
+ *   - `addon` — a capability switched on alongside the same core agent
+ *               (takeaway, concierge, drive-thru).
+ * `role` describes packaging; `status` describes shipping maturity.
+ */
+export type ProductRole = "core" | "addon";
+
 export interface ProductFeature {
   readonly title: string;
   readonly body?: string;
@@ -34,6 +44,13 @@ export interface ProductMetric {
 export interface ProductFAQ {
   readonly q: string;
   readonly a: string;
+}
+
+export interface Testimonial {
+  readonly quote: string;
+  readonly author: string;
+  /** Attribution line, e.g. "Owner · Natalia's Bistro, Sydney". */
+  readonly role: string;
 }
 
 export interface PricingTier {
@@ -62,6 +79,10 @@ export interface Product {
   readonly tagline: string;
   readonly summary: string;
   readonly status: ProductStatus;
+  /** Packaging role in the Voco line — the one `core` product vs `addon` capabilities. */
+  readonly role: ProductRole;
+  /** Owner-outcome headline for the /products capabilities grid (falls back to `tagline`). */
+  readonly outcome?: string;
   readonly accent: string;
   readonly externalUrl?: string;
   readonly hero: {
@@ -94,6 +115,8 @@ const vocotable: Product = {
   summary:
     "Bella answers every call in a warm Australian voice, books the table, and never sleeps — the AI phone host built for Sydney restaurants.",
   status: "live",
+  role: "core",
+  outcome: "Never miss another booking — even when every line's busy.",
   accent: "rgba(245, 196, 24, 0.32)",
   externalUrl: site.vocotableUrl,
   hero: {
@@ -251,6 +274,8 @@ const vocoorder: Product = {
   summary:
     "A voice agent that takes pickup orders, reads the menu in your accent, and drops the ticket straight into your POS — so no order is ever lost to a busy line.",
   status: "in-development",
+  role: "addon",
+  outcome: "Never lose a takeaway order to a phone nobody can reach.",
   accent: "rgba(255, 184, 64, 0.28)",
   hero: {
     headline: "Pick up every order, even when your kitchen is on the floor.",
@@ -287,6 +312,8 @@ const vococoncierge: Product = {
   summary:
     "The bit between the booking and the guest sitting down. Waitlist management, post-booking texts, no-show recovery — quietly handled.",
   status: "in-development",
+  role: "addon",
+  outcome: "Turn no-shows and waitlists into filled tables.",
   accent: "rgba(74, 138, 72, 0.32)",
   hero: {
     headline: "Everything between the booking and the table — handled.",
@@ -321,8 +348,10 @@ const vocodrive: Product = {
   wordmark: { prefix: "Voco", suffix: "Drive" },
   tagline: "Drive-thru voice AI, built for the Australian window.",
   summary:
-    "An order taker for cafes and quick-service drive-thrus. Built around the rhythms of an Australian morning rush, not a US franchise script.",
+    "A voice agent for the drive-thru window, built for the Australian morning rush — local accents, local orders, local rhythm. Not a US franchise script bolted onto an Aussie café.",
   status: "concept",
+  role: "addon",
+  outcome: "Keep the morning drive-thru queue moving.",
   accent: "rgba(245, 196, 24, 0.22)",
   hero: {
     headline: "An order taker that knows the Saturday-morning queue.",
@@ -332,16 +361,16 @@ const vocodrive: Product = {
   },
   features: [
     {
-      title: "Built for the rush",
-      body: "Designed around peak-hour throughput. Latency you can hear, not feel.",
+      title: "Tuned to the Australian accent",
+      body: "Understands how Australians actually order at a window — clipped, quick and accented — where a model trained on US drive-thrus asks them to repeat themselves.",
     },
     {
-      title: "Local cadence",
-      body: "Knows that 'flat white, two sugars' is one order, not three follow-up questions.",
+      title: "Local ordering rhythm",
+      body: "Knows 'flat white, two sugars' is one order, not three follow-up questions. Built around the way an Australian queue really moves, not a franchise script.",
     },
     {
-      title: "POS + screen sync",
-      body: "Order shows on the kitchen screen the moment the customer finishes speaking.",
+      title: "Built for the morning rush",
+      body: "Designed for peak-hour throughput, with the order on the kitchen screen the moment the customer stops speaking.",
     },
   ],
   seo: {
@@ -356,6 +385,83 @@ export const products: ReadonlyArray<Product> = [
   vocoorder,
   vococoncierge,
   vocodrive,
+];
+
+/**
+ * Voco is ONE product. `coreProduct` is the always-on agent every venue gets
+ * (the live Table/bookings capability); `addonProducts` are the capabilities
+ * switched on alongside it. The /products overview renders from these so the
+ * page reads as "one product + add-ons", not a grid of four equals.
+ */
+const _core = products.find((p) => p.role === "core");
+if (!_core) {
+  throw new Error("products.ts: exactly one product must have role 'core'.");
+}
+export const coreProduct: Product = _core;
+export const addonProducts: ReadonlyArray<Product> = products.filter(
+  (p) => p.role === "addon",
+);
+
+/**
+ * Optional product-line content for the /products overview. Empty/undefined
+ * slots render honest placeholders rather than fabricated scale — so the page
+ * can grow real proof later without a refactor.
+ */
+export const vocoProof: {
+  readonly testimonials: ReadonlyArray<Testimonial>;
+  readonly demo?: { readonly label: string; readonly href: string };
+} = {
+  testimonials: [
+    {
+      quote:
+        "We used to lose tables every Friday night just because nobody could reach the phone. Bella picks up every single call — and the bookings just appear on our screen. It paid for itself in the first week.",
+      author: "Natalia",
+      role: "Owner · Natalia's Bistro, Sydney",
+    },
+  ],
+  // Real Bella audio only — points at the live app's demo anchor. Swap to a
+  // self-hosted <audio> source here if a standalone clip is produced.
+  demo: { label: "Hear Bella take a booking", href: `${site.vocotableUrl}#meet-bella` },
+};
+
+/**
+ * The optional full-front-of-house bundle: Voco running every line at once.
+ * Presented as a single CTA, NOT a fifth product/slug. `name` is a provisional
+ * working name — change in one place here when it's locked.
+ */
+export const vocoBundle = {
+  name: "The Lot",
+  fallbackName: "Full Service",
+  tagline: "Voco running your whole front-of-house — one agent, one voice, one bill.",
+  cta: { label: "Book a demo", href: "/contact/?product=general" },
+} as const;
+
+/** Product-line FAQ for the /products overview (distinct from per-capability FAQs). */
+export const vocoFaq: ReadonlyArray<ProductFAQ> = [
+  {
+    q: "How hard is it to get started?",
+    a: "It's a phone number, not a hardware install. You forward your existing line to Voco — about five minutes with your phone provider — with no new hardware, no apps, and nothing for your team to learn. You keep your number, and most venues are live the same day.",
+  },
+  {
+    q: "What can Voco do today, and what's coming?",
+    a: "Today Voco answers your phone and takes bookings — that's live and serving paying venues. Takeaway and pickup ordering and the front-of-house concierge are in active development, and a drive-thru capability is on the drawing board. Start with bookings now and switch the rest on as they ship — same agent, same voice.",
+  },
+  {
+    q: "Can I start with just bookings?",
+    a: "Yes — that's exactly how Voco works. Every venue starts with the live bookings capability, then turns on add-ons when they need them. They're capabilities of the same agent, not separate products to buy and wire up again.",
+  },
+  {
+    q: "What happens if Bella isn't sure what a caller wants?",
+    a: "She doesn't guess. If a call is unclear — a tricky request, a name she can't quite catch — Bella takes the caller's details and a message and flags your team to call them back, so an uncertain moment becomes a callback rather than a wrong booking.",
+  },
+  {
+    q: "Does Voco actually sound Australian?",
+    a: "Yes. Bella speaks natural Australian English and is tuned for local suburb and street names — not an overseas call centre. It's one of the first things owners notice.",
+  },
+  {
+    q: "What does Voco cost?",
+    a: "The live bookings capability is flat monthly pricing with a free week to try it — no per-call or per-cover fees. See the VocoTable page for current plans. As new capabilities ship, we'll price them honestly and only for what you switch on.",
+  },
 ];
 
 export function getProduct(slug: string): Product | undefined {

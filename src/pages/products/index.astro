@@ -1,23 +1,22 @@
 ---
 import Base from "@/layouts/Base.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
-import ProductCard from "@/components/ProductCard.astro";
+import CapabilityCard from "@/components/CapabilityCard.astro";
+import PullQuote from "@/components/PullQuote.astro";
+import FAQ from "@/components/FAQ.astro";
 import Cta from "@/components/Cta.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import ImageBlock from "@/components/ImageBlock.astro";
-import { products, statusLabel, type ProductStatus } from "@/data/products";
+import { coreProduct, addonProducts, vocoProof, vocoBundle, vocoFaq } from "@/data/products";
+import { buildFaqPage, buildVocoApplication, vocoEditionId } from "@/data/schema";
 import { site } from "@/data/site";
 
-const title = "Products — Biteperk";
+const title = "Voco — AI phone host for restaurants · Biteperk";
 const description =
-  "Four products. One mission. VocoTable is live; VocoOrder, VocoConcierge and VocoDrive are next. Voice + AI for Australian hospitality.";
+  "Voco is one AI phone host for your restaurant — a warm Australian voice that answers every call and books the table, day or night. Start with bookings; add takeaway, concierge and drive-thru as you grow.";
 
-type FilterValue = "all" | ProductStatus;
-const statuses: ReadonlyArray<FilterValue> = ["all", "live", "in-development", "concept"];
-
-function chipLabel(s: FilterValue): string {
-  return s === "all" ? "All" : statusLabel(s);
-}
+// One product, four capabilities — core first, then add-ons (from products.ts).
+const capabilities = [coreProduct, ...addonProducts];
 
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",
@@ -27,6 +26,36 @@ const breadcrumbJsonLd = {
     { "@type": "ListItem", position: 2, name: "Products", item: `${site.url}/products/` },
   ],
 };
+
+// Page-level FAQPage, linked into the sitewide entity graph by @id.
+const faqJsonLd = buildFaqPage(vocoFaq);
+
+// Voco-level SoftwareApplication — the ONE product (vs the four per-capability
+// nodes on the /products/<slug>/ pages). Prices come from the live capability's
+// real tiers; featureList is live-only so the schema never overpromises.
+const corePrices = (coreProduct.pricing?.tiers ?? [])
+  .map((t) => Number(t.amount.replace(/[^0-9.]/g, "")))
+  .filter((n) => Number.isFinite(n) && n > 0);
+const vocoAppJsonLd = buildVocoApplication({
+  description:
+    'Voco is one AI phone host for restaurants, voiced by "Bella" — a warm Australian voice that answers every call and books the table, 24/7. Bookings are live today; takeaway, concierge and drive-thru capabilities are rolling out.',
+  featureList: [
+    "24/7 phone answering in a natural Australian voice",
+    "Live table bookings written straight into your diary",
+    "Call transcripts and recordings",
+    "Australian data residency, Privacy Act compliant",
+  ],
+  prices: corePrices,
+  editionIds: capabilities.map((p) => vocoEditionId(p.slug)),
+});
+
+// Decorative hospitality floor under the hero (real alts; aria-hidden as a set).
+const collage = [
+  { slug: "pour-shot", alt: "A drink being poured during restaurant service." },
+  { slug: "empty-tables-evening", alt: "Empty restaurant tables set and waiting for evening guests." },
+  { slug: "pizza-pass", alt: "A fresh pizza on the kitchen pass during service." },
+  { slug: "hands-headset", alt: "A restaurant host taking a booking call on a headset." },
+] as const;
 ---
 
 <Base title={title} description={description} path="/products/" ogImage="/og/products.png">
@@ -36,81 +65,174 @@ const breadcrumbJsonLd = {
     slot="jsonld"
     set:html={JSON.stringify(breadcrumbJsonLd)}
   />
+  <script
+    is:inline
+    type="application/ld+json"
+    slot="jsonld"
+    set:html={JSON.stringify(faqJsonLd)}
+  />
+  <script
+    is:inline
+    type="application/ld+json"
+    slot="jsonld"
+    set:html={JSON.stringify(vocoAppJsonLd)}
+  />
 
-  <section class="prod-index">
-    <div class="prod-index-glow" aria-hidden="true"></div>
+  {/* ── Hero ─────────────────────────────────────────────────────── */}
+  <section class="vx-hero">
+    <div class="vx-hero-glow" aria-hidden="true"></div>
     <div class="wrap">
-      <div class="prod-index-top">
+      <div class="vx-hero-top">
         <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Products" }]} />
       </div>
+
       <SectionHeader
         as="h1"
-        eyebrow="The catalogue"
-        lede="One mission — keep restaurant teams on the floor while the unglamorous bits (the phone, the bookings, the no-shows) take care of themselves."
+        eyebrow="Meet Voco"
+        lede="A warm Australian voice that answers every call, day or night. Start with bookings; add takeaway, concierge and drive-thru as you need them — same agent, same voice, your whole front-of-house line handled."
       >
         <Fragment slot="headline">
-          Four products.
+          One AI phone host
           <br />
-          <span class="gold">One mission.</span>
+          for <span class="gold">your restaurant.</span>
         </Fragment>
       </SectionHeader>
 
-      <div class="prod-index-collage reveal" aria-hidden="true">
-        <div class="prod-index-collage-cell"><ImageBlock slug="pour-shot" alt="A drink being poured during restaurant service." aspect="3 / 4" widths="(min-width: 1024px) 22vw, 45vw" /></div>
-        <div class="prod-index-collage-cell"><ImageBlock slug="empty-tables-evening" alt="Empty restaurant tables set and waiting for evening guests." aspect="3 / 4" widths="(min-width: 1024px) 22vw, 45vw" /></div>
-        <div class="prod-index-collage-cell"><ImageBlock slug="pizza-pass" alt="A fresh pizza on the kitchen pass during service." aspect="3 / 4" widths="(min-width: 1024px) 22vw, 45vw" /></div>
-        <div class="prod-index-collage-cell"><ImageBlock slug="hands-headset" alt="A restaurant host taking a booking call on a headset." aspect="3 / 4" widths="(min-width: 1024px) 22vw, 45vw" /></div>
-      </div>
-
-      <div class="prod-index-filters reveal" role="tablist" aria-label="Filter products by status">
-        {statuses.map((s) => (
-          <button
-            type="button"
-            class="filter-chip"
-            data-filter={s}
-            aria-pressed={s === "all" ? "true" : "false"}
-            role="tab"
+      {/* Proof-forward: a voice product earns trust by being heard. Demo sits
+          high, right under the lede, next to the primary CTA. */}
+      <div class="vx-hero-cta reveal">
+        <a class="btn" href="/contact/">Book a demo</a>
+        {vocoProof.demo && (
+          <a
+            class="btn-ghost vx-demo"
+            href={vocoProof.demo.href}
+            rel={vocoProof.demo.href.startsWith("http") ? "noopener" : undefined}
+            target={vocoProof.demo.href.startsWith("http") ? "_blank" : undefined}
           >
-            {chipLabel(s)}
-          </button>
-        ))}
+            <span class="vx-demo-play" aria-hidden="true">▶</span>
+            {vocoProof.demo.label}
+          </a>
+        )}
       </div>
 
-      <div class="prod-index-grid reveal" id="products-grid">
-        {products.map((p) => (
-          <div class="prod-cell" data-status={p.status}>
-            <ProductCard product={p} variant="tile" />
+      <div class="vx-collage reveal" aria-hidden="true">
+        {collage.map((c) => (
+          <div class="vx-collage-cell">
+            <ImageBlock slug={c.slug} alt={c.alt} aspect="3 / 4" widths="(min-width: 1024px) 22vw, 45vw" />
           </div>
         ))}
       </div>
+    </div>
+  </section>
 
-      <div class="prod-honesty reveal">
-        <div class="prod-honesty-card">
-          <div class="eyebrow">What we're not building</div>
-          <p>
-            We don't build generic AI agents. We don't build platforms. We don't build for industries we don't know.
-            Biteperk is hospitality, in Sydney. Everything else stays out of the catalogue.
-          </p>
+  {/* ── Capabilities ─────────────────────────────────────────────── */}
+  <section class="vx-section vx-caps">
+    <div class="wrap">
+      <SectionHeader
+        eyebrow="What Voco does"
+        headline="Four jobs. One agent, one voice."
+        lede="Voco handles your phone line end to end. Bookings are live today; the rest switch on as they ship — no new number, no second system to learn."
+      />
+      <div class="vx-caps-grid reveal">
+        {capabilities.map((p) => <CapabilityCard product={p} />)}
+      </div>
+    </div>
+  </section>
+
+  {/* ── Trust / human-in-the-loop ────────────────────────────────── */}
+  <section class="vx-section vx-trust">
+    <div class="wrap">
+      <div class="vx-trust-card reveal">
+        <span class="eyebrow">How we keep it accurate</span>
+        <h2 class="vx-h2">A human in the loop, by design.</h2>
+        <p class="vx-trust-body">
+          Voco is built to know the limits of a phone call. When Bella is confident, she handles the
+          whole conversation — the booking, the details, the confirmation. When she isn't — a tricky
+          request, a name she can't quite catch — she doesn't guess. She takes the caller's details and
+          a message, and flags your team to call them back.
+        </p>
+        <p class="vx-trust-body">
+          A low-confidence moment becomes a callback, not a wrong booking. That's the difference between
+          a voice agent you can leave on the line on a Friday night and one you can't.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {/* ── Proof ────────────────────────────────────────────────────── */}
+  <section class="vx-section vx-proof">
+    <div class="wrap">
+      {vocoProof.testimonials.length > 0 ? (
+        <div class="reveal">
+          <PullQuote
+            quote={vocoProof.testimonials[0].quote}
+            author={vocoProof.testimonials[0].author}
+            role={vocoProof.testimonials[0].role}
+          />
         </div>
+      ) : (
+        <div class="vx-proof-placeholder reveal">
+          <span class="eyebrow">From the floor</span>
+          <p>Early Sydney venues are running Voco now. Their words are coming soon.</p>
+        </div>
+      )}
+
+      {/*
+        FUTURE — scale proof. Add ONLY when the data is real:
+          • logo wall of venues using Voco (needs permission + real logos)
+          • big-number counters (calls answered / bookings made) wired to counter.ts
+        Left out on purpose: a hollow scale claim lowers trust more than no claim.
+      */}
+    </div>
+  </section>
+
+  {/* ── FAQ (FAQPage JSON-LD emitted in <head> above) ────────────── */}
+  <section class="vx-section vx-faq">
+    <div class="wrap">
+      <div class="vx-faq-head reveal">
+        <span class="eyebrow">Common questions</span>
+        <h2 class="vx-h2">Voco, answered plainly.</h2>
+      </div>
+      <div class="reveal" style="margin-top:40px">
+        <FAQ items={vocoFaq} />
+      </div>
+    </div>
+  </section>
+
+  {/* ── Bundle ───────────────────────────────────────────────────── */}
+  <section class="vx-section vx-bundle">
+    <div class="wrap">
+      <div class="vx-bundle-card reveal">
+        <span class="eyebrow">The whole line, one agent</span>
+        <h2 class="vx-h2">{vocoBundle.name}</h2>
+        <p class="vx-bundle-tag">{vocoBundle.tagline}</p>
+        <p class="vx-bundle-note">
+          Start with bookings today. As takeaway, concierge and drive-thru ship, Voco can run your
+          entire front-of-house line — one agent, one voice, one bill.
+        </p>
+        <a class="btn" href={vocoBundle.cta.href}>{vocoBundle.cta.label}</a>
       </div>
     </div>
   </section>
 
   <Cta
     eyebrow="Have a venue?"
-    headline="Tell us what you'd want next."
-    lede="Our roadmap follows the venues we work with. If there's a phone-shaped problem we haven't named yet, we'd love to hear it."
+    headline="Book a demo and hear Voco on your line."
+    lede="We work with a small number of venues at a time. Tell us about your phone and we'll show you what Voco can take off your team's plate."
+    primary={{ label: "Book a demo", href: "/contact/" }}
+    secondary={{ label: `Call us · ${site.phone.display}`, href: site.phone.href }}
   />
 </Base>
 
 <style>
-  .prod-index {
+  /* ── Hero ─────────────────────────────────────────────────────── */
+  .vx-hero {
     position: relative;
     padding: clamp(120px, 14vw, 180px) 0 var(--space-section);
     overflow: hidden;
     border-bottom: 1px solid var(--line);
   }
-  .prod-index-glow {
+  .vx-hero-glow {
     position: absolute;
     inset: 0;
     z-index: 0;
@@ -119,113 +241,140 @@ const breadcrumbJsonLd = {
       radial-gradient(40% 50% at 80% 0%, rgba(245, 196, 24, 0.12), transparent 70%),
       radial-gradient(40% 50% at 0% 100%, rgba(26, 77, 26, 0.25), transparent 70%);
   }
-  .prod-index .wrap { position: relative; z-index: 1; }
-  .prod-index-top { margin-bottom: 32px; }
+  .vx-hero .wrap { position: relative; z-index: 1; }
+  .vx-hero-top { margin-bottom: 32px; }
 
-  .prod-index-collage {
-    margin-top: 56px;
+  .vx-hero-cta {
+    margin-top: 36px;
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .vx-demo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .vx-demo-play {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(245, 196, 24, 0.16);
+    color: var(--gold);
+    font-size: 9px;
+    padding-left: 2px;
+  }
+
+  .vx-collage {
+    margin-top: 64px;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 14px;
     mask-image: linear-gradient(180deg, #000 0%, #000 65%, transparent 100%);
     -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 65%, transparent 100%);
   }
-  .prod-index-collage-cell {
+  .vx-collage-cell {
     border-radius: var(--r-lg);
     overflow: hidden;
     border: 1px solid var(--line);
   }
-  .prod-index-collage-cell :global(.image-block) { border-radius: 0; }
+  .vx-collage-cell :global(.image-block) { border-radius: 0; }
   @media (max-width: 720px) {
-    .prod-index-collage { grid-template-columns: repeat(2, 1fr); }
+    .vx-collage { grid-template-columns: repeat(2, 1fr); }
   }
 
-  .prod-index-filters {
-    margin-top: 48px;
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
+  /* ── Shared section rhythm ────────────────────────────────────── */
+  .vx-section {
+    padding-block: var(--space-section);
+    border-top: 1px solid var(--line);
   }
-  .filter-chip {
-    padding: 10px 18px;
-    border-radius: var(--r-pill);
-    border: 1px solid var(--line);
-    color: var(--mist);
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    transition:
-      color var(--dur-fast) var(--ease-out),
-      background var(--dur-fast) var(--ease-out),
-      border-color var(--dur-fast) var(--ease-out);
-  }
-  .filter-chip:hover { color: var(--white); border-color: var(--line-strong); }
-  .filter-chip[aria-pressed="true"] {
-    background: var(--gold);
-    color: #1a0f04;
-    border-color: var(--gold);
+  .vx-section:first-of-type { border-top: 0; }
+  .vx-h2 {
+    font-size: var(--fs-h2);
+    font-weight: 800;
+    line-height: var(--lh-display);
+    letter-spacing: -0.025em;
+    color: var(--white);
+    margin-top: 16px;
   }
 
-  .prod-index-grid {
-    margin-top: 32px;
+  /* ── Capabilities grid ────────────────────────────────────────── */
+  .vx-caps-grid {
+    margin-top: 56px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
   }
-  .prod-cell.is-hidden { display: none; }
-  @media (max-width: 720px) {
-    .prod-index-grid { grid-template-columns: 1fr; }
+  @media (max-width: 760px) {
+    .vx-caps-grid { grid-template-columns: 1fr; }
   }
 
-  .prod-honesty { margin-top: 96px; }
-  .prod-honesty-card {
-    max-width: 720px;
+  /* ── Trust ────────────────────────────────────────────────────── */
+  .vx-trust-card {
+    max-width: 820px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 48px 36px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-xl);
+    background: linear-gradient(160deg, rgba(245, 196, 24, 0.04), transparent 60%), var(--ink-1);
+  }
+  .vx-trust-body {
+    margin-top: 18px;
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 16px;
+    max-width: 64ch;
+    margin-inline: auto;
+  }
+
+  /* ── Proof ────────────────────────────────────────────────────── */
+  .vx-proof-placeholder {
+    max-width: 680px;
     margin: 0 auto;
     text-align: center;
     padding: 40px 32px;
-    border: 1px solid var(--line);
+    border: 1px dashed var(--line);
     border-radius: var(--r-lg);
-    background: linear-gradient(160deg, rgba(245, 196, 24, 0.04), transparent 60%), var(--ink-1);
+    background: var(--ink-1);
   }
-  .prod-honesty-card p {
+  .vx-proof-placeholder p {
     margin-top: 14px;
     color: var(--text);
-    line-height: 1.65;
+    line-height: 1.6;
+  }
+
+  /* ── FAQ ──────────────────────────────────────────────────────── */
+  .vx-faq-head { text-align: center; }
+
+  /* ── Bundle ───────────────────────────────────────────────────── */
+  .vx-bundle-card {
+    max-width: 760px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 56px 36px;
+    border: 1px solid color-mix(in srgb, var(--gold) 24%, var(--line));
+    border-radius: var(--r-xl);
+    background:
+      radial-gradient(80% 60% at 50% 0%, rgba(245, 196, 24, 0.1), transparent 70%),
+      var(--ink-1);
+    box-shadow: var(--shadow-card);
+  }
+  .vx-bundle-tag {
+    margin-top: 14px;
+    color: var(--text);
+    font-size: var(--fs-lede);
+    line-height: var(--lh-lede);
+  }
+  .vx-bundle-note {
+    margin: 16px auto 28px;
+    color: var(--mist);
+    line-height: 1.6;
+    max-width: 56ch;
+    font-size: 14.5px;
   }
 </style>
-
-<script>
-  // Filter chips — toggle visibility, sync to ?status= query string.
-  (function () {
-    function init() {
-      const chips = document.querySelectorAll<HTMLButtonElement>(".filter-chip");
-      const cells = document.querySelectorAll<HTMLElement>(".prod-cell");
-      if (chips.length === 0 || cells.length === 0) return;
-
-      function apply(status: string) {
-        chips.forEach((c) =>
-          c.setAttribute("aria-pressed", c.dataset.filter === status ? "true" : "false")
-        );
-        cells.forEach((cell) => {
-          const match = status === "all" || cell.dataset.status === status;
-          cell.classList.toggle("is-hidden", !match);
-        });
-        const url = new URL(window.location.href);
-        if (status === "all") url.searchParams.delete("status");
-        else url.searchParams.set("status", status);
-        history.replaceState(null, "", url.toString());
-      }
-
-      chips.forEach((chip) => {
-        chip.addEventListener("click", () => apply(chip.dataset.filter ?? "all"));
-      });
-
-      // Apply ?status= from URL on load.
-      const initial = new URL(window.location.href).searchParams.get("status") ?? "all";
-      const valid = ["all", "live", "in-development", "concept"];
-      apply(valid.includes(initial) ? initial : "all");
-    }
-    init();
-    document.addEventListener("astro:page-load", init);
-  })();
-</script>

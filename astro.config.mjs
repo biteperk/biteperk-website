@@ -1,6 +1,6 @@
 // @ts-check
 import { defineConfig } from "astro/config";
-import sitemap from "@astrojs/sitemap";
+import sitemap, { ChangeFreqEnum } from "@astrojs/sitemap";
 
 // Static-only output — this is a marketing site, no SSR needed.
 // Firebase Hosting serves the contents of `dist/` directly.
@@ -37,7 +37,7 @@ export default defineConfig({
         else if (item.url.includes("/blog/")) {
           // Individual guides: fresher content, crawl more often.
           item.priority = 0.7;
-          item.changefreq = "weekly";
+          item.changefreq = ChangeFreqEnum.WEEKLY;
         } else if (item.url.includes("/legal/")) item.priority = 0.4;
         else item.priority = 0.7;
         return item;

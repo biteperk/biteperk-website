@@ -1,0 +1,174 @@
+---
+/**
+ * CapabilityCard — one Voco capability on the /products overview.
+ *
+ * Voco is ONE product; each capability (Table / Order / Concierge / Drive) is a
+ * job it does, not a separate product. The card is framed around the owner
+ * OUTCOME, carries a status badge, and offers two distinct destinations:
+ *   - "Learn more" → the capability's /products/<slug>/ page (which keeps its
+ *     existing title/keyword SEO).
+ *   - a status-aware CTA: live → "Get started" (the running app); otherwise
+ *     → "Join the waitlist" (/contact/?product=<slug>), which captures
+ *     per-capability demand signal.
+ *
+ * Deliberately NOT a single whole-card <a> (unlike ProductCard): it carries two
+ * different destinations, and nesting anchors would be invalid markup.
+ */
+import type { Product } from "@/data/products";
+import { productUrl } from "@/data/products";
+import StatusPill from "@/components/StatusPill.astro";
+
+interface Props {
+  product: Product;
+}
+const { product } = Astro.props;
+
+const learnHref = productUrl(product);
+const isLive = product.status === "live";
+
+// Live capability points at the running app; everything else collects waitlist
+// demand against its own slug (already allow-listed in the contact form and the
+// Cloud Function's PRODUCT_SLUGS).
+const cta =
+  isLive && product.externalUrl
+    ? { label: "Get started", href: product.externalUrl }
+    : { label: "Join the waitlist", href: `/contact/?product=${product.slug}` };
+
+const ctaExternal = cta.href.startsWith("http");
+---
+
+<article class:list={["cap-card", `is-${product.status}`]}>
+  <div class="cap-glow" aria-hidden="true" style={`--accent:${product.accent}`}></div>
+
+  <div class="cap-head">
+    <div class="cap-name">
+      <span class="cap-kicker">{product.wordmark.prefix}</span>
+      <span class="cap-cap">{product.wordmark.suffix}</span>
+    </div>
+    <StatusPill status={product.status} size="sm" />
+  </div>
+
+  <h3 class="cap-outcome">{product.outcome ?? product.tagline}</h3>
+  <p class="cap-sum">{product.summary}</p>
+
+  <div class="cap-actions">
+    <a class="cap-learn" href={learnHref}>
+      Learn more
+      <span aria-hidden="true">→</span>
+    </a>
+    <a
+      class:list={["cap-cta", isLive ? "btn" : "btn-ghost"]}
+      href={cta.href}
+      rel={ctaExternal ? "noopener" : undefined}
+      target={ctaExternal ? "_blank" : undefined}
+    >
+      {cta.label}
+    </a>
+  </div>
+</article>
+
+<style>
+  .cap-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 30px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-xl);
+    background:
+      linear-gradient(160deg, rgba(255, 255, 255, 0.02), transparent 60%),
+      var(--ink-1);
+    box-shadow: var(--shadow-card);
+    isolation: isolate;
+    overflow: hidden;
+    transition:
+      transform var(--dur-base) var(--ease-out),
+      border-color var(--dur-base) var(--ease-out),
+      box-shadow var(--dur-base) var(--ease-out);
+  }
+  .cap-card:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--gold) 22%, var(--line));
+    box-shadow: var(--shadow-card-hover);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cap-card:hover { transform: none; }
+  }
+
+  .cap-glow {
+    position: absolute;
+    inset: -30%;
+    z-index: -1;
+    background: radial-gradient(40% 40% at 100% 0%, var(--accent), transparent 70%);
+    opacity: 0.5;
+    transition: opacity var(--dur-base) var(--ease-out);
+  }
+  .cap-card:hover .cap-glow { opacity: 0.85; }
+
+  .cap-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .cap-name {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .cap-kicker {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+  }
+  .cap-cap {
+    font-size: clamp(22px, 2.4vw, 28px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--white);
+  }
+
+  .cap-outcome {
+    margin-top: 2px;
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    color: var(--white);
+  }
+  .cap-sum {
+    color: var(--text);
+    line-height: 1.55;
+    font-size: 14.5px;
+    flex: 1;
+  }
+
+  .cap-actions {
+    margin-top: auto;
+    padding-top: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-top: 1px solid var(--line);
+    flex-wrap: wrap;
+  }
+  .cap-learn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .cap-learn span { transition: transform var(--dur-base) var(--ease-out); }
+  .cap-learn:hover span { transform: translateX(4px); }
+  .cap-cta {
+    padding: 10px 16px;
+    font-size: 13.5px;
+  }
+</style>

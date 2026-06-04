@@ -4,6 +4,7 @@ import SectionHeader from "@/components/SectionHeader.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import ImageBlock from "@/components/ImageBlock.astro";
 import { site } from "@/data/site";
+import { products } from "@/data/products";
 
 const title = "Contact Biteperk — Restaurant voice AI, Sydney & Australia-wide";
 const description =
@@ -125,7 +126,8 @@ const description =
             <div class="contact-field">
               <label for="cf-product">About</label>
               <select id="cf-product" name="product">
-                <option value="vocotable">VocoTable</option>
+                {products.map((p) => <option value={p.slug}>{p.name}</option>)}
+                <option value="general">Something else</option>
               </select>
             </div>
           </div>
@@ -389,6 +391,16 @@ const description =
       if (!form || form.dataset.bound === "1") return;
       form.dataset.bound = "1";
 
+      // Preselect the "About" dropdown from ?product= — the capability waitlist
+      // CTAs link here with it, so each lead records which capability they want.
+      const wantedProduct = new URLSearchParams(window.location.search).get("product");
+      if (wantedProduct) {
+        const sel = form.querySelector<HTMLSelectElement>("#cf-product");
+        if (sel && Array.from(sel.options).some((o) => o.value === wantedProduct)) {
+          sel.value = wantedProduct;
+        }
+      }
+
       const btn = form.querySelector<HTMLButtonElement>(".contact-submit");
       const status = form.querySelector<HTMLParagraphElement>(".contact-status");
       const btnLabel = btn ? btn.textContent : "Send message →";
@@ -401,14 +413,16 @@ const description =
         status.hidden = false;
       }
 
-      function showSuccess() {
+      const showSuccess = () => {
+        // Arrow (not a hoisted declaration) so it captures `form` narrowed
+        // non-null by the early-return guard above.
         form.innerHTML =
           '<div class="contact-success">' +
           "<h2>Thanks — we'll be in touch.</h2>" +
           "<p>Your message has reached the Biteperk team. We usually reply within a " +
           "few hours during business hours (Mon–Fri, 9am–5pm AEST).</p>" +
           "</div>";
-      }
+      };
 
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
