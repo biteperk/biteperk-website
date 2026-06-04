@@ -48,6 +48,7 @@ function isActive(href: string): boolean {
     <nav class="mm-body" aria-label="Mobile">
       <div class="mm-section">
         <div class="mm-heading">Products</div>
+        <p class="mm-subheading">Voco is one AI phone host. Bookings are live; takeaway, concierge and drive-thru roll out as add-ons.</p>
         {products.map((p) => (
           <a
             class:list={["mm-link", "mm-product", { active: isActive(productUrl(p)) }]}
@@ -58,7 +59,7 @@ function isActive(href: string): boolean {
           </a>
         ))}
         <a class:list={["mm-link", "mm-all", { active: pathname === "/products" }]} href="/products/">
-          All products →
+          See the Voco overview →
         </a>
       </div>
 
@@ -151,6 +152,12 @@ function isActive(href: string): boolean {
     color: var(--mist);
     font-weight: 600;
     margin-bottom: 12px;
+  }
+  .mm-subheading {
+    margin: -4px 0 16px;
+    color: var(--mist-2);
+    font-size: 13px;
+    line-height: 1.5;
   }
   .mm-link {
     display: flex;
