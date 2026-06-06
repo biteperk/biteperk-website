@@ -1,13 +1,13 @@
 # Biteperk
 
-> Biteperk builds Voco — one AI phone host for Australian restaurants, voiced by "Bella", a warm Australian voice that answers every call, day or night. Voco does four jobs from a single agent: bookings (live today), takeaway & pickup ordering and a front-of-house concierge (both in development), and a drive-thru order-taker (concept). Venues start with bookings and switch on the rest as they ship — same agent, same voice, same number. Built, hosted and supported in Sydney; serving restaurants, cafés and venues Australia-wide. (Voco's live bookings capability ships under the product name "VocoTable".)
+> Biteperk builds Voco — one AI phone host for Australian restaurants, voiced by "Bella", a warm Australian voice that answers every call, day or night. Voco does four jobs from a single agent: bookings and takeaway & pickup ordering (live today), a front-of-house concierge (in development), and a drive-thru order-taker (concept). Venues start with bookings and switch on the rest as they ship — same agent, same voice, same number. Built, hosted and supported in Sydney; serving restaurants, cafés and venues Australia-wide. (Voco's live capabilities ship under the product names "VocoTable" for bookings and "VocoOrder" for takeaway.)
 
 ## Key facts
 
 - Company: Biteperk Pty Ltd, a Sydney-based voice/AI software company for hospitality.
 - Location: Level 1, 477 Pitt Street, Haymarket NSW 2000, Australia (serves all of Australia).
 - Contact: phone 0450 011 140 (+61 450 011 140); email hello@biteperk.com.au; hours Mon–Fri 9am–5pm AEST.
-- Product: Voco — one AI phone host (the voice is "Bella"). Its capabilities are bookings (live), takeaway/pickup and concierge (in development), and drive-thru (concept). The live bookings capability ships as "VocoTable" and is serving paying customers.
+- Product: Voco — one AI phone host (the voice is "Bella"). Its capabilities are bookings and takeaway/pickup (live), concierge (in development), and drive-thru (concept). Bookings ship as "VocoTable" (serving paying customers); takeaway/pickup ships as "VocoOrder".
 - VocoTable pricing (AUD, flat monthly, no per-call or per-cover fees): Solo $80/month (up to 300 covers, 1 venue), Pro $150/month (unlimited covers — "Our pick"), Group $250/month (up to 3 venues), Enterprise custom (4+ venues). Free week trial; month-to-month, no lock-in.
 - Setup: works with a venue's existing phone number — just forward calls. No new hardware, no installation, no IT. Most venues are live the same day.
 - The AI voice ("Bella") speaks natural Australian English and gets local suburb/street names right — not an overseas call centre.
@@ -18,7 +18,7 @@
 Voco is a single AI phone host. Each capability below is a job the same agent does — not a separate product. Restaurants start with bookings and add the rest as they ship; same agent, same voice, same number.
 
 - [Bookings — VocoTable](https://biteperk.com.au/products/vocotable/): **Live.** The core capability every venue starts with. "Bella" answers every call on the first ring, 24/7, handles the booking conversation, and writes reservations straight into the venue's diary against real availability (no double-bookings). Pricing: Solo $80 / Pro $150 / Group $250 per month / Enterprise custom — flat, no per-call or per-cover fees, free week trial.
-- [Takeaway & pickup — VocoOrder](https://biteperk.com.au/products/vocoorder/): **In development.** AI phone ordering for takeaway and pickup — the same agent handles the order, the modifiers, and the pickup time, then sends a clean ticket to the POS. Waitlist open.
+- [Takeaway & pickup — VocoOrder](https://biteperk.com.au/products/vocoorder/): **Live.** AI phone ordering for takeaway and pickup — the same agent handles the order, the modifiers, and the pickup time, then sends a clean ticket to the POS. Book a demo.
 - [Concierge — VocoConcierge](https://biteperk.com.au/products/vococoncierge/): **In development.** Voice + SMS front-of-house concierge — nudges the waitlist, confirms upcoming covers, recovers no-shows, and replies when guests text back. Waitlist open.
 - [Drive-thru — VocoDrive](https://biteperk.com.au/products/vocodrive/): **Concept.** A voice agent for the drive-through window, built for the Australian morning rush — local accents and ordering rhythms, not a US franchise script. Register interest.
 - [All capabilities — the Voco overview](https://biteperk.com.au/products/): What's live, what's in development, and how the add-ons fit together as one front-of-house line.
