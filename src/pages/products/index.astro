@@ -38,10 +38,11 @@ const corePrices = (coreProduct.pricing?.tiers ?? [])
   .filter((n) => Number.isFinite(n) && n > 0);
 const vocoAppJsonLd = buildVocoApplication({
   description:
-    'Voco is one AI phone host for restaurants, voiced by "Bella" — a warm Australian voice that answers every call and books the table, 24/7. Bookings are live today; takeaway, concierge and drive-thru capabilities are rolling out.',
+    'Voco is one AI phone host for restaurants, voiced by "Bella" — a warm Australian voice that answers every call and books the table, 24/7. Bookings and takeaway ordering are live today; concierge and drive-thru capabilities are rolling out.',
   featureList: [
     "24/7 phone answering in a natural Australian voice",
     "Live table bookings written straight into your diary",
+    "Takeaway and pickup orders sent as clean tickets to your POS",
     "Call transcripts and recordings",
     "Australian data residency, Privacy Act compliant",
   ],
@@ -131,7 +132,7 @@ const collage = [
       <SectionHeader
         eyebrow="What Voco does"
         headline="Four jobs. One agent, one voice."
-        lede="Voco handles your phone line end to end. Bookings are live today; the rest switch on as they ship — no new number, no second system to learn."
+        lede="Voco handles your phone line end to end. Bookings and takeaway ordering are live today; the rest switch on as they ship — no new number, no second system to learn."
       />
       <div class="vx-caps-grid reveal">
         {capabilities.map((p) => <CapabilityCard product={p} />)}
@@ -207,7 +208,7 @@ const collage = [
         <h2 class="vx-h2">{vocoBundle.name}</h2>
         <p class="vx-bundle-tag">{vocoBundle.tagline}</p>
         <p class="vx-bundle-note">
-          Start with bookings today. As takeaway, concierge and drive-thru ship, Voco can run your
+          Start with bookings and takeaway today. As concierge and drive-thru ship, Voco can run your
           entire front-of-house line — one agent, one voice, one bill.
         </p>
         <a class="btn" href={vocoBundle.cta.href}>{vocoBundle.cta.label}</a>

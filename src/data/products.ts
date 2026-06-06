@@ -273,15 +273,15 @@ const vocoorder: Product = {
   tagline: "AI phone ordering for takeaway and pickup.",
   summary:
     "A voice agent that takes pickup orders, reads the menu in your accent, and drops the ticket straight into your POS — so no order is ever lost to a busy line.",
-  status: "in-development",
+  status: "live",
   role: "addon",
   outcome: "Never lose a takeaway order to a phone nobody can reach.",
   accent: "rgba(255, 184, 64, 0.28)",
   hero: {
     headline: "Pick up every order, even when your kitchen is on the floor.",
     sub: "VocoOrder is the takeaway twin of VocoTable. A voice agent that handles the order, the modifiers, and the pickup time — and sends a clean ticket to your POS.",
-    primaryCta: { label: "Join the waitlist", href: "/contact/?product=vocoorder" },
-    secondaryCta: { label: "See VocoTable instead →", href: "/products/vocotable/" },
+    primaryCta: { label: "Book a demo", href: "/contact/?product=vocoorder" },
+    secondaryCta: { label: "Hear Bella live", href: `${site.vocotableUrl}#meet-bella` },
   },
   features: [
     {
@@ -300,7 +300,7 @@ const vocoorder: Product = {
   seo: {
     title: "VocoOrder — AI phone ordering for hospitality · Biteperk",
     description:
-      "VocoOrder is Biteperk's voice agent for takeaway and pickup orders, integrated with your POS. In development — join the waitlist.",
+      "VocoOrder is Biteperk's AI voice agent for takeaway and pickup — clean tickets straight to your POS, so no order is lost to a busy line. Live now; book a demo.",
   },
 };
 
@@ -444,7 +444,7 @@ export const vocoFaq: ReadonlyArray<ProductFAQ> = [
   },
   {
     q: "What can Voco do today, and what's coming?",
-    a: "Today Voco answers your phone and takes bookings — that's live and serving paying venues. Takeaway and pickup ordering and the front-of-house concierge are in active development, and a drive-thru capability is on the drawing board. Start with bookings now and switch the rest on as they ship — same agent, same voice.",
+    a: "Today Voco does two live jobs: it takes bookings (already serving paying venues) and it handles takeaway and pickup orders. The front-of-house concierge is in active development, and a drive-thru capability is on the drawing board. Start with what you need now and switch the rest on as they ship — same agent, same voice.",
   },
   {
     q: "Can I start with just bookings?",

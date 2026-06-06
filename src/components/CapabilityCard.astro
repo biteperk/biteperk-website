@@ -7,9 +7,9 @@
  * OUTCOME, carries a status badge, and offers two distinct destinations:
  *   - "Learn more" → the capability's /products/<slug>/ page (which keeps its
  *     existing title/keyword SEO).
- *   - a status-aware CTA: live → "Get started" (the running app); otherwise
- *     → "Join the waitlist" (/contact/?product=<slug>), which captures
- *     per-capability demand signal.
+ *   - a status-aware CTA: live with an app → "Get started" (the running app);
+ *     live without one → "Book a demo"; otherwise → "Join the waitlist"
+ *     (/contact/?product=<slug>), which captures per-capability demand signal.
  *
  * Deliberately NOT a single whole-card <a> (unlike ProductCard): it carries two
  * different destinations, and nesting anchors would be invalid markup.
@@ -26,13 +26,15 @@ const { product } = Astro.props;
 const learnHref = productUrl(product);
 const isLive = product.status === "live";
 
-// Live capability points at the running app; everything else collects waitlist
-// demand against its own slug (already allow-listed in the contact form and the
-// Cloud Function's PRODUCT_SLUGS).
-const cta =
-  isLive && product.externalUrl
+// A live capability with its own app points at it ("Get started"); a live
+// capability without an app routes to a demo ("Book a demo"); everything else
+// collects waitlist demand against its own slug (already allow-listed in the
+// contact form and the Cloud Function's PRODUCT_SLUGS).
+const cta = isLive
+  ? product.externalUrl
     ? { label: "Get started", href: product.externalUrl }
-    : { label: "Join the waitlist", href: `/contact/?product=${product.slug}` };
+    : { label: "Book a demo", href: `/contact/?product=${product.slug}` }
+  : { label: "Join the waitlist", href: `/contact/?product=${product.slug}` };
 
 const ctaExternal = cta.href.startsWith("http");
 ---
