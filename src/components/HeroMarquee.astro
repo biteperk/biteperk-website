@@ -42,7 +42,7 @@ const tiles = [
   .marquee {
     padding-block: clamp(48px, 6vw, 80px);
     border-top: 1px solid var(--line);
-    background: linear-gradient(180deg, transparent, rgba(255,255,255,0.02) 60%, transparent);
+    background: linear-gradient(180deg, transparent, var(--fill-subtle) 60%, transparent);
   }
   .marquee-head {
     display: flex;
@@ -83,7 +83,7 @@ const tiles = [
   .marquee-tile:focus-visible {
     transform: translateY(-3px);
     border-color: color-mix(in srgb, var(--gold) 35%, var(--line));
-    box-shadow: 0 14px 32px -16px rgba(245, 196, 24, 0.32);
+    box-shadow: 0 14px 32px -16px var(--gold-glow);
   }
   @media (prefers-reduced-motion: reduce) {
     .marquee-tile:hover, .marquee-tile:focus-visible { transform: none; }

@@ -78,15 +78,15 @@ import HeroMarquee from "@/components/HeroMarquee.astro";
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(50% 60% at 80% 40%, rgba(245, 196, 24, 0.16), transparent 70%),
-      radial-gradient(40% 50% at 20% 70%, rgba(26, 77, 26, 0.32), transparent 70%);
+      radial-gradient(50% 60% at 80% 40%, color-mix(in srgb, var(--gold-fill) 16%, transparent), transparent 70%),
+      radial-gradient(40% 50% at 20% 70%, color-mix(in srgb, var(--green) 32%, transparent), transparent 70%);
   }
   .hero-stage-grid {
     position: absolute;
     inset: 0;
     background-image:
-      linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+      linear-gradient(var(--fill-subtle) 1px, transparent 1px),
+      linear-gradient(90deg, var(--fill-subtle) 1px, transparent 1px);
     background-size: 80px 80px;
     mask-image: radial-gradient(60% 70% at 30% 50%, #000 0%, transparent 70%);
     -webkit-mask-image: radial-gradient(60% 70% at 30% 50%, #000 0%, transparent 70%);
@@ -148,10 +148,10 @@ import HeroMarquee from "@/components/HeroMarquee.astro";
     border-radius: var(--r-xl);
     overflow: hidden;
     border: 1px solid var(--line);
-    background: var(--bp-surface);
+    background: var(--ink-1);
     box-shadow:
-      0 32px 80px -20px rgba(0, 0, 0, 0.75),
-      inset 0 1px 0 rgba(255, 255, 255, 0.07);
+      var(--shadow-card),
+      inset 0 1px 0 var(--line);
     transition:
       transform 0.5s var(--ease-soft),
       box-shadow 0.5s ease;
@@ -159,9 +159,7 @@ import HeroMarquee from "@/components/HeroMarquee.astro";
   }
   .hero-card:hover {
     transform: translateY(-6px);
-    box-shadow:
-      0 40px 100px -20px rgba(0, 0, 0, 0.8),
-      0 16px 38px -8px rgba(245, 196, 24, 0.18);
+    box-shadow: var(--shadow-card-hover);
   }
   @media (prefers-reduced-motion: reduce) {
     .hero-card:hover { transform: none; }
@@ -171,8 +169,8 @@ import HeroMarquee from "@/components/HeroMarquee.astro";
     inset: -22%;
     z-index: -1;
     background:
-      radial-gradient(45% 45% at 60% 50%, rgba(245, 196, 24, 0.32), transparent 65%),
-      radial-gradient(50% 50% at 30% 70%, rgba(26, 77, 26, 0.42), transparent 70%);
+      radial-gradient(45% 45% at 60% 50%, color-mix(in srgb, var(--gold-fill) 32%, transparent), transparent 65%),
+      radial-gradient(50% 50% at 30% 70%, color-mix(in srgb, var(--green) 42%, transparent), transparent 70%);
     filter: blur(34px);
   }
   .hero-card-img {
@@ -203,14 +201,14 @@ import HeroMarquee from "@/components/HeroMarquee.astro";
     letter-spacing: 1.6px;
     text-transform: uppercase;
     font-weight: 600;
-    color: #f0f2f6;
+    color: var(--on-image);
   }
   .hero-card-caption-dot {
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: var(--gold);
-    box-shadow: 0 0 14px var(--gold);
+    background: var(--gold-fill);
+    box-shadow: 0 0 14px var(--gold-glow);
     animation: bp-pulse 2.4s ease-in-out infinite;
   }
   @media (prefers-reduced-motion: reduce) {
