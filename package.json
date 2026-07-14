@@ -15,7 +15,9 @@
     "images:fetch": "node scripts/fetch-images.mjs",
     "images:grade": "node scripts/grade.mjs",
     "images:composite": "node scripts/generate-images.mjs",
-    "images": "npm run images:fetch && npm run images:grade && npm run images:composite"
+    "images": "npm run images:fetch && npm run images:grade && npm run images:composite",
+    "images:v2": "node scripts/img/process.mjs",
+    "check:images": "node scripts/check-images.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.6.0",
