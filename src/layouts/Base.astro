@@ -15,6 +15,13 @@
  * override), optional `preloadImage` (push critical hero image on home),
  * optional `ogImage` (per-page Open Graph card).
  */
+// Self-hosted fonts (woff2, hashed + immutable-cached by the build) —
+// replaces the render-blocking Google Fonts request. InterVariable covers
+// weights 300–900 in one file; Source Serif 4 only ships the weights the
+// serif PullQuote actually uses.
+import "@fontsource-variable/inter";
+import "@fontsource/source-serif-4/400.css";
+import "@fontsource/source-serif-4/500.css";
 import "@/styles/global.css";
 import "@/styles/megamenu.css";
 import SEO from "@/components/SEO.astro";
@@ -73,12 +80,6 @@ const {
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&display=swap"
-      rel="stylesheet"
-    />
     {preloadImage && <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />}
 
     <SEO title={title} description={description} path={path} ogImage={ogImage}>
