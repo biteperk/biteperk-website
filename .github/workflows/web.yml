@@ -40,6 +40,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Imagery review gate (manifest slots must be human-reviewed)
+        run: node scripts/check-images.mjs
+
       - name: Smoke-test built routes (generated from cities.ts + blog)
         run: node scripts/check-routes.mjs
 
