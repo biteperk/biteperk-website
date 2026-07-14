@@ -11,6 +11,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "check": "astro check",
+    "test:e2e": "playwright test",
+    "lhci": "lhci autorun",
     "og": "node scripts/generate-og.mjs",
     "images:fetch": "node scripts/fetch-images.mjs",
     "images:grade": "node scripts/grade.mjs",
@@ -25,6 +27,9 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
+    "@axe-core/playwright": "^4.12.1",
+    "@lhci/cli": "^0.15.1",
+    "@playwright/test": "^1.61.1",
     "@resvg/resvg-js": "^2.6.2",
     "satori": "^0.26.0",
     "satori-html": "^0.3.2",
