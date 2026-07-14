@@ -1,0 +1,211 @@
+[
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://biteperk.com.au"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Products",
+        "item": "https://biteperk.com.au/products/"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "isPartOf": {
+      "@id": "https://biteperk.com.au/#website"
+    },
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How hard is it to get started?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "It's a phone number, not a hardware install. You forward your existing line to Voco — about five minutes with your phone provider — with no new hardware, no apps, and nothing for your team to learn. You keep your number, and most venues are live the same day."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What can Voco do today, and what's coming?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Today Voco does two live jobs: it takes bookings (already serving paying venues) and it handles takeaway and pickup orders. The front-of-house concierge is in active development, and a drive-thru capability is on the drawing board. Start with what you need now and switch the rest on as they ship — same agent, same voice."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I start with just bookings?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes — that's exactly how Voco works. Every venue starts with the live bookings capability, then turns on add-ons when they need them. They're capabilities of the same agent, not separate products to buy and wire up again."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What happens if Bella isn't sure what a caller wants?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "She doesn't guess. If a call is unclear — a tricky request, a name she can't quite catch — Bella takes the caller's details and a message and flags your team to call them back, so an uncertain moment becomes a callback rather than a wrong booking."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does Voco actually sound Australian?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Bella speaks natural Australian English and is tuned for local suburb and street names — not an overseas call centre. It's one of the first things owners notice."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What does Voco cost?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The live bookings capability is flat monthly pricing with a free week to try it — no per-call or per-cover fees. See the VocoTable page for current plans. As new capabilities ship, we'll price them honestly and only for what you switch on."
+        }
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "@id": "https://biteperk.com.au/products/#voco",
+    "name": "Voco",
+    "url": "https://biteperk.com.au/products/",
+    "description": "Voco is one AI phone host for restaurants, voiced by \"Bella\" — a warm Australian voice that answers every call and books the table, 24/7. Bookings and takeaway ordering are live today; concierge and drive-thru capabilities are rolling out.",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web, Phone",
+    "featureList": [
+      "24/7 phone answering in a natural Australian voice",
+      "Live table bookings written straight into your diary",
+      "Takeaway and pickup orders sent as clean tickets to your POS",
+      "Call transcripts and recordings",
+      "Australian data residency, Privacy Act compliant"
+    ],
+    "publisher": {
+      "@id": "https://biteperk.com.au/#organization"
+    },
+    "isPartOf": {
+      "@id": "https://biteperk.com.au/#website"
+    },
+    "hasPart": [
+      {
+        "@id": "https://biteperk.com.au/products/vocotable/#software"
+      },
+      {
+        "@id": "https://biteperk.com.au/products/vocoorder/#software"
+      },
+      {
+        "@id": "https://biteperk.com.au/products/vococoncierge/#software"
+      },
+      {
+        "@id": "https://biteperk.com.au/products/vocodrive/#software"
+      }
+    ],
+    "offers": {
+      "@type": "AggregateOffer",
+      "priceCurrency": "AUD",
+      "lowPrice": "80",
+      "highPrice": "250",
+      "offerCount": "3",
+      "availability": "https://schema.org/InStock"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": [
+          "Organization",
+          "LocalBusiness"
+        ],
+        "@id": "https://biteperk.com.au/#organization",
+        "name": "Biteperk",
+        "legalName": "Biteperk Pty Ltd",
+        "url": "https://biteperk.com.au",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://biteperk.com.au/favicon.svg"
+        },
+        "image": "https://biteperk.com.au/og/home.png",
+        "description": "Biteperk builds voice and AI tools for hospitality — starting with VocoTable, the AI phone host that answers every restaurant call in a warm Australian voice. Made in Sydney.",
+        "email": "hello@biteperk.com.au",
+        "telephone": "+61450011140",
+        "priceRange": "$$",
+        "currenciesAccepted": "AUD",
+        "sameAs": [
+          "https://www.linkedin.com/company/biteperk"
+        ],
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Level 1, 477 Pitt Street",
+          "addressLocality": "Haymarket",
+          "addressRegion": "NSW",
+          "postalCode": "2000",
+          "addressCountry": "AU"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": -33.8806,
+          "longitude": 151.2043
+        },
+        "hasMap": "https://www.google.com/maps/search/?api=1&query=Level%201%2C%20477%20Pitt%20Street%2C%20Haymarket%20NSW%202000",
+        "areaServed": {
+          "@type": "Country",
+          "name": "Australia"
+        },
+        "knowsAbout": [
+          "Restaurant phone answering",
+          "AI receptionist for restaurants",
+          "Voice AI for hospitality",
+          "Restaurant booking automation"
+        ],
+        "openingHoursSpecification": [
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday"
+            ],
+            "opens": "09:00",
+            "closes": "17:00"
+          }
+        ],
+        "contactPoint": [
+          {
+            "@type": "ContactPoint",
+            "telephone": "+61450011140",
+            "email": "hello@biteperk.com.au",
+            "contactType": "customer service",
+            "areaServed": "AU",
+            "availableLanguage": [
+              "en-AU"
+            ]
+          }
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://biteperk.com.au/#website",
+        "url": "https://biteperk.com.au",
+        "name": "Biteperk",
+        "description": "Biteperk builds voice and AI tools for hospitality — starting with VocoTable, the AI phone host that answers every restaurant call in a warm Australian voice. Made in Sydney.",
+        "inLanguage": "en-AU",
+        "publisher": {
+          "@id": "https://biteperk.com.au/#organization"
+        }
+      }
+    ]
+  }
+]
