@@ -1,0 +1,90 @@
+#!/usr/bin/env node
+/**
+ * Anti-doorway + integrity gate for the city-page engine.
+ *
+ * For every `published: true` city in src/data/cities.ts:
+ *   1. Unique hand-written copy (intro + scenarios + faqs) ≥ 600 words.
+ *   2. Cross-city intro similarity below threshold (4-word shingle overlap
+ *      ≤ 35%) — catches "same paragraph, city name swapped" doorway copy.
+ *   3. An OG card exists at public/og/<slug>.png.
+ *   4. relatedGuides slugs exist in src/content/blog/.
+ *
+ * Runs in CI and locally: node scripts/check-cities.mjs
+ * cities.ts is transpiled with esbuild (already in the Astro dependency
+ * tree) and imported as a data URL — no extra dependencies, no fragile
+ * hand-rolled type stripping.
+ */
+import { readFileSync, existsSync, readdirSync } from "node:fs";
+import { join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+import { transformSync } from "esbuild";
+
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+
+const src = readFileSync(join(ROOT, "src/data/cities.ts"), "utf8");
+const { code } = transformSync(src, { loader: "ts", format: "esm" });
+const dataUrl = "data:text/javascript;base64," + Buffer.from(code).toString("base64");
+const { cities } = await import(dataUrl);
+
+const words = (s) => s.split(/\s+/).filter(Boolean);
+const shingles = (s, n = 4) => {
+  const w = words(s.toLowerCase().replace(/[^a-z0-9\s]/g, ""));
+  const set = new Set();
+  for (let i = 0; i <= w.length - n; i++) set.add(w.slice(i, i + n).join(" "));
+  return set;
+};
+const overlap = (a, b) => {
+  if (a.size === 0 || b.size === 0) return 0;
+  let hit = 0;
+  for (const s of a) if (b.has(s)) hit++;
+  return hit / Math.min(a.size, b.size);
+};
+
+const blogDir = join(ROOT, "src/content/blog");
+const blogSlugs = new Set(
+  readdirSync(blogDir)
+    .filter((f) => f.endsWith(".md"))
+    .map((f) => f.replace(/\.md$/, ""))
+);
+
+const published = cities.filter((c) => c.published);
+let failed = 0;
+const fail = (msg) => {
+  failed++;
+  console.error(`FAIL  ${msg}`);
+};
+
+const cityText = (c) =>
+  [
+    ...c.intro,
+    ...c.scenarios.flatMap((s) => [s.title, s.body]),
+    ...c.faqs.flatMap((f) => [f.q, f.a]),
+  ].join(" ");
+
+for (const c of published) {
+  const count = words(cityText(c)).length;
+  if (count < 600) fail(`${c.slug}: only ${count} words of unique copy (need ≥600)`);
+  else console.log(`PASS  ${c.slug}: ${count} words`);
+
+  if (!existsSync(join(ROOT, "public/og", `${c.slug}.png`)))
+    fail(`${c.slug}: missing OG card public/og/${c.slug}.png`);
+
+  for (const g of c.relatedGuides)
+    if (!blogSlugs.has(g)) fail(`${c.slug}: relatedGuide "${g}" not found in src/content/blog/`);
+}
+
+// Pairwise intro-similarity (the field most tempting to template).
+for (let i = 0; i < published.length; i++) {
+  for (let j = i + 1; j < published.length; j++) {
+    const a = published[i], b = published[j];
+    const sim = overlap(shingles(a.intro.join(" ")), shingles(b.intro.join(" ")));
+    if (sim > 0.35) fail(`${a.slug} ↔ ${b.slug}: intro similarity ${(sim * 100).toFixed(0)}% (max 35%) — doorway risk`);
+    else console.log(`PASS  ${a.slug} ↔ ${b.slug}: intro similarity ${(sim * 100).toFixed(0)}%`);
+  }
+}
+
+if (failed) {
+  console.error(`\ncheck-cities: ${failed} failure(s).`);
+  process.exit(1);
+}
+console.log(`\ncheck-cities: ${published.length} published cities pass all gates.`);
