@@ -17,6 +17,7 @@
  * overlay.
  */
 import StarMark from "@/components/StarMark.astro";
+import ThemeToggle from "@/components/ThemeToggle.astro";
 import NavDropdown from "@/components/NavDropdown.astro";
 import MobileMenu from "@/components/MobileMenu.astro";
 import { site } from "@/data/site";
@@ -61,6 +62,7 @@ const centreLinks = [
     </div>
 
     <div class="nav-right">
+      <ThemeToggle />
       <a class="nav-phone" href={site.phone.href} aria-label={`Call Biteperk on ${site.phone.display}`}>
         <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
           <path d="M3.4 2.5C3 2.9 2.9 3.6 3.2 4.2c1.4 3 3.6 5.2 6.6 6.6.6.3 1.3.2 1.7-.2l.9-.9c.3-.3.3-.8 0-1.1l-1.5-1.5c-.3-.3-.8-.3-1.1 0l-.6.6c-1.5-.7-2.7-1.9-3.4-3.4l.6-.6c.3-.3.3-.8 0-1.1L4.9 1.1c-.3-.3-.8-.3-1.1 0z" fill="currentColor"/>
@@ -97,7 +99,7 @@ const centreLinks = [
     z-index: var(--z-nav);
     backdrop-filter: blur(24px) saturate(140%);
     -webkit-backdrop-filter: blur(24px) saturate(140%);
-    background: rgba(10, 11, 13, 0.5);
+    background: color-mix(in srgb, var(--ink-0) 55%, transparent);
     border-bottom: 1px solid transparent;
     transition:
       border-color var(--dur-base) var(--ease-out),
@@ -106,9 +108,9 @@ const centreLinks = [
     padding-top: env(safe-area-inset-top);
   }
   .nav.scrolled {
-    background: rgba(10, 11, 13, 0.85);
+    background: color-mix(in srgb, var(--ink-0) 88%, transparent);
     border-bottom: 1px solid var(--line-gold);
-    box-shadow: 0 8px 32px -16px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 8px 32px -16px rgba(0, 0, 0, 0.35);
   }
   .nav-inner {
     display: grid;
@@ -153,7 +155,7 @@ const centreLinks = [
   }
   .lnk:hover {
     color: var(--white);
-    background: rgba(255, 255, 255, 0.04);
+    background: var(--fill-subtle);
   }
   .lnk.active,
   .lnk[aria-current="page"] {
@@ -199,7 +201,7 @@ const centreLinks = [
   }
   .nav-phone:hover {
     color: var(--white);
-    background: rgba(255, 255, 255, 0.04);
+    background: var(--fill-subtle);
   }
   .nav-phone:hover svg {
     transform: rotate(-10deg);

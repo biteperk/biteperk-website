@@ -1,63 +1,45 @@
 /*
- * Biteperk design tokens.
+ * BitePerk design tokens — v2, dual theme.
  *
  * Single source of truth for colour, type, spacing, radii, shadow, and
- * motion. Edit a token here and the whole site moves with it.
+ * motion. Themes are keyed off `data-theme` on <html> (set pre-paint by
+ * the inline script in Base.astro; falls back to prefers-color-scheme
+ * via the media query below when JS is disabled).
  *
- * Tokens are namespaced with --bp-* for back-compat with the existing
- * stylesheet, and the new --ink-*, --gold-*, --fs-*, --space-* names
- * introduced for the multi-product site live alongside.
+ * Colour token contract:
+ *   --ink-0..3    surfaces, page → raised
+ *   --white       strongest text ("white" on dark, near-black on light)
+ *   --text/--mist body / muted text
+ *   --gold        TEXT-SAFE brand colour — ≥4.5:1 on --ink-0/1 in BOTH themes
+ *   --gold-fill   vivid brand fill (buttons, dots). Always pair with
+ *                 --gold-fill-text on top. Never use as text colour.
+ *   Scrim/overlay tokens are theme-invariant (they sit over photos).
+ *
+ * scripts/check-contrast.mjs parses the pairs declared in the manifest at
+ * the bottom of this file and fails CI if any drops below WCAG AA.
  */
 
 :root {
-  /* ── Surface / ink ───────────────────────────────────────────── */
-  --ink-0: #0a0b0d;            /* page background */
-  --ink-1: #111317;            /* elevation 1 — cards */
-  --ink-2: #161a20;            /* elevation 2 — popovers, dropdowns */
-  --ink-3: #1d222a;            /* elevation 3 — focused / pressed */
+  /* ── Theme-invariant ─────────────────────────────────────────── */
+  --gold-fill:      #f5c418;
+  --gold-fill-dark: #d9aa0e;
+  --gold-fill-text: #1a0f04;
 
-  --bp-ink: var(--ink-0);
-  --bp-ink2: #0e1014;
-  --bp-surface: #14171c;
-  --bp-surface-elev: #181c22;
-
-  /* ── Text ────────────────────────────────────────────────────── */
-  --white: #f7f8fa;
-  --text:  #d5d9e0;
-  --mist:  #9aa1ad;
-  --mist-2: #b8bec8;
-
-  --bp-white: var(--white);
-  --bp-mist: var(--mist);
-  --bp-mist-2: var(--mist-2);
-
-  /* ── Brand colour ────────────────────────────────────────────── */
-  --gold:       #f5c418;
-  --gold-dark:  #d9aa0e;
-  --gold-amber: #ffb840;
-  --gold-soft:  color-mix(in srgb, var(--gold) 14%, transparent);
-  --gold-glow:  color-mix(in srgb, var(--gold) 32%, transparent);
-  --green:      #1a4d1a;
-  --green-deep: #0e2f12;
-  --green-light: #4a8a48;
-
-  --bp-gold: var(--gold);
-  --bp-gold-dark: var(--gold-dark);
-  --bp-gold-amber: var(--gold-amber);
-  --bp-green: var(--green);
-  --bp-green-deep: var(--green-deep);
-  --bp-green-light: var(--green-light);
-
-  /* ── Lines / hairlines ───────────────────────────────────────── */
-  --line:        rgba(255, 255, 255, 0.08);
-  --line-strong: rgba(255, 255, 255, 0.14);
-  --line-gold:   rgba(245, 196, 24, 0.18);
-  --bp-line: var(--line);
-  --bp-line-strong: var(--line-strong);
-
-  /* ── State ───────────────────────────────────────────────────── */
-  --danger:  #ff5d5d;
-  --success: #6ee7a8;
+  --overlay-scrim: linear-gradient(
+    180deg,
+    rgba(10, 11, 13, 0) 0%,
+    rgba(10, 11, 13, 0.15) 45%,
+    rgba(10, 11, 13, 0.65) 100%
+  );
+  --overlay-scrim-strong: linear-gradient(
+    180deg,
+    rgba(10, 11, 13, 0.4) 0%,
+    rgba(10, 11, 13, 0.55) 50%,
+    rgba(10, 11, 13, 0.9) 100%
+  );
+  /* Text placed over photos/scrims — always light. */
+  --on-image: #f7f8fa;
+  --on-image-muted: #c9cfd8;
 
   /* ── Type ────────────────────────────────────────────────────── */
   --font-sans: "InterVariable", "Inter", ui-sans-serif, system-ui,
@@ -78,7 +60,7 @@
   --lh-body:     1.6;
   --lh-lede:     1.5;
 
-  /* ── Spacing ─────────────────────────────────────────────────── */
+  /* ── Spacing / layout ────────────────────────────────────────── */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -101,28 +83,6 @@
   --r-xl:   28px;
   --r-pill: 999px;
 
-  /* ── Shadow / glow ───────────────────────────────────────────── */
-  --shadow-card:       0 30px 80px -30px rgba(0, 0, 0, 0.7);
-  --shadow-card-hover: 0 36px 100px -28px rgba(245, 196, 24, 0.18),
-                       0 30px 80px -30px rgba(0, 0, 0, 0.7);
-  --shadow-btn:        0 8px 28px rgba(245, 196, 24, 0.18);
-  --shadow-btn-hover:  0 14px 38px rgba(245, 196, 24, 0.32);
-  --ring-focus:        0 0 0 2px var(--gold);
-
-  /* ── Overlay scrim for photos ────────────────────────────────── */
-  --overlay-scrim: linear-gradient(
-    180deg,
-    rgba(10, 11, 13, 0) 0%,
-    rgba(10, 11, 13, 0.15) 45%,
-    rgba(10, 11, 13, 0.65) 100%
-  );
-  --overlay-scrim-strong: linear-gradient(
-    180deg,
-    rgba(10, 11, 13, 0.4) 0%,
-    rgba(10, 11, 13, 0.55) 50%,
-    rgba(10, 11, 13, 0.9) 100%
-  );
-
   /* ── Motion ──────────────────────────────────────────────────── */
   --ease-out:    cubic-bezier(0.2, 0.7, 0.1, 1);
   --ease-spring: cubic-bezier(0.34, 1.3, 0.64, 1);
@@ -139,15 +99,184 @@
   --z-overlay: 80;
   --z-modal: 100;
 
+  color-scheme: light dark;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   DARK theme (brand default)
+   ════════════════════════════════════════════════════════════════ */
+:root,
+:root[data-theme="dark"] {
+  /* Surfaces */
+  --ink-0: #0a0b0d;
+  --ink-1: #111317;
+  --ink-2: #161a20;
+  --ink-3: #1d222a;
+
+  /* Text */
+  --white: #f7f8fa;
+  --text:  #d5d9e0;
+  --mist:  #9aa1ad;
+  --mist-2: #b8bec8;
+
+  /* Brand */
+  --gold:       #f5c418;   /* text-safe on dark surfaces (~11:1) */
+  --gold-dark:  #d9aa0e;
+  --gold-amber: #ffb840;
+  --gold-soft:  color-mix(in srgb, #f5c418 14%, transparent);
+  --gold-glow:  color-mix(in srgb, #f5c418 32%, transparent);
+  --green:      #1a4d1a;
+  --green-deep: #0e2f12;
+  --green-light: #4a8a48;
+
+  /* Lines */
+  --line:        rgba(255, 255, 255, 0.08);
+  --line-strong: rgba(255, 255, 255, 0.18);
+  --line-gold:   rgba(245, 196, 24, 0.18);
+
+  /* State */
+  --danger:  #ff6b6b;
+  --success: #6ee7a8;
+
+  /* Shadow / glow */
+  --shadow-card:       0 30px 80px -30px rgba(0, 0, 0, 0.7);
+  --shadow-card-hover: 0 36px 100px -28px rgba(245, 196, 24, 0.18),
+                       0 30px 80px -30px rgba(0, 0, 0, 0.7);
+  --shadow-btn:        0 8px 28px rgba(245, 196, 24, 0.18);
+  --shadow-btn-hover:  0 14px 38px rgba(245, 196, 24, 0.32);
+  --ring-focus:        0 0 0 2px var(--gold);
+
+  /* Ghost-button / subtle fills */
+  --fill-subtle: rgba(255, 255, 255, 0.04);
+  --fill-hover:  rgba(255, 255, 255, 0.07);
+
   color-scheme: dark;
 }
 
+/* ════════════════════════════════════════════════════════════════
+   LIGHT theme — warm premium paper
+   ════════════════════════════════════════════════════════════════ */
+:root[data-theme="light"] {
+  /* Surfaces */
+  --ink-0: #faf9f6;
+  --ink-1: #ffffff;
+  --ink-2: #f2f0e9;
+  --ink-3: #e9e6dc;
+
+  /* Text (names kept for compat: --white = strongest text) */
+  --white: #14161a;
+  --text:  #333a44;
+  --mist:  #5f6774;
+  --mist-2: #4a515c;
+
+  /* Brand — darkened for text contrast on light paper (≥4.5:1) */
+  --gold:       #7d6104;
+  --gold-dark:  #644e03;
+  --gold-amber: #8a5a00;
+  --gold-soft:  color-mix(in srgb, #f5c418 22%, transparent);
+  --gold-glow:  color-mix(in srgb, #d9aa0e 30%, transparent);
+  --green:      #1a4d1a;
+  --green-deep: #0e2f12;
+  --green-light: #2e6b2c;
+
+  /* Lines */
+  --line:        rgba(20, 22, 26, 0.10);
+  --line-strong: rgba(20, 22, 26, 0.22);
+  --line-gold:   rgba(125, 97, 4, 0.30);
+
+  /* State */
+  --danger:  #b3261e;
+  --success: #1a7a4a;
+
+  /* Shadow / glow */
+  --shadow-card:       0 24px 60px -28px rgba(20, 22, 26, 0.22);
+  --shadow-card-hover: 0 30px 80px -26px rgba(150, 118, 8, 0.28),
+                       0 24px 60px -28px rgba(20, 22, 26, 0.22);
+  --shadow-btn:        0 8px 24px rgba(150, 118, 8, 0.22);
+  --shadow-btn-hover:  0 14px 34px rgba(150, 118, 8, 0.34);
+  --ring-focus:        0 0 0 2px var(--gold);
+
+  --fill-subtle: rgba(20, 22, 26, 0.04);
+  --fill-hover:  rgba(20, 22, 26, 0.07);
+
+  color-scheme: light;
+}
+
+/* No-JS fallback: honour the OS preference when the inline theme script
+   never ran (data-theme absent). Values mirror the light block above. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --ink-0: #faf9f6;
+    --ink-1: #ffffff;
+    --ink-2: #f2f0e9;
+    --ink-3: #e9e6dc;
+    --white: #14161a;
+    --text:  #333a44;
+    --mist:  #5f6774;
+    --mist-2: #4a515c;
+    --gold:       #7d6104;
+    --gold-dark:  #644e03;
+    --gold-amber: #8a5a00;
+    --gold-soft:  color-mix(in srgb, #f5c418 22%, transparent);
+    --gold-glow:  color-mix(in srgb, #d9aa0e 30%, transparent);
+    --green-light: #2e6b2c;
+    --line:        rgba(20, 22, 26, 0.10);
+    --line-strong: rgba(20, 22, 26, 0.22);
+    --line-gold:   rgba(125, 97, 4, 0.30);
+    --danger:  #b3261e;
+    --success: #1a7a4a;
+    --shadow-card:       0 24px 60px -28px rgba(20, 22, 26, 0.22);
+    --shadow-card-hover: 0 30px 80px -26px rgba(150, 118, 8, 0.28),
+                         0 24px 60px -28px rgba(20, 22, 26, 0.22);
+    --shadow-btn:        0 8px 24px rgba(150, 118, 8, 0.22);
+    --shadow-btn-hover:  0 14px 34px rgba(150, 118, 8, 0.34);
+    --fill-subtle: rgba(20, 22, 26, 0.04);
+    --fill-hover:  rgba(20, 22, 26, 0.07);
+    color-scheme: light;
+  }
+}
+
 @media (prefers-contrast: more) {
-  :root {
+  :root,
+  :root[data-theme="dark"] {
     --gold: #ffd84d;
     --mist: #c8ced9;
     --text: #ffffff;
     --line: rgba(255, 255, 255, 0.18);
     --overlay-scrim: var(--overlay-scrim-strong);
   }
+  :root[data-theme="light"] {
+    --gold: #5c4802;
+    --mist: #3d434d;
+    --text: #14161a;
+    --line: rgba(20, 22, 26, 0.28);
+  }
 }
+
+/*
+ * contrast-manifest (parsed by scripts/check-contrast.mjs — keep format):
+ * pair dark  --white  #f7f8fa on --ink-0 #0a0b0d
+ * pair dark  --white  #f7f8fa on --ink-1 #111317
+ * pair dark  --text   #d5d9e0 on --ink-0 #0a0b0d
+ * pair dark  --text   #d5d9e0 on --ink-2 #161a20
+ * pair dark  --mist   #9aa1ad on --ink-0 #0a0b0d
+ * pair dark  --mist   #9aa1ad on --ink-1 #111317
+ * pair dark  --mist-2 #b8bec8 on --ink-1 #111317
+ * pair dark  --gold   #f5c418 on --ink-0 #0a0b0d
+ * pair dark  --gold   #f5c418 on --ink-1 #111317
+ * pair dark  --danger #ff6b6b on --ink-0 #0a0b0d
+ * pair dark  --success #6ee7a8 on --ink-0 #0a0b0d
+ * pair light --white  #14161a on --ink-0 #faf9f6
+ * pair light --white  #14161a on --ink-1 #ffffff
+ * pair light --text   #333a44 on --ink-0 #faf9f6
+ * pair light --text   #333a44 on --ink-2 #f2f0e9
+ * pair light --mist   #5f6774 on --ink-0 #faf9f6
+ * pair light --mist   #5f6774 on --ink-1 #ffffff
+ * pair light --mist-2 #4a515c on --ink-1 #ffffff
+ * pair light --gold   #7d6104 on --ink-0 #faf9f6
+ * pair light --gold   #7d6104 on --ink-1 #ffffff
+ * pair light --danger #b3261e on --ink-0 #faf9f6
+ * pair light --success #1a7a4a on --ink-0 #faf9f6
+ * pair any   --gold-fill-text #1a0f04 on --gold-fill #f5c418
+ * pair any   --on-image #f7f8fa on scrim #22242a
+ */

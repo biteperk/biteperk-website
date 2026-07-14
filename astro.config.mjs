@@ -25,7 +25,7 @@ export default defineConfig({
   integrations: [
     sitemap({
       filter: (page) =>
-        !page.includes("/__kitchen-sink") &&
+        !page.includes("/kitchen-sink") &&
         !page.includes("/404"),
       changefreq: "monthly",
       priority: 0.7,
