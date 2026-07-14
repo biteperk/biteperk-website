@@ -32,7 +32,12 @@ export default defineConfig({
       serialize(item) {
         if (item.url === "https://biteperk.com.au/") item.priority = 1.0;
         else if (item.url.includes("/products/")) item.priority = 0.9;
-        else if (item.url.endsWith("/sydney/")) item.priority = 0.9;
+        else if (
+          // City landing pages — keep in sync with src/data/cities.ts
+          // (CI's route list is generated from cities.ts, which catches drift).
+          /\/(sydney|melbourne|brisbane|perth|adelaide|gold-coast)\/$/.test(item.url)
+        )
+          item.priority = 0.9;
         else if (item.url === "https://biteperk.com.au/blog/") item.priority = 0.8;
         else if (item.url.includes("/blog/")) {
           // Individual guides: fresher content, crawl more often.

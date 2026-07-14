@@ -302,10 +302,37 @@ const cards = [
     headline: "One conversation away from a quieter Friday night.",
     showBella: false,
   },
+  // City landing pages — keep slugs in sync with src/data/cities.ts
+  // (scripts/check-cities.mjs fails the build if a published city has no card).
   {
     file: "sydney.png",
     eyebrow: "AI for Sydney restaurants",
     headline: "Never miss another Sydney booking.",
+  },
+  {
+    file: "melbourne.png",
+    eyebrow: "AI for Melbourne restaurants",
+    headline: "Never miss another Melbourne booking.",
+  },
+  {
+    file: "brisbane.png",
+    eyebrow: "AI for Brisbane restaurants",
+    headline: "Never miss another Brisbane booking.",
+  },
+  {
+    file: "perth.png",
+    eyebrow: "AI for Perth restaurants",
+    headline: "Never miss another Perth booking.",
+  },
+  {
+    file: "adelaide.png",
+    eyebrow: "AI for Adelaide restaurants",
+    headline: "Never miss another Adelaide booking.",
+  },
+  {
+    file: "gold-coast.png",
+    eyebrow: "AI for Gold Coast restaurants",
+    headline: "Never miss another Gold Coast booking.",
   },
   {
     file: "blog.png",
