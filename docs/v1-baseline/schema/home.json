@@ -1,0 +1,145 @@
+[
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Can AI really answer my restaurant's phone?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. VocoTable, our AI phone host, answers every inbound call in a warm Australian voice, checks real availability, and writes the booking straight to your dashboard — no hold music, no menus, no missed Friday nights. It runs 24/7 and answers in under a second."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does Biteperk work for restaurants outside Sydney?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Absolutely. We're built and supported from Sydney, but VocoTable works for any restaurant or venue across Australia — Melbourne, Brisbane, Perth, Adelaide and regional towns included. The voice is trained on Australian English and gets local suburb names right."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How much does it cost to have AI answer restaurant calls in Australia?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "VocoTable starts at a flat $80/month with no per-cover or per-call fees, and plans scale up for busier venues and multi-location groups. Most venues recover the cost from the bookings saved in the first week."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Will my callers know they're talking to an AI?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Bella sounds natural and local, and she's upfront and polite. Guests get a fast, friendly answer and a confirmed table — which beats a phone ringing out to voicemail during service."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How is my booking and call data handled?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Audio is processed in Australia, stored only as long as needed to confirm the booking, and never used to train outside models. Biteperk is Privacy Act compliant and your bookings always stay yours."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How quickly can I get set up?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Most venues are live within 48 hours. You forward your existing number to your VocoTable line — about five minutes with your phone provider — and Bella starts answering."
+        }
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": [
+          "Organization",
+          "LocalBusiness"
+        ],
+        "@id": "https://biteperk.com.au/#organization",
+        "name": "Biteperk",
+        "legalName": "Biteperk Pty Ltd",
+        "url": "https://biteperk.com.au",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://biteperk.com.au/favicon.svg"
+        },
+        "image": "https://biteperk.com.au/og/home.png",
+        "description": "Biteperk builds voice and AI tools for hospitality — starting with VocoTable, the AI phone host that answers every restaurant call in a warm Australian voice. Made in Sydney.",
+        "email": "hello@biteperk.com.au",
+        "telephone": "+61450011140",
+        "priceRange": "$$",
+        "currenciesAccepted": "AUD",
+        "sameAs": [
+          "https://www.linkedin.com/company/biteperk"
+        ],
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Level 1, 477 Pitt Street",
+          "addressLocality": "Haymarket",
+          "addressRegion": "NSW",
+          "postalCode": "2000",
+          "addressCountry": "AU"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": -33.8806,
+          "longitude": 151.2043
+        },
+        "hasMap": "https://www.google.com/maps/search/?api=1&query=Level%201%2C%20477%20Pitt%20Street%2C%20Haymarket%20NSW%202000",
+        "areaServed": {
+          "@type": "Country",
+          "name": "Australia"
+        },
+        "knowsAbout": [
+          "Restaurant phone answering",
+          "AI receptionist for restaurants",
+          "Voice AI for hospitality",
+          "Restaurant booking automation"
+        ],
+        "openingHoursSpecification": [
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday"
+            ],
+            "opens": "09:00",
+            "closes": "17:00"
+          }
+        ],
+        "contactPoint": [
+          {
+            "@type": "ContactPoint",
+            "telephone": "+61450011140",
+            "email": "hello@biteperk.com.au",
+            "contactType": "customer service",
+            "areaServed": "AU",
+            "availableLanguage": [
+              "en-AU"
+            ]
+          }
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://biteperk.com.au/#website",
+        "url": "https://biteperk.com.au",
+        "name": "Biteperk",
+        "description": "Biteperk builds voice and AI tools for hospitality — starting with VocoTable, the AI phone host that answers every restaurant call in a warm Australian voice. Made in Sydney.",
+        "inLanguage": "en-AU",
+        "publisher": {
+          "@id": "https://biteperk.com.au/#organization"
+        }
+      }
+    ]
+  }
+]
