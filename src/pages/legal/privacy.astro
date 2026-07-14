@@ -134,6 +134,11 @@ const description =
     margin-bottom: 14px;
     max-width: 70ch;
   }
-  .legal a { color: var(--gold); }
-  .legal a:hover { text-decoration: underline; }
+  .legal a {
+    color: var(--gold);
+    /* Underline so in-prose links don't rely on colour alone (WCAG 1.4.1). */
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .legal a:hover { text-decoration-thickness: 2px; }
 </style>

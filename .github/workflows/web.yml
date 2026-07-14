@@ -19,7 +19,7 @@ jobs:
   build:
     name: Type-check, build, link-check
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 25
 
     steps:
       - name: Checkout
@@ -74,6 +74,25 @@ jobs:
             ./dist/**/*.html
           fail: false
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      # ---- Phase 7 automated QA (runs after the existing gates) ----
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium webkit
+
+      - name: Playwright E2E + axe (theme, menus, contact, routes, a11y)
+        run: npm run test:e2e
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 7
+
+      - name: Lighthouse CI budgets (perf ≥95, LCP ≤2.0s, CLS ≤0.02, JS ≤60KB)
+        run: npm run lhci
 
       - name: Upload build artefact
         uses: actions/upload-artifact@v4
