@@ -73,6 +73,13 @@ for (const c of published) {
     if (!blogSlugs.has(g)) fail(`${c.slug}: relatedGuide "${g}" not found in src/content/blog/`);
 }
 
+// llms.txt must mention every published city page (AI-crawler surface).
+const llms = readFileSync(join(ROOT, "public/llms.txt"), "utf8");
+for (const c of published) {
+  if (!llms.includes(`https://biteperk.com.au/${c.slug}/`))
+    fail(`${c.slug}: not listed in public/llms.txt`);
+}
+
 // Pairwise intro-similarity (the field most tempting to template).
 for (let i = 0; i < published.length; i++) {
   for (let j = i + 1; j < published.length; j++) {
