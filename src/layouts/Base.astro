@@ -50,8 +50,23 @@ const {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="color-scheme" content="dark" />
-    <meta name="theme-color" content="#0a0b0d" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0a0b0d" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#faf9f6" />
+    {/* Pre-paint theme: explicit localStorage choice wins, else follow the
+        OS. Inline so it runs before first paint — prevents theme flash.
+        Storage contract shared with src/scripts/theme.ts. */}
+    <script is:inline>
+      (function () {
+        try {
+          var t = localStorage.getItem("bp-theme");
+          if (t !== "light" && t !== "dark") {
+            t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+          }
+          document.documentElement.dataset.theme = t;
+        } catch (e) {}
+      })();
+    </script>
     <meta name="format-detection" content="telephone=no" />
     <!-- Bing Webmaster Tools site verification -->
     <meta name="msvalidate.01" content="C717E1E48BD4B561E0F2F3B5F733838D" />
@@ -84,6 +99,7 @@ const {
     <Footer />
 
     <script>
+      import "@/scripts/theme.ts";
       import "@/scripts/reveal.ts";
       import "@/scripts/nav.ts";
       import "@/scripts/mobile-menu.ts";

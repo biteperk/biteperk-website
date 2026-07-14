@@ -87,8 +87,8 @@ button {
 }
 
 ::selection {
-  background: var(--gold);
-  color: #1a0f04;
+  background: var(--gold-fill);
+  color: var(--gold-fill-text);
 }
 
 /* ── Skip link ──────────────────────────────────────────────────── */
@@ -98,8 +98,8 @@ button {
   top: 0;
   z-index: var(--z-modal);
   padding: 12px 18px;
-  background: var(--gold);
-  color: #1a0f04;
+  background: var(--gold-fill);
+  color: var(--gold-fill-text);
   font-weight: 700;
   border-radius: 0 0 8px 0;
 }
@@ -179,8 +179,8 @@ button {
   min-height: 44px;
 }
 .btn {
-  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-  color: #1a0f04;
+  background: linear-gradient(135deg, var(--gold-fill), var(--gold-fill-dark));
+  color: var(--gold-fill-text);
   border: none;
   box-shadow: var(--shadow-btn);
 }
@@ -193,14 +193,14 @@ button {
 }
 
 .btn-ghost {
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid var(--line-strong);
   color: var(--white);
   background: transparent;
   font-weight: 600;
 }
 .btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.35);
+  background: var(--fill-hover);
+  border-color: var(--white);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -222,15 +222,15 @@ button {
   font-weight: 600;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: #e6e9ee;
-  background: rgba(255, 255, 255, 0.03);
+  color: var(--white);
+  background: var(--fill-subtle);
 }
 .pill .dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--gold);
-  box-shadow: 0 0 12px var(--gold);
+  background: var(--gold-fill);
+  box-shadow: 0 0 12px var(--gold-glow);
   animation: bp-pulse 2.6s ease-in-out infinite;
 }
 
