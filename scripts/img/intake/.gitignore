@@ -1,0 +1,4 @@
+# Generated masters are review-time inputs, not repo assets.
+# Drop <slot>.png here per docs/art-direction.md, run npm run images:v2.
+*
+!.gitignore

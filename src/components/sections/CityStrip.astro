@@ -1,0 +1,84 @@
+---
+/**
+ * Homepage strip linking every published city landing page. Feeds the
+ * city-engine internal-link mesh (home → cities, cities ↔ cities,
+ * footer → cities) that tells crawlers these pages matter.
+ */
+import { publishedCities, cityUrl } from "@/data/cities";
+---
+
+<section class="citystrip section" aria-labelledby="citystrip-h">
+  <div class="wrap">
+    <div class="reveal citystrip-head">
+      <span class="eyebrow">Across Australia</span>
+      <h2 id="citystrip-h">One phone host. Every city.</h2>
+      <p class="lede">
+        Voco answers for venues Australia-wide, with local pages for the cities
+        our callers ring from most.
+      </p>
+    </div>
+    <ul class="reveal citystrip-list">
+      {publishedCities.map((c) => (
+        <li>
+          <a href={cityUrl(c)}>
+            <span class="citystrip-name">{c.name}</span>
+            <span class="citystrip-state">{c.state}</span>
+            <span class="citystrip-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .citystrip {
+    border-top: 1px solid var(--line);
+  }
+  .citystrip-head h2 {
+    font-size: var(--fs-h2);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: var(--lh-display);
+    color: var(--white);
+    margin-top: 14px;
+  }
+  .citystrip-head .lede { margin-top: 16px; }
+  .citystrip-list {
+    list-style: none;
+    padding: 0;
+    margin: 40px 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 14px;
+  }
+  .citystrip-list a {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 18px 20px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--ink-1);
+    transition:
+      border-color var(--dur-base) var(--ease-out),
+      background var(--dur-base) var(--ease-out),
+      transform var(--dur-base) var(--ease-out);
+  }
+  .citystrip-list a:hover {
+    border-color: color-mix(in srgb, var(--gold) 40%, var(--line));
+    background: var(--fill-hover);
+    transform: translateY(-2px);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .citystrip-list a:hover { transform: none; }
+  }
+  .citystrip-name { font-weight: 700; color: var(--white); font-size: 16px; }
+  .citystrip-state { font-size: 12px; color: var(--mist); letter-spacing: 1px; }
+  .citystrip-arrow {
+    margin-left: auto;
+    color: var(--gold);
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+  .citystrip-list a:hover .citystrip-arrow { transform: translateX(3px); }
+</style>

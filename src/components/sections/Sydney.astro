@@ -73,7 +73,7 @@ import ImageBlock from "@/components/ImageBlock.astro";
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    background: radial-gradient(50% 60% at 50% 40%, rgba(26, 77, 26, 0.32), transparent 70%);
+    background: radial-gradient(50% 60% at 50% 40%, color-mix(in srgb, var(--green) 32%, transparent), transparent 70%);
   }
   .sydney .wrap { position: relative; z-index: 1; }
   .sydney-grid {
@@ -133,8 +133,8 @@ import ImageBlock from "@/components/ImageBlock.astro";
     overflow: hidden;
     border: 1px solid var(--line);
     box-shadow:
-      0 32px 80px -20px rgba(0, 0, 0, 0.6),
-      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      var(--shadow-card),
+      inset 0 1px 0 var(--line);
   }
   .sydney-photo :global(.image-block) {
     border-radius: 0;
@@ -158,12 +158,12 @@ import ImageBlock from "@/components/ImageBlock.astro";
     font-size: 10.5px;
     letter-spacing: 1.8px;
     text-transform: uppercase;
-    color: var(--gold);
+    color: var(--gold-fill);
     font-weight: 700;
   }
   .sydney-photo-line {
     font-size: 14px;
-    color: var(--white);
+    color: var(--on-image);
     font-weight: 600;
     letter-spacing: -0.01em;
   }

@@ -19,7 +19,7 @@ jobs:
   build:
     name: Type-check, build, link-check
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 25
 
     steps:
       - name: Checkout
@@ -40,26 +40,20 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Smoke-test built routes
-        run: |
-          set -e
-          for route in \
-            dist/index.html \
-            dist/products/index.html \
-            dist/products/vocotable/index.html \
-            dist/products/vocoorder/index.html \
-            dist/products/vococoncierge/index.html \
-            dist/products/vocodrive/index.html \
-            dist/contact/index.html \
-            dist/legal/privacy/index.html \
-            dist/legal/terms/index.html \
-            dist/404.html \
-            dist/sitemap-index.xml \
-            dist/robots.txt
-          do
-            test -f "$route" || { echo "Missing: $route"; exit 1; }
-          done
-          echo "All expected routes present."
+      - name: Imagery review gate (manifest slots must be human-reviewed)
+        run: node scripts/check-images.mjs
+
+      - name: Smoke-test built routes (generated from cities.ts + blog)
+        run: node scripts/check-routes.mjs
+
+      - name: WCAG contrast gate (both themes)
+        run: node scripts/check-contrast.mjs
+
+      - name: City-page anti-doorway gate
+        run: node scripts/check-cities.mjs
+
+      - name: JSON-LD @id + NAP integrity
+        run: node scripts/check-schema.mjs
 
       - name: Sanity-check sitemap
         run: |
@@ -80,6 +74,25 @@ jobs:
             ./dist/**/*.html
           fail: false
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      # ---- Phase 7 automated QA (runs after the existing gates) ----
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium webkit
+
+      - name: Playwright E2E + axe (theme, menus, contact, routes, a11y)
+        run: npm run test:e2e
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 7
+
+      - name: Lighthouse CI budgets (perf ≥95, LCP ≤2.0s, CLS ≤0.02, JS ≤60KB)
+        run: npm run lhci
 
       - name: Upload build artefact
         uses: actions/upload-artifact@v4
