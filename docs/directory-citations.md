@@ -18,7 +18,7 @@ Suburb:          Haymarket
 State:           NSW
 Postcode:        2000
 Country:         Australia
-Phone:           0450 011 140                 (intl format if required: +61 450 011 140)
+Phone:           +61 2 5504 1140              (E.164 if required: +61255041140)
 Email:           hello@biteperk.com.au
 Website:         https://biteperk.com.au
 Hours:           Mon–Fri 9:00am–5:00pm (AEST)

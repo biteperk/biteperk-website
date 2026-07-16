@@ -200,7 +200,7 @@ def draw_front(bleed):
     c.setFont("MonoB", 8.0)
     c.drawString(tx, band_h - 32.5 * mm, "vocotable.biteperk.com.au")
     c.setFont("Mono", 7.6)
-    c.drawString(tx, band_h - 38 * mm, "or call 0450 011 140")
+    c.drawString(tx, band_h - 38 * mm, "or call +61 2 5504 1140")
     c.setFont("Mono", 5.8)
     c.drawString(tx, band_h - 44 * mm, "MONTH-TO-MONTH  ·  NO LOCK-IN  ·  CANCEL ANYTIME")
 
@@ -320,7 +320,7 @@ def draw_back(bleed):
     c.drawString(M + c.stringWidth("Voco", "SansB", 9.5), fy - 7.5 * mm, "Table")
     c.setFillColor(MIST2)
     c.setFont("Mono", 7.2)
-    c.drawString(M, fy - 13 * mm, "0450 011 140   ·   hello@biteperk.com.au")
+    c.drawString(M, fy - 13 * mm, "+61 2 5504 1140   ·   hello@biteperk.com.au")
     c.drawString(M, fy - 17.8 * mm, "vocotable.biteperk.com.au")
     c.setFillColor(MIST)
     c.setFont("Mono", 5.8)
