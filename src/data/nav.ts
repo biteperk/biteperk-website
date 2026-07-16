@@ -7,6 +7,7 @@
 
 import { site } from "./site";
 import { products, productUrl } from "./products";
+import { publishedCities, cityUrl } from "./cities";
 
 export interface NavLink {
   readonly label: string;
@@ -36,9 +37,15 @@ export const footerColumns: ReadonlyArray<NavColumn> = [
     links: products.map((p) => ({ label: p.name, href: productUrl(p) })),
   },
   {
+    heading: "Locations",
+    links: publishedCities.map((c) => ({
+      label: `AI for ${c.name} restaurants`,
+      href: cityUrl(c),
+    })),
+  },
+  {
     heading: "Company",
     links: [
-      { label: "AI for Sydney restaurants", href: "/sydney/" },
       { label: "Guides", href: "/blog/" },
       { label: "Contact", href: "/contact/" },
       { label: "Careers", href: site.email.href },

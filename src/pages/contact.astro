@@ -8,7 +8,7 @@ import { products } from "@/data/products";
 
 const title = "Contact Biteperk — Restaurant voice AI, Sydney & Australia-wide";
 const description =
-  "Talk to Biteperk at Level 1, 477 Pitt Street, Haymarket NSW. Call 0450 011 140 (Mon–Fri, 9am–5pm AEST) or email hello@biteperk.com.au. We answer every message — usually within a few hours.";
+  "Talk to Biteperk at Level 1, 477 Pitt Street, Haymarket NSW. Call +61 2 5504 1140 (Mon–Fri, 9am–5pm AEST) or email hello@biteperk.com.au. We answer every message — usually within a few hours.";
 ---
 
 <Base title={title} description={description} path="/contact/" ogImage="/og/contact.png">
@@ -168,7 +168,7 @@ const description =
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    background: radial-gradient(40% 50% at 80% 0%, rgba(245, 196, 24, 0.16), transparent 70%);
+    background: radial-gradient(40% 50% at 80% 0%, var(--gold-soft), transparent 70%);
   }
   .contact-hero .wrap { position: relative; z-index: 1; }
   .contact-top { margin-bottom: 28px; }
@@ -182,7 +182,7 @@ const description =
     border-radius: var(--r-xl);
     overflow: hidden;
     border: 1px solid var(--line);
-    box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.7);
+    box-shadow: var(--shadow-card);
   }
   .contact-strip-frame :global(.image-block) {
     border-radius: 0;
@@ -199,19 +199,19 @@ const description =
     background: rgba(10, 11, 13, 0.7);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    border: 1px solid var(--line);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     font-size: 12px;
     letter-spacing: 1.5px;
     text-transform: uppercase;
     font-weight: 600;
-    color: var(--white);
+    color: var(--on-image);
   }
   .contact-strip-tag .dot {
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: var(--gold);
-    box-shadow: 0 0 12px var(--gold);
+    background: var(--gold-fill);
+    box-shadow: 0 0 12px var(--gold-fill);
   }
 
   .contact-grid-wrap { padding-block: var(--space-section); background: var(--ink-0); }
@@ -263,7 +263,7 @@ const description =
     border: 1px solid var(--line);
     border-radius: var(--r-xl);
     background:
-      linear-gradient(160deg, rgba(245, 196, 24, 0.03), transparent 50%),
+      linear-gradient(160deg, color-mix(in srgb, var(--gold-fill) 3%, transparent), transparent 50%),
       var(--ink-1);
   }
   .contact-noscript {
@@ -309,9 +309,9 @@ const description =
   .contact-field select,
   .contact-field textarea {
     width: 100%;
-    background: var(--ink-2);
+    background: var(--ink-1);
     color: var(--white);
-    border: 1px solid var(--line);
+    border: 1px solid var(--line-strong);
     border-radius: var(--r-md);
     padding: 14px 16px;
     font-family: inherit;
@@ -333,7 +333,7 @@ const description =
   }
   .contact-field input::placeholder,
   .contact-field textarea::placeholder {
-    color: #5b6470;
+    color: var(--mist);
   }
 
   .contact-field { margin-bottom: 22px; }
@@ -360,9 +360,9 @@ const description =
   }
   .contact-status[hidden] { display: none; }
   .contact-status.is-error {
-    color: #ffd2cf;
-    background: rgba(220, 70, 60, 0.12);
-    border-color: rgba(220, 70, 60, 0.35);
+    color: var(--danger);
+    background: color-mix(in srgb, var(--danger) 12%, transparent);
+    border-color: color-mix(in srgb, var(--danger) 35%, transparent);
   }
   .contact-status a { color: var(--gold); }
 

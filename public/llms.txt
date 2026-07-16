@@ -6,7 +6,7 @@
 
 - Company: Biteperk Pty Ltd, a Sydney-based voice/AI software company for hospitality.
 - Location: Level 1, 477 Pitt Street, Haymarket NSW 2000, Australia (serves all of Australia).
-- Contact: phone 0450 011 140 (+61 450 011 140); email hello@biteperk.com.au; hours Mon–Fri 9am–5pm AEST.
+- Contact: phone +61 2 5504 1140; email hello@biteperk.com.au; hours Mon–Fri 9am–5pm AEST.
 - Product: Voco — one AI phone host (the voice is "Bella"). Its capabilities are bookings and takeaway/pickup (live), concierge (in development), and drive-thru (concept). Bookings ship as "VocoTable" (serving paying customers); takeaway/pickup ships as "VocoOrder".
 - VocoTable pricing (AUD, flat monthly, no per-call or per-cover fees): Solo $80/month (up to 300 covers, 1 venue), Pro $150/month (unlimited covers — "Our pick"), Group $250/month (up to 3 venues), Enterprise custom (4+ venues). Free week trial; month-to-month, no lock-in.
 - Setup: works with a venue's existing phone number — just forward calls. No new hardware, no installation, no IT. Most venues are live the same day.
@@ -26,7 +26,13 @@ Voco is a single AI phone host. Each capability below is a job the same agent do
 ## Key pages
 
 - [Home](https://biteperk.com.au/): Company overview, products, and the missed-call problem Biteperk solves.
-- [AI phone answering for Sydney restaurants](https://biteperk.com.au/sydney/): Local landing page — how AI phone answering works for Sydney venues, suburbs served, and FAQs.
+- [AI phone answering for Sydney restaurants](https://biteperk.com.au/sydney/): Flagship local landing page — how AI phone answering works for Sydney venues (Biteperk's home city), suburbs served, and FAQs.
+- [AI phone answering for Melbourne restaurants](https://biteperk.com.au/melbourne/): Melbourne landing page — laneway venues, booking amendments, no-show reduction, suburbs served, and FAQs.
+- [AI phone answering for Brisbane restaurants](https://biteperk.com.au/brisbane/): Brisbane landing page — outdoor/deck dining, weather-driven booking changes, suburbs served, and FAQs.
+- [AI phone answering for Perth restaurants](https://biteperk.com.au/perth/): Perth landing page — time-zone-proof 24/7 answering for WA venues, suburbs served, and FAQs.
+- [AI phone answering for Adelaide restaurants](https://biteperk.com.au/adelaide/): Adelaide landing page — small rooms, festival-season surges, wine-country weekends, suburbs served, and FAQs.
+- [AI phone answering for Gold Coast restaurants](https://biteperk.com.au/gold-coast/): Gold Coast landing page — tourist callers, holiday-peak volume, suburbs served, and FAQs.
+- Note: Biteperk's only physical office is in Haymarket, Sydney. All other cities are served remotely (setup is a phone-forward; support is Australian business hours).
 - [Contact](https://biteperk.com.au/contact/): Phone, email, address, hours, and a contact form for venues.
 
 ## Guides (blog)

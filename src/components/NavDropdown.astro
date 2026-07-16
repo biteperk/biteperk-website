@@ -111,7 +111,7 @@ const onProducts = pathname === "/products" || pathname.startsWith("/products/")
   .megamenu-trigger:hover,
   .megamenu-trigger.active {
     color: var(--white);
-    background: rgba(255, 255, 255, 0.04);
+    background: var(--fill-hover);
   }
   .megamenu-chev {
     transition: transform var(--dur-fast) var(--ease-out);
@@ -119,13 +119,13 @@ const onProducts = pathname === "/products" || pathname.startsWith("/products/")
   .megamenu.is-open .megamenu-chev { transform: rotate(180deg); }
 
   .megamenu-panel {
-    background: rgba(17, 19, 23, 0.96);
+    background: color-mix(in srgb, var(--ink-1) 96%, transparent);
     backdrop-filter: blur(24px) saturate(140%);
     -webkit-backdrop-filter: blur(24px) saturate(140%);
     border-color: var(--line);
     box-shadow:
-      0 32px 80px -20px rgba(0, 0, 0, 0.75),
-      0 0 0 1px rgba(245, 196, 24, 0.04);
+      var(--shadow-card),
+      0 0 0 1px color-mix(in srgb, var(--gold-fill) 4%, transparent);
     opacity: 0;
     transform: translate(-50%, -8px);
     transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out);
@@ -172,7 +172,7 @@ const onProducts = pathname === "/products" || pathname.startsWith("/products/")
   .megamenu-card:hover,
   .megamenu-card.active,
   .megamenu-card:focus-visible {
-    background: rgba(255, 255, 255, 0.04);
+    background: var(--fill-hover);
     border-color: color-mix(in srgb, var(--gold) 18%, transparent);
   }
   .megamenu-card:hover .megamenu-card-arrow {
@@ -233,15 +233,15 @@ const onProducts = pathname === "/products" || pathname.startsWith("/products/")
     border-radius: var(--r-pill);
     white-space: nowrap;
   }
-  .megamenu-pill.is-live { background: var(--gold); color: #1a0f04; }
+  .megamenu-pill.is-live { background: var(--gold-fill); color: var(--gold-fill-text); }
   .megamenu-pill.is-in-development {
     color: var(--gold);
-    background: rgba(245, 196, 24, 0.08);
+    background: color-mix(in srgb, var(--gold-fill) 8%, transparent);
     border: 1px solid color-mix(in srgb, var(--gold) 32%, transparent);
   }
   .megamenu-pill.is-concept {
     color: var(--mist-2);
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--fill-subtle);
     border: 1px solid var(--line);
   }
 
@@ -259,7 +259,7 @@ const onProducts = pathname === "/products" || pathname.startsWith("/products/")
   .megamenu-foot-link:hover,
   .megamenu-foot-link:focus-visible {
     color: var(--white);
-    background: rgba(255, 255, 255, 0.04);
+    background: var(--fill-hover);
   }
   .megamenu-foot-link svg { color: var(--gold); }
 </style>

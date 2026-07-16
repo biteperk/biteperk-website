@@ -1,0 +1,415 @@
+---
+/**
+ * /[city]/ — local landing-page engine.
+ *
+ * One template, many cities, driven by src/data/cities.ts. Every text field
+ * is hand-written per city (anti-doorway rule enforced by
+ * scripts/check-cities.mjs), so these are genuine local pages, not spun
+ * copies. Sydney (isHQ) keeps its original /sydney/ URL and content.
+ *
+ * Structured data per city: Service (provider → Organization @id,
+ * areaServed → the city) + BreadcrumbList + FAQPage. The LocalBusiness NAP
+ * itself never changes — Biteperk has one real address (Haymarket, Sydney);
+ * other cities are honestly remote-served markets.
+ */
+import Base from "@/layouts/Base.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import FAQ from "@/components/FAQ.astro";
+import Cta from "@/components/Cta.astro";
+import ImageBlock from "@/components/ImageBlock.astro";
+import { site } from "@/data/site";
+import { ORG_ID, WEBSITE_ID } from "@/data/schema";
+import { publishedCities, cityUrl, type City } from "@/data/cities";
+
+export function getStaticPaths() {
+  return publishedCities.map((city) => ({
+    params: { city: city.slug },
+    props: { city },
+  }));
+}
+
+interface Props {
+  city: City;
+}
+const { city } = Astro.props;
+
+const path = cityUrl(city);
+const others = publishedCities.filter((c) => c.slug !== city.slug);
+const ogImage = `/og/${city.slug}.png`;
+
+const serviceJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "@id": `${site.url}${path}#service`,
+  name: `AI phone answering for ${city.name} restaurants`,
+  serviceType: "AI phone answering and reservation booking",
+  description: city.seoDescription,
+  provider: { "@id": ORG_ID },
+  areaServed: {
+    "@type": "City",
+    name: city.name,
+    containedInPlace: { "@type": "State", name: city.stateName },
+  },
+  audience: { "@type": "BusinessAudience", name: "Restaurants, cafés and venues" },
+  url: `${site.url}${path}`,
+  offers: {
+    "@type": "Offer",
+    priceCurrency: "AUD",
+    price: "80",
+    priceSpecification: {
+      "@type": "UnitPriceSpecification",
+      price: "80",
+      priceCurrency: "AUD",
+      unitText: "MONTH",
+    },
+    availability: "https://schema.org/InStock",
+  },
+};
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: site.url },
+    { "@type": "ListItem", position: 2, name: `AI for ${city.name} restaurants`, item: `${site.url}${path}` },
+  ],
+};
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  isPartOf: { "@id": WEBSITE_ID },
+  mainEntity: city.faqs.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+};
+
+const [headStart, headAccent] = (() => {
+  // "AI phone answering for Sydney restaurants." → split before the city
+  const idx = city.heroHeadline.indexOf(city.name);
+  if (idx === -1) return [city.heroHeadline, ""];
+  return [city.heroHeadline.slice(0, idx), city.heroHeadline.slice(idx)];
+})();
+---
+
+<Base title={city.seoTitle} description={city.seoDescription} path={path} ogImage={ogImage}>
+  <Fragment slot="jsonld">
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(serviceJsonLd)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
+  </Fragment>
+
+  {/* ── Hero ─────────────────────────────────────────────────────── */}
+  <section class="city-hero">
+    <div class="city-hero-glow" aria-hidden="true"></div>
+    <div class="wrap">
+      <div class="city-top">
+        <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: city.name }]} />
+      </div>
+      <div class="city-hero-grid">
+        <div class="reveal">
+          <span class="pill">
+            <span class="dot"></span>
+            {city.name}, {city.state}
+          </span>
+          <h1 class="city-h1">
+            {headStart}<span class="gold">{headAccent}</span>
+          </h1>
+          <p class="city-sub lede">{city.intro[0]}</p>
+          <div class="city-cta">
+            <a class="btn" href="/products/vocotable/">See how VocoTable works →</a>
+            <a class="btn-ghost" href={site.phone.href}>Call us · {site.phone.display}</a>
+          </div>
+          <ul class="city-trust">
+            <li><span class="gold">100%</span> made in Australia</li>
+            <li><span class="gold">AU</span> data residency</li>
+            <li><span class="gold">24/7</span> every call answered</li>
+          </ul>
+        </div>
+        <div class="reveal city-hero-photo">
+          <ImageBlock
+            slug={city.heroImage}
+            alt={city.heroImageAlt}
+            aspect="4 / 5"
+            widths="(min-width: 1024px) 40vw, 100vw"
+            priority
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ── The local story ──────────────────────────────────────────── */}
+  <section class="city-section">
+    <div class="wrap">
+      <div class="city-split">
+        <div class="reveal">
+          <span class="eyebrow">The missed-call problem, {city.name}-style</span>
+          <h2 class="city-h2">A ringing phone during service is a booking walking next door.</h2>
+          {city.intro.slice(1).map((p) => <p class="city-body">{p}</p>)}
+        </div>
+        <div class="reveal city-split-photo">
+          <ImageBlock
+            slug="busy-service-night"
+            alt="A busy restaurant during evening service, staff focused on the floor."
+            aspect="4 / 3"
+            widths="(min-width: 1024px) 46vw, 100vw"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ── City scenarios ───────────────────────────────────────────── */}
+  <section class="city-section city-how">
+    <div class="wrap">
+      <div class="city-how-head reveal">
+        <span class="eyebrow">How Biteperk helps in {city.name}</span>
+        <h2 class="city-h2">Bella answers, so your team can stay on the floor.</h2>
+      </div>
+      <div class="city-cards reveal">
+        {city.scenarios.map((s) => (
+          <article class="city-card">
+            <h3>{s.title}</h3>
+            <p>{s.body}</p>
+          </article>
+        ))}
+      </div>
+      <div class="city-how-cta reveal">
+        <a class="btn" href="/products/vocotable/">Explore VocoTable →</a>
+        <a class="btn-ghost" href="/contact/">Book a 15-minute walkthrough</a>
+      </div>
+    </div>
+  </section>
+
+  {/* ── Suburbs served ───────────────────────────────────────────── */}
+  <section class="city-section city-areas">
+    <div class="wrap">
+      <div class="reveal">
+        <span class="eyebrow">Across {city.name}</span>
+        <h2 class="city-h2">The neighbourhoods our callers ring from.</h2>
+        <p class="city-body city-areas-lede">
+          We work with restaurants, cafés and venues right across {city.name} — and Australia-wide.
+        </p>
+        <ul class="city-chips">
+          {city.suburbs.map((s) => <li>{s}</li>)}
+        </ul>
+        <p class="city-areas-note">
+          Somewhere else? VocoTable works anywhere in Australia — <a href="/products/vocotable/">see the product</a>
+          or <a href="/contact/">get in touch</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {/* ── FAQ ──────────────────────────────────────────────────────── */}
+  <section class="city-section city-faq">
+    <div class="wrap">
+      <div class="city-how-head reveal">
+        <span class="eyebrow">{city.name} questions</span>
+        <h2 class="city-h2">Answered plainly.</h2>
+      </div>
+      <div class="reveal" style="margin-top:40px">
+        <FAQ items={[...city.faqs]} />
+      </div>
+    </div>
+  </section>
+
+  {/* ── Other cities ─────────────────────────────────────────────── */}
+  <section class="city-section city-others">
+    <div class="wrap reveal">
+      <span class="eyebrow">Everywhere Voco answers</span>
+      <h2 class="city-h2">Also serving venues in</h2>
+      <ul class="city-links">
+        {others.map((c) => (
+          <li><a href={cityUrl(c)}>{c.name}, {c.state} →</a></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <Cta
+    eyebrow={city.isHQ ? "Talk to a Sydney team" : "Talk to an Australian team"}
+    headline={`Stop losing ${city.name} bookings to a busy line.`}
+    lede="Most venues are live within 48 hours. Talk to us about a 15-minute walkthrough, or just call the number and hear Bella for yourself."
+    primary={{ label: `Call us · ${site.phone.display}`, href: site.phone.href }}
+    secondary={{ label: "See VocoTable", href: "/products/vocotable/" }}
+  />
+</Base>
+
+<style>
+  .city-hero {
+    position: relative;
+    padding: clamp(120px, 14vw, 180px) 0 clamp(56px, 7vw, 88px);
+    overflow: hidden;
+    border-bottom: 1px solid var(--line);
+  }
+  .city-hero-glow {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(46% 56% at 82% 8%, color-mix(in srgb, var(--gold-fill) 16%, transparent), transparent 70%),
+      radial-gradient(40% 50% at 0% 100%, color-mix(in srgb, var(--green) 28%, transparent), transparent 70%);
+  }
+  .city-hero .wrap { position: relative; z-index: 1; }
+  .city-top { margin-bottom: 28px; }
+  .city-hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: clamp(40px, 6vw, 72px);
+    align-items: center;
+  }
+  .city-h1 {
+    margin-top: 22px;
+    font-size: var(--fs-h1);
+    font-weight: 800;
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    color: var(--white);
+    max-width: 14ch;
+  }
+  .city-h1 .gold { color: var(--gold); }
+  .city-sub { margin-top: 24px; color: var(--text); max-width: 56ch; }
+  .city-cta {
+    margin-top: 36px;
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .city-trust {
+    margin-top: 36px;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    font-size: 13.5px;
+    color: var(--mist);
+  }
+  .city-trust .gold { color: var(--gold); font-weight: 800; font-size: 16px; margin-right: 4px; }
+
+  .city-hero-photo {
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-card);
+  }
+  .city-hero-photo :global(.image-block) { border-radius: 0; }
+
+  .city-section {
+    padding-block: var(--space-section);
+    border-top: 1px solid var(--line);
+  }
+  .city-h2 {
+    font-size: var(--fs-h2);
+    font-weight: 800;
+    line-height: var(--lh-display);
+    letter-spacing: -0.025em;
+    color: var(--white);
+    margin-top: 16px;
+    max-width: 20ch;
+  }
+  .city-body {
+    margin-top: 22px;
+    color: var(--text);
+    line-height: 1.7;
+    max-width: 60ch;
+  }
+
+  .city-split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(40px, 5vw, 64px);
+    align-items: center;
+  }
+  .city-split-photo {
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-card);
+  }
+  .city-split-photo :global(.image-block) { border-radius: 0; }
+
+  .city-how-head { text-align: center; max-width: 760px; margin: 0 auto; }
+  .city-how-head .city-h2 { margin-inline: auto; }
+  .city-cards {
+    margin-top: 48px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+  }
+  .city-card {
+    padding: 28px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--ink-1);
+    transition: border-color var(--dur-base) var(--ease-out);
+  }
+  .city-card:hover { border-color: color-mix(in srgb, var(--gold) 30%, var(--line)); }
+  .city-card h3 { font-size: 18px; color: var(--white); font-weight: 700; letter-spacing: -0.01em; }
+  .city-card p { margin-top: 10px; color: var(--text); line-height: 1.6; font-size: 14.5px; }
+  .city-how-cta {
+    margin-top: 44px;
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .city-areas-lede { margin-bottom: 28px; }
+  .city-chips {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .city-chips li {
+    padding: 9px 16px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--line);
+    background: var(--ink-1);
+    color: var(--mist-2);
+    font-size: 13.5px;
+    font-weight: 500;
+  }
+  .city-areas-note { margin-top: 28px; color: var(--mist); font-size: 14.5px; }
+  .city-areas-note a { color: var(--gold); }
+  .city-areas-note a:hover { text-decoration: underline; }
+
+  .city-links {
+    list-style: none;
+    padding: 0;
+    margin: 28px 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .city-links a {
+    display: inline-block;
+    padding: 12px 20px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-pill);
+    background: var(--ink-1);
+    color: var(--white);
+    font-weight: 600;
+    font-size: 14.5px;
+    transition: border-color var(--dur-base) var(--ease-out), background var(--dur-base) var(--ease-out);
+  }
+  .city-links a:hover {
+    border-color: color-mix(in srgb, var(--gold) 40%, var(--line));
+    background: var(--fill-hover);
+  }
+
+  @media (max-width: 980px) {
+    .city-hero-grid { grid-template-columns: 1fr; gap: 48px; }
+    .city-hero-photo { order: -1; max-width: 420px; }
+    .city-split { grid-template-columns: 1fr; gap: 40px; }
+    .city-h1, .city-h2 { max-width: none; }
+  }
+</style>

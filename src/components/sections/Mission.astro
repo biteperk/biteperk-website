@@ -66,8 +66,8 @@ import ImageBlock from "@/components/ImageBlock.astro";
     overflow: hidden;
     border: 1px solid var(--line);
     box-shadow:
-      0 32px 80px -20px rgba(0, 0, 0, 0.65),
-      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      var(--shadow-card),
+      inset 0 1px 0 var(--line);
   }
   .mission-photo :global(.image-block) { border-radius: 0; }
   .mission-photo-cap {
@@ -89,12 +89,12 @@ import ImageBlock from "@/components/ImageBlock.astro";
     font-size: 10.5px;
     letter-spacing: 1.8px;
     text-transform: uppercase;
-    color: var(--gold);
+    color: var(--gold-fill);
     font-weight: 700;
   }
   .mission-photo-sub {
     font-size: 13px;
-    color: var(--text);
+    color: var(--on-image);
     line-height: 1.4;
   }
 

@@ -14,6 +14,7 @@
  * of treating each page's copy as a separate entity.
  */
 import { site } from "./site";
+import { publishedCities } from "./cities";
 
 export const ORG_ID = `${site.url}/#organization`;
 export const WEBSITE_ID = `${site.url}/#website`;
@@ -62,7 +63,17 @@ export const organizationNode = {
     longitude: site.address.geo.lng,
   },
   hasMap: site.address.mapsUrl,
-  areaServed: { "@type": "Country", name: "Australia" },
+  // Country-wide service + the cities we actively target with landing pages.
+  // The NAP above stays the single real Haymarket address — cities are
+  // served markets, never fake premises.
+  areaServed: [
+    { "@type": "Country", name: "Australia" },
+    ...publishedCities.map((c) => ({
+      "@type": "City" as const,
+      name: c.name,
+      containedInPlace: { "@type": "State" as const, name: c.stateName },
+    })),
+  ],
   knowsAbout: [
     "Restaurant phone answering",
     "AI receptionist for restaurants",

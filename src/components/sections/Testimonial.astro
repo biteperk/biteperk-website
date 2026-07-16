@@ -36,7 +36,7 @@ import ImageBlock from "@/components/ImageBlock.astro";
     padding-block: var(--space-section);
     border-top: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
-    background: #0e1014;
+    background: var(--ink-1);
     overflow: hidden;
   }
   .testimonial-bg {
@@ -60,8 +60,8 @@ import ImageBlock from "@/components/ImageBlock.astro";
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(60% 60% at 50% 50%, rgba(10, 11, 13, 0.65), rgba(10, 11, 13, 0.92) 80%),
-      linear-gradient(180deg, rgba(10, 11, 13, 0.6) 0%, rgba(10, 11, 13, 0.8) 100%);
+      radial-gradient(60% 60% at 50% 50%, color-mix(in srgb, var(--ink-0) 65%, transparent), color-mix(in srgb, var(--ink-0) 92%, transparent) 80%),
+      linear-gradient(180deg, color-mix(in srgb, var(--ink-0) 60%, transparent) 0%, color-mix(in srgb, var(--ink-0) 80%, transparent) 100%);
   }
   .testimonial .wrap {
     position: relative;

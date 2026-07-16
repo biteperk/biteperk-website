@@ -76,16 +76,16 @@ const label = statusLabel(status);
   }
 
   .pill-status.is-live {
-    background: var(--gold);
-    color: #1a0f04;
+    background: var(--gold-fill);
+    color: var(--gold-fill-text);
   }
   .pill-status.is-in-development {
-    background: rgba(245, 196, 24, 0.08);
+    background: color-mix(in srgb, var(--gold-fill) 8%, transparent);
     color: var(--gold);
     border: 1px solid color-mix(in srgb, var(--gold) 40%, transparent);
   }
   .pill-status.is-concept {
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--fill-subtle);
     color: var(--mist-2);
     border: 1px solid var(--line);
   }

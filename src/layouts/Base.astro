@@ -15,6 +15,13 @@
  * override), optional `preloadImage` (push critical hero image on home),
  * optional `ogImage` (per-page Open Graph card).
  */
+// Self-hosted fonts (woff2, hashed + immutable-cached by the build) —
+// replaces the render-blocking Google Fonts request. InterVariable covers
+// weights 300–900 in one file; Source Serif 4 only ships the weights the
+// serif PullQuote actually uses.
+import "@fontsource-variable/inter";
+import "@fontsource/source-serif-4/400.css";
+import "@fontsource/source-serif-4/500.css";
 import "@/styles/global.css";
 import "@/styles/megamenu.css";
 import SEO from "@/components/SEO.astro";
@@ -50,20 +57,29 @@ const {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="color-scheme" content="dark" />
-    <meta name="theme-color" content="#0a0b0d" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0a0b0d" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#faf9f6" />
+    {/* Pre-paint theme: explicit localStorage choice wins, else follow the
+        OS. Inline so it runs before first paint — prevents theme flash.
+        Storage contract shared with src/scripts/theme.ts. */}
+    <script is:inline>
+      (function () {
+        try {
+          var t = localStorage.getItem("bp-theme");
+          if (t !== "light" && t !== "dark") {
+            t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+          }
+          document.documentElement.dataset.theme = t;
+        } catch (e) {}
+      })();
+    </script>
     <meta name="format-detection" content="telephone=no" />
     <!-- Bing Webmaster Tools site verification -->
     <meta name="msvalidate.01" content="C717E1E48BD4B561E0F2F3B5F733838D" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&display=swap"
-      rel="stylesheet"
-    />
     {preloadImage && <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />}
 
     <SEO title={title} description={description} path={path} ogImage={ogImage}>
@@ -84,6 +100,7 @@ const {
     <Footer />
 
     <script>
+      import "@/scripts/theme.ts";
       import "@/scripts/reveal.ts";
       import "@/scripts/nav.ts";
       import "@/scripts/mobile-menu.ts";

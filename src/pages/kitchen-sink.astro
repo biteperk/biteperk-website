@@ -1,0 +1,137 @@
+---
+/**
+ * Design-system kitchen sink. Excluded from the sitemap (astro.config.mjs)
+ * and noindexed. Renders every token + shared primitive so both themes can
+ * be eyeballed and screenshot-tested. Not linked from anywhere.
+ */
+import Base from "@/layouts/Base.astro";
+import StatusPill from "@/components/StatusPill.astro";
+import ThemeToggle from "@/components/ThemeToggle.astro";
+
+const surfaces = ["--ink-0", "--ink-1", "--ink-2", "--ink-3"] as const;
+const textTokens = ["--white", "--text", "--mist", "--mist-2", "--gold", "--danger", "--success"] as const;
+---
+
+<Base title="Kitchen sink" description="Internal design-system reference." path="/kitchen-sink/">
+  <meta slot="jsonld" name="robots" content="noindex" />
+  <div class="wrap sink">
+    <header class="section">
+      <p class="eyebrow">Design system</p>
+      <h1>Kitchen sink</h1>
+      <p class="lede">Every token and primitive, in the current theme. Flip it: <ThemeToggle /></p>
+    </header>
+
+    <section class="section">
+      <h2>Surfaces</h2>
+      <div class="row">
+        {surfaces.map((t) => (
+          <div class="swatch" style={`background: var(${t})`}>
+            <code>{t}</code>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Text on surfaces</h2>
+      {surfaces.slice(0, 2).map((s) => (
+        <div class="textcard" style={`background: var(${s})`}>
+          <code class="sub">{s}</code>
+          {textTokens.map((t) => (
+            <p style={`color: var(${t}); margin: 4px 0;`}>
+              <code>{t}</code> — The quick brown quoll books a table for six.
+            </p>
+          ))}
+        </div>
+      ))}
+    </section>
+
+    <section class="section">
+      <h2>Type scale</h2>
+      <h1 style="font-size: var(--fs-h1); line-height: var(--lh-display);">Display h1</h1>
+      <h2 style="font-size: var(--fs-h2);">Heading h2</h2>
+      <h3 style="font-size: var(--fs-h3);">Heading h3</h3>
+      <p class="lede">Lede — the friendly explainer voice under a heading.</p>
+      <p>Body — regular paragraph text at a comfortable measure.</p>
+      <p class="eyebrow">Eyebrow label</p>
+    </section>
+
+    <section class="section">
+      <h2>Buttons & pills</h2>
+      <div class="row">
+        <a class="btn" href="#">Primary action</a>
+        <a class="btn-ghost" href="#">Ghost action</a>
+        <span class="pill"><span class="dot"></span> Live in Sydney</span>
+        <StatusPill status="live" />
+        <StatusPill status="in-development" />
+        <StatusPill status="concept" />
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Card</h2>
+      <div class="card">
+        <h3>Elevated card</h3>
+        <p style="color: var(--mist)">Uses --ink-1, --line, --shadow-card. Hover for the brand glow.</p>
+        <a class="btn" href="#">Card CTA</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Form controls</h2>
+      <form class="demo-form" onsubmit="return false">
+        <label>Name <input type="text" placeholder="Sam" /></label>
+        <label>Email <input type="email" placeholder="you@venue.com.au" /></label>
+        <label>Message <textarea rows="3" placeholder="Tell us about your venue"></textarea></label>
+        <button class="btn" type="submit">Send</button>
+      </form>
+    </section>
+
+    <section class="section">
+      <h2>Details / FAQ primitive</h2>
+      <details class="faq-demo">
+        <summary>Does this work without JavaScript?</summary>
+        <p>Yes — native <code>&lt;details&gt;</code>, no script required.</p>
+      </details>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .sink { padding-top: 96px; padding-bottom: 96px; }
+  .section { padding-block: var(--space-6); border-bottom: 1px solid var(--line); }
+  h2 { margin-bottom: var(--space-4); font-size: var(--fs-h3); }
+  .row { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: center; }
+  .swatch {
+    width: 160px; height: 90px; border-radius: var(--r-md);
+    border: 1px solid var(--line-strong);
+    display: grid; place-items: end start; padding: 8px;
+  }
+  .swatch code { font-size: 12px; color: var(--mist); background: var(--ink-0); padding: 2px 6px; border-radius: 4px; }
+  .textcard {
+    border: 1px solid var(--line); border-radius: var(--r-md);
+    padding: var(--space-5); margin-bottom: var(--space-4);
+  }
+  .textcard .sub { color: var(--mist); font-size: 12px; }
+  .card {
+    background: var(--ink-1); border: 1px solid var(--line);
+    border-radius: var(--r-lg); padding: var(--space-6);
+    box-shadow: var(--shadow-card); max-width: 420px;
+    transition: box-shadow var(--dur-base) var(--ease-out);
+    display: grid; gap: var(--space-4); justify-items: start;
+  }
+  .card:hover { box-shadow: var(--shadow-card-hover); }
+  .demo-form { display: grid; gap: var(--space-4); max-width: 420px; }
+  .demo-form label { display: grid; gap: 6px; font-size: var(--fs-small); color: var(--mist-2); }
+  .demo-form input, .demo-form textarea {
+    font: inherit; color: var(--white); background: var(--ink-1);
+    border: 1px solid var(--line-strong); border-radius: var(--r-sm);
+    padding: 10px 12px;
+  }
+  .faq-demo {
+    border: 1px solid var(--line); border-radius: var(--r-md);
+    padding: var(--space-4); background: var(--ink-1); max-width: 560px;
+  }
+  .faq-demo summary { font-weight: 600; cursor: pointer; }
+  .faq-demo p { margin-top: var(--space-3); color: var(--mist-2); }
+</style>

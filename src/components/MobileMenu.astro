@@ -90,7 +90,7 @@ function isActive(href: string): boolean {
   .mm-backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(10, 11, 13, 0.6);
+    background: color-mix(in srgb, var(--ink-0) 60%, transparent);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     opacity: 0;
@@ -137,7 +137,7 @@ function isActive(href: string): boolean {
     border-radius: var(--r-pill);
     color: var(--white);
   }
-  .mm-close:hover { background: rgba(255,255,255,0.04); }
+  .mm-close:hover { background: var(--fill-hover); }
 
   .mm-body {
     flex: 1;
@@ -183,7 +183,7 @@ function isActive(href: string): boolean {
     padding: 3px 8px;
     border-radius: var(--r-pill);
   }
-  .mm-product-pill.is-live { background: var(--gold); color: #1a0f04; }
+  .mm-product-pill.is-live { background: var(--gold-fill); color: var(--gold-fill-text); }
   .mm-product-pill.is-in-development { color: var(--gold); border: 1px solid color-mix(in srgb, var(--gold) 30%, transparent); }
   .mm-product-pill.is-concept { color: var(--mist-2); border: 1px solid var(--line); }
 

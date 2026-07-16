@@ -47,12 +47,12 @@
   width: 640px;
   max-width: calc(100vw - 32px);
   z-index: 60;
-  background: #111317;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--ink-1);
+  border: 1px solid var(--line);
   border-radius: 24px;
   padding: 28px 16px 16px;
   margin-top: 4px;
-  box-shadow: 0 32px 80px -20px rgba(0, 0, 0, 0.75);
+  box-shadow: var(--shadow-card);
 }
 .megamenu-panel[hidden] {
   display: none;
@@ -81,7 +81,7 @@
 .megamenu-foot {
   margin-top: 8px;
   padding: 8px 8px 4px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--line);
   display: flex;
   justify-content: space-between;
   align-items: center;
