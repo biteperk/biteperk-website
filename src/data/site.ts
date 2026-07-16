@@ -52,7 +52,7 @@ export const site: SiteData = {
   url: "https://biteperk.com.au",
   description:
     "Biteperk builds voice and AI tools for hospitality — starting with VocoTable, the AI phone host that answers every restaurant call in a warm Australian voice. Made in Sydney.",
-  phone: { display: "0450 011 140", href: "tel:+61450011140" },
+  phone: { display: "+61 2 5504 1140", href: "tel:+61255041140" },
   email: { display: "hello@biteperk.com.au", href: "mailto:hello@biteperk.com.au" },
   vocotableUrl: "https://vocotable.biteperk.com.au",
   abn: "TODO",

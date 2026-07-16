@@ -67,7 +67,7 @@ export interface PricingTier {
   /** Bullet features. The first bullet may be an "Everything in X, plus:" reference. */
   readonly features: ReadonlyArray<string>;
   readonly cta: { readonly label: string; readonly href: string };
-  /** Footer note under the CTA (e.g. "Live in 48 hours", "Or call 0450…"). */
+  /** Footer note under the CTA (e.g. "Live in 48 hours", "Or call +61 2…"). */
   readonly footer?: string;
 }
 
