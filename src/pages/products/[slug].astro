@@ -92,7 +92,7 @@ const isConcept = product.status === "concept";
 
   {/* ── How it works (VocoTable only for now) ───────────────────── */}
   {product.slug === "vocotable" && (
-    <section class="p-section p-how">
+    <section class="cv-auto p-section p-how">
       <div class="wrap">
         <div class="p-how-head reveal">
           <span class="eyebrow">How Bella works</span>
@@ -138,7 +138,7 @@ const isConcept = product.status === "concept";
 
   {/* ── Metrics row ─────────────────────────────────────────────── */}
   {product.metrics && product.metrics.length > 0 && (
-    <section class="p-section p-metrics">
+    <section class="cv-auto p-section p-metrics">
       <div class="wrap">
         <div class="p-metrics-grid reveal">
           {product.metrics.map((m) => (
@@ -168,7 +168,7 @@ const isConcept = product.status === "concept";
 
   {/* ── Pricing (tiered) ────────────────────────────────────────── */}
   {product.pricing && (
-    <section class="p-section p-pricing" id="pricing">
+    <section class="cv-auto p-section p-pricing" id="pricing">
       <div class="wrap">
         <div class="p-pricing-head reveal">
           <div class="eyebrow">{product.pricing.eyebrow ?? "Pricing"}</div>
@@ -221,7 +221,7 @@ const isConcept = product.status === "concept";
 
   {/* ── Testimonial (VocoTable) ─────────────────────────────────── */}
   {product.slug === "vocotable" && (
-    <section class="p-section p-quote">
+    <section class="cv-auto p-section p-quote">
       <div class="wrap">
         <div class="reveal">
           <PullQuote
@@ -238,7 +238,7 @@ const isConcept = product.status === "concept";
   {/* ── Your data, plainly (VocoTable) — surfaces the privacy facts
        already published at /legal/privacy/ where buyers actually look */}
   {product.slug === "vocotable" && (
-    <section class="p-section p-data">
+    <section class="cv-auto p-section p-data">
       <div class="wrap">
         <div class="p-data-head reveal">
           <span class="eyebrow">Your data, plainly</span>
@@ -270,7 +270,7 @@ const isConcept = product.status === "concept";
 
   {/* ── In-development / Concept body ──────────────────────────── */}
   {!isLive && (
-    <section class="p-section p-dev">
+    <section class="cv-auto p-section p-dev">
       <div class="wrap">
         <div class="p-dev-card reveal">
           <div class="eyebrow">
@@ -293,7 +293,7 @@ const isConcept = product.status === "concept";
 
   {/* ── FAQ (every product that has one) ────────────────────────── */}
   {product.faq && product.faq.length > 0 && (
-    <section class="p-section p-faq">
+    <section class="cv-auto p-section p-faq">
       <div class="wrap">
         <div class="p-faq-head reveal">
           <span class="eyebrow">Common questions</span>

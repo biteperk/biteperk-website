@@ -84,6 +84,7 @@ const faqJsonLd = product.faq && product.faq.length > 0
   description={product.seo.description}
   path={path}
   ogImage={`/og/${product.slug}.png`}
+  preloadComposite={product.slug === "vocotable" ? "vocotable-hero" : undefined}
 >
   <Fragment slot="jsonld">
     <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
