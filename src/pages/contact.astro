@@ -319,7 +319,8 @@ const description =
     line-height: 1.5;
     transition:
       border-color var(--dur-fast) var(--ease-out),
-      background var(--dur-fast) var(--ease-out);
+      background var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-base) var(--ease-out);
   }
   .contact-field textarea {
     resize: vertical;
@@ -330,6 +331,10 @@ const description =
   .contact-field textarea:focus {
     border-color: var(--gold);
     background: var(--ink-3);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--gold) 14%, transparent);
+  }
+  .contact-field:focus-within label {
+    color: var(--gold);
   }
   .contact-field input::placeholder,
   .contact-field textarea::placeholder {

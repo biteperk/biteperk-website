@@ -28,7 +28,7 @@ const tiles = [
         <span aria-hidden="true">→</span>
       </a>
     </div>
-    <div class="marquee-row" role="list">
+    <div class="marquee-row reveal-stagger" role="list" style="--stagger-step: 50ms">
       {tiles.map((t) => (
         <a class="marquee-tile" href="/products/" aria-label={`Open product catalogue — context photo: ${t.alt}`} role="listitem">
           <ImageBlock slug={t.slug} alt={t.alt} aspect="1 / 1" widths="(min-width:1024px) 12vw, 30vw" />
