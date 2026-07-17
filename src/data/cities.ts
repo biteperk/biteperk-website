@@ -285,9 +285,9 @@ export const cities: readonly City[] = [
       ],
     },
     relatedGuides: [
+      "ai-phone-answering-for-melbourne-restaurants",
       "what-missed-calls-cost-your-restaurant",
       "how-to-reduce-no-shows-at-your-restaurant",
-      "ai-receptionist-vs-answering-service-vs-voicemail",
     ],
     heroImage: "busy-service-night",
     heroImageAlt: "A dim, busy restaurant dining room mid-service, staff moving between tables.",
@@ -398,9 +398,9 @@ export const cities: readonly City[] = [
       ],
     },
     relatedGuides: [
+      "ai-phone-answering-for-brisbane-restaurants",
       "what-missed-calls-cost-your-restaurant",
       "how-to-forward-your-restaurant-phone-to-an-ai-host",
-      "do-diners-want-to-talk-to-an-ai",
     ],
     heroImage: "restaurant-evening",
     heroImageAlt: "A candlelit restaurant interior in the evening, tables set for service.",
@@ -511,9 +511,9 @@ export const cities: readonly City[] = [
       ],
     },
     relatedGuides: [
+      "ai-phone-answering-for-perth-restaurants",
       "what-missed-calls-cost-your-restaurant",
       "how-much-does-ai-phone-answering-cost-for-a-restaurant",
-      "why-an-australian-voice-matters",
     ],
     heroImage: "phone-on-bar",
     heroImageAlt: "A phone resting on a timber bar counter in warm afternoon light.",
@@ -623,9 +623,9 @@ export const cities: readonly City[] = [
       ],
     },
     relatedGuides: [
+      "ai-phone-answering-for-adelaide-restaurants",
       "what-missed-calls-cost-your-restaurant",
       "do-diners-want-to-talk-to-an-ai",
-      "how-to-reduce-no-shows-at-your-restaurant",
     ],
     heroImage: "kitchen-rush",
     heroImageAlt: "A busy kitchen mid-service, tickets and plates lined up on the pass.",
@@ -736,8 +736,8 @@ export const cities: readonly City[] = [
       ],
     },
     relatedGuides: [
+      "ai-phone-answering-for-gold-coast-restaurants",
       "what-missed-calls-cost-your-restaurant",
-      "how-to-forward-your-restaurant-phone-to-an-ai-host",
       "how-much-does-ai-phone-answering-cost-for-a-restaurant",
     ],
     heroImage: "empty-tables-evening",
