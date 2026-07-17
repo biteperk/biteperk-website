@@ -1,0 +1,80 @@
+/*
+ * Scroll-driven depth layer — CSS scroll-driven animations only.
+ *
+ * Everything here is progressive enhancement gated twice: browsers
+ * without `animation-timeline: view()` (and anyone preferring reduced
+ * motion) get the exact static site. No polyfill on purpose — a JS
+ * scroll library would cost budget and scroll-thread jank for the same
+ * effect.
+ *
+ * Rules of the layer:
+ *   - transforms/opacity only (CLS budget is 0.02)
+ *   - every parallax parent must clip (overflow: hidden) so the
+ *     over-scan scale never leaks
+ *   - ranges are clamped with animation-range so iOS rubber-band
+ *     overscroll can't over-rotate an effect
+ */
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Slow Ken-Burns on a big photographic surface. Apply to the media
+       wrapper; the image relaxes from a gentle over-scan to rest as the
+       surface crosses the viewport. */
+    .sm-kenburns img {
+      animation: sm-kenburns linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 100%;
+    }
+
+    /* Vertical parallax for framed photos: the image pans slightly
+       slower than the scroll. Over-scanned so edges never show. */
+    .sm-parallax img {
+      scale: 1.12;
+      animation: sm-parallax linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 100%;
+    }
+
+    /* A caption/tag that settles upward as its band scrolls through. */
+    .sm-drift-up {
+      animation: sm-drift-up linear both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 55%;
+    }
+
+    /* Ambient glow that breathes in with the section. */
+    .sm-glow-ramp {
+      animation: sm-glow-ramp linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 45%;
+    }
+
+    /* Hero stage backdrop bows out as the hero leaves the viewport. */
+    .sm-exit-fade {
+      animation: sm-exit-fade linear both;
+      animation-timeline: view();
+      animation-range: exit 10% exit 90%;
+    }
+  }
+}
+
+@keyframes sm-kenburns {
+  from { scale: 1.12; }
+  to { scale: 1; }
+}
+@keyframes sm-parallax {
+  from { translate: 0 -3.5%; }
+  to { translate: 0 3.5%; }
+}
+@keyframes sm-drift-up {
+  from { transform: translateY(16px); opacity: 0.4; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes sm-glow-ramp {
+  from { opacity: 0.25; }
+  to { opacity: 1; }
+}
+@keyframes sm-exit-fade {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
