@@ -16,7 +16,7 @@
 function applyReveal(): void {
   if (typeof window === "undefined") return;
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const els = document.querySelectorAll<HTMLElement>(".reveal");
+  const els = document.querySelectorAll<HTMLElement>(".reveal, .reveal-stagger");
   if (els.length === 0) return;
   if (reduce || !("IntersectionObserver" in window)) {
     els.forEach((el) => el.classList.add("is-in"));

@@ -98,7 +98,7 @@ const faqJsonLd = {
           </div>
           <a class="home-guides-all" href="/blog/">All guides →</a>
         </div>
-        <ul class="home-guides-grid reveal">
+        <ul class="home-guides-grid reveal-stagger">
           {latestGuides.map((post) => (
             <li>
               <a class="home-guide" href={`/blog/${post.id}/`}>
@@ -130,7 +130,7 @@ const faqJsonLd = {
         </p>
       </div>
       <div class="reveal home-faq-body">
-        <FAQ items={homeFaqs} />
+        <FAQ items={homeFaqs} stagger />
       </div>
     </div>
   </section>

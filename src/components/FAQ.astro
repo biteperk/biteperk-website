@@ -12,11 +12,13 @@ interface FaqItem {
 }
 interface Props {
   items: ReadonlyArray<FaqItem>;
+  /** Rise the items in sequence on scroll-reveal (see .reveal-stagger). */
+  stagger?: boolean;
 }
-const { items } = Astro.props;
+const { items, stagger = false } = Astro.props;
 ---
 
-<div class="faq">
+<div class:list={["faq", { "reveal-stagger": stagger }]}>
   {items.map((item) => (
     <details class="faq-item">
       <summary class="faq-q">
@@ -47,6 +49,41 @@ const { items } = Astro.props;
   }
   .faq-item[open] {
     border-color: color-mix(in srgb, var(--gold) 30%, var(--line));
+    /* Gold accent hairline on the open item — outside any @supports so
+       every browser gets the visual state even without the animation. */
+    box-shadow: inset 3px 0 0 var(--gold);
+  }
+
+  /* Smooth open/close where ::details-content sizing is supported
+     (Chromium 131+); elsewhere the accordion opens instantly as today. */
+  @supports (interpolate-size: allow-keywords) {
+    @media (prefers-reduced-motion: no-preference) {
+      .faq-item {
+        interpolate-size: allow-keywords;
+      }
+      .faq-item::details-content {
+        block-size: 0;
+        overflow-y: clip;
+        transition:
+          block-size 300ms var(--ease-out),
+          content-visibility 300ms allow-discrete;
+      }
+      .faq-item[open]::details-content {
+        block-size: auto;
+      }
+      .faq-a {
+        opacity: 0;
+        transform: translateY(-4px);
+        transition:
+          opacity 240ms var(--ease-out),
+          transform 240ms var(--ease-out);
+      }
+      .faq-item[open] .faq-a {
+        opacity: 1;
+        transform: none;
+        transition-delay: 90ms;
+      }
+    }
   }
   .faq-q {
     display: flex;

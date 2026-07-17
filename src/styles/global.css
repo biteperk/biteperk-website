@@ -138,6 +138,50 @@ button {
   }
 }
 
+/* ── Reveal stagger — companion to .reveal on a container ───────── */
+/* The container fades as one (no double transform); children rise in
+   sequence once reveal.ts adds .is-in. --sg-i is assigned per child via
+   nth-child so no inline styles or JS are needed. */
+.reveal-stagger {
+  transform: none;
+}
+.reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity var(--dur-reveal) var(--ease-out),
+    transform var(--dur-reveal) var(--ease-out);
+}
+.reveal-stagger.is-in > * {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(var(--stagger-step, 70ms) * var(--sg-i, 0));
+}
+.reveal-stagger > :nth-child(1) { --sg-i: 0; }
+.reveal-stagger > :nth-child(2) { --sg-i: 1; }
+.reveal-stagger > :nth-child(3) { --sg-i: 2; }
+.reveal-stagger > :nth-child(4) { --sg-i: 3; }
+.reveal-stagger > :nth-child(5) { --sg-i: 4; }
+.reveal-stagger > :nth-child(6) { --sg-i: 5; }
+.reveal-stagger > :nth-child(7) { --sg-i: 6; }
+.reveal-stagger > :nth-child(n + 8) { --sg-i: 7; }
+@media (max-width: 640px) {
+  /* Stacked layouts enter the viewport one child at a time — long
+     queued delays read as broken. Tighten the step and cap the queue. */
+  .reveal-stagger.is-in > * {
+    --stagger-step: 40ms;
+  }
+  .reveal-stagger > :nth-child(n + 5) { --sg-i: 4; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal-stagger > *,
+  .reveal-stagger.is-in > * {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
 /* ── Brand mark + wordmark ─────────────────────────────────────── */
 .brand {
   display: inline-flex;
@@ -189,7 +233,9 @@ button {
   box-shadow: var(--shadow-btn-hover);
 }
 .btn:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.97);
+  transition-duration: var(--dur-fast);
+  transition-timing-function: var(--ease-spring);
 }
 
 .btn-ghost {
@@ -202,10 +248,49 @@ button {
   background: var(--fill-hover);
   border-color: var(--white);
 }
+.btn-ghost:active {
+  transform: scale(0.97);
+  transition-duration: var(--dur-fast);
+  transition-timing-function: var(--ease-spring);
+}
 
 @media (prefers-reduced-motion: reduce) {
   .btn:hover,
-  .btn-ghost:hover {
+  .btn-ghost:hover,
+  .btn:active,
+  .btn-ghost:active {
+    transform: none;
+  }
+}
+
+/* ── Link arrow — the trailing → nudges on hover/focus ─────────── */
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.link-arrow .arrow {
+  display: inline-block;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+.link-arrow:hover .arrow,
+.link-arrow:focus-visible .arrow {
+  transform: translateX(4px);
+}
+
+/* ── Pressable — touch feedback for cards (hover lifts are lost on
+   coarse pointers; a press scale keeps mobile tactile) ──────────── */
+.pressable {
+  transition: transform var(--dur-fast) var(--ease-spring);
+}
+.pressable:active {
+  transform: scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link-arrow:hover .arrow,
+  .link-arrow:focus-visible .arrow,
+  .pressable:active {
     transform: none;
   }
 }
