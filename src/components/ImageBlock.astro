@@ -45,7 +45,9 @@ const lqip = map[slug];
 const base = `/images/${slug}`;
 const loading = priority ? "eager" : "lazy";
 const fetchpriority = priority ? "high" : "auto";
-const decoding = priority ? "sync" : "async";
+// Always async: sync decode blocks the main thread at exactly the moment
+// the LCP paint is due (measured +ve on throttled-mobile Lighthouse).
+const decoding = "async";
 ---
 
 <figure
