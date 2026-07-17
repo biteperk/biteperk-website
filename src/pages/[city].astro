@@ -17,9 +17,11 @@ import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import FAQ from "@/components/FAQ.astro";
 import Cta from "@/components/Cta.astro";
 import ImageBlock from "@/components/ImageBlock.astro";
+import Illustration from "@/components/Illustration.astro";
 import { site } from "@/data/site";
 import { ORG_ID, WEBSITE_ID } from "@/data/schema";
 import { publishedCities, cityUrl, type City } from "@/data/cities";
+import { getCollection } from "astro:content";
 
 export function getStaticPaths() {
   return publishedCities.map((city) => ({
@@ -37,18 +39,36 @@ const path = cityUrl(city);
 const others = publishedCities.filter((c) => c.slug !== city.slug);
 const ogImage = `/og/${city.slug}.png`;
 
+// Guides for this city — resolve relatedGuides in order (the city-specific
+// guide sits first). Filtered to published posts.
+const allGuides = await getCollection("blog", ({ data }) => !data.draft);
+const cityGuides = city.relatedGuides
+  .map((slug) => allGuides.find((g) => g.id === slug))
+  .filter((g): g is (typeof allGuides)[number] => Boolean(g));
+const fmtGuideDate = (d: Date) =>
+  new Intl.DateTimeFormat("en-AU", { day: "numeric", month: "short", year: "numeric" }).format(d);
+
 const serviceJsonLd = {
   "@context": "https://schema.org",
   "@type": "Service",
   "@id": `${site.url}${path}#service`,
   name: `AI phone answering for ${city.name} restaurants`,
-  serviceType: "AI phone answering and reservation booking",
+  alternateName: `AI receptionist for ${city.name} restaurants`,
+  serviceType: [
+    "AI phone answering and reservation booking",
+    "AI receptionist for restaurants",
+  ],
   description: city.seoDescription,
   provider: { "@id": ORG_ID },
   areaServed: {
     "@type": "City",
     name: city.name,
     containedInPlace: { "@type": "State", name: city.stateName },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: city.geo.lat,
+      longitude: city.geo.lng,
+    },
   },
   audience: { "@type": "BusinessAudience", name: "Restaurants, cafés and venues" },
   url: `${site.url}${path}`,
@@ -169,7 +189,7 @@ const [headStart, headAccent] = (() => {
         <span class="eyebrow">How Biteperk helps in {city.name}</span>
         <h2 class="city-h2">Bella answers, so your team can stay on the floor.</h2>
       </div>
-      <div class="city-cards reveal">
+      <div class="city-cards reveal reveal-stagger">
         {city.scenarios.map((s) => (
           <article class="city-card">
             <h3>{s.title}</h3>
@@ -181,6 +201,32 @@ const [headStart, headAccent] = (() => {
         <a class="btn" href="/products/vocotable/">Explore VocoTable →</a>
         <a class="btn-ghost" href="/contact/">Book a 15-minute walkthrough</a>
       </div>
+    </div>
+  </section>
+
+  {/* ── The AI under the hood, tuned for this city ───────────────── */}
+  <section class="city-section city-ai">
+    <div class="wrap">
+      <div class="city-ai-head reveal">
+        <span class="eyebrow">The AI under the hood</span>
+        <h2 class="city-h2">Speech recognition tuned for {city.name}. A human when it matters.</h2>
+        <p class="city-body city-ai-lede">{city.aiLocal.lead}</p>
+      </div>
+      <div class="city-ai-grid reveal reveal-stagger">
+        {city.aiLocal.points.map((p) => (
+          <article class="city-ai-card" data-glow>
+            <Illustration name={p.icon} size={40} trace />
+            <h3>{p.title}</h3>
+            <p>{p.body}</p>
+          </article>
+        ))}
+      </div>
+      <p class="city-ai-more reveal">
+        <a class="link-arrow" href="/technology/">
+          How the whole stack works
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+      </p>
     </div>
   </section>
 
@@ -236,6 +282,35 @@ const [headStart, headAccent] = (() => {
       </div>
     </div>
   </section>
+
+  {/* ── Guides for this city ─────────────────────────────────────── */}
+  {cityGuides.length > 0 && (
+    <section class="city-section city-guides">
+      <div class="wrap">
+        <div class="city-how-head reveal">
+          <span class="eyebrow">From the guides</span>
+          <h2 class="city-h2">Plain-English reading for {city.name} venues.</h2>
+        </div>
+        <ul class="city-guides-grid reveal-stagger">
+          {cityGuides.map((post) => (
+            <li>
+              <a class="city-guide" href={`/blog/${post.id}/`} data-glow>
+                <div class="city-guide-meta">
+                  <time datetime={post.data.publishDate.toISOString().slice(0, 10)}>
+                    {fmtGuideDate(post.data.publishDate)}
+                  </time>
+                  {post.data.tags[0] && <span class="city-guide-tag">{post.data.tags[0]}</span>}
+                </div>
+                <h3 class="city-guide-title">{post.data.title}</h3>
+                <p class="city-guide-desc">{post.data.description}</p>
+                <span class="city-guide-read">Read →</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
 
   {/* ── Other cities ─────────────────────────────────────────────── */}
   <section class="city-section city-others">
@@ -424,6 +499,110 @@ const [headStart, headAccent] = (() => {
   .city-links a:hover {
     border-color: color-mix(in srgb, var(--gold) 40%, var(--line));
     background: var(--fill-hover);
+  }
+
+  /* ── AI under the hood ────────────────────────────────────────── */
+  .city-ai { border-top: 1px solid var(--line); background: var(--ink-0); }
+  .city-ai-head { max-width: 640px; }
+  .city-ai-lede { margin-top: 18px; }
+  .city-ai-grid {
+    margin-top: 44px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+  }
+  .city-ai-card {
+    padding: 28px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--ink-1);
+    transition: border-color var(--dur-base) var(--ease-out);
+  }
+  .city-ai-card:hover { border-color: color-mix(in srgb, var(--gold) 26%, var(--line)); }
+  .city-ai-card h3 {
+    margin-top: 16px;
+    font-size: 16.5px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.01em;
+  }
+  .city-ai-card p {
+    margin-top: 9px;
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .city-ai-more { margin-top: 30px; }
+  .city-ai-more .link-arrow { color: var(--gold); font-weight: 600; font-size: 15px; }
+
+  /* ── Guides for this city ──────────────────────────────────────── */
+  .city-guides { border-top: 1px solid var(--line); background: var(--ink-0); }
+  .city-guides-grid {
+    list-style: none;
+    padding: 0;
+    margin: 44px 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+  }
+  .city-guide {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 26px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--ink-1);
+    transition:
+      transform var(--dur-base) var(--ease-out),
+      border-color var(--dur-base) var(--ease-out);
+  }
+  .city-guide:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--gold) 26%, var(--line));
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .city-guide:hover { transform: none; }
+  }
+  .city-guide-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 11.5px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    color: var(--mist);
+  }
+  .city-guide-tag {
+    padding: 2px 9px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--line);
+    color: var(--mist-2);
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+  .city-guide-title {
+    margin-top: 14px;
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: -0.015em;
+    line-height: 1.3;
+    color: var(--white);
+  }
+  .city-guide:hover .city-guide-title { color: var(--gold); }
+  .city-guide-desc {
+    margin-top: 10px;
+    color: var(--text);
+    font-size: 13.5px;
+    line-height: 1.55;
+    flex: 1;
+  }
+  .city-guide-read {
+    margin-top: 18px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.3px;
   }
 
   /* ── City establishing band ───────────────────────────────────── */
