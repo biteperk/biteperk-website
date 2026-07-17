@@ -98,11 +98,13 @@ const onProducts = pathname === "/products" || pathname.startsWith("/products/")
   /* Layer 2 — polish only. Layer 1 (src/styles/megamenu.css) carries
      the survival-critical position/display rules. */
 
+  /* Mirrors Nav.astro's .lnk metrics (keep in sync — Layer-2 contract). */
   .megamenu-trigger {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 500;
+    letter-spacing: 0.005em;
     color: var(--mist-2);
-    padding: 8px 13px;
+    padding: 11px 14px;
     border-radius: var(--r-md);
     transition:
       color var(--dur-fast) var(--ease-out),
@@ -114,8 +116,21 @@ const onProducts = pathname === "/products" || pathname.startsWith("/products/")
     color: var(--white);
     background: var(--fill-hover);
   }
+  /* Open state gets a held background so the trigger reads as the
+     panel's anchor while the menu is up. */
+  .megamenu-trigger[aria-expanded="true"] {
+    color: var(--white);
+    background: var(--fill-hover);
+  }
   .megamenu-chev {
-    transition: transform var(--dur-fast) var(--ease-out);
+    color: var(--mist);
+    transition:
+      transform var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+  .megamenu-trigger:hover .megamenu-chev,
+  .megamenu-trigger[aria-expanded="true"] .megamenu-chev {
+    color: var(--gold);
   }
   .megamenu.is-open .megamenu-chev { transform: rotate(180deg); }
 
@@ -158,7 +173,7 @@ const onProducts = pathname === "/products" || pathname.startsWith("/products/")
   .megamenu-head-lede {
     margin-top: 7px;
     color: var(--mist-2);
-    font-size: 12.5px;
+    font-size: 13px;
     line-height: 1.5;
     max-width: 56ch;
   }
@@ -199,7 +214,7 @@ const onProducts = pathname === "/products" || pathname.startsWith("/products/")
     font-weight: 700;
   }
   .megamenu-card-name .cap {
-    font-size: 18px;
+    font-size: 19px;
     font-weight: 800;
     letter-spacing: -0.02em;
     line-height: 1;
@@ -208,9 +223,9 @@ const onProducts = pathname === "/products" || pathname.startsWith("/products/")
   .megamenu-card-tag {
     margin-top: 9px;
     color: var(--text);
-    font-size: 12.5px;
+    font-size: 13px;
     line-height: 1.5;
-    max-width: 30ch;
+    max-width: 32ch;
   }
   .megamenu-card-arrow {
     position: absolute;

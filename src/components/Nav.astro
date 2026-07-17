@@ -30,10 +30,10 @@ const pathname = Astro.url.pathname;
 const centreLinks = headerNav.filter((l) => l.desktop !== false);
 ---
 
-<nav class="nav" id="nav" aria-label="Primary" data-ver="2" transition:persist>
+<nav class="nav" id="nav" aria-label="Primary" transition:persist>
   <div class="wrap nav-inner">
     <a class="brand nav-brand" href="/" aria-label="Biteperk home">
-      <StarMark size={32} />
+      <StarMark size={34} />
       <span class="brand-name">bite<span class="perk">perk</span></span>
     </a>
 
@@ -53,14 +53,20 @@ const centreLinks = headerNav.filter((l) => l.desktop !== false);
 
     <div class="nav-right">
       <ThemeToggle />
-      <a class="nav-phone" href={site.phone.href} aria-label={`Call Biteperk on ${site.phone.display}`}>
-        <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+      <a
+        class="nav-phone"
+        href={site.phone.href}
+        aria-label={`Call Biteperk on ${site.phone.display}`}
+        title={site.phone.display}
+        data-cta="call-nav"
+      >
+        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
           <path d="M3.4 2.5C3 2.9 2.9 3.6 3.2 4.2c1.4 3 3.6 5.2 6.6 6.6.6.3 1.3.2 1.7-.2l.9-.9c.3-.3.3-.8 0-1.1l-1.5-1.5c-.3-.3-.8-.3-1.1 0l-.6.6c-1.5-.7-2.7-1.9-3.4-3.4l.6-.6c.3-.3.3-.8 0-1.1L4.9 1.1c-.3-.3-.8-.3-1.1 0z" fill="currentColor"/>
         </svg>
         <span class="nav-phone-text">{site.phone.display}</span>
       </a>
-      <a class="btn nav-cta" href="/contact/?intent=demo" data-cta="book-demo" aria-label="Book a demo">
-        <span class="nav-cta-full" aria-hidden="true">Book a demo</span>
+      <a class="btn nav-cta" href="/contact/?intent=demo" data-cta="book-demo">
+        Book a demo
         <span class="nav-cta-arrow" aria-hidden="true">→</span>
       </a>
     </div>
@@ -106,9 +112,18 @@ const centreLinks = headerNav.filter((l) => l.desktop !== false);
     display: grid;
     grid-template-columns: auto 1fr auto;
     align-items: center;
-    height: 68px;
+    height: var(--nav-h);
     gap: 20px;
     min-width: 0;
+  }
+  /* Bar compresses slightly once scrolled — fixed position, so no CLS. */
+  .nav.scrolled .nav-inner {
+    height: var(--nav-h-scrolled);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .nav-inner {
+      transition: height var(--dur-base) var(--ease-out);
+    }
   }
 
   /* Left — brand */
@@ -118,7 +133,7 @@ const centreLinks = headerNav.filter((l) => l.desktop !== false);
     gap: 10px;
   }
   .nav-brand .brand-name {
-    font-size: 17px;
+    font-size: 18px;
     letter-spacing: -0.01em;
   }
 
@@ -132,10 +147,11 @@ const centreLinks = headerNav.filter((l) => l.desktop !== false);
     min-width: 0;
   }
   .lnk {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 500;
+    letter-spacing: 0.005em;
     color: var(--mist-2);
-    padding: 8px 13px;
+    padding: 11px 14px;
     border-radius: var(--r-md);
     transition:
       color var(--dur-fast) var(--ease-out),
@@ -157,8 +173,8 @@ const centreLinks = headerNav.filter((l) => l.desktop !== false);
     content: "";
     position: absolute;
     left: 50%;
-    bottom: 1px;
-    width: 18px;
+    bottom: 6px;
+    width: 20px;
     height: 2px;
     background: var(--gold);
     border-radius: 2px;
@@ -175,15 +191,20 @@ const centreLinks = headerNav.filter((l) => l.desktop !== false);
   .nav-phone {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
-    padding: 8px 12px;
+    min-height: 44px;
+    padding: 10px 14px;
     border-radius: var(--r-pill);
-    font-size: 13.5px;
+    font-size: 14px;
     font-weight: 500;
     color: var(--text);
     letter-spacing: 0.2px;
     font-variant-numeric: tabular-nums;
-    transition: color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+    transition:
+      color var(--dur-fast) var(--ease-out),
+      background var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out);
   }
   .nav-phone svg {
     color: var(--gold);
@@ -198,10 +219,11 @@ const centreLinks = headerNav.filter((l) => l.desktop !== false);
   }
 
   .nav-cta {
-    padding: 9px 18px;
-    font-size: 13.5px;
-    gap: 6px;
-    min-height: 38px;
+    padding: 11px 22px;
+    font-size: 14px;
+    font-weight: 700;
+    gap: 7px;
+    min-height: 44px;
     box-shadow: 0 6px 20px rgba(245, 196, 24, 0.14);
   }
   .nav-cta-arrow {
@@ -231,19 +253,33 @@ const centreLinks = headerNav.filter((l) => l.desktop !== false);
   .nav-burger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
   .nav-burger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-  @media (max-width: 1240px) {
+  /* Phone tiers — the number is the product demo; NEVER fully hidden on
+     desktop. Full number ≥1280; icon-only 44×44 pill below that. */
+  @media (max-width: 1279px) {
     .nav-phone-text { display: none; }
-    .nav-phone { padding: 8px 10px; }
+    .nav-phone {
+      width: 44px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      background: var(--fill-subtle);
+    }
+    .nav-phone:hover { border-color: var(--line-strong); }
   }
-  @media (max-width: 1100px) {
-    .nav-phone { display: none; }
+
+  /* Compression tiers for the 6-item centre cluster. */
+  @media (max-width: 1160px) {
+    .lnk, .nav-centre :global(.megamenu-trigger) { padding: 11px 10px; }
+    .nav-cta { padding: 11px 16px; }
   }
-  @media (max-width: 1040px) {
-    .nav-cta { padding: 9px 14px; font-size: 13px; }
+  @media (max-width: 1060px) {
+    .lnk, .nav-centre :global(.megamenu-trigger) { padding: 11px 8px; font-size: 14.5px; }
+    .nav-right { gap: 8px; }
+    .nav-inner { gap: 12px; }
   }
 
   @media (max-width: 980px) {
-    .nav-inner { grid-template-columns: auto 1fr auto; gap: 16px; height: 64px; }
+    .nav-inner { grid-template-columns: auto 1fr auto; gap: 16px; height: var(--nav-h-mobile); }
+    .nav.scrolled .nav-inner { height: var(--nav-h-mobile); }
     .nav-centre,
     .nav-right { display: none; }
     .nav-burger { display: inline-flex; justify-self: end; }
