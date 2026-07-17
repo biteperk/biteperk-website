@@ -9,6 +9,7 @@
  */
 import HeroMarquee from "@/components/HeroMarquee.astro";
 import ImageBlock from "@/components/ImageBlock.astro";
+import { site } from "@/data/site";
 ---
 
 <header class="hero">
@@ -25,34 +26,59 @@ import ImageBlock from "@/components/ImageBlock.astro";
         Sydney, Australia
       </span>
       <h1 class="hero-title">
-        <span class="hero-title-line">We build</span>
-        <span class="hero-title-line gold">voice + AI</span>
-        <span class="hero-title-line">for hospitality.</span>
+        <span class="hero-title-line">Never miss</span>
+        <span class="hero-title-line gold">another booking.</span>
       </h1>
       <p class="sub">
-        Restaurants and venues lose bookings every day to a phone that nobody can pick up.
-        Voco — our AI phone host — answers every call, books the table and takes the order.
-        Made in Sydney, answering calls Australia-wide.
+        Bella, our AI phone host, answers every call your venue can't — checks real
+        availability and writes the booking straight to your dashboard. Made in Sydney,
+        answering calls Australia-wide.
       </p>
       <div class="hero-cta">
-        <a class="btn" href="/products/">Meet Voco →</a>
-        <a class="btn-ghost" href="/contact/">Get in touch</a>
+        <a class="btn" href="/contact/?intent=demo" data-cta="book-demo">Book a demo →</a>
+        <a class="btn-ghost" href="/technology/">See how it works</a>
       </div>
+      <p class="hero-phone">
+        or call <a href={site.phone.href} data-cta="call-hero">{site.phone.display}</a> — Bella will pick up.
+      </p>
+      <ul class="hero-proof" aria-label="Why venues choose Voco">
+        <li>Answers in under a second</li>
+        <li>$80/month flat</li>
+        <li>Data stays in Australia</li>
+      </ul>
     </div>
     <div class="hero-visual">
       <figure class="hero-card">
         <div class="hero-card-halo" aria-hidden="true"></div>
         <ImageBlock
-          slug="restaurant-host"
-          alt="A restaurant host taking a booking by phone at the stand, warm evening service light behind."
+          slug="table-set-candles"
+          alt="A shared restaurant table from above, plates and coffee being passed mid-service."
           aspect="4 / 5"
           widths="(min-width: 1024px) 38vw, 100vw"
           priority
         />
-        <figcaption class="hero-card-caption">
-          <span class="hero-card-caption-dot" aria-hidden="true"></span>
-          Live · 24/7
-        </figcaption>
+        {/* One-shot "live call" story: three chips land at 0.7s / 1.5s /
+            2.6s then rest — the product demonstrated in the first frame.
+            Decorative fiction (aria-hidden) with a truthful sr-only line;
+            under reduced motion all chips are simply visible. */}
+        <div class="hero-call-story" aria-hidden="true">
+          <span class="hero-chip hero-chip-ring">
+            <span class="hero-chip-dot"></span>
+            Incoming call · 7:42pm
+          </span>
+          <span class="hero-chip hero-chip-answer">Answered &lt;1s</span>
+          <span class="hero-chip hero-chip-booked">
+            <span class="hero-chip-tick">
+              <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true">
+                <path d="M2.5 8.5l3.5 3.5 7-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+            Booked · Tonight 8:30 · 4 guests
+          </span>
+        </div>
+        <p class="sr-only">
+          Bella answers the phone in under a second and books the table — live, 24 hours a day.
+        </p>
       </figure>
     </div>
   </div>
@@ -107,7 +133,10 @@ import ImageBlock from "@/components/ImageBlock.astro";
   }
   .hero-text { max-width: 720px; }
   .hero-title {
-    font-size: var(--fs-h1);
+    /* Fit cap (measured): "another booking." at the 84px --fs-h1 cap is
+       665px vs a 653px column — nowrap + the hero's overflow:hidden
+       would clip it silently. 76px renders 602px with margin. */
+    font-size: min(var(--fs-h1), 76px);
     font-weight: 800;
     line-height: 1;
     letter-spacing: -0.035em;
@@ -132,7 +161,6 @@ import ImageBlock from "@/components/ImageBlock.astro";
       animation: hero-line-rise var(--dur-slow) var(--ease-soft) backwards;
     }
     .hero-title-line:nth-child(2) { animation-delay: 90ms; }
-    .hero-title-line:nth-child(3) { animation-delay: 180ms; }
     .hero-text .pill {
       animation: hero-fade-rise var(--dur-slow) var(--ease-soft) 150ms backwards;
     }
@@ -142,21 +170,24 @@ import ImageBlock from "@/components/ImageBlock.astro";
     .hero-cta {
       animation: hero-fade-rise var(--dur-slow) var(--ease-soft) 400ms backwards;
     }
+    .hero-phone {
+      animation: hero-fade-rise var(--dur-slow) var(--ease-soft) 460ms backwards;
+    }
+    .hero-proof {
+      animation: hero-fade-rise var(--dur-slow) var(--ease-soft) 520ms backwards;
+    }
     .hero-card-halo {
       animation: hero-halo-bloom 900ms var(--ease-soft) 200ms backwards;
-    }
-    .hero-card-caption {
-      animation: hero-fade-rise var(--dur-slow) var(--ease-soft) 550ms backwards;
     }
     @media (max-width: 980px) {
       /* Portrait sits above the text on mobile — the value prop is
          already below the fold, so it must not wait on long delays. */
       .hero-title-line:nth-child(2) { animation-delay: 60ms; }
-      .hero-title-line:nth-child(3) { animation-delay: 120ms; }
       .hero-text .pill { animation-delay: 80ms; }
       .sub { animation-delay: 140ms; }
       .hero-cta { animation-delay: 200ms; }
-      .hero-card-caption { animation-delay: 200ms; }
+      .hero-phone { animation-delay: 240ms; }
+      .hero-proof { animation-delay: 280ms; }
     }
   }
   @keyframes hero-line-rise {
@@ -183,6 +214,46 @@ import ImageBlock from "@/components/ImageBlock.astro";
     display: flex;
     gap: 14px;
     flex-wrap: wrap;
+  }
+  .hero-phone {
+    margin-top: 14px;
+    font-size: 13.5px;
+    color: var(--mist);
+    letter-spacing: 0.2px;
+  }
+  .hero-phone a {
+    color: var(--gold);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .hero-phone a:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .hero-proof {
+    list-style: none;
+    margin: 26px 0 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 0;
+    font-size: 13px;
+    color: var(--mist);
+    letter-spacing: 0.2px;
+  }
+  .hero-proof li {
+    display: inline-flex;
+    align-items: center;
+  }
+  .hero-proof li + li::before {
+    content: "";
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--gold-fill);
+    margin: 0 12px;
+    flex: none;
   }
 
   .hero-visual {
@@ -234,36 +305,70 @@ import ImageBlock from "@/components/ImageBlock.astro";
     height: 100%;
     object-fit: cover;
   }
-  .hero-card-caption {
+  /* ── Live-call chip story ──────────────────────────────────────── */
+  .hero-call-story {
     position: absolute;
-    left: 18px;
-    bottom: 18px;
+    inset: 0;
     z-index: 2;
+    pointer-events: none;
+  }
+  .hero-chip {
+    position: absolute;
     display: inline-flex;
     align-items: center;
-    gap: 9px;
+    gap: 8px;
     padding: 8px 14px;
     border-radius: var(--r-pill);
     background: rgba(10, 11, 13, 0.72);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     border: 1px solid var(--line);
-    font-size: 11.5px;
-    letter-spacing: 1.6px;
+    font-size: 11px;
+    letter-spacing: 1.4px;
     text-transform: uppercase;
     font-weight: 600;
     color: var(--on-image);
+    white-space: nowrap;
   }
-  .hero-card-caption-dot {
+  .hero-chip-ring { top: 18px; left: 18px; }
+  .hero-chip-answer {
+    top: 58px;
+    left: 34px;
+    border-color: color-mix(in srgb, var(--gold) 35%, var(--line));
+    font-weight: 700;
+  }
+  .hero-chip-booked { left: 18px; bottom: 18px; }
+  .hero-chip-dot {
     width: 7px;
     height: 7px;
     border-radius: 50%;
     background: var(--gold-fill);
     box-shadow: 0 0 14px var(--gold-glow);
     animation: bp-pulse 2.4s ease-in-out infinite;
+    flex: none;
+  }
+  .hero-chip-tick {
+    display: inline-flex;
+    color: var(--success);
+    flex: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-chip {
+      animation: hero-chip-in 400ms var(--ease-soft) backwards;
+    }
+    .hero-chip-ring { animation-delay: 700ms; }
+    .hero-chip-answer { animation-delay: 1500ms; }
+    .hero-chip-booked { animation-delay: 2600ms; }
+    @media (max-width: 980px) {
+      .hero-chip-booked { animation-delay: 1600ms; }
+    }
+  }
+  @keyframes hero-chip-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
   }
   @media (prefers-reduced-motion: reduce) {
-    .hero-card-caption-dot { animation: none; }
+    .hero-chip-dot { animation: none; }
   }
 
   @media (max-width: 980px) {
@@ -275,8 +380,24 @@ import ImageBlock from "@/components/ImageBlock.astro";
        during the LCP window on throttled devices. */
     .hero-stage-grid { display: none; }
     .hero-card-halo { filter: blur(18px); inset: -12%; }
+    /* Chips on the 340px card: two beats, smaller. The "answered fast"
+       claim is carried by the proof line directly below the portrait. */
+    .hero-chip { font-size: 10px; padding: 6px 10px; letter-spacing: 1.1px; }
+    .hero-chip-ring { top: 12px; left: 12px; }
+    .hero-chip-answer { display: none; }
+    .hero-chip-booked { left: 12px; bottom: 12px; }
   }
   @media (max-width: 560px) {
     .hero { padding: 120px 0 80px; }
+  }
+
+  /* Marquee peek — on common laptop heights, tighten the composition so
+     the marquee's eyebrow row shows above the fold: a scroll cue by
+     composition, not a bouncing arrow. */
+  @media (min-width: 981px) and (max-height: 900px) {
+    .hero { padding-top: 112px; }
+    .hero-card { max-width: 410px; }
+    .hero-title { margin: 18px 0 20px; }
+    .hero-cta { margin-top: 30px; }
   }
 </style>
