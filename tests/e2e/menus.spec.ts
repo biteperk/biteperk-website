@@ -123,4 +123,27 @@ test.describe("mobile menu", () => {
     await page.waitForURL("**/contact/");
     await expect(page.locator("[data-mobile-menu]")).toBeHidden();
   });
+
+  test("surfaces the primary conversion actions", async ({ page }) => {
+    await page.goto("/");
+    await page.locator("[data-mobile-menu-trigger]").click();
+    const panel = page.locator("[data-mobile-menu]");
+    await expect(panel).toBeVisible();
+    // Book-a-demo parity with desktop + a tappable phone action.
+    await expect(panel.locator('a[data-cta="book-demo"]')).toBeVisible();
+    await expect(panel.locator('a[data-cta="call-menu"]')).toBeVisible();
+  });
+});
+
+test.describe("desktop phone affordance", () => {
+  // The phone is the product demo — it must be reachable at every
+  // desktop width, including the 981–1279px icon-pill tier.
+  test.use({ viewport: { width: 1024, height: 768 } });
+
+  test("phone link stays visible on mid-width laptops", async ({ page }) => {
+    await page.goto("/");
+    const phone = page.locator('#nav a[data-cta="call-nav"]');
+    await expect(phone).toBeVisible();
+    await expect(phone).toHaveAttribute("href", /^tel:/);
+  });
 });
