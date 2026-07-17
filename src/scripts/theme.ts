@@ -44,6 +44,23 @@ function onToggleClick(e: Event) {
   } catch {
     /* private mode — theme still applies for this page view */
   }
+  // Soft cross-fade via the View Transition API where available. The
+  // [data-theme-switching] stamp scopes the longer fade in global.css to
+  // theme swaps only. Falls back (and under reduced motion) to a direct
+  // swap; startViewTransition throws if one is already running (e.g.
+  // mid-navigation), in which case we also just apply directly.
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const root = document.documentElement;
+  if (!reduce && typeof document.startViewTransition === "function") {
+    try {
+      root.setAttribute("data-theme-switching", "");
+      const vt = document.startViewTransition(() => apply(next));
+      vt.finished.finally(() => root.removeAttribute("data-theme-switching"));
+      return;
+    } catch {
+      root.removeAttribute("data-theme-switching");
+    }
+  }
   apply(next);
 }
 

@@ -110,7 +110,7 @@ const faqJsonLd = {
                   </time>
                   {post.data.tags[0] && <span class="home-guide-tag">{post.data.tags[0]}</span>}
                 </div>
-                <h3 class="home-guide-title">{post.data.title}</h3>
+                <h3 class="home-guide-title" transition:name={`post-${post.id}`}>{post.data.title}</h3>
                 <p class="home-guide-desc">{post.data.description}</p>
                 <span class="home-guide-read">Read →</span>
               </a>

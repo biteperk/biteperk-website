@@ -89,7 +89,7 @@ const breadcrumbJsonLd = {
                   <time datetime={iso(post.data.publishDate)}>{fmt(post.data.publishDate)}</time>
                   {post.data.tags[0] && <span class="blog-card-tag">{post.data.tags[0]}</span>}
                 </div>
-                <h2 class="blog-card-title">{post.data.title}</h2>
+                <h2 class="blog-card-title" transition:name={`post-${post.id}`}>{post.data.title}</h2>
                 <p class="blog-card-desc">{post.data.description}</p>
                 <span class="blog-card-read">Read the guide →</span>
               </a>

@@ -183,6 +183,30 @@ button {
   }
 }
 
+/* ── View Transitions — timing for page morphs + theme cross-fade ─ */
+/* Shared elements (product wordmarks, guide titles) morph between
+   pages; keep the whole navigation snappy so it never feels slowed. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--dur-base);
+  animation-timing-function: var(--ease-soft);
+}
+/* Theme toggle wraps its swap in startViewTransition (theme.ts) and
+   stamps this attribute for the duration — a softer, longer cross-fade
+   that only applies to the theme change, not navigations. */
+html[data-theme-switching]::view-transition-old(root),
+html[data-theme-switching]::view-transition-new(root) {
+  animation-duration: 480ms;
+  animation-timing-function: var(--ease-soft);
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
 /* ── Brand mark + wordmark ─────────────────────────────────────── */
 .brand {
   display: inline-flex;
