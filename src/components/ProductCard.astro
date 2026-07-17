@@ -20,10 +20,12 @@ const href = productUrl(product);
 <a class:list={["product-card", `variant-${variant}`, `is-${product.status}`]} href={href} aria-label={`Open ${product.name}`}>
   <div class="product-card-glow" aria-hidden="true" style={`--accent:${product.accent}`}></div>
   <div class="product-card-head">
-    <div class="product-card-name">
+    <div class="product-card-name" transition:name={`product-title-${product.slug}`}>
       <span class="prefix">{product.wordmark.prefix}</span><span class="suffix">{product.wordmark.suffix}</span>
     </div>
-    <StatusPill status={product.status} size={variant === "tile" ? "sm" : "md"} />
+    <span transition:name={`product-pill-${product.slug}`}>
+      <StatusPill status={product.status} size={variant === "tile" ? "sm" : "md"} />
+    </span>
   </div>
   <p class="product-card-tag">{product.tagline}</p>
   <p class="product-card-sum">{product.summary}</p>

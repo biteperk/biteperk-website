@@ -43,11 +43,13 @@ const ctaExternal = cta.href.startsWith("http");
   <div class="cap-glow" aria-hidden="true" style={`--accent:${product.accent}`}></div>
 
   <div class="cap-head">
-    <div class="cap-name">
+    <div class="cap-name" transition:name={`product-title-${product.slug}`}>
       <span class="cap-kicker">{product.wordmark.prefix}</span>
       <span class="cap-cap">{product.wordmark.suffix}</span>
     </div>
-    <StatusPill status={product.status} size="sm" />
+    <span transition:name={`product-pill-${product.slug}`}>
+      <StatusPill status={product.status} size="sm" />
+    </span>
   </div>
 
   <h3 class="cap-outcome">{product.outcome ?? product.tagline}</h3>
