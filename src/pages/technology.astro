@@ -1,0 +1,342 @@
+---
+/**
+ * /technology/ — "How AI phone answering actually works".
+ *
+ * The AI/ML depth page for the high-volume "how does AI phone answering
+ * work" search demand. Plain-English but technically substantive; every
+ * claim maps to one already published elsewhere on the site (Australian-
+ * English ASR + suburb tuning, live availability, confidence gating →
+ * human callback, onshore processing, no external training, sub-second
+ * pickup). No invented benchmarks.
+ */
+import Base from "@/layouts/Base.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import SectionHeader from "@/components/SectionHeader.astro";
+import Illustration from "@/components/Illustration.astro";
+import FAQ from "@/components/FAQ.astro";
+import CallSim from "@/components/CallSim.astro";
+import Cta from "@/components/Cta.astro";
+import { site } from "@/data/site";
+import { ORG_ID, WEBSITE_ID } from "@/data/schema";
+
+const title = "How AI phone answering works — the technology behind Bella · Biteperk";
+const description =
+  "How AI phone answering actually works, in plain English: speech recognition tuned for Australian English, understanding intent, checking your live diary, and a human in the loop when the AI isn't sure.";
+const path = "/technology/";
+
+const pipeline = [
+  {
+    icon: "phone-wave" as const,
+    step: "01",
+    title: "The call is answered",
+    body: "The moment your forwarded line rings, Bella picks up — first ring, day or night. No phone tree, no hold music, no app for the caller to install.",
+  },
+  {
+    icon: "pin-au" as const,
+    step: "02",
+    title: "Speech becomes text",
+    body: "A speech-recognition model turns what the caller says into words — tuned for Australian English and local place names, so \"a table in Prahran\" isn't heard as three separate guesses.",
+  },
+  {
+    icon: "calendar-tick" as const,
+    step: "03",
+    title: "Intent is understood, the diary is checked",
+    body: "Bella works out what the caller actually wants — a booking, a change, a question — pulls out the details, and checks them against your live availability before she promises anything.",
+  },
+  {
+    icon: "ticket" as const,
+    step: "04",
+    title: "The table is booked, or a human is flagged",
+    body: "If she's confident, the confirmed booking writes straight to your dashboard. If she isn't, she takes a message and flags your team — a callback, never a wrong booking.",
+  },
+];
+
+const techFaqs = [
+  {
+    q: "How does AI phone answering actually work?",
+    a: "When a caller rings, the call is routed to a software voice agent. It converts speech to text, works out the caller's intent (a booking, an amendment, a question), checks your live availability, and either completes the booking or — if it's unsure — takes a message for your team. From the caller's side it just feels like reaching a fast, friendly host.",
+  },
+  {
+    q: "Is it a real AI, or just a phone tree?",
+    a: "A phone tree makes the caller navigate menus (\"press 1 for bookings\"). Bella understands natural speech — \"have you got anything for four-ish around eight?\" — as a single request with a party size and a rough time, and responds conversationally. There are no menus and nothing for the caller to press.",
+  },
+  {
+    q: "What happens when the AI isn't sure?",
+    a: "Every response carries a confidence score. When it falls below the line — an unusual request, a name that can't be caught clearly — Bella stops rather than guesses, captures the caller's details, and flags your team to call back. A low-confidence moment becomes a callback, not a wrong booking. That human-in-the-loop design is deliberate.",
+  },
+  {
+    q: "Why does an Australian-trained model matter?",
+    a: "Generic, overseas-trained speech models mangle Australian place names — Woolloongabba, Prahran, Subiaco — and callers hear the difference instantly. Bella's recogniser is tuned for Australian English and local suburb names, so guests get a warm, local-sounding answer instead of an offshore-call-centre feel.",
+  },
+  {
+    q: "Where is the call audio processed and stored?",
+    a: "In Australia. Audio is processed onshore, kept only as long as needed to confirm the booking, and never used to train outside models. Biteperk is Privacy Act compliant and your bookings always stay yours.",
+  },
+];
+
+const webpageJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": `${site.url}${path}#webpage`,
+  url: `${site.url}${path}`,
+  name: title,
+  description,
+  isPartOf: { "@id": WEBSITE_ID },
+  about: { "@id": ORG_ID },
+  publisher: { "@id": ORG_ID },
+};
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: site.url },
+    { "@type": "ListItem", position: 2, name: "How it works", item: `${site.url}${path}` },
+  ],
+};
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  isPartOf: { "@id": WEBSITE_ID },
+  mainEntity: techFaqs.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+};
+---
+
+<Base title={title} description={description} path={path} ogImage="/og/technology.png">
+  <Fragment slot="jsonld">
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(webpageJsonLd)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
+  </Fragment>
+
+  <section class="tech-hero">
+    <div class="wrap">
+      <div class="tech-top">
+        <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "How it works" }]} />
+      </div>
+      <SectionHeader
+        as="h1"
+        eyebrow="Under the hood"
+        lede="Strip away the buzzwords and AI phone answering is a simple pipeline: a caller speaks, software understands them, checks your diary, and books the table. Here's each step — in plain English."
+      >
+        <Fragment slot="headline">
+          How does AI phone answering
+          <br />
+          <span class="gold">actually work?</span>
+        </Fragment>
+      </SectionHeader>
+    </div>
+  </section>
+
+  {/* ── The pipeline ─────────────────────────────────────────────── */}
+  <section class="tech-section tech-pipeline">
+    <div class="wrap">
+      <div class="tech-head reveal">
+        <span class="eyebrow">The pipeline</span>
+        <h2 class="tech-h2">From a ringing phone to a booking on your screen.</h2>
+      </div>
+      <ol class="tech-steps reveal reveal-stagger">
+        {pipeline.map((p) => (
+          <li class="tech-step" data-glow>
+            <div class="tech-step-top">
+              <Illustration name={p.icon} size={38} trace />
+              <span class="tech-step-n" aria-hidden="true">{p.step}</span>
+            </div>
+            <h3>{p.title}</h3>
+            <p>{p.body}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  {/* ── Hear it ──────────────────────────────────────────────────── */}
+  <CallSim />
+
+  {/* ── The detail ───────────────────────────────────────────────── */}
+  <section class="tech-section tech-detail">
+    <div class="wrap">
+      <div class="tech-detail-grid">
+        <article class="reveal">
+          <h2 class="tech-h3">Speech recognition, tuned for how Australia talks</h2>
+          <p>
+            The first job is turning sound into words, and it's where generic systems fall down.
+            A model trained mostly on American English hears "Woolloongabba" or "Prahran" as a
+            string of bad guesses. Bella's recogniser is tuned for Australian English and the
+            suburb and street names guests actually say — so the transcript that everything else
+            depends on is right from the start.
+          </p>
+        </article>
+        <article class="reveal">
+          <h2 class="tech-h3">Understanding, not keyword-matching</h2>
+          <p>
+            "Have you got anything for four-ish around eight?" isn't a keyword — it's a request
+            with a party size and an approximate time. Bella reads it as one intent, extracts the
+            details, and fills in the blanks by asking, the way a good host would. There's no menu
+            to navigate and nothing to press.
+          </p>
+        </article>
+        <article class="reveal">
+          <h2 class="tech-h3">Checked against your real diary</h2>
+          <p>
+            Before Bella offers a time, she reads your live availability — so she only ever
+            proposes a table that genuinely exists, and the confirmed booking writes straight to
+            your dashboard. No double-bookings, no reconciling scribbled notes at the pass.
+          </p>
+        </article>
+        <article class="reveal">
+          <h2 class="tech-h3">A human in the loop, by design</h2>
+          <p>
+            This is the part that makes an AI safe on a real phone line. Every response carries a
+            confidence score. When it's high, Bella handles the whole call. When it drops — a
+            tricky request, a name she can't quite catch — she stops guessing, takes the caller's
+            details, and flags your team to ring back. A low-confidence moment becomes a callback,
+            not a wrong booking.
+          </p>
+        </article>
+        <article class="reveal">
+          <h2 class="tech-h3">Fast enough to feel human</h2>
+          <p>
+            None of this is useful if it's slow. Bella answers in under a second and keeps the
+            conversation moving at a natural pace, so callers get the brisk, friendly experience
+            they'd want from your best host on a quiet night — not a laggy robot.
+          </p>
+        </article>
+        <article class="reveal">
+          <h2 class="tech-h3">Processed onshore, and kept in Australia</h2>
+          <p>
+            Call audio is processed in Australia, retained only as long as it takes to confirm the
+            booking, and never used to train outside models. Biteperk is Privacy Act compliant, and
+            the bookings — and the recordings — stay yours.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  {/* ── What it won't do ─────────────────────────────────────────── */}
+  <section class="tech-section tech-honest">
+    <div class="wrap">
+      <div class="tech-honest-card reveal" data-glow>
+        <Illustration name="shield" size={44} trace />
+        <h2 class="tech-h3">What Bella deliberately doesn't do</h2>
+        <p>
+          A good voice agent is defined as much by its limits as its abilities. Bella doesn't
+          invent availability she hasn't checked, doesn't push through a booking she's unsure of,
+          and doesn't pretend to handle things a phone call isn't the right place for. When
+          something is beyond a quick, confident booking, she takes a structured message and hands
+          it to a human. That restraint is what lets you leave her on the line on a Friday night.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {/* ── FAQ ──────────────────────────────────────────────────────── */}
+  <section class="tech-section tech-faq">
+    <div class="wrap">
+      <div class="tech-head reveal">
+        <span class="eyebrow">Common questions</span>
+        <h2 class="tech-h2">How AI phone answering works, answered plainly.</h2>
+      </div>
+      <div class="reveal" style="margin-top:40px">
+        <FAQ items={techFaqs} stagger />
+      </div>
+    </div>
+  </section>
+
+  <Cta
+    eyebrow="See it on your line"
+    headline="The best explanation is a phone call."
+    lede="Read all you like — then call the number and hear Bella answer, check a diary, and book a table in real time. Most venues are live within 48 hours."
+    primary={{ label: `Call us · ${site.phone.display}`, href: site.phone.href }}
+    secondary={{ label: "See VocoTable", href: "/products/vocotable/" }}
+  />
+</Base>
+
+<style>
+  .tech-hero { padding: 150px 0 40px; }
+  .tech-top { margin-bottom: 28px; }
+  .tech-section { padding-block: var(--space-section); border-top: 1px solid var(--line); }
+  .tech-h2 {
+    font-size: var(--fs-h2);
+    font-weight: 800;
+    line-height: var(--lh-display);
+    letter-spacing: -0.025em;
+    color: var(--white);
+    margin-top: 14px;
+  }
+  .tech-h3 {
+    font-size: clamp(19px, 2vw, 23px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--white);
+    line-height: 1.25;
+  }
+  .tech-head { max-width: 680px; }
+
+  .tech-steps {
+    list-style: none;
+    padding: 0;
+    margin: 48px 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+  }
+  .tech-step {
+    padding: 28px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--ink-1);
+    transition: border-color var(--dur-base) var(--ease-out);
+  }
+  .tech-step:hover { border-color: color-mix(in srgb, var(--gold) 26%, var(--line)); }
+  .tech-step-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .tech-step-n {
+    font-size: 12px;
+    letter-spacing: 2px;
+    font-weight: 700;
+    color: var(--gold);
+  }
+  .tech-step h3 { font-size: 16.5px; font-weight: 700; color: var(--white); letter-spacing: -0.01em; }
+  .tech-step p { margin-top: 9px; color: var(--text); font-size: 14px; line-height: 1.6; }
+
+  .tech-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: clamp(28px, 4vw, 48px) clamp(32px, 5vw, 64px);
+  }
+  .tech-detail-grid p {
+    margin-top: 12px;
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15.5px;
+    max-width: 52ch;
+  }
+
+  .tech-honest-card {
+    max-width: 820px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 48px 40px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-xl);
+    background: var(--ink-1);
+  }
+  .tech-honest-card .tech-h3 { margin-top: 18px; }
+  .tech-honest-card p {
+    margin-top: 16px;
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 16px;
+  }
+
+  .tech-faq .tech-head { text-align: center; margin-inline: auto; }
+</style>

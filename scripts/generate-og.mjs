@@ -340,6 +340,11 @@ const cards = [
     headline: "Field notes for a busier, calmer floor.",
     showBella: false,
   },
+  {
+    file: "technology.png",
+    eyebrow: "Under the hood",
+    headline: "How Bella actually answers the phone.",
+  },
 ];
 
 for (const c of cards) {
