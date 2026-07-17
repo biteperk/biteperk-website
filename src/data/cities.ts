@@ -24,6 +24,19 @@ export interface CityScenario {
   readonly body: string;
 }
 
+/** "The AI under the hood, tuned for {City}" — hand-written per city.
+ *  Four fixed topics (speech recognition + local suburbs, live availability,
+ *  confidence gating → human, onshore processing) with per-city wording. */
+export interface CityAiPoint {
+  readonly icon: "pin-au" | "calendar-tick" | "phone-wave" | "shield";
+  readonly title: string;
+  readonly body: string;
+}
+export interface CityAiLocal {
+  readonly lead: string;
+  readonly points: readonly CityAiPoint[];
+}
+
 export interface City {
   readonly slug: string;
   readonly name: string;
@@ -43,6 +56,8 @@ export interface City {
   /** Localised "how Voco fits this city" cards. */
   readonly scenarios: readonly CityScenario[];
   readonly faqs: readonly CityFaq[];
+  /** The AI/ML explainer, localised to this city. */
+  readonly aiLocal: CityAiLocal;
   /** Blog slugs for internal linking. */
   readonly relatedGuides: readonly string[];
   /** ImageBlock slug for the hero photo. */
@@ -68,7 +83,7 @@ export const cities: readonly City[] = [
     navLabel: "Sydney",
     seoTitle: "AI phone answering for Sydney restaurants · Biteperk",
     seoDescription:
-      "Stop losing Sydney bookings to a phone nobody can reach. Biteperk's VocoTable answers every restaurant call in a warm Australian voice, checks availability, and books the table — 24/7. Built, hosted and supported in Sydney.",
+      "AI phone answering and an AI receptionist for Sydney restaurants. Bella answers every call from Surry Hills to Manly, checks live availability and books the table — 24/7, built in Sydney.",
     heroHeadline: "AI phone answering for Sydney restaurants.",
     intro: [
       "Every night, Sydney venues lose tables to a phone nobody can reach during service. At 7:30 on a Friday in Surry Hills or the CBD, your floor staff are carrying plates, not picking up the phone — and in a city with this much choice, callers rarely ring back. A handful of missed calls a week quietly adds up to thousands of dollars a month in lost covers.",
@@ -127,7 +142,36 @@ export const cities: readonly City[] = [
         q: "What does it cost?",
         a: "VocoTable starts at a flat $80/month with no per-cover or per-call fees, scaling up for busier venues and multi-location groups. Most Sydney venues make it back from the bookings they stop missing in the first week.",
       },
+      {
+        q: "Is Bella an AI receptionist or just an answering service?",
+        a: "An answering service takes a message and passes it on — you still have to ring the Sydney caller back, usually after they've booked somewhere else. Bella is an AI receptionist: she completes the booking on the call, against your live availability, and only takes a message for the genuinely unusual requests. The table is confirmed before the caller hangs up.",
+      },
     ],
+    aiLocal: {
+      lead: "Voco is built and trained in Sydney, and it shows in the details. The speech model is tuned for Australian English and the way this city actually talks — so Bella isn't guessing at the names your guests take for granted.",
+      points: [
+        {
+          icon: "pin-au",
+          title: "She says the suburbs like a local",
+          body: "Leichhardt lands as \"Lie-cart,\" not letter-by-letter. Marrickville, Parramatta, Woolloomooloo — the place names a generic overseas model mangles are exactly the ones our Sydney-trained recogniser gets right.",
+        },
+        {
+          icon: "calendar-tick",
+          title: "Checked against your real diary",
+          body: "Bella doesn't improvise a time. She reads your live availability the instant a caller asks, offers a table that genuinely exists, and writes it back — so a Friday-night rush never becomes a double-booking.",
+        },
+        {
+          icon: "phone-wave",
+          title: "When she's unsure, a human steps in",
+          body: "Every answer carries a confidence score. Below the line — an odd request, a name she can't quite catch — she stops guessing, takes the details, and flags your team to call back. A maybe becomes a callback, never a wrong booking.",
+        },
+        {
+          icon: "shield",
+          title: "Processed onshore, kept in Australia",
+          body: "Call audio is handled in Australia, kept only as long as it takes to confirm the booking, and never used to train outside models. The team you reach when you want a person is the one that built the model.",
+        },
+      ],
+    },
     relatedGuides: [
       "ai-phone-answering-for-sydney-restaurants",
       "what-missed-calls-cost-your-restaurant",
@@ -151,7 +195,7 @@ export const cities: readonly City[] = [
     navLabel: "Melbourne",
     seoTitle: "AI phone answering for Melbourne restaurants · Biteperk",
     seoDescription:
-      "Melbourne's laneway bars and dining rooms miss calls all service long. Biteperk's VocoTable answers every call in a natural Australian voice, checks availability and books the table — 24/7, with Australian data residency.",
+      "An AI receptionist for Melbourne restaurants. Bella answers every call — Fitzroy laneway bar or CBD dining room — checks live availability and books the table, 24/7.",
     heroHeadline: "AI phone answering for Melbourne restaurants.",
     intro: [
       "Melbourne runs on tight rooms and tighter margins. A forty-seat laneway diner doesn't have a host standing by the phone — the person nearest it is also running the pass, polishing glasses and seating walk-ins. When the room is loud and the espresso machine is screaming, the phone loses. Every one of those unanswered calls is a table that quietly books the place two doors down.",
@@ -210,7 +254,36 @@ export const cities: readonly City[] = [
         q: "We already take bookings through a widget — why add phone answering?",
         a: "Because Melbourne still rings. Older diners, group organisers and anyone with a question a form can't answer will always pick up the phone — and those callers skew toward bigger tables and special occasions. Bella catches the bookings your widget never sees.",
       },
+      {
+        q: "Is Bella an AI receptionist or just an answering service?",
+        a: "A Melbourne answering service writes down the request and leaves you to call back — which, with this city's amendment habit, means playing phone tag over a table time. Bella is an AI receptionist: she books it there and then, moves the 8:15 to 8:30 if that's what's asked, and confirms it against your real diary. Only the odd request becomes a message.",
+      },
     ],
+    aiLocal: {
+      lead: "Melbourne diners amend. \"Push it to 8:15, make it six, actually can we sit inside\" — the model behind Bella is tuned for Australian English and the fast, chatty way this city changes its mind on the phone.",
+      points: [
+        {
+          icon: "pin-au",
+          title: "Prahran, not \"Pra-han\"",
+          body: "Our Australian-trained speech recogniser handles the names locals shorten and swallow — Prahran as \"P'ran,\" Northcote, Brunswick — where an overseas model spells them out or gets them wrong.",
+        },
+        {
+          icon: "phone-wave",
+          title: "Understanding, not keyword-matching",
+          body: "\"Any chance of four-ish around eight?\" is a request with a party size and a rough time, and Bella reads it as one — then confirms the specifics rather than forcing the caller into a menu.",
+        },
+        {
+          icon: "calendar-tick",
+          title: "Booked against the live diary",
+          body: "Every table she offers is checked against your real availability in the moment, and the confirmed booking lands on your screen — no laneway 40-seater juggling paper at the pass.",
+        },
+        {
+          icon: "shield",
+          title: "Your data stays onshore",
+          body: "Call audio is processed in Australia and kept only long enough to lock the booking. It is never used to train outside models, and low-confidence moments become a flagged callback, not a guess.",
+        },
+      ],
+    },
     relatedGuides: [
       "what-missed-calls-cost-your-restaurant",
       "how-to-reduce-no-shows-at-your-restaurant",
@@ -234,7 +307,7 @@ export const cities: readonly City[] = [
     navLabel: "Brisbane",
     seoTitle: "AI phone answering for Brisbane restaurants · Biteperk",
     seoDescription:
-      "Brisbane venues live and die by the weather and the weekend. Biteperk's VocoTable answers every call in a natural Australian voice, books tables and takes the deck-or-inside question off your team's plate — 24/7.",
+      "AI phone answering for Brisbane restaurants. Bella is the AI receptionist that answers every call from West End to Teneriffe, handles deck-or-inside changes and books tables 24/7.",
     heroHeadline: "AI phone answering for Brisbane restaurants.",
     intro: [
       "Brisbane dining is outdoor dining — river decks at Howard Smith Wharves, beer gardens in West End, footpath tables in Teneriffe. That makes the phone busier, not quieter: every change in the sky produces a wave of \"is the deck still on?\", \"can we move inside?\" and \"are you open if it storms?\" calls, all landing while your team is resetting tables in the heat.",
@@ -294,7 +367,36 @@ export const cities: readonly City[] = [
         q: "Can Bella tell callers about our outdoor areas and wet-weather policy?",
         a: "Yes — you configure the facts once (covered deck, umbrellas, the move-inside rule) and Bella answers them consistently on every call, which is exactly the question Brisbane venues get asked most.",
       },
+      {
+        q: "Is Bella an AI receptionist or just an answering service?",
+        a: "An answering service in Brisbane just relays a message and leaves the booking to you. Bella is an AI receptionist: on a storm-night rush of deck-or-inside calls she checks your live diary and confirms each table herself, in parallel, and only hands you a message for anything she can't resolve. Fewer callbacks, no missed covers.",
+      },
     ],
+    aiLocal: {
+      lead: "A Brisbane storm rolls in and the deck-or-inside calls arrive all at once. Bella takes every one of them in parallel — and because the model is tuned for Australian English, the Queensland place names never trip her up.",
+      points: [
+        {
+          icon: "calendar-tick",
+          title: "Real availability, in real time",
+          body: "When the weather turns and everyone wants to move off the deck, Bella checks your live diary before she offers anything — so a wet-Friday rush rebooks cleanly instead of stacking clashes.",
+        },
+        {
+          icon: "pin-au",
+          title: "Queensland names, said right",
+          body: "Woolloongabba, Teneriffe, Toowong — the suburbs a generic recogniser fumbles are the ones ours is trained on. Callers get a warm, local-sounding answer, not an overseas script sounding them out.",
+        },
+        {
+          icon: "shield",
+          title: "Processed and kept in Australia",
+          body: "Your call audio is handled onshore, held only as long as it takes to confirm the booking, and never fed to outside training models. Your bookings stay yours.",
+        },
+        {
+          icon: "phone-wave",
+          title: "A human for the tricky ones",
+          body: "Bella scores her own confidence on every turn. When something's off — a big function, a request she can't place — she takes a message and flags your team rather than committing to a booking she's unsure of.",
+        },
+      ],
+    },
     relatedGuides: [
       "what-missed-calls-cost-your-restaurant",
       "how-to-forward-your-restaurant-phone-to-an-ai-host",
@@ -318,7 +420,7 @@ export const cities: readonly City[] = [
     navLabel: "Perth",
     seoTitle: "AI phone answering for Perth restaurants · Biteperk",
     seoDescription:
-      "Perth venues run service while the east coast sleeps — and miss calls while they prep. Biteperk's VocoTable answers every call 24/7 in a natural Australian voice, so the time zone never costs you a booking.",
+      "An AI receptionist that never checks the clock. Bella answers Perth restaurant calls 24/7 — Northbridge to Fremantle — so the time zone never costs you a booking.",
     heroHeadline: "AI phone answering for Perth restaurants.",
     intro: [
       "Perth runs two to three hours behind the east coast, and hospitality feels it everywhere: suppliers, platforms and support desks are closing just as your service begins. The phone doesn't care. Beach-suburb bistros in Cottesloe and wine bars in Mount Lawley get their booking calls at Perth time — through the afternoon prep window and deep into a Friday night when there is nobody spare to answer.",
@@ -378,7 +480,36 @@ export const cities: readonly City[] = [
         q: "Our venue also does functions — can Bella handle those enquiries?",
         a: "Bella books standard tables end-to-end and captures function enquiries as structured messages — date, numbers, budget hints, contact details — so your events person calls back with everything they need instead of playing phone tag.",
       },
+      {
+        q: "Is Bella an AI receptionist or just an answering service?",
+        a: "A traditional answering service takes a message you have to action later — no use at 6am in Perth when the caller is an eastern-states booking. Bella is an AI receptionist: she completes the booking on the spot, around the clock, against your live availability, and only escalates the genuinely tricky calls to your team. The time zone stops costing you tables.",
+      },
     ],
+    aiLocal: {
+      lead: "Software doesn't have a time zone. An eastern-states caller ringing a Perth venue at what feels like mid-morning to them is 6am in Perth — and Bella answers that call in the same warm, Australian-tuned voice she uses at dinner service.",
+      points: [
+        {
+          icon: "phone-wave",
+          title: "Awake when the east coast calls",
+          body: "There's no roster gap for Bella to fall through. She picks up around the clock and, when a request is beyond a quick booking, takes the details and flags your team instead of guessing — a callback, not a wrong answer.",
+        },
+        {
+          icon: "pin-au",
+          title: "Subiaco, said the local way",
+          body: "\"Subi-AH-co,\" Cottesloe, Fremantle — WA names have their own rhythm, and the Australian-English model behind Bella is tuned for them where an offshore recogniser guesses.",
+        },
+        {
+          icon: "calendar-tick",
+          title: "Checked against your book",
+          body: "Bella reads your live availability the moment a caller asks and only offers a table that actually exists, writing the confirmed booking straight to your dashboard.",
+        },
+        {
+          icon: "shield",
+          title: "Onshore, and yours",
+          body: "Audio is processed in Australia and kept only as long as needed to confirm the booking — never used to train models outside the country. Privacy Act compliant, start to finish.",
+        },
+      ],
+    },
     relatedGuides: [
       "what-missed-calls-cost-your-restaurant",
       "how-much-does-ai-phone-answering-cost-for-a-restaurant",
@@ -402,7 +533,7 @@ export const cities: readonly City[] = [
     navLabel: "Adelaide",
     seoTitle: "AI phone answering for Adelaide restaurants · Biteperk",
     seoDescription:
-      "Adelaide's wine bars and dining rooms are small, personal and impossible to phone during service. Biteperk's VocoTable answers every call in a warm Australian voice and books the table — 24/7, data kept in Australia.",
+      "AI phone answering for Adelaide restaurants and wine bars. Bella, an AI receptionist, answers every call — Peel Street to Glenelg — books the table and rides the Mad March surge, 24/7.",
     heroHeadline: "AI phone answering for Adelaide restaurants.",
     intro: [
       "Adelaide punches absurdly above its weight — a city of heritage-stone wine bars, Peel Street rooms with twelve tables, and East End dining built on personal service. That intimacy is the point, and it's also the problem: in a venue where the owner is on the floor, there is genuinely nobody to answer the phone, and the person calling can hear it ring out.",
@@ -461,7 +592,36 @@ export const cities: readonly City[] = [
         q: "What does VocoTable cost for a small Adelaide venue?",
         a: "The entry tier is a flat $80/month with no per-call or per-cover fees — festival fortnights included. For a twelve-table room, one saved Saturday booking usually covers it.",
       },
+      {
+        q: "Is Bella an AI receptionist or just an answering service?",
+        a: "An answering service records the call and leaves the booking to you — extra work in a small Adelaide room already run off its feet. Bella is an AI receptionist: she books the table herself, checked against your live diary, and because she knows her own limits she takes a message only when she's genuinely unsure. A maybe becomes a callback, not a wrong booking.",
+      },
     ],
+    aiLocal: {
+      lead: "In a twelve-table Adelaide dining room, one wrong booking is a real problem. That's why the AI behind Bella is built to know its own limits — and why it's tuned for Australian English and the small-bar names locals rattle off.",
+      points: [
+        {
+          icon: "phone-wave",
+          title: "A maybe is a callback, never a mistake",
+          body: "Bella scores her confidence on every turn. When she isn't sure — an unusual request, a name she can't catch in a busy room — she takes a message and flags your team rather than risk a booking you'd have to unpick.",
+        },
+        {
+          icon: "calendar-tick",
+          title: "Only tables that exist",
+          body: "She checks your live diary before she promises anything, so the Mad March surge fills the room instead of overfilling it. Confirmed bookings write straight to your screen.",
+        },
+        {
+          icon: "pin-au",
+          title: "Glenelg, Thebarton, Norwood",
+          body: "The suburbs your regulars name are the ones our Australian-trained recogniser is tuned for — so callers hear a familiar, local answer, not an overseas call-centre feel.",
+        },
+        {
+          icon: "shield",
+          title: "Kept in Australia",
+          body: "Call audio is processed onshore, retained only as long as it takes to confirm the booking, and never used to train outside models. The people you reach for a hand are an Australian team.",
+        },
+      ],
+    },
     relatedGuides: [
       "what-missed-calls-cost-your-restaurant",
       "do-diners-want-to-talk-to-an-ai",
@@ -485,7 +645,7 @@ export const cities: readonly City[] = [
     navLabel: "Gold Coast",
     seoTitle: "AI phone answering for Gold Coast restaurants · Biteperk",
     seoDescription:
-      "Gold Coast venues serve a city of tourists who book by phone at all hours. Biteperk's VocoTable answers every call in a natural Australian voice, books the table and never takes schoolies week off.",
+      "An AI receptionist for Gold Coast restaurants. Bella answers tourist calls 24/7 — Burleigh to Broadbeach — books same-day tables and never takes schoolies week off.",
     heroHeadline: "AI phone answering for Gold Coast restaurants.",
     intro: [
       "The Gold Coast feeds a permanent holiday crowd, and holiday-makers behave nothing like locals: they book same-day, they call from the beach at 3pm for tonight, they ask for directions, parking, kids' menus and whether thongs are fine — and if the phone rings out they simply call the next place on the strip. On the Coast, an unanswered phone isn't a missed booking, it's a donation to your competitor.",
@@ -545,7 +705,36 @@ export const cities: readonly City[] = [
         q: "We're a café that turns tables fast — is phone booking even worth it?",
         a: "For high-turn venues Bella acts more like a traffic controller than a reservations desk: she answers the \"how long's the wait?\" calls, takes larger-group bookings that are worth holding a table for, and spares your counter staff the phone entirely during the brunch crush.",
       },
+      {
+        q: "Is Bella an AI receptionist or just an answering service?",
+        a: "An answering service takes a tourist's message and hopes you call back before they've booked another Gold Coast venue. Bella is an AI receptionist: she answers every holiday-peak call at once, confirms same-day tables against your live diary on the call, and only takes a message for the requests she can't complete. The booking is locked before they hang up.",
+      },
     ],
+    aiLocal: {
+      lead: "Gold Coast phones ring with first-time visitors in every accent — interstate, overseas, someone reading your name off a map. Bella answers all of them at once, and the Australian-tuned model still gets the local names right.",
+      points: [
+        {
+          icon: "pin-au",
+          title: "Mudgeeraba and Coolangatta, no stumble",
+          body: "\"Mudge-er-AH-ba,\" Coolangatta, Currumbin — the names that catch out a visitor catch out a generic model too. Ours is trained on them, so a tourist gets a confident, local-sounding answer.",
+        },
+        {
+          icon: "calendar-tick",
+          title: "Same-day tables, checked live",
+          body: "A 3pm \"anything for tonight?\" from the beach is checked against your real diary on the spot — Bella offers what's genuinely open and books it straight to your screen.",
+        },
+        {
+          icon: "phone-wave",
+          title: "Every caller at once, humans on standby",
+          body: "Holiday-peak volume doesn't put anyone on hold; Bella takes calls in parallel. And when a request is beyond her confidence, she captures the details and flags your team for a callback.",
+        },
+        {
+          icon: "shield",
+          title: "Australian data, always",
+          body: "Audio is processed onshore, kept only as long as needed to confirm the booking, and never used to train outside models — however far away the caller happens to be.",
+        },
+      ],
+    },
     relatedGuides: [
       "what-missed-calls-cost-your-restaurant",
       "how-to-forward-your-restaurant-phone-to-an-ai-host",
