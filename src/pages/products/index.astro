@@ -7,7 +7,7 @@ import FAQ from "@/components/FAQ.astro";
 import Cta from "@/components/Cta.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import ImageBlock from "@/components/ImageBlock.astro";
-import { coreProduct, addonProducts, vocoProof, vocoBundle, vocoFaq } from "@/data/products";
+import { coreProduct, addonProducts, vocoProof, vocoBundle, vocoFaq, foundingVenues } from "@/data/products";
 import { buildFaqPage, buildVocoApplication, vocoEditionId } from "@/data/schema";
 import { site } from "@/data/site";
 
@@ -102,7 +102,7 @@ const collage = [
       {/* Proof-forward: a voice product earns trust by being heard. Demo sits
           high, right under the lede, next to the primary CTA. */}
       <div class="vx-hero-cta reveal">
-        <a class="btn" href="/contact/">Book a demo</a>
+        <a class="btn" href="/contact/?intent=demo">Book a demo</a>
         {vocoProof.demo && (
           <a
             class="btn-ghost vx-demo"
@@ -134,7 +134,7 @@ const collage = [
         headline="Four jobs. One agent, one voice."
         lede="Voco handles your phone line end to end. Bookings and takeaway ordering are live today; the rest switch on as they ship — no new number, no second system to learn."
       />
-      <div class="vx-caps-grid reveal">
+      <div class="vx-caps-grid reveal reveal-stagger">
         {capabilities.map((p) => <CapabilityCard product={p} />)}
       </div>
     </div>
@@ -175,6 +175,30 @@ const collage = [
         <div class="vx-proof-placeholder reveal">
           <span class="eyebrow">From the floor</span>
           <p>Early Sydney venues are running Voco now. Their words are coming soon.</p>
+        </div>
+      )}
+
+      {/* Founding venues — real names only (see foundingVenues in
+          products.ts). Framed as exclusivity, not absent scale. */}
+      {foundingVenues.length > 0 && (
+        <div class="vx-founding reveal">
+          <span class="eyebrow">Founding venues</span>
+          <ul class="vx-founding-list">
+            {foundingVenues.map((v) => (
+              <li class="vx-founding-venue">
+                {v.url ? (
+                  <a href={v.url} rel="noopener" target="_blank">{v.name}</a>
+                ) : (
+                  <span>{v.name}</span>
+                )}
+                {v.location && <span class="vx-founding-loc">{v.location}</span>}
+              </li>
+            ))}
+          </ul>
+          <p class="vx-founding-note">
+            Early venues are live now — the founding cohort is still open.
+            <a href="/contact/?intent=demo">Put your venue on the line →</a>
+          </p>
         </div>
       )}
 
@@ -220,7 +244,7 @@ const collage = [
     eyebrow="Have a venue?"
     headline="Book a demo and hear Voco on your line."
     lede="We work with a small number of venues at a time. Tell us about your phone and we'll show you what Voco can take off your team's plate."
-    primary={{ label: "Book a demo", href: "/contact/" }}
+    primary={{ label: "Book a demo", href: "/contact/?intent=demo" }}
     secondary={{ label: `Call us · ${site.phone.display}`, href: site.phone.href }}
   />
 </Base>
@@ -348,6 +372,55 @@ const collage = [
     color: var(--text);
     line-height: 1.6;
   }
+  .vx-founding {
+    margin-top: 56px;
+    text-align: center;
+  }
+  .vx-founding-list {
+    list-style: none;
+    margin: 22px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+  .vx-founding-venue {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 10px 20px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-pill);
+    background: var(--ink-1);
+    font-family: var(--font-serif);
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--white);
+    transition: border-color var(--dur-base) var(--ease-out);
+  }
+  .vx-founding-venue:hover {
+    border-color: color-mix(in srgb, var(--gold) 30%, var(--line));
+  }
+  .vx-founding-venue a { color: inherit; }
+  .vx-founding-loc {
+    font-family: var(--font-sans);
+    font-size: 11.5px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--mist);
+  }
+  .vx-founding-note {
+    margin-top: 22px;
+    color: var(--mist-2);
+    font-size: 14px;
+  }
+  .vx-founding-note a {
+    margin-left: 8px;
+    color: var(--gold);
+    font-weight: 600;
+  }
+  .vx-founding-note a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
   /* ── FAQ ──────────────────────────────────────────────────────── */
   .vx-faq-head { text-align: center; }

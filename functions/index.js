@@ -225,3 +225,48 @@ function errorHtml(error) {
     `${escapeHtml(error || "Please try again.")} You can also email us directly at <a style="color:#F5C418" href="mailto:hello@biteperk.com.au">hello@biteperk.com.au</a>.`
   );
 }
+
+/**
+ * Privacy-friendly analytics proxy (Plausible).
+ *
+ * Reached same-origin as POST /api/event via a Firebase Hosting rewrite —
+ * keeps the CSP at connect-src 'self' with no third-party request from the
+ * browser. Forwards the raw event body plus the visitor's UA and client IP
+ * (both required by Plausible for correct unique-visitor counting; neither
+ * is stored by us). Fire-and-forget: analytics must never break the site,
+ * so every failure path still returns 202.
+ *
+ * Inert until the Plausible site (biteperk.com.au) exists AND the client
+ * flag in src/scripts/analytics.ts is flipped to true.
+ */
+exports.analyticsEvent = onRequest(
+  {
+    region: "australia-southeast1",
+    cors: false,
+    maxInstances: 3,
+    timeoutSeconds: 10,
+    memory: "128MiB",
+  },
+  async (req, res) => {
+    if (req.method !== "POST") {
+      res.set("Allow", "POST");
+      return res.status(405).end();
+    }
+    const origin = req.get("origin");
+    if (origin && !ALLOWED_ORIGINS.includes(origin)) return res.status(403).end();
+    try {
+      await fetch("https://plausible.io/api/event", {
+        method: "POST",
+        headers: {
+          "Content-Type": req.get("content-type") || "application/json",
+          "User-Agent": req.get("user-agent") || "",
+          "X-Forwarded-For": (req.get("x-forwarded-for") || "").split(",")[0].trim(),
+        },
+        body: req.rawBody,
+      });
+    } catch (e) {
+      logger.warn("analytics forward failed", e);
+    }
+    return res.status(202).end();
+  }
+);

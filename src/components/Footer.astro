@@ -35,7 +35,7 @@ const hasAbn = site.abn !== "TODO";
           <a href={site.email.href}>{site.email.display}</a>
         </address>
       </div>
-      <div class="foot-cols">
+      <div class="foot-cols reveal-stagger" style="--stagger-step: 40ms">
         {footerColumns.map((col) => (
           <div class="foot-col">
             <h4>{col.heading}</h4>

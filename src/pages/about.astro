@@ -1,0 +1,293 @@
+---
+/**
+ * About page — the company story, the philosophy, and the real-world
+ * details (address, hours) that make a small company checkable.
+ *
+ * A structured founder slot is reserved below the story; fill it with a
+ * real name + photo when supplied (never a stock face — see
+ * docs/art-direction.md).
+ */
+import Base from "@/layouts/Base.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import SectionHeader from "@/components/SectionHeader.astro";
+import ImageBlock from "@/components/ImageBlock.astro";
+import Illustration from "@/components/Illustration.astro";
+import Cta from "@/components/Cta.astro";
+import { site } from "@/data/site";
+import { ORG_ID } from "@/data/schema";
+
+const title = "About Biteperk — the Sydney team behind Voco";
+const description =
+  "Biteperk is a small Sydney company building voice and AI tools for hospitality. Based in Haymarket, answering restaurant phones Australia-wide. Here's why we build what we build.";
+
+const aboutJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  "@id": `${site.url}/about/#aboutpage`,
+  url: `${site.url}/about/`,
+  name: title,
+  about: { "@id": ORG_ID },
+};
+---
+
+<Base title={title} description={description} path="/about/">
+  <script
+    is:inline
+    type="application/ld+json"
+    slot="jsonld"
+    set:html={JSON.stringify(aboutJsonLd)}
+  />
+
+  <section class="about-hero">
+    <div class="wrap">
+      <div class="about-top">
+        <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "About" }]} />
+      </div>
+      <SectionHeader
+        as="h1"
+        eyebrow="About Biteperk"
+        lede="We're a small Sydney company with one obsession: the restaurant phone that nobody can reach during service. Everything we build starts there."
+      >
+        <Fragment slot="headline">
+          Built in Haymarket,
+          <br />
+          <span class="gold">answering Australia-wide.</span>
+        </Fragment>
+      </SectionHeader>
+    </div>
+  </section>
+
+  <section class="about-story">
+    <div class="wrap">
+      <div class="about-story-grid">
+        <div class="reveal about-story-copy">
+          <h2 class="about-h2">Why we build this</h2>
+          <p>
+            Walk past any good restaurant on a Friday night and you'll hear it:
+            a phone ringing out while every single person on the floor is doing
+            exactly what they should be doing — looking after the room. That
+            ringing phone is a booking walking to the venue next door.
+          </p>
+          <p>
+            Biteperk exists to end that trade-off. Our AI phone host, Bella,
+            answers every call in a warm Australian voice, checks real
+            availability, and writes the booking straight to the venue's
+            screen. The team never leaves the floor; the guest never hits
+            voicemail.
+          </p>
+          <p>
+            We deliberately build a small, careful catalogue — no buzzword
+            roadmaps, no platform pitches. Software that solves one
+            front-of-house problem properly, then the next one.
+          </p>
+        </div>
+        <div class="reveal about-story-photo">
+          <ImageBlock
+            slug="hands-headset"
+            alt="Hands adjusting a phone headset — the craft of answering well."
+            aspect="4 / 5"
+            widths="(min-width: 1024px) 38vw, 100vw"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about-principles">
+    <div class="wrap">
+      <div class="about-principles-head reveal">
+        <span class="eyebrow">How we work</span>
+        <h2 class="about-h2">Three principles we don't bend.</h2>
+      </div>
+      <div class="about-principles-grid reveal reveal-stagger">
+        <div class="about-principle">
+          <Illustration name="shield" size={40} />
+          <h3>A human in the loop, by design</h3>
+          <p>
+            When Bella isn't confident, she doesn't guess — she takes a message
+            and flags your team to call back. A low-confidence moment becomes a
+            callback, not a wrong booking.
+          </p>
+        </div>
+        <div class="about-principle">
+          <Illustration name="pin-au" size={40} />
+          <h3>Australian, all the way down</h3>
+          <p>
+            Built and supported from Sydney. Call audio processed and stored in
+            Australia, never used to train outside models. Privacy Act
+            compliant.
+          </p>
+        </div>
+        <div class="about-principle">
+          <Illustration name="calendar-tick" size={40} />
+          <h3>Honest by default</h3>
+          <p>
+            Flat pricing with no per-cover fees. Product pages that say
+            "in development" when something's in development. We'd rather earn
+            trust slowly than claim it.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about-find">
+    <div class="wrap">
+      <div class="about-find-grid">
+        <div class="reveal about-find-copy">
+          <span class="eyebrow">Where we are</span>
+          <h2 class="about-h2">A real office, real hours, a phone we answer.</h2>
+          <address class="about-address">
+            {site.address.street}<br />
+            {site.address.locality} {site.address.region} {site.address.postalCode}
+          </address>
+          <p class="about-find-row">
+            <a href={site.phone.href}>{site.phone.display}</a> · {site.hours.display}
+          </p>
+          <p class="about-find-row">
+            <a href={site.email.href}>{site.email.display}</a>
+          </p>
+          <a
+            class="btn-ghost link-arrow about-find-map"
+            href={site.address.mapsUrl}
+            rel="noopener"
+            target="_blank"
+          >
+            Find us on the map
+            <span class="arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+        <div class="reveal about-find-photo">
+          <ImageBlock
+            slug="sydney-cafe-street"
+            alt="A Sydney café street scene near Haymarket, morning light."
+            aspect="16 / 10"
+            widths="(min-width: 1024px) 48vw, 100vw"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Cta
+    eyebrow="Say hello"
+    headline="Talk to the people who build it."
+    lede="No sales team, no scripts — you'll be talking to the team that ships the product. Ask us anything about the missed-call problem."
+  />
+</Base>
+
+<style>
+  .about-hero {
+    padding: 150px 0 40px;
+  }
+  .about-top { margin-bottom: 28px; }
+  .about-h2 {
+    font-size: var(--fs-h2);
+    font-weight: 800;
+    line-height: var(--lh-display);
+    letter-spacing: -0.025em;
+    color: var(--white);
+  }
+
+  .about-story {
+    padding-block: var(--space-section);
+  }
+  .about-story-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: clamp(40px, 6vw, 80px);
+    align-items: center;
+  }
+  .about-story-copy p {
+    margin-top: 20px;
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 16px;
+    max-width: 58ch;
+  }
+  .about-story-photo :global(.image-block) {
+    border-radius: var(--r-xl);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-card);
+  }
+
+  .about-principles {
+    padding-block: var(--space-section);
+    border-top: 1px solid var(--line);
+    background: var(--ink-1);
+  }
+  .about-principles-head {
+    text-align: center;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .about-principles-head .about-h2 { margin-top: 14px; }
+  .about-principles-grid {
+    margin-top: 52px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  .about-principle {
+    padding: 30px 28px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--ink-0);
+    transition: border-color var(--dur-base) var(--ease-out);
+  }
+  .about-principle:hover {
+    border-color: color-mix(in srgb, var(--gold) 26%, var(--line));
+  }
+  .about-principle h3 {
+    margin-top: 18px;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.01em;
+  }
+  .about-principle p {
+    margin-top: 10px;
+    color: var(--text);
+    font-size: 14.5px;
+    line-height: 1.6;
+  }
+
+  .about-find {
+    padding-block: var(--space-section);
+    border-top: 1px solid var(--line);
+  }
+  .about-find-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: clamp(40px, 6vw, 80px);
+    align-items: center;
+  }
+  .about-find-copy .about-h2 { margin-top: 14px; }
+  .about-address {
+    margin-top: 24px;
+    font-style: normal;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--white);
+    font-weight: 600;
+  }
+  .about-find-row {
+    margin-top: 12px;
+    color: var(--text);
+    font-size: 15px;
+  }
+  .about-find-row a { color: var(--gold); font-weight: 600; }
+  .about-find-row a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .about-find-map { margin-top: 26px; }
+  .about-find-photo :global(.image-block) {
+    border-radius: var(--r-xl);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-card);
+  }
+
+  @media (max-width: 900px) {
+    .about-story-grid,
+    .about-find-grid { grid-template-columns: 1fr; gap: 44px; }
+    .about-hero { padding-top: 130px; }
+  }
+</style>

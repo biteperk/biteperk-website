@@ -102,10 +102,12 @@ const faqJsonLd = product.faq && product.faq.length > 0
         { label: product.name },
       ]} />
       <div class="prod-hero-row">
-        <div class="prod-hero-name">
+        <div class="prod-hero-name" transition:name={`product-title-${product.slug}`}>
           <span class="prefix">{product.wordmark.prefix}</span><span class="suffix">{product.wordmark.suffix}</span>
         </div>
-        <StatusPill status={product.status} />
+        <span transition:name={`product-pill-${product.slug}`}>
+          <StatusPill status={product.status} />
+        </span>
       </div>
       <h1 class="prod-hero-h">{product.hero.headline}</h1>
       <p class="prod-hero-sub">{product.hero.sub}</p>

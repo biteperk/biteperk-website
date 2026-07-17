@@ -58,6 +58,28 @@
   display: none;
 }
 
+/* Entrance: 8px rise + fade, items staggering in behind the panel.
+   Layer-1-safe — if this block is cached-out the menu still floats. */
+@media (prefers-reduced-motion: no-preference) {
+  .megamenu-panel:not([hidden]) {
+    animation: megamenu-in 240ms var(--ease-soft, ease-out) both;
+  }
+  .megamenu-panel:not([hidden]) .megamenu-card {
+    animation: megamenu-item-in 320ms var(--ease-soft, ease-out) backwards;
+  }
+  .megamenu-panel:not([hidden]) .megamenu-card:nth-child(2) { animation-delay: 40ms; }
+  .megamenu-panel:not([hidden]) .megamenu-card:nth-child(3) { animation-delay: 80ms; }
+  .megamenu-panel:not([hidden]) .megamenu-card:nth-child(4) { animation-delay: 120ms; }
+}
+@keyframes megamenu-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+@keyframes megamenu-item-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* Items grid. Plain 2-up; the scoped layer adds hover affordances. */
 .megamenu-grid {
   display: grid;

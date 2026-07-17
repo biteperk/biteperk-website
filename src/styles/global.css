@@ -11,6 +11,7 @@
  */
 
 @import "./tokens.css";
+@import "./scroll-motion.css";
 
 *,
 *::before,
@@ -138,6 +139,74 @@ button {
   }
 }
 
+/* ── Reveal stagger — companion to .reveal on a container ───────── */
+/* The container fades as one (no double transform); children rise in
+   sequence once reveal.ts adds .is-in. --sg-i is assigned per child via
+   nth-child so no inline styles or JS are needed. */
+.reveal-stagger {
+  transform: none;
+}
+.reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity var(--dur-reveal) var(--ease-out),
+    transform var(--dur-reveal) var(--ease-out);
+}
+.reveal-stagger.is-in > * {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(var(--stagger-step, 70ms) * var(--sg-i, 0));
+}
+.reveal-stagger > :nth-child(1) { --sg-i: 0; }
+.reveal-stagger > :nth-child(2) { --sg-i: 1; }
+.reveal-stagger > :nth-child(3) { --sg-i: 2; }
+.reveal-stagger > :nth-child(4) { --sg-i: 3; }
+.reveal-stagger > :nth-child(5) { --sg-i: 4; }
+.reveal-stagger > :nth-child(6) { --sg-i: 5; }
+.reveal-stagger > :nth-child(7) { --sg-i: 6; }
+.reveal-stagger > :nth-child(n + 8) { --sg-i: 7; }
+@media (max-width: 640px) {
+  /* Stacked layouts enter the viewport one child at a time — long
+     queued delays read as broken. Tighten the step and cap the queue. */
+  .reveal-stagger.is-in > * {
+    --stagger-step: 40ms;
+  }
+  .reveal-stagger > :nth-child(n + 5) { --sg-i: 4; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal-stagger > *,
+  .reveal-stagger.is-in > * {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ── View Transitions — timing for page morphs + theme cross-fade ─ */
+/* Shared elements (product wordmarks, guide titles) morph between
+   pages; keep the whole navigation snappy so it never feels slowed. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--dur-base);
+  animation-timing-function: var(--ease-soft);
+}
+/* Theme toggle wraps its swap in startViewTransition (theme.ts) and
+   stamps this attribute for the duration — a softer, longer cross-fade
+   that only applies to the theme change, not navigations. */
+html[data-theme-switching]::view-transition-old(root),
+html[data-theme-switching]::view-transition-new(root) {
+  animation-duration: 480ms;
+  animation-timing-function: var(--ease-soft);
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
 /* ── Brand mark + wordmark ─────────────────────────────────────── */
 .brand {
   display: inline-flex;
@@ -189,7 +258,9 @@ button {
   box-shadow: var(--shadow-btn-hover);
 }
 .btn:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.97);
+  transition-duration: var(--dur-fast);
+  transition-timing-function: var(--ease-spring);
 }
 
 .btn-ghost {
@@ -202,12 +273,130 @@ button {
   background: var(--fill-hover);
   border-color: var(--white);
 }
+.btn-ghost:active {
+  transform: scale(0.97);
+  transition-duration: var(--dur-fast);
+  transition-timing-function: var(--ease-spring);
+}
 
 @media (prefers-reduced-motion: reduce) {
   .btn:hover,
-  .btn-ghost:hover {
+  .btn-ghost:hover,
+  .btn:active,
+  .btn-ghost:active {
     transform: none;
   }
+}
+
+/* ── Link arrow — the trailing → nudges on hover/focus ─────────── */
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.link-arrow .arrow {
+  display: inline-block;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+.link-arrow:hover .arrow,
+.link-arrow:focus-visible .arrow {
+  transform: translateX(4px);
+}
+
+/* ── Pressable — touch feedback for cards (hover lifts are lost on
+   coarse pointers; a press scale keeps mobile tactile) ──────────── */
+.pressable {
+  transition: transform var(--dur-fast) var(--ease-spring);
+}
+.pressable:active {
+  transform: scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link-arrow:hover .arrow,
+  .link-arrow:focus-visible .arrow,
+  .pressable:active {
+    transform: none;
+  }
+}
+
+/* ── Pointer-tracking card glow (script: card-glow.ts) ─────────── */
+/* The gold literally follows the visitor's hand. Overlay sits above
+   the card surface at low alpha (pointer-events: none) so text and
+   contrast are untouched. Light theme runs fainter — a dark-tuned
+   radial reads as a stain on white cards. */
+[data-glow] {
+  position: relative;
+}
+[data-glow]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    240px circle at var(--mx, 50%) var(--my, 50%),
+    var(--gold-glow),
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-out);
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+}
+[data-glow]:hover::after,
+[data-glow]:focus-within::after {
+  opacity: 0.9;
+}
+:root[data-theme="light"] [data-glow]::after {
+  mix-blend-mode: normal;
+  background: radial-gradient(
+    240px circle at var(--mx, 50%) var(--my, 50%),
+    var(--gold-soft),
+    transparent 70%
+  );
+}
+:root[data-theme="light"] [data-glow]:hover::after,
+:root[data-theme="light"] [data-glow]:focus-within::after {
+  opacity: 0.4;
+}
+@media (prefers-reduced-motion: reduce), (pointer: coarse) {
+  [data-glow]::after { display: none; }
+}
+
+/* ── Grain — kills the flat-vector feel on large ink surfaces ──── */
+/* Inline feTurbulence data-URI: zero requests, both themes. Kept at
+   whisper opacity so axe/contrast is unaffected. */
+.grain {
+  position: relative;
+}
+.grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+  background-size: 140px 140px;
+  opacity: 0.028;
+  mix-blend-mode: overlay;
+}
+:root[data-theme="light"] .grain::before {
+  mix-blend-mode: multiply;
+  opacity: 0.02;
+}
+
+/* ── Glow field — ambient section backdrop, per-section hues ───── */
+.glow-field {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(45% 55% at var(--glow-x, 78%) 25%, var(--glow-a, var(--gold-soft)), transparent 70%),
+    radial-gradient(40% 50% at 18% 80%, var(--glow-b, transparent), transparent 70%);
+}
+:root[data-theme="light"] .glow-field {
+  opacity: 0.5;
 }
 
 /* ── Pill — eyebrow chip with a pulsing dot ────────────────────── */
@@ -244,6 +433,14 @@ button {
   .dot {
     animation: none;
   }
+}
+
+/* ── Serif accent — one italic serif moment per headline, max ──── */
+.serif-accent {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.01em;
 }
 
 /* ── Eyebrow ───────────────────────────────────────────────────── */

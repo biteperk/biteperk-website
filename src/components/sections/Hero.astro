@@ -12,7 +12,7 @@ import ImageBlock from "@/components/ImageBlock.astro";
 ---
 
 <header class="hero">
-  <div class="hero-stage" aria-hidden="true">
+  <div class="hero-stage sm-exit-fade grain" aria-hidden="true">
     <div class="hero-stage-grid"></div>
     <div class="hero-stage-glow"></div>
   </div>
@@ -120,6 +120,55 @@ import ImageBlock from "@/components/ImageBlock.astro";
     white-space: nowrap;
   }
   .hero-title .gold { color: var(--gold); }
+
+  /* ── Entrance choreography (one-shot, load-time) ──────────────
+     LCP rule: the h1 lines animate transform-only from opacity: 1 —
+     an element that starts transparent hasn't painted, which pushes
+     LCP out. Only the pill, sub, CTAs, halo and caption may fade. */
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-title-line {
+      animation: hero-line-rise var(--dur-slow) var(--ease-soft) backwards;
+    }
+    .hero-title-line:nth-child(2) { animation-delay: 90ms; }
+    .hero-title-line:nth-child(3) { animation-delay: 180ms; }
+    .hero-text .pill {
+      animation: hero-fade-rise var(--dur-slow) var(--ease-soft) 150ms backwards;
+    }
+    .sub {
+      animation: hero-fade-rise var(--dur-slow) var(--ease-soft) 280ms backwards;
+    }
+    .hero-cta {
+      animation: hero-fade-rise var(--dur-slow) var(--ease-soft) 400ms backwards;
+    }
+    .hero-card-halo {
+      animation: hero-halo-bloom 900ms var(--ease-soft) 200ms backwards;
+    }
+    .hero-card-caption {
+      animation: hero-fade-rise var(--dur-slow) var(--ease-soft) 550ms backwards;
+    }
+    @media (max-width: 980px) {
+      /* Portrait sits above the text on mobile — the value prop is
+         already below the fold, so it must not wait on long delays. */
+      .hero-title-line:nth-child(2) { animation-delay: 60ms; }
+      .hero-title-line:nth-child(3) { animation-delay: 120ms; }
+      .hero-text .pill { animation-delay: 80ms; }
+      .sub { animation-delay: 140ms; }
+      .hero-cta { animation-delay: 200ms; }
+      .hero-card-caption { animation-delay: 200ms; }
+    }
+  }
+  @keyframes hero-line-rise {
+    from { transform: translateY(0.35em); }
+    to { transform: translateY(0); }
+  }
+  @keyframes hero-fade-rise {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes hero-halo-bloom {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
   .sub {
     font-size: var(--fs-lede);
     line-height: 1.6;
