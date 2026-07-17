@@ -36,6 +36,13 @@ interface Props {
   path?: string;
   /** Absolute path under /public to preload (e.g. "/bella/portrait.png") */
   preloadImage?: string;
+  /** Responsive LCP-image preload (ImageBlock slug + its `sizes` value).
+      Emits <link rel=preload imagesrcset> for the AVIF chain so the
+      request starts before the (large, fully-inlined-CSS) HTML finishes
+      parsing. */
+  preloadSlug?: { slug: string; sizes: string };
+  /** Preload a Composite's AVIF pair (media-split desktop/mobile). */
+  preloadComposite?: string;
   /** Per-page OG image, defaults to /og/default.png */
   ogImage?: string;
   /** Skip the global Nav (e.g. on the 404 page if a custom chrome is wanted). */
@@ -47,6 +54,8 @@ const {
   description,
   path,
   preloadImage,
+  preloadSlug,
+  preloadComposite,
   ogImage,
   hideNav = false,
 } = Astro.props;
@@ -81,6 +90,22 @@ const {
     <link rel="apple-touch-icon" href="/favicon.svg" />
 
     {preloadImage && <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />}
+    {preloadSlug && (
+      <link
+        rel="preload"
+        as="image"
+        type="image/avif"
+        imagesrcset={`/images/${preloadSlug.slug}-768.avif 768w, /images/${preloadSlug.slug}-1280.avif 1280w, /images/${preloadSlug.slug}-1920.avif 1920w`}
+        imagesizes={preloadSlug.sizes}
+        fetchpriority="high"
+      />
+    )}
+    {preloadComposite && (
+      <>
+        <link rel="preload" as="image" type="image/avif" href={`/images/composites/${preloadComposite}-mobile.avif?v2`} media="(max-width: 767px)" fetchpriority="high" />
+        <link rel="preload" as="image" type="image/avif" href={`/images/composites/${preloadComposite}-desktop.avif?v2`} media="(min-width: 768px)" fetchpriority="high" />
+      </>
+    )}
 
     <SEO title={title} description={description} path={path} ogImage={ogImage}>
       <slot name="jsonld" slot="jsonld" />
