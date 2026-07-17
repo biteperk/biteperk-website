@@ -34,6 +34,7 @@ Voco is a single AI phone host. Each capability below is a job the same agent do
 - [AI phone answering for Gold Coast restaurants](https://biteperk.com.au/gold-coast/): Gold Coast landing page — tourist callers, holiday-peak volume, suburbs served, and FAQs.
 - Note: Biteperk's only physical office is in Haymarket, Sydney. All other cities are served remotely (setup is a phone-forward; support is Australian business hours).
 - [About Biteperk](https://biteperk.com.au/about/): The Sydney team behind Voco — why the company exists, its three operating principles (human in the loop, Australian data residency, honest pricing), and the Haymarket office details.
+- [How AI phone answering works](https://biteperk.com.au/technology/): Plain-English explainer of the technology behind Bella — Australian-English speech recognition, understanding intent, checking the live diary, confidence gating with a human in the loop, sub-second pickup, and onshore data.
 - [Contact](https://biteperk.com.au/contact/): Phone, email, address, hours, and a contact form for venues.
 
 ## Guides (blog)
