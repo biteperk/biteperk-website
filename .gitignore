@@ -133,3 +133,7 @@ playwright-report/
 
 # Claude Code local config
 .claude/
+
+# Local reference material — never commit
+CARTA-ACTUALIZADA-2026.pdf
+BitePerk_website_enquiries_*.xlsx

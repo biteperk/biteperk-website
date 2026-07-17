@@ -33,9 +33,9 @@ const cards = [
 
 <section class="trust">
   <div class="wrap">
-    <div class="trust-row reveal">
+    <div class="trust-row reveal reveal-stagger">
       {cards.map((c) => (
-        <article class="trust-card">
+        <article class="trust-card" data-glow>
           <div class="trust-card-photo">
             <ImageBlock slug={c.slug} alt={c.alt} aspect="4 / 5" widths="(min-width:1024px) 28vw, 88vw" />
           </div>
@@ -65,6 +65,7 @@ const cards = [
   }
   .trust-card {
     position: relative;
+    -webkit-tap-highlight-color: transparent;
     border-radius: var(--r-xl);
     overflow: hidden;
     border: 1px solid var(--line);

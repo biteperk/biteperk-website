@@ -14,6 +14,10 @@
       {
         "source": "/api/contact",
         "function": { "functionId": "contactForm", "region": "australia-southeast1" }
+      },
+      {
+        "source": "/api/event",
+        "function": { "functionId": "analyticsEvent", "region": "australia-southeast1" }
       }
     ],
     "redirects": [

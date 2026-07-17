@@ -69,7 +69,7 @@ test.describe("mobile menu", () => {
   // Reduced motion: we're testing menu *behaviour*; the site's animations are
   // opt-in behind prefers-reduced-motion, and disabling them keeps elements
   // stable for Playwright's actionability checks.
-  test.use({ viewport: devices["iPhone 13"].viewport, reducedMotion: "reduce" });
+  test.use({ viewport: devices["iPhone 13"].viewport, contextOptions: { reducedMotion: "reduce" } });
 
   test("opens from burger, traps focus, Esc closes and restores focus", async ({ page, browserName }) => {
     await page.goto("/");

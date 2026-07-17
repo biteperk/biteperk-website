@@ -83,13 +83,13 @@ const breadcrumbJsonLd = {
         <ul class="blog-grid">
           {posts.map((post) => (
             <li class="blog-cell reveal">
-              <a class="blog-card" href={`/blog/${post.id}/`}>
+              <a class="blog-card" href={`/blog/${post.id}/`} data-glow>
                 {post.data.featured && <span class="blog-card-flag">Start here</span>}
                 <div class="blog-card-meta">
                   <time datetime={iso(post.data.publishDate)}>{fmt(post.data.publishDate)}</time>
                   {post.data.tags[0] && <span class="blog-card-tag">{post.data.tags[0]}</span>}
                 </div>
-                <h2 class="blog-card-title">{post.data.title}</h2>
+                <h2 class="blog-card-title" transition:name={`post-${post.id}`}>{post.data.title}</h2>
                 <p class="blog-card-desc">{post.data.description}</p>
                 <span class="blog-card-read">Read the guide →</span>
               </a>

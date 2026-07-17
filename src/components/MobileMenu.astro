@@ -116,6 +116,24 @@ function isActive(href: string): boolean {
     transform: none;
     opacity: 1;
   }
+  /* Sections settle in sequence once the panel opens — the mobile
+     mirror of the desktop mega-menu's staggered entrance. */
+  @media (prefers-reduced-motion: no-preference) {
+    .mm-section {
+      opacity: 0;
+      transform: translateY(10px);
+      transition:
+        opacity var(--dur-base) var(--ease-soft),
+        transform var(--dur-base) var(--ease-soft);
+    }
+    .mm.is-open .mm-section {
+      opacity: 1;
+      transform: none;
+    }
+    .mm.is-open .mm-section:nth-of-type(2) { transition-delay: 60ms; }
+    .mm.is-open .mm-section:nth-of-type(3) { transition-delay: 120ms; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .mm-panel { transition: none; transform: none; }
     .mm-backdrop { transition: none; }

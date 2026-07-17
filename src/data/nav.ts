@@ -46,6 +46,7 @@ export const footerColumns: ReadonlyArray<NavColumn> = [
   {
     heading: "Company",
     links: [
+      { label: "About", href: "/about/" },
       { label: "Guides", href: "/blog/" },
       { label: "Contact", href: "/contact/" },
       { label: "Careers", href: site.email.href },
