@@ -31,6 +31,7 @@ const expected = [
   "products/vocodrive/index.html",
   "contact/index.html",
   "about/index.html",
+  "technology/index.html",
   "blog/index.html",
   ...blogSlugs.map((s) => `blog/${s}/index.html`),
   ...cities.filter((c) => c.published).map((c) => `${c.slug}/index.html`),

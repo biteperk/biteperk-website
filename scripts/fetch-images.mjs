@@ -161,6 +161,45 @@ const catalogue = [
     url: "https://unsplash.com/photos/7QChbqDes6w",
     brief: "Hands of service staff carrying a tray",
   },
+  // ── City establishing shots (landscape) — one iconic, signage-free
+  //    landmark per published city. Used as the /[city]/ cityscape band.
+  //    Sydney reuses sydney-harbour-dusk above. IDs HEAD-verified against
+  //    the CDN transform (recent uploads can 404; these are 200).
+  {
+    slug: "melbourne-skyline",
+    id: "photo-1573639571368-065819727a52",
+    photographer: "Ayush Jain",
+    url: "https://unsplash.com/photos/city-during-day-6DiTXhlRE70",
+    brief: "Melbourne CBD skyline across the Yarra River, daytime",
+  },
+  {
+    slug: "brisbane-river",
+    id: "photo-1571384192873-ad1703337b32",
+    photographer: "Jesse Collins",
+    url: "https://unsplash.com/photos/birds-eye-view-photo-of-a-country-kfqZbKHV8dQ",
+    brief: "Brisbane city skyline at dusk above the river",
+  },
+  {
+    slug: "perth-city",
+    id: "photo-1662672764495-1f048fe7f65f",
+    photographer: "Eddie Mark Blair",
+    url: "https://unsplash.com/photos/a-city-skyline-at-night-XU3sz-IJANk",
+    brief: "Perth skyline reflected in the Swan River at dusk",
+  },
+  {
+    slug: "adelaide-city",
+    id: "photo-1676878791571-72a8b48fcc97",
+    photographer: "Athithan Vignakaran",
+    url: "https://unsplash.com/photos/a-view-of-a-city-from-the-top-of-a-hill-qhE2ya9vv2M",
+    brief: "Adelaide from the hills, the city stretching to the gulf",
+  },
+  {
+    slug: "gold-coast-skyline",
+    id: "photo-1582761370596-77a6a42350d7",
+    photographer: "City of Gold Coast",
+    url: "https://unsplash.com/photos/city-skyline-near-body-of-water-during-daytime-o5TTYcAlbHc",
+    brief: "Gold Coast skyline along the beach at Surfers Paradise",
+  },
 ];
 
 const FETCH_W = 2000;

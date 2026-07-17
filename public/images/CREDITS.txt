@@ -99,3 +99,28 @@ staff-hands-tray
   Photographer: Louis Hansel
   Original:     https://unsplash.com/photos/7QChbqDes6w
   Brief:        Hands of service staff carrying a tray
+
+melbourne-skyline
+  Photographer: Ayush Jain
+  Original:     https://unsplash.com/photos/city-during-day-6DiTXhlRE70
+  Brief:        Melbourne CBD skyline across the Yarra River, daytime
+
+brisbane-river
+  Photographer: Jesse Collins
+  Original:     https://unsplash.com/photos/birds-eye-view-photo-of-a-country-kfqZbKHV8dQ
+  Brief:        Brisbane city skyline at dusk above the river
+
+perth-city
+  Photographer: Eddie Mark Blair
+  Original:     https://unsplash.com/photos/a-city-skyline-at-night-XU3sz-IJANk
+  Brief:        Perth skyline reflected in the Swan River at dusk
+
+adelaide-city
+  Photographer: Athithan Vignakaran
+  Original:     https://unsplash.com/photos/a-view-of-a-city-from-the-top-of-a-hill-qhE2ya9vv2M
+  Brief:        Adelaide from the hills, the city stretching to the gulf
+
+gold-coast-skyline
+  Photographer: City of Gold Coast
+  Original:     https://unsplash.com/photos/city-skyline-near-body-of-water-during-daytime-o5TTYcAlbHc
+  Brief:        Gold Coast skyline along the beach at Surfers Paradise
