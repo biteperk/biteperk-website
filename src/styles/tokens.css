@@ -94,6 +94,11 @@
   --dur-reveal: 800ms;
 
   /* ── Layered z-index scale ───────────────────────────────────── */
+  /* Nav heights — the bar compresses slightly once scrolled. */
+  --nav-h: 76px;
+  --nav-h-scrolled: 68px;
+  --nav-h-mobile: 68px;
+
   --z-nav: 50;
   --z-dropdown: 60;
   --z-overlay: 80;
