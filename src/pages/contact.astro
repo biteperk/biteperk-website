@@ -4,7 +4,7 @@ import SectionHeader from "@/components/SectionHeader.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import ImageBlock from "@/components/ImageBlock.astro";
 import { site } from "@/data/site";
-import { products } from "@/data/products";
+import { products, vocoProof } from "@/data/products";
 
 const title = "Contact Biteperk — Restaurant voice AI, Sydney & Australia-wide";
 const description =
@@ -29,6 +29,26 @@ const description =
           from <span class="gold">a quieter Friday night.</span>
         </Fragment>
       </SectionHeader>
+
+      {/* What happens next — turns a vague form into a concrete,
+          low-risk ask. Static for everyone; demo CTAs land here. */}
+      <ol class="contact-steps reveal reveal-stagger">
+        <li>
+          <span class="contact-step-n" aria-hidden="true">1</span>
+          <h2>A 15-minute call</h2>
+          <p>You tell us about your venue and your phone. No slides, no pressure.</p>
+        </li>
+        <li>
+          <span class="contact-step-n" aria-hidden="true">2</span>
+          <h2>Bella on a test line</h2>
+          <p>We set her up for your venue on a number you can call yourself.</p>
+        </li>
+        <li>
+          <span class="contact-step-n" aria-hidden="true">3</span>
+          <h2>You make the call</h2>
+          <p>Ring her, try to stump her, and decide if she belongs on your line.</p>
+        </li>
+      </ol>
     </div>
   </section>
 
@@ -64,6 +84,20 @@ const description =
             <a class="contact-side-v" href={site.email.href}>{site.email.display}</a>
             <div class="contact-side-h">We reply, usually within a few hours.</div>
           </div>
+          {vocoProof.demo && (
+            <div class="contact-side-block">
+              <div class="contact-side-l">Hear her first</div>
+              <a
+                class="contact-side-v"
+                href={vocoProof.demo.href}
+                rel="noopener"
+                target="_blank"
+              >
+                {vocoProof.demo.label} →
+              </a>
+              <div class="contact-side-h">Real Bella audio, one minute.</div>
+            </div>
+          )}
           <div class="contact-side-block">
             <div class="contact-side-l">Find us</div>
             <a
@@ -119,7 +153,7 @@ const description =
                 name="venue"
                 type="text"
                 maxlength="200"
-                placeholder="e.g. Natalia's Bistro"
+                placeholder="e.g. The Garden Room, Surry Hills"
                 autocomplete="organization"
               />
             </div>
@@ -386,6 +420,76 @@ const description =
     color: var(--mist);
     line-height: 1.6;
   }
+  .contact-success-tick {
+    display: inline-flex;
+    color: var(--success);
+    margin-bottom: 18px;
+  }
+  /* Success choreography — the card settles in and the tick draws
+     itself. Keyframes fire on insertion, so no extra script is needed. */
+  @media (prefers-reduced-motion: no-preference) {
+    .contact-success {
+      animation: contact-pop var(--dur-slow) var(--ease-soft) backwards;
+    }
+    .contact-success-tick svg circle,
+    .contact-success-tick svg path {
+      stroke-dasharray: 240;
+      stroke-dashoffset: 240;
+      animation: contact-trace 0.9s var(--ease-out) 150ms forwards;
+    }
+  }
+  @keyframes contact-pop {
+    from { opacity: 0; transform: scale(0.96) translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes contact-trace {
+    to { stroke-dashoffset: 0; }
+  }
+
+  /* What happens next — 3-step demo strip */
+  .contact-steps {
+    list-style: none;
+    margin: 52px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    counter-reset: step;
+  }
+  .contact-steps li {
+    padding: 24px 26px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--ink-1);
+  }
+  .contact-step-n {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--gold-fill);
+    color: var(--gold-fill-text);
+    font-weight: 800;
+    font-size: 14px;
+  }
+  .contact-steps h2 {
+    margin-top: 14px;
+    font-size: 16.5px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.01em;
+  }
+  .contact-steps p {
+    margin-top: 7px;
+    color: var(--text);
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+  @media (max-width: 760px) {
+    .contact-steps { grid-template-columns: 1fr; }
+  }
 </style>
 
 <script>
@@ -398,12 +502,24 @@ const description =
 
       // Preselect the "About" dropdown from ?product= — the capability waitlist
       // CTAs link here with it, so each lead records which capability they want.
-      const wantedProduct = new URLSearchParams(window.location.search).get("product");
+      const params = new URLSearchParams(window.location.search);
+      const wantedProduct = params.get("product");
       if (wantedProduct) {
         const sel = form.querySelector<HTMLSelectElement>("#cf-product");
         if (sel && Array.from(sel.options).some((o) => o.value === wantedProduct)) {
           sel.value = wantedProduct;
         }
+      }
+
+      // Demo intent (?intent=demo, set by "Book a demo" CTAs) — reframe the
+      // hero copy around the concrete 3-step path shown below it.
+      if (params.get("intent") === "demo") {
+        const eyebrow = document.querySelector<HTMLElement>(".contact-hero .eyebrow");
+        const lede = document.querySelector<HTMLElement>(".contact-hero .section-header-lede");
+        if (eyebrow) eyebrow.textContent = "Book a demo";
+        if (lede)
+          lede.textContent =
+            "Fifteen minutes, then Bella on a test line set up for your venue — call her yourself before you decide anything.";
       }
 
       const btn = form.querySelector<HTMLButtonElement>(".contact-submit");
@@ -423,6 +539,12 @@ const description =
         // non-null by the early-return guard above.
         form.innerHTML =
           '<div class="contact-success">' +
+          '<span class="contact-success-tick" aria-hidden="true">' +
+          '<svg viewBox="0 0 56 56" width="44" height="44" fill="none">' +
+          '<circle cx="28" cy="28" r="25" stroke="currentColor" stroke-width="2"/>' +
+          '<path d="M17 29l8 8 15-17" stroke="currentColor" stroke-width="2.5" ' +
+          'stroke-linecap="round" stroke-linejoin="round"/>' +
+          "</svg></span>" +
           "<h2>Thanks — we'll be in touch.</h2>" +
           "<p>Your message has reached the Biteperk team. We usually reply within a " +
           "few hours during business hours (Mon–Fri, 9am–5pm AEST).</p>" +
