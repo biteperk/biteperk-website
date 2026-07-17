@@ -425,6 +425,19 @@ export const vocoProof: {
 };
 
 /**
+ * Real venues in the founding cohort — names only until each supplies a
+ * quote and permission (same honesty rule as vocoProof: never fabricate).
+ */
+export const foundingVenues: ReadonlyArray<{
+  readonly name: string;
+  readonly location?: string;
+  readonly url?: string;
+}> = [
+  { name: "Natalia's Bistro", location: "Sydney" },
+  { name: "Mazcina Resto-Bar", url: "https://mazcina.com" },
+];
+
+/**
  * The optional full-front-of-house bundle: Voco running every line at once.
  * Presented as a single CTA, NOT a fifth product/slug. `name` is a provisional
  * working name — change in one place here when it's locked.

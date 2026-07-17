@@ -1,0 +1,369 @@
+---
+/**
+ * Live call simulation — the homepage's flagship trust piece.
+ *
+ * An illustrative Friday-night booking call, played back as a timed
+ * transcript (src/scripts/call-sim.ts). The transcript is real
+ * server-rendered DOM: crawlers, screen readers, no-JS visitors and
+ * anyone under prefers-reduced-motion get the full conversation with
+ * nothing hidden — the script only ever *hides then reveals* lines when
+ * motion is allowed, so there are no dead states.
+ *
+ * Honesty rules: the venue is fictional, the card says so, and every
+ * behaviour depicted (answers fast, checks real availability, human in
+ * the loop when unsure) is a claim already published on the site.
+ */
+import { vocoProof } from "@/data/products";
+
+const lines = [
+  {
+    role: "bella",
+    text: "Good evening — you've called Marlow Lane. This is Bella. How can I help?",
+  },
+  {
+    role: "caller",
+    text: "Oh hi! Any chance of a table for four tonight, around eight?",
+  },
+  {
+    role: "bella",
+    text: "Let me check the book… eight o'clock is full, but I can do 7:15, or 8:30 on the terrace.",
+  },
+  {
+    role: "caller",
+    text: "8:30 works — it's actually my mum's birthday.",
+  },
+  {
+    role: "bella",
+    text: "Lovely. Four people at 8:30 tonight — what name should I put it under?",
+  },
+  {
+    role: "caller",
+    text: "Priya.",
+  },
+  {
+    role: "bella",
+    text: "Done, Priya — you're booked, and I've let the team know it's a birthday. A confirmation text is on its way.",
+  },
+] as const;
+---
+
+<section class="callsim-section" aria-labelledby="callsim-h">
+  <div class="wrap">
+    <div class="callsim-grid">
+      <div class="callsim-copy reveal">
+        <span class="eyebrow">The 7:42pm test</span>
+        <h2 class="callsim-h" id="callsim-h">
+          This is what a missed call<br />
+          <span class="gold">sounds like instead.</span>
+        </h2>
+        <p class="lede callsim-lede">
+          Friday night, phone rings, every host is mid-service. Bella answers in
+          under a second, checks your real availability, and writes the booking
+          straight to your dashboard.
+        </p>
+        <p class="callsim-note">
+          And when she's ever unsure, she doesn't guess — she takes a message so
+          a human calls back. That's by design.
+        </p>
+        <div class="callsim-ctas">
+          <a class="btn-ghost link-arrow callsim-cta" href="/products/vocotable/">
+            See how VocoTable works
+            <span class="arrow" aria-hidden="true">→</span>
+          </a>
+          {vocoProof.demo && (
+            <a
+              class="callsim-audio-link link-arrow"
+              href={vocoProof.demo.href}
+              rel="noopener"
+              target="_blank"
+            >
+              {vocoProof.demo.label}
+              <span class="arrow" aria-hidden="true">→</span>
+            </a>
+          )}
+        </div>
+      </div>
+
+      <figure class="callsim-card reveal" data-call-sim>
+        <figcaption class="callsim-head">
+          <span class="callsim-status">
+            <span class="callsim-dot" aria-hidden="true"></span>
+            Incoming call · Friday, 7:42pm
+          </span>
+          <span class="callsim-badge">Answered &lt;1s</span>
+        </figcaption>
+        <ol class="callsim-lines">
+          {lines.map((l) => (
+            <li class="cs-line" data-cs-line data-role={l.role}>
+              <span class="cs-who">{l.role === "bella" ? "Bella" : "Caller"}</span>
+              <span class="cs-bubble">{l.text}</span>
+              {l.role === "bella" && (
+                <span class="cs-typing" aria-hidden="true">
+                  <span></span><span></span><span></span>
+                </span>
+              )}
+            </li>
+          ))}
+        </ol>
+        <div class="callsim-foot">
+          <span class="callsim-written">
+            <span class="callsim-tick" aria-hidden="true">
+              <svg viewBox="0 0 16 16" width="13" height="13">
+                <path d="M2.5 8.5l3.5 3.5 7-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+            Booking written to the venue dashboard
+          </span>
+          <button type="button" class="callsim-replay" data-cs-replay>Replay</button>
+        </div>
+        <p class="callsim-disclaimer">
+          Illustrative — a fictional venue, but exactly the way Bella handles a call.
+        </p>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<style>
+  .callsim-section {
+    padding-block: var(--space-section);
+    border-top: 1px solid var(--line);
+    background: linear-gradient(180deg, var(--ink-1) 0%, var(--ink-0) 100%);
+    overflow: hidden;
+  }
+  .callsim-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: clamp(40px, 6vw, 80px);
+    align-items: center;
+  }
+  .callsim-h {
+    font-size: var(--fs-h2);
+    font-weight: 800;
+    line-height: var(--lh-display);
+    letter-spacing: -0.025em;
+    color: var(--white);
+    margin-top: 16px;
+  }
+  .callsim-h .gold { color: var(--gold); }
+  .callsim-lede { margin-top: 20px; }
+  .callsim-note {
+    margin-top: 16px;
+    color: var(--mist-2);
+    font-size: 14.5px;
+    line-height: 1.6;
+    max-width: 46ch;
+  }
+  .callsim-ctas {
+    margin-top: 30px;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    flex-wrap: wrap;
+  }
+  .callsim-audio-link {
+    color: var(--gold);
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .callsim-audio-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+  /* ── The phone card ─────────────────────────────────────────────── */
+  .callsim-card {
+    border: 1px solid var(--line);
+    border-radius: var(--r-xl);
+    background: var(--ink-1);
+    box-shadow: var(--shadow-card);
+    padding: 22px clamp(18px, 2.4vw, 30px) 18px;
+    max-width: 560px;
+    justify-self: center;
+    width: 100%;
+  }
+  .callsim-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .callsim-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 11.5px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--mist-2);
+  }
+  .callsim-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--gold-fill);
+    box-shadow: 0 0 12px var(--gold-glow);
+    animation: bp-pulse 2.4s ease-in-out infinite;
+  }
+  .callsim-badge {
+    font-size: 11px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--gold);
+    border: 1px solid color-mix(in srgb, var(--gold) 35%, var(--line));
+    border-radius: var(--r-pill);
+    padding: 4px 10px;
+    white-space: nowrap;
+  }
+
+  .callsim-lines {
+    list-style: none;
+    margin: 0;
+    padding: 18px 0 4px;
+    display: grid;
+    gap: 12px;
+  }
+  .cs-line {
+    position: relative;
+    display: grid;
+    gap: 4px;
+    max-width: 88%;
+  }
+  .cs-line[data-role="caller"] { justify-self: end; text-align: right; }
+  .cs-who {
+    font-size: 10.5px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--mist);
+  }
+  .cs-line[data-role="bella"] .cs-who { color: var(--gold); }
+  .cs-bubble {
+    display: inline-block;
+    padding: 11px 15px;
+    border-radius: 16px;
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--text);
+    background: var(--ink-2);
+    border: 1px solid var(--line);
+    text-align: left;
+  }
+  .cs-line[data-role="bella"] .cs-bubble {
+    border-radius: 4px 16px 16px 16px;
+    box-shadow: inset 2px 0 0 var(--gold);
+  }
+  .cs-line[data-role="caller"] .cs-bubble {
+    border-radius: 16px 4px 16px 16px;
+    background: var(--ink-3);
+  }
+
+  /* Typing indicator — occupies the bubble's spot via overlay so the
+     reserved layout height never changes (CLS 0 by construction). */
+  .cs-typing {
+    position: absolute;
+    left: 0;
+    bottom: 8px;
+    display: inline-flex;
+    gap: 4px;
+    padding: 12px 14px;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .cs-typing span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+  .cs-line[data-typing] .cs-typing { opacity: 1; }
+  .cs-line[data-typing] .cs-typing span {
+    animation: cs-dot 900ms ease-in-out infinite;
+  }
+  .cs-line[data-typing] .cs-typing span:nth-child(2) { animation-delay: 150ms; }
+  .cs-line[data-typing] .cs-typing span:nth-child(3) { animation-delay: 300ms; }
+  @keyframes cs-dot {
+    0%, 100% { opacity: 0.3; transform: translateY(0); }
+    50% { opacity: 1; transform: translateY(-3px); }
+  }
+
+  /* Playback choreography — only ever active when motion is allowed;
+     call-sim.ts never arms the card under prefers-reduced-motion, and
+     this guard keeps the resting state visible even if it did. */
+  @media (prefers-reduced-motion: no-preference) {
+    [data-armed] .cs-line {
+      opacity: 0;
+      transform: translateY(10px);
+      transition:
+        opacity var(--dur-base) var(--ease-soft),
+        transform var(--dur-base) var(--ease-soft);
+    }
+    [data-armed] .cs-line.is-in {
+      opacity: 1;
+      transform: none;
+    }
+    /* While a Bella line is "typing", her bubble stays hidden but its
+       space is already reserved — the dots borrow the spot. */
+    [data-armed] .cs-line[data-typing] {
+      opacity: 1;
+      transform: none;
+    }
+    [data-armed] .cs-line[data-typing] .cs-who { opacity: 1; }
+    [data-armed] .cs-line[data-typing] .cs-bubble { opacity: 0; }
+    .cs-bubble { transition: opacity var(--dur-fast) var(--ease-out); }
+  }
+
+  .callsim-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+  }
+  .callsim-written {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--mist-2);
+  }
+  .callsim-tick {
+    display: inline-flex;
+    color: var(--success);
+  }
+  .callsim-replay {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding: 6px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-pill);
+    transition: border-color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+  }
+  .callsim-replay:hover {
+    border-color: color-mix(in srgb, var(--gold) 40%, var(--line));
+    background: var(--fill-subtle);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .callsim-replay { display: none; }
+    .callsim-dot { animation: none; }
+  }
+  .callsim-disclaimer {
+    margin-top: 12px;
+    font-size: 11.5px;
+    color: var(--mist);
+    text-align: center;
+  }
+
+  @media (max-width: 900px) {
+    .callsim-grid { grid-template-columns: 1fr; gap: 44px; }
+    .callsim-card { justify-self: stretch; max-width: 100%; }
+    .cs-line { max-width: 94%; }
+  }
+</style>

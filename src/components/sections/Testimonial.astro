@@ -6,6 +6,9 @@
  */
 import PullQuote from "@/components/PullQuote.astro";
 import ImageBlock from "@/components/ImageBlock.astro";
+import { vocoProof } from "@/data/products";
+
+const t = vocoProof.testimonials[0];
 ---
 
 <section class="testimonial">
@@ -21,11 +24,7 @@ import ImageBlock from "@/components/ImageBlock.astro";
   </div>
   <div class="wrap">
     <div class="reveal">
-      <PullQuote
-        quote="We used to lose tables every Friday night just because nobody could reach the phone. Bella picks up every single call — and the bookings just appear on our screen. It paid for itself in the first week."
-        author="Natalia"
-        role="Owner · Natalia's Bistro, Sydney"
-      />
+      <PullQuote quote={t.quote} author={t.author} role={t.role} />
     </div>
   </div>
 </section>

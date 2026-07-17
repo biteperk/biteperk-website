@@ -2,16 +2,21 @@
 /**
  * Serif pull-quote. Used at most once per long page — visual breath,
  * signals craft, no decorative type elsewhere.
+ *
+ * `variant="full"` (default) is the centred, oversized homepage
+ * treatment. `variant="compact"` is a left-aligned card for product and
+ * city pages so the same quote doesn't read as copy-paste at scale.
  */
 interface Props {
   quote: string;
   author: string;
   role?: string;
+  variant?: "full" | "compact";
 }
-const { quote, author, role } = Astro.props;
+const { quote, author, role, variant = "full" } = Astro.props;
 ---
 
-<figure class="pull">
+<figure class:list={["pull", `pull-${variant}`]}>
   <span class="pull-mark" aria-hidden="true">“</span>
   <blockquote class="pull-q">{quote}</blockquote>
   <figcaption class="pull-cap">
@@ -26,15 +31,17 @@ const { quote, author, role } = Astro.props;
     margin: 0 auto;
     text-align: center;
     padding-inline: 16px;
+    position: relative;
   }
   .pull-mark {
     display: block;
     font-family: var(--font-serif);
     font-weight: 500;
-    font-size: 80px;
+    font-size: 96px;
     line-height: 0.5;
     color: var(--gold);
-    margin-bottom: 24px;
+    margin-bottom: 26px;
+    text-shadow: 0 0 40px var(--gold-glow);
   }
   .pull-q {
     font-family: var(--font-serif);
@@ -59,5 +66,29 @@ const { quote, author, role } = Astro.props;
   .pull-role {
     font-size: 13px;
     color: var(--mist);
+  }
+
+  /* ── Compact card variant ──────────────────────────────────────── */
+  .pull-compact {
+    max-width: 720px;
+    text-align: left;
+    padding: 30px 32px 26px 36px;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--gold);
+    border-radius: var(--r-lg);
+    background: var(--ink-1);
+  }
+  .pull-compact .pull-mark {
+    font-size: 54px;
+    margin-bottom: 14px;
+    text-shadow: none;
+  }
+  .pull-compact .pull-q {
+    font-size: clamp(18px, 2vw, 22px);
+    line-height: 1.5;
+  }
+  .pull-compact .pull-cap {
+    margin-top: 20px;
+    align-items: flex-start;
   }
 </style>
