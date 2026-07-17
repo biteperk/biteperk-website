@@ -12,7 +12,9 @@ import ImageBlock from "@/components/ImageBlock.astro";
 ---
 
 <header class="hero">
-  <div class="hero-stage sm-exit-fade grain" aria-hidden="true">
+  {/* No .grain here: a full-viewport mix-blend layer at first paint costs
+      real LCP on throttled mobile; grain stays on below-fold sections. */}
+  <div class="hero-stage sm-exit-fade" aria-hidden="true">
     <div class="hero-stage-grid"></div>
     <div class="hero-stage-glow"></div>
   </div>
@@ -268,6 +270,11 @@ import ImageBlock from "@/components/ImageBlock.astro";
     .hero-grid { grid-template-columns: 1fr; gap: 56px; }
     .hero-visual { order: -1; }
     .hero-card { max-width: 340px; aspect-ratio: 4 / 4.6; }
+    /* Mobile paint diet: the masked grid and the 34px-blur halo are
+       barely perceptible at this size but cost real main-thread time
+       during the LCP window on throttled devices. */
+    .hero-stage-grid { display: none; }
+    .hero-card-halo { filter: blur(18px); inset: -12%; }
   }
   @media (max-width: 560px) {
     .hero { padding: 120px 0 80px; }

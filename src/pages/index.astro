@@ -72,6 +72,7 @@ const faqJsonLd = {
   description={description}
   path="/"
   ogImage="/og/home.png"
+  preloadSlug={{ slug: "restaurant-host", sizes: "(min-width: 1024px) 38vw, 100vw" }}
 >
   <script
     is:inline
@@ -91,7 +92,7 @@ const faqJsonLd = {
   <Testimonial />
 
   {latestGuides.length > 0 && (
-    <section class="home-guides">
+    <section class="home-guides cv-auto">
       <div class="wrap">
         <div class="home-guides-head reveal">
           <div>
@@ -121,7 +122,7 @@ const faqJsonLd = {
     </section>
   )}
 
-  <section class="home-faq">
+  <section class="home-faq cv-auto">
     <div class="wrap">
       <div class="home-faq-head reveal">
         <span class="eyebrow">Common questions</span>

@@ -119,6 +119,17 @@ button {
   padding-inline: var(--container-pad);
 }
 
+/* ── Below-fold rendering deferral ─────────────────────────────── */
+/* Sections marked .cv-auto skip style/layout/paint until they approach
+   the viewport — cuts initial main-thread work (the LCP render-delay
+   driver on throttled mobile) without changing visuals. The intrinsic
+   size reserves approximate space so scrollbar/anchors stay sane;
+   IntersectionObservers (reveal, counters) fire as normal. */
+.cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 720px;
+}
+
 /* ── Reveal-on-scroll hook ─────────────────────────────────────── */
 .reveal {
   opacity: 0;

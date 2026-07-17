@@ -10,7 +10,7 @@ export default defineConfig({
   trailingSlash: "ignore",
   build: {
     // Inline tiny CSS to cut a render-blocking request on the hero.
-    inlineStylesheets: "auto",
+    inlineStylesheets: "always",
   },
   compressHTML: true,
   prefetch: {
