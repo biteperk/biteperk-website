@@ -34,12 +34,18 @@ Voco is a single AI phone host. Each capability below is a job the same agent do
 - [AI phone answering for Gold Coast restaurants](https://biteperk.com.au/gold-coast/): Gold Coast landing page — tourist callers, holiday-peak volume, suburbs served, and FAQs.
 - Note: Biteperk's only physical office is in Haymarket, Sydney. All other cities are served remotely (setup is a phone-forward; support is Australian business hours).
 - [About Biteperk](https://biteperk.com.au/about/): The Sydney team behind Voco — why the company exists, its three operating principles (human in the loop, Australian data residency, honest pricing), and the Haymarket office details.
+- [How AI phone answering works](https://biteperk.com.au/technology/): Plain-English explainer of the technology behind Bella — Australian-English speech recognition, understanding intent, checking the live diary, confidence gating with a human in the loop, sub-second pickup, and onshore data.
 - [Contact](https://biteperk.com.au/contact/): Phone, email, address, hours, and a contact form for venues.
 
 ## Guides (blog)
 
 - [What missed phone calls really cost your restaurant](https://biteperk.com.au/blog/what-missed-calls-cost-your-restaurant/): A simple way to put a dollar figure on a restaurant's missed calls, and what to do about it.
 - [AI phone answering for Sydney restaurants: a plain-English guide](https://biteperk.com.au/blog/ai-phone-answering-for-sydney-restaurants/): What AI phone answering is, how it works for a Sydney restaurant, what it costs, and how to spot a good one.
+- [AI phone answering for Melbourne restaurants: a plain-English guide](https://biteperk.com.au/blog/ai-phone-answering-for-melbourne-restaurants/): How AI phone answering works for a Melbourne venue — the laneway maths, the amendment culture, no-shows, and cost.
+- [AI phone answering for Brisbane restaurants: a plain-English guide](https://biteperk.com.au/blog/ai-phone-answering-for-brisbane-restaurants/): How AI phone answering works for a Brisbane venue — the weather calls, the early booking peak, setup, and cost.
+- [AI phone answering for Perth restaurants: a plain-English guide](https://biteperk.com.au/blog/ai-phone-answering-for-perth-restaurants/): How AI phone answering works for a Perth venue — the time-zone maths, the staffing crunch, group bookings, and cost.
+- [AI phone answering for Adelaide restaurants: a plain-English guide](https://biteperk.com.au/blog/ai-phone-answering-for-adelaide-restaurants/): How AI phone answering works for a small Adelaide venue — trust, confidence gating, the Mad March surge, and cost.
+- [AI phone answering for Gold Coast restaurants: a plain-English guide](https://biteperk.com.au/blog/ai-phone-answering-for-gold-coast-restaurants/): How AI phone answering works for a Gold Coast venue — tourist callers, holiday-peak volume, same-day bookings, and cost.
 - [How to forward your restaurant phone to an AI host](https://biteperk.com.au/blog/how-to-forward-your-restaurant-phone-to-an-ai-host/): Step-by-step call forwarding for restaurants (Telstra, Optus, VoIP) — about five minutes, without changing your number.
 - [Why an Australian voice matters on your restaurant's phone](https://biteperk.com.au/blog/why-an-australian-voice-matters/): Why a genuinely local voice — accent, place names, data — changes how guests feel about a venue.
 - [How much does AI phone answering cost for a restaurant?](https://biteperk.com.au/blog/how-much-does-ai-phone-answering-cost-for-a-restaurant/): Pricing models, the per-call fees to watch for, and how to work out your payback.

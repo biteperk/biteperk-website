@@ -54,11 +54,15 @@ const fail = (msg) => {
   console.error(`FAIL  ${msg}`);
 };
 
+const aiLocalText = (c) =>
+  [c.aiLocal.lead, ...c.aiLocal.points.flatMap((p) => [p.title, p.body])].join(" ");
+
 const cityText = (c) =>
   [
     ...c.intro,
     ...c.scenarios.flatMap((s) => [s.title, s.body]),
     ...c.faqs.flatMap((f) => [f.q, f.a]),
+    aiLocalText(c),
   ].join(" ");
 
 for (const c of published) {
@@ -80,13 +84,19 @@ for (const c of published) {
     fail(`${c.slug}: not listed in public/llms.txt`);
 }
 
-// Pairwise intro-similarity (the field most tempting to template).
+// Pairwise similarity on the two fields most tempting to template: the
+// intro and the AI-explainer (whose four topics are shared across cities,
+// so the *copy* must stay genuinely per-city).
 for (let i = 0; i < published.length; i++) {
   for (let j = i + 1; j < published.length; j++) {
     const a = published[i], b = published[j];
-    const sim = overlap(shingles(a.intro.join(" ")), shingles(b.intro.join(" ")));
-    if (sim > 0.35) fail(`${a.slug} ↔ ${b.slug}: intro similarity ${(sim * 100).toFixed(0)}% (max 35%) — doorway risk`);
-    else console.log(`PASS  ${a.slug} ↔ ${b.slug}: intro similarity ${(sim * 100).toFixed(0)}%`);
+    const introSim = overlap(shingles(a.intro.join(" ")), shingles(b.intro.join(" ")));
+    if (introSim > 0.35) fail(`${a.slug} ↔ ${b.slug}: intro similarity ${(introSim * 100).toFixed(0)}% (max 35%) — doorway risk`);
+    else console.log(`PASS  ${a.slug} ↔ ${b.slug}: intro similarity ${(introSim * 100).toFixed(0)}%`);
+
+    const aiSim = overlap(shingles(aiLocalText(a)), shingles(aiLocalText(b)));
+    if (aiSim > 0.35) fail(`${a.slug} ↔ ${b.slug}: aiLocal similarity ${(aiSim * 100).toFixed(0)}% (max 35%) — doorway risk`);
+    else console.log(`PASS  ${a.slug} ↔ ${b.slug}: aiLocal similarity ${(aiSim * 100).toFixed(0)}%`);
   }
 }
 

@@ -22,6 +22,7 @@ export interface NavColumn {
 
 export const primaryNav: ReadonlyArray<NavLink> = [
   { label: "Products", href: "/products/" },
+  { label: "How it works", href: "/technology/" },
   { label: "Guides", href: "/blog/" },
   { label: "Contact", href: "/contact/" },
 ];
@@ -47,6 +48,7 @@ export const footerColumns: ReadonlyArray<NavColumn> = [
     heading: "Company",
     links: [
       { label: "About", href: "/about/" },
+      { label: "How it works", href: "/technology/" },
       { label: "Guides", href: "/blog/" },
       { label: "Contact", href: "/contact/" },
       { label: "Careers", href: site.email.href },
