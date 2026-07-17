@@ -48,6 +48,12 @@ export interface City {
   /** ImageBlock slug for the hero photo. */
   readonly heroImage: string;
   readonly heroImageAlt: string;
+  /** Mid-page "local story" photo (distinct per city, warm hospitality). */
+  readonly storyImage: string;
+  readonly storyImageAlt: string;
+  /** Iconic, signage-free city establishing shot for the cityscape band. */
+  readonly cityscapeImage: string;
+  readonly cityscapeImageAlt: string;
 }
 
 export const cities: readonly City[] = [
@@ -129,6 +135,10 @@ export const cities: readonly City[] = [
     ],
     heroImage: "sydney-cafe-morning",
     heroImageAlt: "A Sydney café in the morning, warm light through the windows, ready for service.",
+    storyImage: "sydney-cafe-street",
+    storyImageAlt: "A Sydney café street at golden hour, an awning over the footpath.",
+    cityscapeImage: "sydney-harbour-dusk",
+    cityscapeImageAlt: "Sydney Harbour at dusk — the Opera House and Harbour Bridge on the water.",
   },
   {
     slug: "melbourne",
@@ -207,7 +217,11 @@ export const cities: readonly City[] = [
       "ai-receptionist-vs-answering-service-vs-voicemail",
     ],
     heroImage: "busy-service-night",
-    heroImageAlt: "A dim, busy Melbourne dining room mid-service, staff moving between tables.",
+    heroImageAlt: "A dim, busy restaurant dining room mid-service, staff moving between tables.",
+    storyImage: "table-set-candles",
+    storyImageAlt: "A restaurant table set with candles and cutlery, ready for dinner service.",
+    cityscapeImage: "melbourne-skyline",
+    cityscapeImageAlt: "The Melbourne city skyline across the Yarra River, framed by parkland.",
   },
   {
     slug: "brisbane",
@@ -287,7 +301,11 @@ export const cities: readonly City[] = [
       "do-diners-want-to-talk-to-an-ai",
     ],
     heroImage: "restaurant-evening",
-    heroImageAlt: "An open-air Brisbane restaurant deck at golden hour, tables set beneath greenery.",
+    heroImageAlt: "A candlelit restaurant interior in the evening, tables set for service.",
+    storyImage: "restaurant-pass",
+    storyImageAlt: "A kitchen pass with a prepared dish under service light.",
+    cityscapeImage: "brisbane-river",
+    cityscapeImageAlt: "The Brisbane city skyline at dusk, high-rises above the river.",
   },
   {
     slug: "perth",
@@ -367,7 +385,11 @@ export const cities: readonly City[] = [
       "why-an-australian-voice-matters",
     ],
     heroImage: "phone-on-bar",
-    heroImageAlt: "Afternoon coastal light across a Perth restaurant bar, phone resting beside the till.",
+    heroImageAlt: "A phone resting on a timber bar counter in warm afternoon light.",
+    storyImage: "coffee-window",
+    storyImageAlt: "A café service window in warm morning light.",
+    cityscapeImage: "perth-city",
+    cityscapeImageAlt: "The Perth skyline reflected in the Swan River at dusk.",
   },
   {
     slug: "adelaide",
@@ -446,7 +468,11 @@ export const cities: readonly City[] = [
       "how-to-reduce-no-shows-at-your-restaurant",
     ],
     heroImage: "kitchen-rush",
-    heroImageAlt: "An intimate Adelaide wine-bar interior, stone wall and low lamplight over a small dining room.",
+    heroImageAlt: "A busy kitchen mid-service, tickets and plates lined up on the pass.",
+    storyImage: "pour-shot",
+    storyImageAlt: "A drink being poured under low, dramatic bar light.",
+    cityscapeImage: "adelaide-city",
+    cityscapeImageAlt: "Adelaide seen from the hills, the city stretching out toward the gulf.",
   },
   {
     slug: "gold-coast",
@@ -526,7 +552,11 @@ export const cities: readonly City[] = [
       "how-much-does-ai-phone-answering-cost-for-a-restaurant",
     ],
     heroImage: "empty-tables-evening",
-    heroImageAlt: "A breezy Gold Coast bistro before evening service, tables set in soft coastal light.",
+    heroImageAlt: "Empty restaurant tables set for evening service in soft, warm light.",
+    storyImage: "bar-cocktail-action",
+    storyImageAlt: "A bartender mixing a cocktail behind a busy bar.",
+    cityscapeImage: "gold-coast-skyline",
+    cityscapeImageAlt: "The Gold Coast skyline along the beach at Surfers Paradise.",
   },
 ];
 
