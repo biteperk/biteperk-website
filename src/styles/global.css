@@ -320,6 +320,85 @@ html[data-theme-switching]::view-transition-new(root) {
   }
 }
 
+/* ── Pointer-tracking card glow (script: card-glow.ts) ─────────── */
+/* The gold literally follows the visitor's hand. Overlay sits above
+   the card surface at low alpha (pointer-events: none) so text and
+   contrast are untouched. Light theme runs fainter — a dark-tuned
+   radial reads as a stain on white cards. */
+[data-glow] {
+  position: relative;
+}
+[data-glow]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    240px circle at var(--mx, 50%) var(--my, 50%),
+    var(--gold-glow),
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-out);
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+}
+[data-glow]:hover::after,
+[data-glow]:focus-within::after {
+  opacity: 0.9;
+}
+:root[data-theme="light"] [data-glow]::after {
+  mix-blend-mode: normal;
+  background: radial-gradient(
+    240px circle at var(--mx, 50%) var(--my, 50%),
+    var(--gold-soft),
+    transparent 70%
+  );
+}
+:root[data-theme="light"] [data-glow]:hover::after,
+:root[data-theme="light"] [data-glow]:focus-within::after {
+  opacity: 0.4;
+}
+@media (prefers-reduced-motion: reduce), (pointer: coarse) {
+  [data-glow]::after { display: none; }
+}
+
+/* ── Grain — kills the flat-vector feel on large ink surfaces ──── */
+/* Inline feTurbulence data-URI: zero requests, both themes. Kept at
+   whisper opacity so axe/contrast is unaffected. */
+.grain {
+  position: relative;
+}
+.grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+  background-size: 140px 140px;
+  opacity: 0.028;
+  mix-blend-mode: overlay;
+}
+:root[data-theme="light"] .grain::before {
+  mix-blend-mode: multiply;
+  opacity: 0.02;
+}
+
+/* ── Glow field — ambient section backdrop, per-section hues ───── */
+.glow-field {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(45% 55% at var(--glow-x, 78%) 25%, var(--glow-a, var(--gold-soft)), transparent 70%),
+    radial-gradient(40% 50% at 18% 80%, var(--glow-b, transparent), transparent 70%);
+}
+:root[data-theme="light"] .glow-field {
+  opacity: 0.5;
+}
+
 /* ── Pill — eyebrow chip with a pulsing dot ────────────────────── */
 .pill {
   display: inline-flex;
@@ -354,6 +433,14 @@ html[data-theme-switching]::view-transition-new(root) {
   .dot {
     animation: none;
   }
+}
+
+/* ── Serif accent — one italic serif moment per headline, max ──── */
+.serif-accent {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.01em;
 }
 
 /* ── Eyebrow ───────────────────────────────────────────────────── */

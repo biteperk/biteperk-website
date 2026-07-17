@@ -103,7 +103,7 @@ const faqJsonLd = {
         <ul class="home-guides-grid reveal-stagger">
           {latestGuides.map((post) => (
             <li>
-              <a class="home-guide" href={`/blog/${post.id}/`}>
+              <a class="home-guide" href={`/blog/${post.id}/`} data-glow>
                 <div class="home-guide-meta">
                   <time datetime={post.data.publishDate.toISOString().slice(0, 10)}>
                     {fmtGuideDate(post.data.publishDate)}
