@@ -7,14 +7,12 @@
  */
 import StarMark from "@/components/StarMark.astro";
 import { products, statusLabel, productUrl } from "@/data/products";
-import { primaryNav } from "@/data/nav";
+import { headerNav, isNavActive } from "@/data/nav";
 import { site } from "@/data/site";
 
-const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
-function isActive(href: string): boolean {
-  const n = href.replace(/\/$/, "") || "/";
-  return pathname === n || pathname.startsWith(n + "/");
-}
+const pathname = Astro.url.pathname;
+const isActive = (href: string) => isNavActive(pathname, { label: "", href });
+const companyLinks = headerNav.filter((l) => l.mobile !== false);
 ---
 
 <div
@@ -58,15 +56,21 @@ function isActive(href: string): boolean {
             <span class:list={["mm-product-pill", `is-${p.status}`]}>{statusLabel(p.status)}</span>
           </a>
         ))}
-        <a class:list={["mm-link", "mm-all", { active: pathname === "/products" }]} href="/products/">
+        <a
+          class:list={["mm-link", "mm-all", { active: isNavActive(pathname, { label: "", href: "/products/", activeMatch: "exact" }) }]}
+          href="/products/"
+        >
           See the Voco overview →
         </a>
       </div>
 
       <div class="mm-section">
         <div class="mm-heading">Company</div>
-        {primaryNav.filter((l) => l.href !== "/products/").map((link) => (
-          <a class:list={["mm-link", { active: isActive(link.href) }]} href={link.href}>
+        {companyLinks.map((link) => (
+          <a
+            class:list={["mm-link", { active: isNavActive(pathname, link) }]}
+            href={link.href}
+          >
             {link.label}
           </a>
         ))}

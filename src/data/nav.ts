@@ -20,12 +20,39 @@ export interface NavColumn {
   readonly links: ReadonlyArray<NavLink>;
 }
 
-export const primaryNav: ReadonlyArray<NavLink> = [
-  { label: "Products", href: "/products/" },
+/**
+ * Header navigation — the single source for the desktop centre links AND
+ * the mobile menu's Company section (Products is separate: megamenu on
+ * desktop, its own section on mobile).
+ *
+ * `activeMatch: "never"` is for hash links (the server can't see the
+ * fragment, and lighting them by base path causes double-active states —
+ * e.g. Pricing + the Products trigger both lit on /products/vocotable/).
+ */
+export interface HeaderNavLink extends NavLink {
+  /** Render in the desktop centre cluster. Default true. */
+  readonly desktop?: boolean;
+  /** Render in the mobile menu. Default true. */
+  readonly mobile?: boolean;
+  readonly activeMatch?: "prefix" | "exact" | "never";
+}
+
+export const headerNav: ReadonlyArray<HeaderNavLink> = [
+  { label: "Pricing", href: "/products/vocotable/#pricing", activeMatch: "never" },
   { label: "How it works", href: "/technology/" },
   { label: "Guides", href: "/blog/" },
+  { label: "About", href: "/about/" },
   { label: "Contact", href: "/contact/" },
 ];
+
+/** Shared active-state rule for header links (used by Nav + MobileMenu). */
+export function isNavActive(pathname: string, link: HeaderNavLink): boolean {
+  if (link.activeMatch === "never" || link.href.includes("#")) return false;
+  const path = pathname.replace(/\/$/, "") || "/";
+  const target = link.href.replace(/\/$/, "") || "/";
+  if (link.activeMatch === "exact") return path === target;
+  return path === target || path.startsWith(target + "/");
+}
 
 export const productNavLinks: ReadonlyArray<NavLink> = products.map((p) => ({
   label: p.name,

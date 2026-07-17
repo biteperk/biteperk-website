@@ -21,25 +21,13 @@ import ThemeToggle from "@/components/ThemeToggle.astro";
 import NavDropdown from "@/components/NavDropdown.astro";
 import MobileMenu from "@/components/MobileMenu.astro";
 import { site } from "@/data/site";
+import { headerNav, isNavActive } from "@/data/nav";
 
-const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
-function isActive(href: string): boolean {
-  if (href.startsWith("#") || href.includes("#")) {
-    const base = href.split("#")[0].replace(/\/$/, "") || "/";
-    return pathname === base;
-  }
-  const n = href.replace(/\/$/, "") || "/";
-  return pathname === n || pathname.startsWith(n + "/");
-}
+const pathname = Astro.url.pathname;
 
-// Links shown in the centre cluster (Products handled separately as a
-// mega-menu via <NavDropdown />).
-const centreLinks = [
-  { label: "Pricing", href: "/products/vocotable/#pricing" },
-  { label: "How it works", href: "/technology/" },
-  { label: "Guides", href: "/blog/" },
-  { label: "Contact", href: "/contact/" },
-] as const;
+// Centre cluster = headerNav minus Products (which is the <NavDropdown />
+// mega-menu). Single source shared with MobileMenu — see data/nav.ts.
+const centreLinks = headerNav.filter((l) => l.desktop !== false);
 ---
 
 <nav class="nav" id="nav" aria-label="Primary" data-ver="2" transition:persist>
@@ -53,9 +41,10 @@ const centreLinks = [
       <NavDropdown />
       {centreLinks.map((link) => (
         <a
-          class:list={["lnk", { active: isActive(link.href) }]}
+          class:list={["lnk", { active: isNavActive(pathname, link) }]}
           href={link.href}
-          aria-current={isActive(link.href) ? "page" : undefined}
+          aria-current={isNavActive(pathname, link) ? "page" : undefined}
+          data-nav-link={link.href.includes("#") ? undefined : link.href}
         >
           {link.label}
         </a>
