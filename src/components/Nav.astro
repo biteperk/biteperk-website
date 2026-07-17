@@ -108,6 +108,17 @@ const centreLinks = headerNav.filter((l) => l.desktop !== false);
     border-bottom: 1px solid var(--line-gold);
     box-shadow: 0 8px 32px -16px rgba(0, 0, 0, 0.35);
   }
+  /* One-shot entrance on full page load. Fixed position → no CLS; the
+     nav is transition:persist'ed so this never replays on soft navs. */
+  @media (prefers-reduced-motion: no-preference) {
+    .nav {
+      animation: nav-in 280ms var(--ease-soft) backwards;
+    }
+  }
+  @keyframes nav-in {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
   .nav-inner {
     display: grid;
     grid-template-columns: auto 1fr auto;
