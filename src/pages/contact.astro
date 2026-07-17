@@ -92,6 +92,7 @@ const description =
                 href={vocoProof.demo.href}
                 rel="noopener"
                 target="_blank"
+                data-cta="audio-demo"
               >
                 {vocoProof.demo.label} →
               </a>
@@ -588,6 +589,7 @@ const description =
 
           if (res.ok && body.ok) {
             showSuccess();
+            document.dispatchEvent(new CustomEvent("bp:event", { detail: { name: "form-success" } }));
             return; // form is gone; nothing left to re-enable
           }
 

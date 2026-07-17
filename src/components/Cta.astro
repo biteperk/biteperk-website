@@ -31,7 +31,11 @@ const {
       <h2 class="cta-h">{headline}</h2>
       {lede && <p class="cta-lede lede">{lede}</p>}
       <div class="cta-actions">
-        <a class="btn" href={primary.href}>{primary.label}</a>
+        <a
+          class="btn"
+          href={primary.href}
+          data-cta={primary.href.includes("intent=demo") ? "book-demo" : undefined}
+        >{primary.label}</a>
         <a class="btn-ghost" href={secondary.href}>{secondary.label}</a>
       </div>
     </div>
