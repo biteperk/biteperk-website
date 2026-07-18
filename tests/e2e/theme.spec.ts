@@ -90,9 +90,10 @@ test.describe("theme", () => {
     const html = page.locator("html");
     await expect(html).toHaveAttribute("data-theme", "light");
 
-    // Client-side nav via the View Transitions router.
-    await page.locator('nav a[href="/contact/"]').first().click();
-    await page.waitForURL("**/contact/");
+    // Client-side nav via the View Transitions router. Use a link that's
+    // visible in the desktop bar (Contact is mobile-menu-only now).
+    await page.locator('nav a[href="/platform/"]').first().click();
+    await page.waitForURL("**/platform/");
     await expect(html).toHaveAttribute("data-theme", "light");
 
     // The swap must never have shown any other theme.
