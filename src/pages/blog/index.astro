@@ -83,7 +83,7 @@ const breadcrumbJsonLd = {
         <ul class="blog-grid">
           {posts.map((post) => (
             <li class="blog-cell reveal">
-              <a class="blog-card" href={`/blog/${post.id}/`} data-glow>
+              <a class="blog-card pressable" href={`/blog/${post.id}/`} data-glow>
                 {post.data.featured && <span class="blog-card-flag">Start here</span>}
                 <div class="blog-card-meta">
                   <time datetime={iso(post.data.publishDate)}>{fmt(post.data.publishDate)}</time>

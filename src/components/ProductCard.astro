@@ -17,7 +17,7 @@ const { product, variant = "tile" } = Astro.props;
 const href = productUrl(product);
 ---
 
-<a class:list={["product-card", `variant-${variant}`, `is-${product.status}`]} href={href} aria-label={`Open ${product.name}`} data-glow>
+<a class:list={["product-card", "pressable", `variant-${variant}`, `is-${product.status}`]} href={href} aria-label={`Open ${product.name}`} data-glow>
   <div class="product-card-glow" aria-hidden="true" style={`--accent:${product.accent}`}></div>
   <div class="product-card-head">
     <div class="product-card-name" transition:name={`product-title-${product.slug}`}>
