@@ -3,7 +3,12 @@
  * Homepage strip linking every published city landing page. Feeds the
  * city-engine internal-link mesh (home → cities, cities ↔ cities,
  * footer → cities) that tells crawlers these pages matter.
+ *
+ * Each card carries its city's real establishing photo (the same
+ * cityscape used on the city page's band) under a theme-invariant dark
+ * scrim, so the strip reads as places, not just labels.
  */
+import ImageBlock from "@/components/ImageBlock.astro";
 import { publishedCities, cityUrl } from "@/data/cities";
 ---
 
@@ -17,13 +22,27 @@ import { publishedCities, cityUrl } from "@/data/cities";
         our callers ring from most.
       </p>
     </div>
-    <ul class="reveal citystrip-list">
+    <ul class="citystrip-list reveal-stagger">
       {publishedCities.map((c) => (
         <li>
-          <a href={cityUrl(c)}>
-            <span class="citystrip-name">{c.name}</span>
-            <span class="citystrip-state">{c.state}</span>
-            <span class="citystrip-arrow" aria-hidden="true">→</span>
+          <a class="citystrip-card" href={cityUrl(c)}>
+            <div class="citystrip-photo">
+              <ImageBlock
+                slug={c.cityscapeImage}
+                alt={c.cityscapeImageAlt}
+                aspect="16 / 10"
+                widths="(min-width: 981px) 30vw, (min-width: 561px) 45vw, 90vw"
+                rounded={false}
+              />
+            </div>
+            <div class="citystrip-scrim" aria-hidden="true"></div>
+            <div class="citystrip-label">
+              <span class="citystrip-name">
+                {c.name}
+                <span class="citystrip-state">{c.state}</span>
+              </span>
+              <span class="citystrip-arrow" aria-hidden="true">→</span>
+            </div>
           </a>
         </li>
       ))}
@@ -44,41 +63,130 @@ import { publishedCities, cityUrl } from "@/data/cities";
     margin-top: 14px;
   }
   .citystrip-head .lede { margin-top: 16px; }
+
   .citystrip-list {
     list-style: none;
     padding: 0;
-    margin: 40px 0 0;
+    margin: 44px 0 0;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-    gap: 14px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
   }
-  .citystrip-list a {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-    padding: 18px 20px;
+
+  .citystrip-card {
+    position: relative;
+    display: block;
+    border-radius: var(--r-lg);
+    overflow: hidden;
     border: 1px solid var(--line);
-    border-radius: var(--r-md);
     background: var(--ink-1);
+    box-shadow: var(--shadow-card);
+    isolation: isolate;
+    -webkit-tap-highlight-color: transparent;
     transition:
+      transform var(--dur-base) var(--ease-out),
       border-color var(--dur-base) var(--ease-out),
-      background var(--dur-base) var(--ease-out),
-      transform var(--dur-base) var(--ease-out);
+      box-shadow var(--dur-base) var(--ease-out);
   }
-  .citystrip-list a:hover {
-    border-color: color-mix(in srgb, var(--gold) 40%, var(--line));
-    background: var(--fill-hover);
-    transform: translateY(-2px);
+  .citystrip-card:hover,
+  .citystrip-card:focus-visible {
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--gold) 35%, var(--line));
+    box-shadow: var(--shadow-card-hover);
+  }
+
+  .citystrip-photo :global(.image-block) {
+    border-radius: 0;
+  }
+  .citystrip-photo :global(img) {
+    transition: transform var(--dur-slow) var(--ease-soft);
+  }
+  .citystrip-card:hover .citystrip-photo :global(img) {
+    transform: scale(1.05);
   }
   @media (prefers-reduced-motion: reduce) {
-    .citystrip-list a:hover { transform: none; }
+    .citystrip-card:hover,
+    .citystrip-card:focus-visible { transform: none; }
+    .citystrip-card:hover .citystrip-photo :global(img) { transform: none; }
   }
-  .citystrip-name { font-weight: 700; color: var(--white); font-size: 16px; }
-  .citystrip-state { font-size: 12px; color: var(--mist); letter-spacing: 1px; }
+
+  /* Theme-invariant dark scrim — the label is --on-image (near-white)
+     in both themes, so the gradient must stay dark in both. */
+  .citystrip-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      rgba(10, 11, 13, 0.05) 35%,
+      rgba(10, 11, 13, 0.62) 78%,
+      rgba(10, 11, 13, 0.85) 100%
+    );
+  }
+
+  .citystrip-label {
+    position: absolute;
+    left: 18px;
+    right: 16px;
+    bottom: 14px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .citystrip-name {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -0.015em;
+    color: var(--on-image);
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+    white-space: nowrap;
+  }
+  .citystrip-state {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+    color: var(--gold-fill);
+  }
   .citystrip-arrow {
-    margin-left: auto;
-    color: var(--gold);
-    transition: transform var(--dur-fast) var(--ease-out);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    flex: none;
+    border-radius: 50%;
+    background: rgba(10, 11, 13, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--line);
+    color: var(--gold-fill);
+    font-size: 15px;
+    transition:
+      transform var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out);
   }
-  .citystrip-list a:hover .citystrip-arrow { transform: translateX(3px); }
+  .citystrip-card:hover .citystrip-arrow {
+    transform: translateX(3px);
+    border-color: color-mix(in srgb, var(--gold) 45%, var(--line));
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .citystrip-card:hover .citystrip-arrow { transform: none; }
+  }
+
+  @media (max-width: 900px) {
+    .citystrip-list { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  }
+  @media (max-width: 560px) {
+    .citystrip-list { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .citystrip-name { font-size: 15px; gap: 6px; }
+    .citystrip-state { font-size: 9.5px; letter-spacing: 1.2px; }
+    .citystrip-label { left: 12px; right: 10px; bottom: 10px; }
+    .citystrip-arrow { width: 28px; height: 28px; font-size: 13px; }
+  }
 </style>
