@@ -39,6 +39,7 @@ export interface HeaderNavLink extends NavLink {
 
 export const headerNav: ReadonlyArray<HeaderNavLink> = [
   { label: "Pricing", href: "/products/vocotable/#pricing", activeMatch: "never" },
+  { label: "Platform", href: "/platform/" },
   { label: "How it works", href: "/technology/" },
   { label: "Guides", href: "/blog/" },
   { label: "About", href: "/about/" },
@@ -75,6 +76,7 @@ export const footerColumns: ReadonlyArray<NavColumn> = [
     heading: "Company",
     links: [
       { label: "About", href: "/about/" },
+      { label: "Platform", href: "/platform/" },
       { label: "How it works", href: "/technology/" },
       { label: "Guides", href: "/blog/" },
       { label: "Contact", href: "/contact/" },

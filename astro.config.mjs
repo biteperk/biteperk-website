@@ -32,6 +32,7 @@ export default defineConfig({
       serialize(item) {
         if (item.url === "https://biteperk.com.au/") item.priority = 1.0;
         else if (item.url === "https://biteperk.com.au/technology/") item.priority = 0.8;
+        else if (item.url === "https://biteperk.com.au/platform/") item.priority = 0.8;
         else if (item.url.includes("/products/")) item.priority = 0.9;
         else if (
           // City landing pages — keep in sync with src/data/cities.ts

@@ -142,6 +142,22 @@ const vocotable: Product = {
       title: "Privacy-first by design",
       body: "Australian data residency. Privacy Act compliant. Audio stays inside our walls.",
     },
+    {
+      title: "Live call feed",
+      body: "Every call Bella takes, on the record — transcript, recording, sentiment, and whether it was handled without a transfer.",
+    },
+    {
+      title: "Booking log & analytics",
+      body: "Every booking with its source call attached, and analytics that grow with your plan — exportable to PDF and CSV.",
+    },
+    {
+      title: "Menu & kitchen tools",
+      body: "Import your menu from a photo, run live tables, and send orders to a kitchen display — all in the same dashboard.",
+    },
+    {
+      title: "Team access, per role",
+      body: "Owner, manager, staff and kitchen logins — each sees what they need, across every venue.",
+    },
   ],
   metrics: [
     { label: "always on", value: "24/7", hint: "every call answered" },
