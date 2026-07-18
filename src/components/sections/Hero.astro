@@ -88,12 +88,6 @@ import { site } from "@/data/site";
 <style>
   .hero {
     position: relative;
-    min-height: 100vh;
-    min-height: 100svh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 140px 0 0;
     overflow: hidden;
   }
   .hero-stage {
@@ -126,10 +120,18 @@ import { site } from "@/data/site";
     width: 100%;
   }
   .hero-grid {
+    /* The grid IS the first viewport: exactly 100svh with the content
+       centred, so the marquee (and everything after) only appears on
+       scroll — one clean section per screen. */
+    min-height: 100vh;
+    min-height: 100svh;
     display: grid;
     grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
     gap: clamp(40px, 6vw, 72px);
     align-items: center;
+    align-content: center;
+    padding-top: 96px; /* clears the fixed nav */
+    padding-bottom: 32px;
   }
   .hero-text { max-width: 720px; }
   .hero-title {
@@ -388,14 +390,14 @@ import { site } from "@/data/site";
     .hero-chip-booked { left: 12px; bottom: 12px; }
   }
   @media (max-width: 560px) {
-    .hero { padding: 120px 0 80px; }
+    .hero-grid { padding-top: 88px; padding-bottom: 56px; }
   }
 
-  /* Marquee peek — on common laptop heights, tighten the composition so
-     the marquee's eyebrow row shows above the fold: a scroll cue by
-     composition, not a bouncing arrow. */
-  @media (min-width: 981px) and (max-height: 900px) {
-    .hero { padding-top: 112px; }
+  /* Short-screen fit insurance: on compact laptop viewports, tighten the
+     composition so the full hero (through the proof line) sits inside
+     the exact-viewport grid with room to breathe. */
+  @media (min-width: 981px) and (max-height: 860px) {
+    .hero-grid { padding-top: 84px; }
     .hero-card { max-width: 410px; }
     .hero-title { margin: 18px 0 20px; }
     .hero-cta { margin-top: 30px; }
