@@ -1,0 +1,394 @@
+---
+/**
+ * The command-centre peek — the homepage's "what you see" beat.
+ *
+ * CallSim (directly above) shows the call; this shows the owner's side:
+ * a hand-built, theme-aware mock of the real Voco dashboard (same
+ * sidebar names, same gold active state as the live product). CSS only —
+ * no screenshot, so no caller data ever appears, and it renders crisp in
+ * both site themes.
+ *
+ * Honesty rules (same contract as CallSim): the venue is the same
+ * fictional Marlow Lane, the card says it's illustrative, and every
+ * element depicted — live call feed, transcripts and recordings, booking
+ * log, analytics, live tables, kitchen display, menu tools, team
+ * callbacks when Bella is unsure — is a shipped feature already claimed
+ * elsewhere on the site. The "Team callback" row is deliberate: showing
+ * the misses is the trust beat.
+ *
+ * Mock chrome is intentionally non-interactive: lists and spans only —
+ * no buttons or links inside the frame, no headings (keeps the document
+ * outline clean for screen readers).
+ */
+const sideItems = [
+  { label: "Live Feed", active: true },
+  { label: "Live Tables", active: false },
+  { label: "Booking Log", active: false },
+  { label: "Manage Menu", active: false },
+  { label: "Kitchen", active: false },
+  { label: "Analytics", active: false },
+] as const;
+
+const rows = [
+  { time: "7:42pm", what: "Booking · 4 guests · birthday", pill: "Handled by AI", kind: "ai" },
+  { time: "7:38pm", what: "Change of time · Sat 6:30pm", pill: "Handled by AI", kind: "ai" },
+  { time: "7:31pm", what: "Function enquiry · 22 guests", pill: "Team callback", kind: "human" },
+] as const;
+---
+
+<section class="platform-section cv-auto" aria-labelledby="platform-h">
+  <div class="wrap">
+    <div class="platform-grid">
+      <div class="platform-copy reveal">
+        <span class="eyebrow">Your command centre</span>
+        <h2 class="platform-h" id="platform-h">
+          No black box.<br />
+          <span class="gold">You see every call she takes.</span>
+        </h2>
+        <p class="lede platform-lede">
+          Every Voco venue gets the full operations hub — every call with its
+          transcript and recording, every booking in the log, analytics you can
+          export, plus live tables, a kitchen screen and your menu. One
+          dashboard, one login away.
+        </p>
+        <p class="platform-note">
+          Owner, manager, staff and kitchen each get their own login — everyone
+          sees what they need, across every venue.
+        </p>
+        <div class="platform-ctas">
+          <a class="btn-ghost link-arrow platform-cta" href="/platform/">
+            Explore the platform
+            <span class="arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+
+      <figure class="platform-card reveal">
+        <div class="pf-frame">
+          <div class="pf-side">
+            <span class="pf-brand" aria-hidden="true">Voco</span>
+            <ul class="pf-nav">
+              {sideItems.map((item) => (
+                <li class:list={["pf-nav-item", { "is-active": item.active }]}>
+                  <span class="pf-nav-dot" aria-hidden="true"></span>
+                  {item.label}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div class="pf-main">
+            <div class="pf-topline">
+              <span class="pf-venue">Marlow Lane</span>
+              <span class="pf-live">
+                <span class="pf-live-dot" aria-hidden="true"></span>
+                Live
+              </span>
+            </div>
+            <ul class="pf-stats">
+              <li class="pf-stat">
+                <span class="pf-stat-label">Calls tonight</span>
+                <span class="pf-stat-value">23</span>
+              </li>
+              <li class="pf-stat">
+                <span class="pf-stat-label">Bookings</span>
+                <span class="pf-stat-value">17</span>
+              </li>
+              <li class="pf-stat">
+                <span class="pf-stat-label">Handled by AI</span>
+                <span class="pf-stat-value">21<span class="pf-stat-sub"> of 23</span></span>
+              </li>
+            </ul>
+            <ol class="pf-rows">
+              {rows.map((r) => (
+                <li class="pf-row">
+                  <span class="pf-row-time">{r.time}</span>
+                  <span class="pf-row-what">{r.what}</span>
+                  <span class:list={["pf-pill", r.kind === "ai" ? "pf-pill-ai" : "pf-pill-human"]}>{r.pill}</span>
+                </li>
+              ))}
+            </ol>
+            <p class="pf-foot">Transcript · Recording · Export CSV</p>
+          </div>
+        </div>
+        <figcaption class="platform-disclaimer">
+          Illustrative — a fictional venue, but the real dashboard layout every
+          Voco venue gets.
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<style>
+  .platform-section {
+    padding-block: var(--space-section);
+    border-top: 1px solid var(--line);
+    background: var(--ink-0);
+    overflow: hidden;
+  }
+  .platform-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: clamp(40px, 6vw, 80px);
+    align-items: center;
+  }
+  /* Copy sits second in DOM (mobile reads copy first when stacked) but
+     renders right on desktop — the mirror of CallSim's copy-left layout. */
+  .platform-copy { order: 2; }
+  .platform-card { order: 1; }
+
+  .platform-h {
+    font-size: var(--fs-h2);
+    font-weight: 800;
+    line-height: var(--lh-display);
+    letter-spacing: -0.025em;
+    color: var(--white);
+    margin-top: 16px;
+  }
+  .platform-h .gold { color: var(--gold); }
+  .platform-lede { margin-top: 20px; }
+  .platform-note {
+    margin-top: 16px;
+    color: var(--mist-2);
+    font-size: 14.5px;
+    line-height: 1.6;
+    max-width: 46ch;
+  }
+  .platform-ctas { margin-top: 30px; }
+
+  /* ── The app frame ──────────────────────────────────────────────── */
+  .platform-card {
+    max-width: 560px;
+    width: 100%;
+    justify-self: center;
+    margin: 0;
+  }
+  .pf-frame {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--ink-1);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+  }
+  .pf-side {
+    background: var(--ink-2);
+    border-right: 1px solid var(--line);
+    padding: 16px 12px;
+    min-width: 128px;
+  }
+  .pf-brand {
+    display: block;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--white);
+    padding: 2px 10px 12px;
+  }
+  .pf-nav {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 2px;
+  }
+  .pf-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--mist);
+    padding: 7px 10px;
+    border-radius: var(--r-sm);
+    white-space: nowrap;
+  }
+  .pf-nav-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.55;
+    flex: none;
+  }
+  .pf-nav-item.is-active {
+    background: var(--gold-fill);
+    color: var(--gold-fill-text);
+    font-weight: 700;
+  }
+  .pf-nav-item.is-active .pf-nav-dot { opacity: 1; }
+
+  .pf-main { padding: 16px clamp(14px, 2vw, 20px) 14px; }
+  .pf-topline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding-bottom: 12px;
+  }
+  .pf-venue {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .pf-live {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .pf-live-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold-fill);
+    flex: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .pf-live-dot { animation: pf-pulse 2.4s ease-in-out infinite; }
+  }
+  @keyframes pf-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+
+  .pf-stats {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .pf-stat {
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+    background: var(--ink-2);
+    padding: 10px 10px 8px;
+    display: grid;
+    gap: 4px;
+  }
+  .pf-stat-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--mist);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .pf-stat-value {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--white);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .pf-stat-sub {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--mist);
+  }
+
+  .pf-rows {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+  .pf-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+    background: var(--ink-2);
+    padding: 9px 10px;
+    font-size: 12px;
+    min-width: 0;
+  }
+  .pf-row-time {
+    color: var(--mist);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    flex: none;
+  }
+  .pf-row-what {
+    color: var(--text);
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+  .pf-pill {
+    margin-left: auto;
+    flex: none;
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: var(--r-pill);
+    white-space: nowrap;
+  }
+  .pf-pill-ai {
+    color: var(--gold);
+    border: 1px solid var(--line-gold);
+  }
+  .pf-pill-human {
+    color: var(--mist);
+    border: 1px solid var(--line-strong);
+  }
+  .pf-foot {
+    margin: 12px 0 0;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--mist);
+    letter-spacing: 0.02em;
+  }
+
+  .platform-disclaimer {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--mist);
+    text-align: center;
+  }
+
+  /* ── Stacked layout ─────────────────────────────────────────────── */
+  @media (max-width: 980px) {
+    .platform-grid { grid-template-columns: minmax(0, 1fr); }
+    .platform-copy { order: 1; }
+    .platform-card { order: 2; justify-self: stretch; }
+  }
+  /* Narrow phones: sidebar becomes a compact top rail. */
+  @media (max-width: 480px) {
+    .pf-frame { grid-template-columns: minmax(0, 1fr); }
+    .pf-side {
+      border-right: 0;
+      border-bottom: 1px solid var(--line);
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+    .pf-brand { padding: 0 4px 0 0; }
+    .pf-nav {
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .pf-nav::-webkit-scrollbar { display: none; }
+    .pf-nav-item { padding: 6px 9px; }
+    .pf-nav-item .pf-nav-dot { display: none; }
+    /* Narrow cards: let stat labels wrap instead of truncating. */
+    .pf-stat-label { white-space: normal; overflow: visible; }
+  }
+</style>

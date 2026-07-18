@@ -1,6 +1,6 @@
 # Biteperk
 
-> Biteperk builds Voco — one AI phone host for Australian restaurants, voiced by "Bella", a warm Australian voice that answers every call, day or night. Voco does four jobs from a single agent: bookings and takeaway & pickup ordering (live today), a front-of-house concierge (in development), and a drive-thru order-taker (concept). Venues start with bookings and switch on the rest as they ship — same agent, same voice, same number. Built, hosted and supported in Sydney; serving restaurants, cafés and venues Australia-wide. (Voco's live capabilities ship under the product names "VocoTable" for bookings and "VocoOrder" for takeaway.)
+> Biteperk builds Voco — one AI phone host for Australian restaurants, voiced by "Bella", a warm Australian voice that answers every call, day or night. Voco does four jobs from a single agent: bookings and takeaway & pickup ordering (live today), a front-of-house concierge (in development), and a drive-thru order-taker (concept). Venues start with bookings and switch on the rest as they ship — same agent, same voice, same number. Every venue also gets a live operations dashboard: every call with its transcript and recording, a booking log, analytics, live tables, a kitchen display and menu management. Built, hosted and supported in Sydney; serving restaurants, cafés and venues Australia-wide. (Voco's live capabilities ship under the product names "VocoTable" for bookings and "VocoOrder" for takeaway.)
 
 ## Key facts
 
@@ -11,6 +11,7 @@
 - VocoTable pricing (AUD, flat monthly, no per-call or per-cover fees): Solo $80/month (up to 300 covers, 1 venue), Pro $150/month (unlimited covers — "Our pick"), Group $250/month (up to 3 venues), Enterprise custom (4+ venues). Free week trial; month-to-month, no lock-in.
 - Setup: works with a venue's existing phone number — just forward calls. No new hardware, no installation, no IT. Most venues are live the same day.
 - The AI voice ("Bella") speaks natural Australian English and gets local suburb/street names right — not an overseas call centre.
+- Dashboard: every venue gets a live operations hub — a live call feed showing each call's transcript, recording, caller sentiment and whether it was handled without a transfer; a booking log; analytics with PDF and CSV export; live tables; a kitchen display screen; menu management with photo import; and owner/manager/staff/kitchen role-based logins with multi-venue support. Details: https://biteperk.com.au/platform/
 - Data/privacy: Australian data residency (audio processed in Australia); Privacy Act compliant; call audio is kept only as long as needed to confirm the booking, then deleted; never used to train AI models outside Biteperk; your bookings and data stay yours and are exported within 24 hours if you cancel. (See the privacy policy for specifics.)
 
 ## Voco — one product, four capabilities
@@ -35,6 +36,7 @@ Voco is a single AI phone host. Each capability below is a job the same agent do
 - Note: Biteperk's only physical office is in Haymarket, Sydney. All other cities are served remotely (setup is a phone-forward; support is Australian business hours).
 - [About Biteperk](https://biteperk.com.au/about/): The Sydney team behind Voco — why the company exists, its three operating principles (human in the loop, Australian data residency, honest pricing), and the Haymarket office details.
 - [How AI phone answering works](https://biteperk.com.au/technology/): Plain-English explainer of the technology behind Bella — Australian-English speech recognition, understanding intent, checking the live diary, confidence gating with a human in the loop, sub-second pickup, and onshore data.
+- [The Voco dashboard](https://biteperk.com.au/platform/): The operations hub every venue gets — live call feed (transcripts, recordings, sentiment, handled-without-transfer outcomes), booking log, analytics with PDF/CSV export, live tables, kitchen display, menu management with photo import, and role-based team logins across venues.
 - [Contact](https://biteperk.com.au/contact/): Phone, email, address, hours, and a contact form for venues.
 
 ## Guides (blog)
