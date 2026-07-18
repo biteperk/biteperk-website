@@ -13,6 +13,7 @@
 - The AI voice ("Bella") speaks natural Australian English and gets local suburb/street names right — not an overseas call centre.
 - Dashboard: every venue gets a live operations hub — a live call feed showing each call's transcript, recording, caller sentiment and whether it was handled without a transfer; a booking log; analytics with PDF and CSV export; live tables; a kitchen display screen; menu management with photo import; and owner/manager/staff/kitchen role-based logins with multi-venue support. Details: https://biteperk.com.au/platform/
 - Data/privacy: Australian data residency (audio processed in Australia); Privacy Act compliant; call audio is kept only as long as needed to confirm the booking, then deleted; never used to train AI models outside Biteperk; your bookings and data stay yours and are exported within 24 hours if you cancel. (See the privacy policy for specifics.)
+- Website cookies/tracking (separate from customer call data, which is unchanged): strict opt-in — nothing non-essential runs until the visitor accepts. Analytics are cookieless (Plausible, first-party, no cross-site profiles); optional LinkedIn marketing runs only if the visitor opts in. Choice changeable any time via Cookie settings. See https://biteperk.com.au/legal/cookies/
 
 ## Voco — one product, four capabilities
 

@@ -31,5 +31,6 @@ export const routes: string[] = [
   ...cities.filter((c) => c.published).map((c) => `/${c.slug}/`),
   "/legal/privacy/",
   "/legal/terms/",
+  "/legal/cookies/",
   "/404.html",
 ];
