@@ -38,3 +38,12 @@ rhythm that turns it into rankings and leads.
 - [ ] Verify Google Business Profile (Haymarket address).
 - [ ] Analytics decision: Plausible self-proxied under `/js/` (keeps CSP
       `script-src 'self'`) — needs a Plausible account before wiring.
+
+## Consent + tracking (shipped 2026-07-19, staged)
+
+A GDPR/Privacy-Act consent system is live-ready but **inert until IDs are added** — one config file, `src/data/consent.ts`:
+- **Go-live analytics:** create the Plausible site for `biteperk.com.au`, then set `plausibleReady = true` (and flip the same in the Cloud Function per the analytics note above).
+- **Go-live LinkedIn remarketing:** create the LinkedIn ads account, set `linkedInPartnerId = "…"`, and optionally fill `linkedInConversions` (keyed by goal name) to fire ad conversions. CSP origins (`snap.licdn.com`, `px*.ads.linkedin.com`) are **pre-provisioned** in `firebase.json` so this is a one-line change with no infra edit.
+- **Behaviour:** strict opt-in (nothing until Accept), "Reject all" equal-weight; cookieless Plausible; the banner **auto-appears only once a tracker is armed** (`TRACKING_ARMED`) — a tracker-free deploy shows no notice. Preview any time with `?cookie-preview=1`.
+- **Marketing value layer:** canonical goal taxonomy + `[data-cta]` normalisation; first-touch lead attribution (`utm_*`/referrer → contact form hidden field → Firestore `attribution` on each lead) so campaign→demo is measurable; an opt-in-rate event on Accept.
+- **Cookie Policy:** `/legal/cookies/` (and `/cookies` 301). Privacy policy's website-tracking line updated; customer-call-data promises unchanged.

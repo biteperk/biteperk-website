@@ -135,6 +135,12 @@ const description =
             </label>
           </div>
 
+          {/* First-touch campaign attribution, populated from sessionStorage
+              by the submit handler so each lead records which campaign drove
+              it. First-party; travels only with the enquiry the user sends. */}
+          <input type="hidden" name="attribution" value="" data-attribution />
+
+
           <div class="contact-row">
             <div class="contact-field">
               <label for="cf-name">Your name <span aria-hidden="true">*</span></label>
@@ -524,6 +530,15 @@ const description =
         if (lede)
           lede.textContent =
             "Fifteen minutes, then Bella on a test line set up for your venue — call her yourself before you decide anything.";
+      }
+
+      // Fill the attribution hidden field from first-touch sessionStorage.
+      try {
+        const attrField = form.querySelector<HTMLInputElement>("[data-attribution]");
+        const attr = sessionStorage.getItem("bp-attr");
+        if (attrField && attr) attrField.value = attr.slice(0, 1000);
+      } catch {
+        /* no storage — attribution simply stays empty */
       }
 
       const btn = form.querySelector<HTMLButtonElement>(".contact-submit");

@@ -48,6 +48,11 @@ const hasAbn = site.abn !== "TODO";
                 {link.label}
               </a>
             ))}
+            {col.heading === "Legal" && (
+              <button type="button" class="foot-col-btn" data-cookie-settings>
+                Cookie settings
+              </button>
+            )}
           </div>
         ))}
       </div>
@@ -127,6 +132,25 @@ const hasAbn = site.abn !== "TODO";
   }
   .foot-col a:hover,
   .foot-col a:focus-visible {
+    color: var(--white);
+  }
+  /* Matches .foot-col a exactly — it's a control (re-opens cookie settings),
+     not a route, so it can't be a plain nav link. */
+  .foot-col-btn {
+    display: block;
+    font-size: 14px;
+    color: var(--mist);
+    background: none;
+    border: 0;
+    text-align: left;
+    padding-block: 8px;
+    margin-bottom: 2px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  .foot-col-btn:hover,
+  .foot-col-btn:focus-visible {
     color: var(--white);
   }
   .foot-bottom {

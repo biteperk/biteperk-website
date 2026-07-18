@@ -27,6 +27,7 @@ import "@/styles/megamenu.css";
 import SEO from "@/components/SEO.astro";
 import Nav from "@/components/Nav.astro";
 import Footer from "@/components/Footer.astro";
+import ConsentBanner from "@/components/ConsentBanner.astro";
 import { siteGraph } from "@/data/schema";
 import { ClientRouter } from "astro:transitions";
 
@@ -83,6 +84,21 @@ const {
         } catch (e) {}
       })();
     </script>
+    {/* Pre-paint consent state: mark whether a stored choice exists so the
+        banner never flashes for returning visitors (CSS shows it only under
+        [data-consent="unset"]). Version-agnostic on purpose — the authoritative
+        version check lives in src/scripts/consent.ts, which re-opens the
+        banner if the stored choice is stale. Storage key shared with it. */}
+    <script is:inline>
+      (function () {
+        try {
+          var raw = localStorage.getItem("bp-consent");
+          var ok = false;
+          if (raw) { var c = JSON.parse(raw); ok = !!(c && typeof c === "object" && "v" in c); }
+          document.documentElement.dataset.consent = ok ? "set" : "unset";
+        } catch (e) { document.documentElement.dataset.consent = "unset"; }
+      })();
+    </script>
     <meta name="format-detection" content="telephone=no" />
     <!-- Bing Webmaster Tools site verification -->
     <meta name="msvalidate.01" content="C717E1E48BD4B561E0F2F3B5F733838D" />
@@ -123,6 +139,10 @@ const {
       <slot />
     </main>
     <Footer />
+    {/* Persisted across View Transitions so its shown/animated state never
+        replays on soft navigation. */}
+    <ConsentBanner transition:persist />
+
 
     <script>
       import "@/scripts/theme.ts";
@@ -133,6 +153,8 @@ const {
       import "@/scripts/counter.ts";
       import "@/scripts/call-sim.ts";
       import "@/scripts/card-glow.ts";
+      import "@/scripts/attribution.ts";
+      import "@/scripts/consent.ts";
       import "@/scripts/analytics.ts";
     </script>
   </body>
