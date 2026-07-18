@@ -25,6 +25,7 @@ export const routes: string[] = [
   "/contact/",
   "/about/",
   "/technology/",
+  "/platform/",
   "/blog/",
   ...blogSlugs.map((s) => `/blog/${s}/`),
   ...cities.filter((c) => c.published).map((c) => `/${c.slug}/`),

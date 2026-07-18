@@ -1,0 +1,383 @@
+---
+/**
+ * /platform/ — the Voco dashboard, marketed.
+ *
+ * The trust page: restaurant owners fear a black box answering their
+ * phone, so this page shows the owner's side of Voco — the operations
+ * hub every venue gets. Each capability block's eyebrow is the REAL
+ * sidebar name in the product (Live Feed, Booking Log, Analytics, Live
+ * Tables, Kitchen, Manage Menu), so a visitor who later opens the
+ * dashboard recognises the map exactly.
+ *
+ * Honesty rules: every capability described is shipped and available to
+ * customers; the only numbers are claims already published elsewhere on
+ * the site (24/7, <1s answer, $80/mo flat, Australian data residency).
+ * Analytics depth is tier-gated, so copy says it "grows with your plan"
+ * rather than promising the deepest reports on the entry tier.
+ */
+import Base from "@/layouts/Base.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import SectionHeader from "@/components/SectionHeader.astro";
+import Illustration from "@/components/Illustration.astro";
+import FAQ from "@/components/FAQ.astro";
+import Cta from "@/components/Cta.astro";
+import { site } from "@/data/site";
+import { vocoProof } from "@/data/products";
+import { ORG_ID, WEBSITE_ID, VOCO_ID } from "@/data/schema";
+
+const title = "The Voco dashboard — see every call, booking and order · Biteperk";
+const description =
+  "Every Voco venue gets a live operations dashboard: every AI call with its transcript and recording, a full booking log, analytics with PDF and CSV export, live tables, a kitchen display and menu management — with logins for owners, managers, staff and kitchen.";
+const path = "/platform/";
+
+const proofStats = [
+  { value: "24/7", label: "every call on the record" },
+  { value: "<1s", label: "answer time, logged live" },
+  { value: "$80/mo", label: "dashboard included, every plan" },
+  { value: "AU", label: "data residency, onshore" },
+];
+
+const capabilities = [
+  {
+    icon: "phone-wave" as const,
+    eyebrow: "Live Feed",
+    title: "Every call, the moment it happens.",
+    body: "The feed shows each call as Bella takes it — the transcript, the recording, the caller's sentiment, and whether it was handled end-to-end without a transfer. And when she isn't sure and takes a message instead, the callback flag sits right there in the feed: you see the misses as clearly as the wins.",
+  },
+  {
+    icon: "calendar-tick" as const,
+    eyebrow: "Booking Log",
+    title: "Every booking, with its source call attached.",
+    body: "New bookings, changes and cancellations land in one log — each one linked back to the call that created it. No reconciling scribbled notes at the pass; if a guest says \"but I rang and changed it\", the answer is one tap away.",
+  },
+  {
+    icon: "ticket" as const,
+    eyebrow: "Analytics",
+    title: "Your numbers, not a black box.",
+    body: "Booking trends, peak-hour patterns and call outcomes — with PDF reports for your accountant and CSV export of the raw data whenever you want it. Analytics grow with your plan, from the essentials on Solo to deeper call-quality and peak-hour insights on Pro and up.",
+  },
+  {
+    icon: "clock-247" as const,
+    eyebrow: "Live Tables",
+    title: "The floor, live.",
+    body: "For venues running table ordering, Live Tables shows every table's state in real time — who's seated, what's ordered, what's ready — so the front of house and the pass are always looking at the same picture.",
+  },
+  {
+    icon: "pin-au" as const,
+    eyebrow: "Kitchen",
+    title: "Orders straight to the pass.",
+    body: "A kitchen display screen shows orders the moment they're placed — the same clean ticket VocoOrder promises, on a screen built for a working kitchen rather than a printer spitting dockets.",
+  },
+  {
+    icon: "shield" as const,
+    eyebrow: "Manage Menu",
+    title: "Your menu, from a photo.",
+    body: "Point a camera at your printed menu and the dashboard reads it in — items, prices, variants. Edit once and it's live everywhere Bella and the ordering screens use it. No retyping the specials every week.",
+  },
+];
+
+const platformFaqs = [
+  {
+    q: "Do I get the dashboard on the $80 plan?",
+    a: "Yes. Every VocoTable plan includes the dashboard — the live call feed, transcripts and recordings, the booking log, and unlimited dashboard users are part of Solo at $80/month. Deeper analytics and multi-venue roll-ups come with the higher tiers.",
+  },
+  {
+    q: "Can my staff have their own logins?",
+    a: "Yes — and they're role-based. Owners, managers, staff and kitchen each get their own login and see what their role needs: the kitchen sees orders, staff see the floor and bookings, managers and owners see everything including analytics and billing.",
+  },
+  {
+    q: "Can I export my data?",
+    a: "Yes. Call and booking data exports to CSV from the dashboard, analytics reports export to PDF, and if you ever cancel, your bookings and data are exported to you within 24 hours. Your data stays yours.",
+  },
+  {
+    q: "Where does the dashboard data live?",
+    a: "In Australia. Call audio is processed onshore, kept only as long as needed to confirm the booking, and never used to train models outside Biteperk. Biteperk is Privacy Act compliant.",
+  },
+  {
+    q: "Do I need to install anything?",
+    a: "No. The dashboard runs in any browser — phone, tablet or the laptop in the office — and the kitchen display runs on any spare tablet or screen. There's no hardware to buy and nothing to install.",
+  },
+];
+
+const webpageJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": `${site.url}${path}#webpage`,
+  url: `${site.url}${path}`,
+  name: title,
+  description,
+  isPartOf: { "@id": WEBSITE_ID },
+  about: { "@id": VOCO_ID },
+  publisher: { "@id": ORG_ID },
+};
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: site.url },
+    { "@type": "ListItem", position: 2, name: "Platform", item: `${site.url}${path}` },
+  ],
+};
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  isPartOf: { "@id": WEBSITE_ID },
+  mainEntity: platformFaqs.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+};
+
+const heroTestimonial = vocoProof.testimonials[0];
+---
+
+<Base title={title} description={description} path={path} ogImage="/og/platform.png">
+  <Fragment slot="jsonld">
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(webpageJsonLd)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
+  </Fragment>
+
+  <section class="pl-hero">
+    <div class="wrap">
+      <div class="pl-top">
+        <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Platform" }]} />
+      </div>
+      <SectionHeader
+        as="h1"
+        eyebrow="The platform"
+        lede="Handing your phone to an AI shouldn't mean losing sight of it. The Voco dashboard shows you every call Bella takes — transcript, recording, outcome — the moment it happens, alongside your bookings, tables, kitchen and menu."
+      >
+        <Fragment slot="headline">
+          Your restaurant's
+          <br />
+          <span class="gold">command centre.</span>
+        </Fragment>
+      </SectionHeader>
+      <div class="pl-hero-ctas reveal">
+        <a class="btn" href={site.vocotableUrl} rel="noopener" target="_blank" data-cta="platform-trial">
+          Start your free week →
+        </a>
+        <a class="btn-ghost" href="/products/vocotable/#pricing">See pricing</a>
+      </div>
+    </div>
+  </section>
+
+  {/* ── Proof strip: published claims only ───────────────────────── */}
+  <section class="pl-section pl-stats-band">
+    <div class="wrap">
+      <ul class="pl-stats reveal reveal-stagger">
+        {proofStats.map((s) => (
+          <li class="pl-stat">
+            <span class="pl-stat-value">{s.value}</span>
+            <span class="pl-stat-label">{s.label}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  {/* ── Capabilities: the real sidebar, block by block ───────────── */}
+  <section class="pl-section pl-caps">
+    <div class="wrap">
+      <div class="pl-head reveal">
+        <span class="eyebrow">One dashboard, six jobs</span>
+        <h2 class="pl-h2">The same names you'll see in the sidebar.</h2>
+        <p class="pl-head-lede">
+          Nothing here is a mock-up feature. These are the six panels of the
+          dashboard every Voco venue signs into — described exactly as
+          you'll find them.
+        </p>
+      </div>
+      <div class="pl-cap-grid">
+        {capabilities.map((c) => (
+          <article class="pl-cap reveal" data-glow>
+            <div class="pl-cap-top">
+              <Illustration name={c.icon} size={36} trace />
+              <span class="pl-cap-eyebrow">{c.eyebrow}</span>
+            </div>
+            <h3>{c.title}</h3>
+            <p>{c.body}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {/* ── Team & venues ────────────────────────────────────────────── */}
+  <section class="pl-section pl-team">
+    <div class="wrap">
+      <div class="pl-team-card reveal" data-glow>
+        <Illustration name="shield" size={44} trace />
+        <h2 class="pl-h3">Your whole team, each with their own view.</h2>
+        <p>
+          Owner, manager, staff and kitchen roles come built in — everyone gets
+          their own login and sees exactly what their job needs. Running more
+          than one venue? The Group plan puts up to three locations in one
+          dashboard with roll-up reporting, and Enterprise goes beyond that.
+        </p>
+        <p class="pl-team-privacy">
+          And it's all held to the same standard as the calls themselves:
+          Australian data residency, Privacy Act compliant, and your data
+          exported to you within 24 hours if you ever leave.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {/* ── Proof ────────────────────────────────────────────────────── */}
+  {heroTestimonial && (
+    <section class="pl-section pl-quote">
+      <div class="wrap">
+        <figure class="pl-quote-card reveal">
+          <blockquote>“{heroTestimonial.quote}”</blockquote>
+          <figcaption>
+            <strong>{heroTestimonial.author}</strong> · {heroTestimonial.role}
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+  )}
+
+  {/* ── FAQ ──────────────────────────────────────────────────────── */}
+  <section class="pl-section pl-faq">
+    <div class="wrap">
+      <div class="pl-head reveal">
+        <span class="eyebrow">Common questions</span>
+        <h2 class="pl-h2">The dashboard, answered plainly.</h2>
+      </div>
+      <div class="reveal" style="margin-top:40px">
+        <FAQ items={platformFaqs} stagger />
+      </div>
+    </div>
+  </section>
+
+  <Cta
+    eyebrow="See your side of it"
+    headline="The dashboard is included. Not an add-on."
+    lede="Every plan comes with the full command centre from day one. Start the free week, forward your phone, and watch the first booking land on your screen."
+    primary={{ label: "Start your free week →", href: site.vocotableUrl }}
+    secondary={{ label: "See VocoTable pricing", href: "/products/vocotable/#pricing" }}
+  />
+</Base>
+
+<style>
+  .pl-hero { padding: 150px 0 40px; }
+  .pl-top { margin-bottom: 28px; }
+  .pl-hero-ctas {
+    margin-top: 34px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .pl-section { padding-block: var(--space-section); border-top: 1px solid var(--line); }
+  .pl-h2 {
+    font-size: var(--fs-h2);
+    font-weight: 800;
+    line-height: var(--lh-display);
+    letter-spacing: -0.025em;
+    color: var(--white);
+    margin-top: 14px;
+  }
+  .pl-h3 {
+    font-size: clamp(19px, 2vw, 23px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--white);
+    line-height: 1.25;
+  }
+  .pl-head { max-width: 680px; }
+  .pl-head-lede {
+    margin-top: 14px;
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15.5px;
+  }
+
+  /* Stats band */
+  .pl-stats-band { padding-block: 44px; background: var(--ink-1); }
+  .pl-stats {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 18px;
+  }
+  .pl-stat { display: grid; gap: 5px; text-align: center; }
+  .pl-stat-value {
+    font-size: clamp(24px, 3vw, 32px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--gold);
+    font-variant-numeric: tabular-nums;
+  }
+  .pl-stat-label { font-size: 13px; color: var(--mist-2); font-weight: 600; }
+
+  /* Capability grid */
+  .pl-cap-grid {
+    margin-top: 48px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  .pl-cap {
+    padding: 28px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--ink-1);
+    transition: border-color var(--dur-base) var(--ease-out);
+  }
+  .pl-cap:hover { border-color: color-mix(in srgb, var(--gold) 26%, var(--line)); }
+  .pl-cap-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .pl-cap-eyebrow {
+    font-size: 11.5px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--gold);
+  }
+  .pl-cap h3 {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.01em;
+  }
+  .pl-cap p { margin-top: 10px; color: var(--text); font-size: 14.5px; line-height: 1.65; }
+
+  /* Team card */
+  .pl-team-card {
+    max-width: 820px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 48px 40px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-xl);
+    background: var(--ink-1);
+  }
+  .pl-team-card .pl-h3 { margin-top: 18px; }
+  .pl-team-card p { margin-top: 16px; color: var(--text); line-height: 1.7; font-size: 16px; }
+  .pl-team-privacy { color: var(--mist-2); font-size: 14.5px; }
+
+  /* Quote */
+  .pl-quote-card { max-width: 760px; margin: 0 auto; text-align: center; }
+  .pl-quote-card blockquote {
+    font-family: var(--font-serif);
+    font-size: clamp(20px, 2.6vw, 27px);
+    line-height: 1.5;
+    color: var(--white);
+    letter-spacing: -0.01em;
+  }
+  .pl-quote-card figcaption { margin-top: 18px; color: var(--mist-2); font-size: 14px; }
+  .pl-quote-card strong { color: var(--text); }
+
+  .pl-faq .pl-head { text-align: center; margin-inline: auto; }
+</style>

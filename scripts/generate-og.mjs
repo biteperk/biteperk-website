@@ -345,6 +345,12 @@ const cards = [
     eyebrow: "Under the hood",
     headline: "How Bella actually answers the phone.",
   },
+  {
+    file: "platform.png",
+    eyebrow: "The platform",
+    headline: "See every call. Live.",
+    showBella: false,
+  },
 ];
 
 for (const c of cards) {
