@@ -104,7 +104,7 @@ const faqJsonLd = {
         <ul class="home-guides-grid reveal-stagger">
           {latestGuides.map((post) => (
             <li>
-              <a class="home-guide" href={`/blog/${post.id}/`} data-glow>
+              <a class="home-guide pressable" href={`/blog/${post.id}/`} data-glow>
                 <div class="home-guide-meta">
                   <time datetime={post.data.publishDate.toISOString().slice(0, 10)}>
                     {fmtGuideDate(post.data.publishDate)}
@@ -169,6 +169,8 @@ const faqJsonLd = {
     font-weight: 700;
     font-size: 14px;
     white-space: nowrap;
+    padding-block: 11px;
+    margin-block: -11px;
   }
   .home-guides-all:hover { text-decoration: underline; text-underline-offset: 3px; }
   .home-guides-grid {

@@ -227,6 +227,10 @@ import { site } from "@/data/site";
     color: var(--gold);
     font-weight: 600;
     font-variant-numeric: tabular-nums;
+    /* tap target (isolated standalone link) */
+    padding-block: 12px;
+    margin-block: -12px;
+    display: inline-block;
   }
   .hero-phone a:hover {
     text-decoration: underline;
@@ -377,6 +381,11 @@ import { site } from "@/data/site";
     .hero-grid { grid-template-columns: 1fr; gap: 56px; }
     .hero-visual { order: -1; }
     .hero-card { max-width: 340px; aspect-ratio: 4 / 4.6; }
+    /* Tablets get a roomier card — 340px on a 768px canvas reads
+       phone-stretched (iPad-portrait screenshot-verified). */
+    @media (min-width: 561px) {
+      .hero-card { max-width: 430px; }
+    }
     /* Mobile paint diet: the masked grid and the 34px-blur halo are
        barely perceptible at this size but cost real main-thread time
        during the LCP window on throttled devices. */
@@ -384,7 +393,7 @@ import { site } from "@/data/site";
     .hero-card-halo { filter: blur(18px); inset: -12%; }
     /* Chips on the 340px card: two beats, smaller. The "answered fast"
        claim is carried by the proof line directly below the portrait. */
-    .hero-chip { font-size: 10px; padding: 6px 10px; letter-spacing: 1.1px; }
+    .hero-chip { font-size: 10.5px; padding: 6px 10px; letter-spacing: 1.1px; }
     .hero-chip-ring { top: 12px; left: 12px; }
     .hero-chip-answer { display: none; }
     .hero-chip-booked { left: 12px; bottom: 12px; }

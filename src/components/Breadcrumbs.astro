@@ -42,7 +42,14 @@ const { items } = Astro.props;
     color: var(--mist);
   }
   .crumbs li { display: inline-flex; align-items: center; gap: 8px; }
-  .crumbs a { color: var(--mist); transition: color var(--dur-fast) var(--ease-out); }
+  .crumbs a {
+    color: var(--mist);
+    transition: color var(--dur-fast) var(--ease-out);
+    /* Grow the tap target without shifting layout — crumbs are isolated
+       (separator/current-page neighbours aren't interactive). */
+    padding: 12px 4px;
+    margin: -12px -4px;
+  }
   .crumbs a:hover { color: var(--white); }
   .crumbs [aria-current="page"] { color: var(--white); }
   .sep { opacity: 0.5; }

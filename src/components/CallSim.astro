@@ -166,6 +166,8 @@ const lines = [
     color: var(--gold);
     font-weight: 600;
     font-size: 14px;
+    padding-block: 11px;
+    margin-block: -11px;
   }
   .callsim-audio-link:hover { text-decoration: underline; text-underline-offset: 3px; }
 
@@ -342,7 +344,8 @@ const lines = [
     letter-spacing: 0.6px;
     text-transform: uppercase;
     color: var(--gold);
-    padding: 6px 12px;
+    min-height: 44px;
+    padding: 6px 16px;
     border: 1px solid var(--line);
     border-radius: var(--r-pill);
     transition: border-color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);

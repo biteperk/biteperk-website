@@ -229,12 +229,17 @@ const companyLinks = headerNav.filter((l) => l.mobile !== false);
     border-bottom: 1px solid var(--line);
   }
   .mm-link.active { color: var(--gold); }
+  /* Native list-row press feedback (background flash, not scale). */
+  .mm-link:active,
+  .mm-city:active {
+    background: var(--fill-hover);
+  }
   .mm-link:last-child { border-bottom: 0; }
   .mm-all { color: var(--gold); font-size: 14px; letter-spacing: 1px; text-transform: uppercase; padding-top: 18px; }
 
   .mm-product { font-size: 17px; }
   .mm-product-pill {
-    font-size: 10px;
+    font-size: 10.5px;
     letter-spacing: 1px;
     text-transform: uppercase;
     font-weight: 600;
