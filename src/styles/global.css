@@ -317,13 +317,17 @@ html[data-theme-switching]::view-transition-new(root) {
   transform: translateX(4px);
 }
 
-/* ── Pressable — touch feedback for cards (hover lifts are lost on
-   coarse pointers; a press scale keeps mobile tactile) ──────────── */
-.pressable {
-  transition: transform var(--dur-fast) var(--ease-spring);
-}
-.pressable:active {
-  transform: scale(0.98);
+/* ── Pressable — touch feedback for floating cards ─────────────── */
+/* Coarse-pointer only: hover lifts are invisible on touch and the
+   pointer glow is coarse-disabled, so cards need a press response.
+   Scoped to (pointer: coarse) so desktop hover/click behaviour is
+   untouched, and no `transition` is declared at rest — cards keep
+   their own multi-property transition shorthands un-clobbered. */
+@media (pointer: coarse) {
+  .pressable:active {
+    transform: scale(0.98);
+    transition: transform var(--dur-fast) var(--ease-spring);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

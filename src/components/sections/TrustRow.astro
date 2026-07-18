@@ -134,7 +134,8 @@ const cards = [
     text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
   }
 
-  @media (max-width: 860px) {
+  /* Tablets keep 3-across (cards ~230px at 768 read fine); phones 1-col. */
+  @media (max-width: 767px) {
     .trust-row { grid-template-columns: 1fr; }
   }
 </style>

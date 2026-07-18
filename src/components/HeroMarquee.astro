@@ -30,7 +30,7 @@ const tiles = [
     </div>
     <div class="marquee-row reveal-stagger" role="list" style="--stagger-step: 50ms">
       {tiles.map((t) => (
-        <a class="marquee-tile" href="/products/" aria-label={`Open product catalogue — context photo: ${t.alt}`} role="listitem">
+        <a class="marquee-tile pressable" href="/products/" aria-label={`Open product catalogue — context photo: ${t.alt}`} role="listitem">
           <ImageBlock slug={t.slug} alt={t.alt} aspect="1 / 1" widths="(min-width:1024px) 12vw, 30vw" />
         </a>
       ))}
@@ -58,6 +58,9 @@ const tiles = [
     color: var(--gold);
     font-weight: 600;
     font-size: 13.5px;
+    /* 44px tap target, layout unchanged (isolated standalone link) */
+    padding-block: 11px;
+    margin-block: -11px;
     padding: 4px 0;
     transition: gap var(--dur-base) var(--ease-out);
   }

@@ -141,6 +141,10 @@ const centreLinks = headerNav.filter((l) => l.desktop !== false);
   .nav-brand {
     display: inline-flex;
     align-items: center;
+    /* Extend the tap target into the bar's height without moving layout
+       (the nav-inner grid centres it either way). */
+    padding-block: 8px;
+    margin-block: -8px;
     gap: 10px;
   }
   .nav-brand .brand-name {
