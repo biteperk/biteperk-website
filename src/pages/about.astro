@@ -276,7 +276,13 @@ const aboutJsonLd = {
     color: var(--text);
     font-size: 15px;
   }
-  .about-find-row a { color: var(--gold); font-weight: 600; }
+  .about-find-row a {
+    color: var(--gold);
+    font-weight: 600;
+    display: inline-block;
+    padding-block: 10px;
+    margin-block: -10px;
+  }
   .about-find-row a:hover { text-decoration: underline; text-underline-offset: 3px; }
   .about-find-map { margin-top: 26px; }
   .about-find-photo :global(.image-block) {
@@ -285,7 +291,7 @@ const aboutJsonLd = {
     box-shadow: var(--shadow-card);
   }
 
-  @media (max-width: 900px) {
+  @media (max-width: 980px) {
     .about-story-grid,
     .about-find-grid { grid-template-columns: 1fr; gap: 44px; }
     .about-hero { padding-top: 130px; }

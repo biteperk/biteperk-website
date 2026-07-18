@@ -303,7 +303,7 @@ const [headStart, headAccent] = (() => {
         <ul class="city-guides-grid reveal-stagger">
           {cityGuides.map((post) => (
             <li>
-              <a class="city-guide" href={`/blog/${post.id}/`} data-glow>
+              <a class="city-guide pressable" href={`/blog/${post.id}/`} data-glow>
                 <div class="city-guide-meta">
                   <time datetime={post.data.publishDate.toISOString().slice(0, 10)}>
                     {fmtGuideDate(post.data.publishDate)}
@@ -587,7 +587,7 @@ const [headStart, headAccent] = (() => {
     border-radius: var(--r-pill);
     border: 1px solid var(--line);
     color: var(--mist-2);
-    font-size: 10px;
+    font-size: 10.5px;
     letter-spacing: 1px;
   }
   .city-guide-title {
@@ -626,6 +626,13 @@ const [headStart, headAccent] = (() => {
   }
   .city-band-media :global(.image-block) {
     border-radius: 0;
+  }
+  /* On phones the 16/6 band is a ~143px letterbox — give the skyline
+     real height. !important overrides ImageBlock's inline aspect-ratio. */
+  @media (max-width: 640px) {
+    .city-band-media :global(.image-block) {
+      aspect-ratio: 3 / 2 !important;
+    }
   }
   .city-band-scrim {
     position: absolute;

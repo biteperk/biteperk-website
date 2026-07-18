@@ -25,7 +25,7 @@ import { publishedCities, cityUrl } from "@/data/cities";
     <ul class="citystrip-list reveal-stagger">
       {publishedCities.map((c) => (
         <li>
-          <a class="citystrip-card" href={cityUrl(c)}>
+          <a class="citystrip-card pressable" href={cityUrl(c)}>
             <div class="citystrip-photo">
               <ImageBlock
                 slug={c.cityscapeImage}
@@ -185,7 +185,7 @@ import { publishedCities, cityUrl } from "@/data/cities";
   @media (max-width: 560px) {
     .citystrip-list { grid-template-columns: 1fr 1fr; gap: 10px; }
     .citystrip-name { font-size: 15px; gap: 6px; }
-    .citystrip-state { font-size: 9.5px; letter-spacing: 1.2px; }
+    .citystrip-state { font-size: 10.5px; letter-spacing: 1.2px; }
     .citystrip-label { left: 12px; right: 10px; bottom: 10px; }
     .citystrip-arrow { width: 28px; height: 28px; font-size: 13px; }
   }
