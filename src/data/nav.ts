@@ -43,7 +43,11 @@ export const headerNav: ReadonlyArray<HeaderNavLink> = [
   { label: "How it works", href: "/technology/" },
   { label: "Guides", href: "/blog/" },
   { label: "About", href: "/about/" },
-  { label: "Contact", href: "/contact/" },
+  // Desktop-hidden: Contact is already reachable from the visible phone
+  // number, the "Book a demo" CTA (→ /contact/), and the footer. Keeping it
+  // out of the centre cluster lets the remaining links + the phone number
+  // breathe. Still shown in the mobile menu.
+  { label: "Contact", href: "/contact/", desktop: false },
 ];
 
 /** Shared active-state rule for header links (used by Nav + MobileMenu). */
