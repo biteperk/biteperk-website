@@ -26,7 +26,7 @@ const ambientBySlug: Record<string, { slug: string; alt: string }> = {
 // Per-feature illustration mapping. Caps the family at six icons.
 const featureIcon = (productSlug: string, idx: number) => {
   const map: Record<string, Array<"phone-wave" | "calendar-tick" | "pin-au" | "shield" | "ticket" | "clock-247">> = {
-    vocotable: ["phone-wave", "calendar-tick", "pin-au", "shield"],
+    vocotable: ["phone-wave", "calendar-tick", "pin-au", "shield", "phone-wave", "calendar-tick", "ticket", "shield"],
     vocoorder: ["phone-wave", "ticket", "clock-247"],
     vococoncierge: ["phone-wave", "calendar-tick", "shield"],
     vocodrive: ["clock-247", "pin-au", "ticket"],
