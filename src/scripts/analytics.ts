@@ -5,18 +5,22 @@
  * Cloud Function forwards to Plausible — no third-party request, CSP
  * stays connect-src 'self', no cookies, no personal data.
  *
+ * CONSENT: strict opt-in. Nothing is sent until the visitor grants the
+ * Analytics category (see src/scripts/consent.ts). We listen for the
+ * `bp:consent-change` event and read the stored choice on load; until
+ * `analytics === true` every send() is a no-op.
+ *
  * Goals fire from:
- *   - clicks on any element with [data-cta] (the attribute value is the
- *     goal name, e.g. data-cta="book-demo")
+ *   - clicks on any element with [data-cta] (value = goal name)
  *   - `document.dispatchEvent(new CustomEvent("bp:event", { detail:
  *     { name: "form-success" } }))` for programmatic moments
+ * Legacy names are normalised to the canonical taxonomy (GOAL_ALIASES).
  *
- * READY flag: flip to true once the Plausible site for biteperk.com.au
- * exists (account + domain registered). Until then this module sends
- * nothing at all.
+ * READY: `plausibleReady` in src/data/consent.ts — flip true once the
+ * Plausible site for biteperk.com.au exists.
  */
+import { plausibleReady, CONSENT_KEY, CONSENT_VERSION, GOAL_ALIASES } from "@/data/consent";
 
-const READY = false; // ← flip to true when the Plausible account is live
 const DOMAIN = "biteperk.com.au";
 
 function onSite(): boolean {
@@ -24,11 +28,29 @@ function onSite(): boolean {
   return h === DOMAIN || h === `www.${DOMAIN}`;
 }
 
+/** Read the analytics-consent flag straight from storage (authoritative). */
+function analyticsConsented(): boolean {
+  try {
+    const raw = localStorage.getItem(CONSENT_KEY);
+    if (!raw) return false;
+    const c = JSON.parse(raw);
+    return !!c && c.v === CONSENT_VERSION && c.analytics === true;
+  } catch {
+    return false;
+  }
+}
+
+let analyticsOk = analyticsConsented();
+
+function normalise(name: string): string {
+  return GOAL_ALIASES[name] ?? name;
+}
+
 function send(name: string, props?: Record<string, string>): void {
-  if (!READY || !onSite()) return;
+  if (!plausibleReady || !analyticsOk || !onSite()) return;
   try {
     const body = JSON.stringify({
-      n: name,
+      n: normalise(name),
       u: window.location.href,
       d: DOMAIN,
       r: document.referrer || null,
@@ -62,6 +84,18 @@ document.addEventListener("click", (e) => {
 document.addEventListener("bp:event", (e) => {
   const name = (e as CustomEvent<{ name?: string }>).detail?.name;
   if (name) send(name);
+});
+
+// React to consent: on grant, register the current page so the first
+// accepted view isn't lost; on withdrawal, silently stop sending.
+document.addEventListener("bp:consent-change", (e) => {
+  const granted = (e as CustomEvent<{ analytics?: boolean }>).detail?.analytics === true;
+  const wasOff = !analyticsOk;
+  analyticsOk = granted;
+  if (granted && wasOff) {
+    lastUrl = "";
+    pageview();
+  }
 });
 
 // Fires on initial load and after every View Transition navigation.

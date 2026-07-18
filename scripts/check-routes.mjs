@@ -38,6 +38,7 @@ const expected = [
   ...cities.filter((c) => c.published).map((c) => `${c.slug}/index.html`),
   "legal/privacy/index.html",
   "legal/terms/index.html",
+  "legal/cookies/index.html",
   "404.html",
   "sitemap-index.xml",
   "sitemap-0.xml",

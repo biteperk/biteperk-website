@@ -75,6 +75,11 @@ exports.contactForm = onRequest(
     let product = str(b.product, 60);
     if (!PRODUCT_SLUGS.has(product)) product = "";
 
+    // First-touch campaign attribution (JSON string from the form's hidden
+    // field). Stored verbatim (capped) so we can see which campaign drove
+    // each lead; never parsed/executed, purely a record on the enquiry.
+    const attribution = str(b.attribution, 1000);
+
     if (!name || !EMAIL_RE.test(email) || !message) {
       return finish(res, false, 400, "Please add your name, a valid email, and a message.", wantsJson);
     }
@@ -87,6 +92,7 @@ exports.contactForm = onRequest(
         venue: venue || null,
         product: product || null,
         message,
+        attribution: attribution || null,
         createdAt: FieldValue.serverTimestamp(),
         userAgent: str(req.get("user-agent"), 500) || null,
         ip: str((req.get("x-forwarded-for") || "").split(",")[0], 60) || null,
