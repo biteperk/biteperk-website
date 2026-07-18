@@ -1,0 +1,204 @@
+---
+import Base from "@/layouts/Base.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import { site } from "@/data/site";
+import { categories, plausibleReady, linkedInPartnerId } from "@/data/consent";
+
+const title = "Cookie policy — Biteperk";
+const description =
+  "What Biteperk stores in your browser and why. Strict opt-in: nothing non-essential runs until you accept. Change your choice any time.";
+
+const analyticsLive = plausibleReady;
+const marketingLive = linkedInPartnerId !== null;
+
+const necessary = categories.find((c) => c.id === "necessary")!;
+const analytics = categories.find((c) => c.id === "analytics")!;
+const marketing = categories.find((c) => c.id === "marketing")!;
+---
+
+<Base title={title} description={description} path="/legal/cookies/">
+  <article class="legal">
+    <div class="wrap">
+      <Breadcrumbs items={[
+        { label: "Home", href: "/" },
+        { label: "Legal", href: "/legal/privacy/" },
+        { label: "Cookies" },
+      ]} />
+      <header class="legal-head">
+        <h1>Cookie policy</h1>
+        <p class="legal-updated">Last updated <time datetime={site.legalLastUpdated}>{site.legalLastUpdated}</time></p>
+      </header>
+
+      <section>
+        <h2>The short version</h2>
+        <p>
+          We keep tracking to a minimum and we ask first. Nothing non-essential runs until you choose
+          <strong>Accept</strong>, "Reject all" is one click, and you can change your mind any time from
+          <button type="button" class="legal-inline-btn" data-cookie-settings>Cookie settings</button>
+          (also linked in the footer of every page). Our analytics are cookieless by design, and marketing
+          cookies only ever load if you switch them on.
+        </p>
+      </section>
+
+      <section>
+        <h2>{necessary.title}</h2>
+        <p>{necessary.body}</p>
+        <p>
+          These are stored with your browser's <strong>localStorage</strong> — technically not cookies, never
+          sent to a server, and they hold no personal data:
+        </p>
+        <table class="legal-table">
+          <thead><tr><th>Name</th><th>Purpose</th><th>Type</th></tr></thead>
+          <tbody>
+            <tr><td><code>bp-consent</code></td><td>Remembers your cookie choice so we don't ask twice.</td><td>localStorage</td></tr>
+            <tr><td><code>bp-theme</code></td><td>Remembers light or dark mode.</td><td>localStorage</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>{analytics.title} <span class="legal-status">{analyticsLive ? "Active — opt-in" : "Configured, not yet live"}</span></h2>
+        <p>{analytics.body}</p>
+        <p>
+          We use <strong>Plausible</strong>, a privacy-friendly analytics tool. It is <strong>cookieless</strong>
+          — it sets no cookies and builds no cross-site profile of you — and we run it first-party through our
+          own server. It only records aggregate visits once you opt in to Analytics.
+        </p>
+      </section>
+
+      <section>
+        <h2>{marketing.title} <span class="legal-status">{marketingLive ? "Active — opt-in" : "Configured, not yet live"}</span></h2>
+        <p>{marketing.body}</p>
+        <p>
+          When enabled and accepted, the <strong>LinkedIn Insight Tag</strong> sets third-party cookies to
+          measure our LinkedIn advertising and let us reach venues who've visited. These may include:
+        </p>
+        <table class="legal-table">
+          <thead><tr><th>Name</th><th>Set by</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><code>li_gc</code>, <code>lidc</code></td><td>LinkedIn</td><td>Consent + routing.</td></tr>
+            <tr><td><code>bcookie</code>, <code>bscookie</code></td><td>LinkedIn</td><td>Browser identifier for ad measurement.</td></tr>
+            <tr><td><code>UserMatchHistory</code>, <code>AnalyticsSyncHistory</code></td><td>LinkedIn</td><td>Ad audience sync.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          If you withdraw marketing consent we stop loading the tag immediately and clear the cookies we can
+          reach. Some LinkedIn cookies are set on LinkedIn's own domains and can only be cleared by LinkedIn or
+          from your browser settings — they expire on LinkedIn's schedule.
+        </p>
+      </section>
+
+      <section>
+        <h2>Changing your mind</h2>
+        <p>
+          Open <button type="button" class="legal-inline-btn" data-cookie-settings>Cookie settings</button> any
+          time to update your choice, or clear this site's data in your browser to reset it. See our
+          <a href="/legal/privacy/">Privacy Policy</a> for how we handle information more broadly.
+        </p>
+      </section>
+
+      <section>
+        <h2>Questions</h2>
+        <p>
+          Email <a href={site.email.href}>{site.email.display}</a> or call
+          <a href={site.phone.href}>{site.phone.display}</a> ({site.hours.display}).
+        </p>
+      </section>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .legal {
+    padding: clamp(120px, 14vw, 180px) 0 var(--space-section);
+    background: var(--ink-0);
+  }
+  .legal .wrap { max-width: 720px; }
+  .legal-head { margin-top: 32px; }
+  .legal h1 {
+    font-size: clamp(40px, 5vw, 64px);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    color: var(--white);
+  }
+  .legal-updated {
+    margin-top: 14px;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--mist);
+    font-weight: 600;
+  }
+  .legal section { margin-top: 48px; }
+  .legal h2 {
+    font-size: clamp(20px, 2vw, 24px);
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.01em;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .legal-status {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--gold);
+    border: 1px solid var(--line-gold);
+    border-radius: var(--r-pill);
+    padding: 3px 10px;
+  }
+  .legal p {
+    color: var(--text);
+    line-height: 1.7;
+    margin-bottom: 14px;
+    max-width: 70ch;
+  }
+  .legal a {
+    color: var(--gold);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .legal a:hover { text-decoration-thickness: 2px; }
+  .legal-inline-btn {
+    background: none;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    color: var(--gold);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+  .legal-inline-btn:hover { text-decoration-thickness: 2px; }
+  .legal-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0 14px;
+    font-size: 13.5px;
+  }
+  .legal-table th,
+  .legal-table td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  .legal-table th {
+    color: var(--white);
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .legal-table td { color: var(--text); }
+  .legal-table code {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--gold);
+  }
+</style>

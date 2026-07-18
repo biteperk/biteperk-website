@@ -1,0 +1,350 @@
+---
+/**
+ * Cookie consent — bottom bar + settings modal.
+ *
+ * Strict opt-in, no dark patterns: "Reject all" is a real button of equal
+ * weight to "Accept all". Behaviour + focus-trap live in
+ * src/scripts/consent.ts (mirrors mobile-menu.ts). Theme-aware via tokens.
+ *
+ * Visibility: rendered on every page but shown ONLY when
+ *   html[data-consent="unset"]  AND  a tracker is armed (data-armed="true")
+ * so a tracker-free site shows no notice. `consent.ts` also honours
+ * ?cookie-preview=1 to preview it while dormant.
+ *
+ * Mounted with transition:persist in Base.astro so its state never
+ * re-animates on View-Transition navigations.
+ */
+import { categories, TRACKING_ARMED } from "@/data/consent";
+
+const toggleable = categories.filter((c) => !c.locked);
+const necessary = categories.find((c) => c.locked)!;
+---
+
+<aside class="consent-root" data-armed={TRACKING_ARMED ? "true" : "false"}>
+  {/* ── Bar ─────────────────────────────────────────────────────────── */}
+  <div
+    class="consent-bar"
+    data-consent-bar
+    role="region"
+    aria-label="Cookie consent"
+    hidden
+  >
+    <div class="consent-bar-inner">
+      <p class="consent-copy">
+        We use privacy-first, cookieless analytics and — only if you allow it —
+        LinkedIn marketing, to improve the site and reach venues like yours.
+        Nothing runs until you choose. <a href="/legal/cookies/">Cookie Policy</a>.
+      </p>
+      <div class="consent-actions">
+        <button type="button" class="consent-btn-text" data-consent-settings>
+          Cookie settings
+        </button>
+        <button type="button" class="btn-ghost consent-btn" data-consent-reject>
+          Reject all
+        </button>
+        <button type="button" class="btn consent-btn" data-consent-accept>
+          Accept all
+        </button>
+      </div>
+    </div>
+  </div>
+
+  {/* ── Settings modal ──────────────────────────────────────────────── */}
+  <div
+    class="consent-modal"
+    data-consent-modal
+    hidden
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="consent-modal-title"
+  >
+    <div class="consent-backdrop" data-consent-backdrop aria-hidden="true"></div>
+    <div class="consent-panel">
+      <h2 id="consent-modal-title">Cookie settings</h2>
+      <p class="consent-panel-lede">
+        Choose what you're comfortable with. You can change this any time from
+        <strong>Cookie settings</strong> in the footer.
+      </p>
+
+      <ul class="consent-cats">
+        {/* Necessary — always on */}
+        <li class="consent-cat">
+          <div class="consent-cat-copy">
+            <h3 id="cat-necessary">{necessary.title}</h3>
+            <p id="cat-necessary-desc">{necessary.body}</p>
+          </div>
+          <div class="consent-switch consent-switch-locked">
+            <input
+              type="checkbox"
+              class="consent-switch-box"
+              checked
+              disabled
+              aria-labelledby="cat-necessary"
+              aria-describedby="cat-necessary-desc"
+            />
+            <span class="consent-switch-always">Always on</span>
+          </div>
+        </li>
+
+        {toggleable.map((c) => (
+          <li class="consent-cat">
+            <div class="consent-cat-copy">
+              <h3 id={`cat-${c.id}`}>{c.title}</h3>
+              <p id={`cat-${c.id}-desc`}>{c.body}</p>
+            </div>
+            <input
+              type="checkbox"
+              class="consent-switch-box"
+              data-consent-toggle={c.id}
+              aria-labelledby={`cat-${c.id}`}
+              aria-describedby={`cat-${c.id}-desc`}
+            />
+          </li>
+        ))}
+      </ul>
+
+      <div class="consent-modal-actions">
+        <span class="consent-saved" data-consent-saved role="status" aria-live="polite">
+          Preferences saved ✓
+        </span>
+        <button type="button" class="btn-ghost consent-btn" data-consent-close>Cancel</button>
+        <button type="button" class="btn consent-btn" data-consent-save>Save choices</button>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<style>
+  /* Visibility model: the JS-toggled `hidden` attribute is the master
+     switch (always wins, !important). When NOT hidden, the bar shows only
+     if a choice is still needed AND a tracker is armed — or in preview
+     (?cookie-preview=1 adds html.consent-preview via consent.ts). The show
+     rules are deliberately non-!important so `[hidden]` can always dismiss. */
+  .consent-root { display: contents; }
+  .consent-bar { display: none; }
+  :global(html[data-consent="unset"]) .consent-root[data-armed="true"] .consent-bar {
+    display: block;
+  }
+  :global(html.consent-preview) .consent-bar { display: block; }
+  .consent-bar[hidden] { display: none !important; }
+
+  /* ── Bar ─────────────────────────────────────────────────────────── */
+  .consent-bar {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: var(--z-overlay);
+    background: var(--ink-1);
+    border-top: 1px solid var(--line-strong);
+    box-shadow: 0 -12px 40px -20px rgba(0, 0, 0, 0.6);
+    padding: 16px 0 calc(16px + env(safe-area-inset-bottom));
+  }
+  .consent-bar[hidden] { display: none !important; }
+  @media (prefers-reduced-motion: no-preference) {
+    .consent-bar.is-in { animation: consent-slide var(--dur-base) var(--ease-out) backwards; }
+  }
+  @keyframes consent-slide {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .consent-bar-inner {
+    width: 100%;
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding-inline: var(--container-pad);
+    display: flex;
+    align-items: center;
+    gap: clamp(16px, 3vw, 40px);
+  }
+  .consent-copy {
+    color: var(--text);
+    font-size: 13.5px;
+    line-height: 1.6;
+    margin: 0;
+    max-width: 62ch;
+  }
+  .consent-copy a {
+    color: var(--gold);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .consent-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+  .consent-btn { min-height: 44px; }
+  .consent-btn-text {
+    background: none;
+    border: 0;
+    color: var(--mist-2);
+    font-size: 13.5px;
+    font-weight: 600;
+    padding: 11px 6px;
+    min-height: 44px;
+    white-space: nowrap;
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  .consent-btn-text:hover,
+  .consent-btn-text:focus-visible { color: var(--white); }
+
+  @media (max-width: 860px) {
+    .consent-bar-inner { flex-direction: column; align-items: stretch; gap: 14px; }
+    .consent-actions { margin-left: 0; flex-wrap: wrap; }
+    .consent-actions .consent-btn { flex: 1 1 auto; justify-content: center; }
+    .consent-btn-text { order: 3; flex-basis: 100%; }
+  }
+
+  /* ── Modal ───────────────────────────────────────────────────────── */
+  .consent-modal { position: fixed; inset: 0; z-index: var(--z-modal); }
+  .consent-modal[hidden] { display: none; }
+  .consent-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 11, 13, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    opacity: 0;
+    transition: opacity var(--dur-base) var(--ease-out);
+  }
+  .consent-modal.is-open .consent-backdrop { opacity: 1; }
+  .consent-panel {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -46%);
+    width: min(560px, calc(100vw - 32px));
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+    background: var(--ink-1);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow-card);
+    padding: clamp(24px, 4vw, 34px);
+    opacity: 0;
+    transition:
+      opacity var(--dur-base) var(--ease-out),
+      transform var(--dur-base) var(--ease-spring);
+  }
+  .consent-modal.is-open .consent-panel { opacity: 1; transform: translate(-50%, -50%); }
+  @media (prefers-reduced-motion: reduce) {
+    .consent-backdrop,
+    .consent-panel { transition: none; }
+  }
+  .consent-panel h2 {
+    font-size: clamp(20px, 2.5vw, 24px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--white);
+    margin: 0;
+  }
+  .consent-panel-lede {
+    margin: 10px 0 22px;
+    color: var(--mist);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .consent-panel-lede strong { color: var(--text); }
+
+  .consent-cats { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+  .consent-cat {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--ink-2);
+  }
+  .consent-cat-copy { flex: 1; min-width: 0; }
+  .consent-cat h3 {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--white);
+    margin: 0;
+  }
+  .consent-cat p {
+    margin: 6px 0 0;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--mist);
+  }
+
+  /* Accessible switch: the native checkbox IS the visible control
+     (appearance:none) — one real, focusable, clickable element, so
+     keyboard, pointer and screen readers all work on every browser. */
+  .consent-switch {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .consent-switch-box {
+    appearance: none;
+    -webkit-appearance: none;
+    flex-shrink: 0;
+    width: 46px;
+    height: 26px;
+    margin: 0;
+    border-radius: var(--r-pill);
+    background: var(--ink-3);
+    border: 1px solid var(--line-strong);
+    position: relative;
+    cursor: pointer;
+    transition: background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+  }
+  .consent-switch-box::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--mist-2);
+    transition: transform var(--dur-fast) var(--ease-spring), background var(--dur-fast) var(--ease-out);
+  }
+  .consent-switch-box:checked {
+    background: var(--gold-fill);
+    border-color: var(--gold-fill);
+  }
+  .consent-switch-box:checked::after {
+    transform: translateX(20px);
+    background: var(--gold-fill-text);
+  }
+  .consent-switch-box:focus-visible { box-shadow: var(--ring-focus); }
+  .consent-switch-box:disabled { cursor: default; }
+  @media (prefers-reduced-motion: reduce) {
+    .consent-switch-box::after { transition: none; }
+  }
+  .consent-switch-always {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--mist);
+    white-space: nowrap;
+  }
+
+  .consent-modal-actions {
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: flex-end;
+  }
+  .consent-modal-actions .consent-btn { min-height: 44px; }
+  .consent-saved {
+    margin-right: auto;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--success);
+    opacity: 0;
+    transform: translateY(2px);
+    transition: opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+  }
+  .consent-saved.is-shown { opacity: 1; transform: none; }
+  @media (max-width: 480px) {
+    .consent-modal-actions { flex-wrap: wrap; }
+    .consent-modal-actions .consent-btn { flex: 1 1 auto; justify-content: center; }
+  }
+</style>
