@@ -262,9 +262,12 @@ const description =
     gap: 64px;
     align-items: start;
   }
-  /* Unified with the sitewide 980 split-grid collapse. */
+  /* Unified with the sitewide 980 split-grid collapse. When stacked, the
+     form leads (right after the image band) so mobile visitors hit the
+     primary action first; the Call us / Email / Find us details follow. */
   @media (max-width: 980px) {
     .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+    .contact-form { order: -1; }
   }
 
   .contact-side { display: grid; gap: 32px; }
