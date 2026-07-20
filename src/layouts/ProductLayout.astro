@@ -48,6 +48,12 @@ const productJsonLd = {
   // This capability page is an edition of the one Voco product.
   isPartOf: { "@id": VOCO_ID },
   brand: { "@type": "Organization", name: site.name },
+  // Cross-link to the running app (same entity, its live location) so the
+  // marketing page and the product subdomain resolve to one entity. Only
+  // for capabilities that actually have an app to launch.
+  ...(product.externalUrl
+    ? { url: product.externalUrl, sameAs: [product.externalUrl] }
+    : {}),
   ...(product.pricing && product.pricing.tiers.length > 0 && (() => {
     const priced = product.pricing.tiers
       .map((t) => Number(t.amount.replace(/[^0-9.]/g, "")))
@@ -120,7 +126,12 @@ const faqJsonLd = product.faq && product.faq.length > 0
           target={product.hero.primaryCta.href.startsWith("http") ? "_blank" : undefined}
         >{product.hero.primaryCta.label}</a>
         {product.hero.secondaryCta && (
-          <a class="btn-ghost" href={product.hero.secondaryCta.href}>
+          <a
+            class="btn-ghost"
+            href={product.hero.secondaryCta.href}
+            rel={product.hero.secondaryCta.href.startsWith("http") ? "noopener" : undefined}
+            target={product.hero.secondaryCta.href.startsWith("http") ? "_blank" : undefined}
+          >
             {product.hero.secondaryCta.label}
           </a>
         )}
