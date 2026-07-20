@@ -137,6 +137,12 @@ const centreLinks = headerNav.filter((l) => l.desktop !== false);
     height: var(--nav-h);
     gap: 20px;
     min-width: 0;
+    /* The bar carries more than the article column (6 links + mega-menu +
+       theme toggle + the always-on phone number + Sign in + Book a demo),
+       so it needs more room than --container-max (1180). Widen it here or
+       the centre cluster overflows its 1fr track and — being centred —
+       spills left over the wordmark. */
+    max-width: 1300px;
   }
   /* Bar compresses slightly once scrolled — fixed position, so no CLS. */
   .nav.scrolled .nav-inner {
