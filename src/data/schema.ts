@@ -168,6 +168,9 @@ export function buildVocoApplication(opts: {
     "@id": VOCO_ID,
     name: "Voco",
     url: `${site.url}/products/`,
+    // The live app runs on the product subdomain — declare it as the same
+    // entity's other home so the two properties consolidate into one.
+    sameAs: [site.vocotableUrl],
     description: opts.description,
     applicationCategory: "BusinessApplication",
     operatingSystem: "Web, Phone",
