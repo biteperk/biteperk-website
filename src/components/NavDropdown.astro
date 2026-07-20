@@ -143,17 +143,17 @@ const onProducts = pathname === "/products" || pathname.startsWith("/products/")
       var(--shadow-card),
       0 0 0 1px color-mix(in srgb, var(--gold-fill) 4%, transparent);
     opacity: 0;
-    transform: translate(-50%, -8px);
+    transform: translateY(-8px);
     transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out);
   }
   .megamenu.is-open .megamenu-panel {
     opacity: 1;
-    transform: translate(-50%, 0);
+    transform: translateY(0);
   }
   @media (prefers-reduced-motion: reduce) {
     .megamenu-panel {
       transition: none;
-      transform: translate(-50%, 0);
+      transform: translateY(0);
     }
   }
 
