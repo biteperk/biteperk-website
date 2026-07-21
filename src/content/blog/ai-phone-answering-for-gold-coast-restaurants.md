@@ -45,7 +45,7 @@ For a caller who's deciding in the moment, the second one is the only one that a
 
 ## What it costs
 
-Mind the pricing model — per-call fees on a tourist-volume venue are exactly the wrong shape. [VocoTable](/products/vocotable/) starts at a flat **$80/month**, no per-call or per-cover charges, scaling up for busier venues and groups.
+Mind the pricing model — per-call fees on a tourist-volume venue are exactly the wrong shape. [PerkTable](/products/perktable/) starts at a flat **$80/month**, no per-call or per-cover charges, scaling up for busier venues and groups.
 
 ## Getting started
 

@@ -1,6 +1,11 @@
 # BitePerk visit pack — print guide
 
-Everything you need to print before walking into venues. Two routes: **home/office printer** (today) or **print shop** (nicer, for volume). Last updated 2026-07-18.
+Everything you need to print before walking into venues. Two routes: **home/office printer** (today) or **print shop** (nicer, for volume). Last updated 2026-07-20.
+
+## The two phone numbers (deliberate — don't "fix")
+
+- **(02) 7501 1140** — Bella's live **demo line**. Print-only: it goes on the demo card, brochures, deck, and business-card back so venue owners can hear her. **Never publish it on the website or directories** (spam risk).
+- **(02) 5504 1140** — the BitePerk **office line** (Sam). This is the canonical NAP number used on the website, GBP, and all directory listings.
 
 ---
 
@@ -46,6 +51,22 @@ Paper at home: the heaviest your printer takes (160–200gsm ideal). Plain 80gsm
 
 **Rules of use:** only for venues actually running VocoTable — it's a badge, not an ad. Place it yourself during onboarding (door glass at eye level + one at the till). The QR is tagged `utm_source=venue-sticker` so you can count scans in your analytics.
 
+### 6. Business cards
+
+| Route | File | Settings |
+|---|---|---|
+| **Home/office** | `BitePerk_BusinessCards_HomePrint_A4_10up.pdf` | A4 portrait, **double-sided, flip on LONG edge**, colour, 100%. Heaviest stock your printer takes. Cut on the dashed guides → 10 cards per sheet. |
+| **Print shop** | `BitePerk_BusinessCard_90x54_PRINT.pdf` | "Standard 90×54mm business cards, double-sided, 3mm bleed included, trim to 90×54. 350gsm matte, 100 copies." |
+
+Front: your contact (office line + sam@). Back: the hook — Bella's demo line + QR (tagged `utm_source=business-card`).
+
+### 7. Follow-up sheet (leave with venues that say YES)
+
+- File: `BitePerk_Followup_NextSteps_A4.pdf` — A4, portrait, single-sided, colour, 100%.
+- The "what happens next" leave-behind: 4 setup steps, what you need from them, the honest fine print, and your contact. Hand it over the moment they agree to the 15-minute setup call — it keeps the deal warm and tells them exactly what to gather (menu, hours, booking rules).
+- Print 5–10. QR tagged `utm_source=followup-sheet`.
+- `build_pack_extras.py` in this folder regenerates the business cards, follow-up sheet, demo card, and all three sticker files (`python3 build_pack_extras.py`).
+
 ## The visit pack (carry checklist)
 
 - [ ] 10–15 × brochures
@@ -53,7 +74,8 @@ Paper at home: the heaviest your printer takes (160–200gsm ideal). Plain 80gsm
 - [ ] 1 × pitch script (folded, internal)
 - [ ] Tablet/phone with `Deck_Print.pdf` loaded (airplane-mode-proof: save it locally)
 - [ ] Your phone charged — the close is them calling **(02) 7501 1140**
-- [ ] Business cards if you have them; brochure works as one if not
+- [ ] A stack of business cards (10-up sheet above)
+- [ ] 5 × follow-up sheets — for the venues that say yes on the spot
 
 ## Print-shop one-liner (copy-paste)
 

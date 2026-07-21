@@ -34,12 +34,12 @@ Generated 2026-07-16. Source of truth: `docs/directory-citations.md`. **Rule #1:
 
 **Short description (≤160 chars)** — for tight fields:
 ```
-Biteperk builds voice AI for Australian hospitality. VocoTable answers every restaurant call in a warm Australian voice and books the table, 24/7.
+Biteperk builds voice AI for Australian hospitality. PerkTable answers every restaurant call in a warm Australian voice and books the table, 24/7.
 ```
 
 **Medium description (~300 chars)** — default:
 ```
-Biteperk is a Sydney-based voice/AI company for hospitality. Our flagship, VocoTable, is an AI phone host that answers every restaurant call in a warm Australian voice, checks live availability and books the table 24/7 — from $80/month, no per-call fees. Built, hosted and supported in Sydney.
+Biteperk is a Sydney-based voice/AI company for hospitality. Our flagship, PerkTable, is an AI phone host that answers every restaurant call in a warm Australian voice, checks live availability and books the table 24/7 — from $80/month, no per-call fees. Built, hosted and supported in Sydney.
 ```
 
 **Tagline / one-liner** (where a slogan field exists):
@@ -76,7 +76,7 @@ Free; good for B2B; decent backlink.
 - Category: `Business-to-business service` (primary here) + `Software company`
 - Keywords field (if present): `restaurant phone answering, AI receptionist, hospitality booking, voice AI, Sydney`
 - Description: **Medium**
-- Link target: `https://biteperk.com.au/products/vocotable/`
+- Link target: `https://biteperk.com.au/products/perktable/`
 
 ### 4. Yelp Australia — biz.yelp.com.au
 Free; feeds Apple Maps + others.

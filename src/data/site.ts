@@ -16,7 +16,7 @@ export type SiteData = {
   readonly description: string;
   readonly phone: { readonly display: string; readonly href: string };
   readonly email: { readonly display: string; readonly href: string };
-  readonly vocotableUrl: string;
+  readonly perktableUrl: string;
   readonly abn: string;
   readonly address: {
     /** Street line incl. unit/level, e.g. "Level 1, 477 Pitt Street". */
@@ -51,10 +51,14 @@ export const site: SiteData = {
   name: "Biteperk",
   url: "https://biteperk.com.au",
   description:
-    "Biteperk builds voice and AI tools for hospitality — starting with VocoTable, the AI phone host that answers every restaurant call in a warm Australian voice. Made in Sydney.",
+    "Biteperk builds voice and AI tools for hospitality — starting with PerkTable, the AI phone host that answers every restaurant call in a warm Australian voice. Made in Sydney.",
   phone: { display: "+61 2 5504 1140", href: "tel:+61255041140" },
   email: { display: "hello@biteperk.com.au", href: "mailto:hello@biteperk.com.au" },
-  vocotableUrl: "https://vocotable.biteperk.com.au",
+  // NOTE (Perk rename, Jul 2026): the booking app still lives on the legacy
+  // `vocotable.` subdomain. Do NOT change this URL until the app + DNS are
+  // migrated to a `perktable.` subdomain (then update the lychee exclude in
+  // .github/workflows/web.yml too).
+  perktableUrl: "https://vocotable.biteperk.com.au",
   abn: "TODO",
   address: {
     street: "Level 1, 477 Pitt Street",

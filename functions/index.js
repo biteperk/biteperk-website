@@ -34,7 +34,13 @@ const SITE_URL = "https://biteperk.com.au";
 const ALLOWED_ORIGINS = ["https://biteperk.com.au", "https://www.biteperk.com.au"];
 
 // Keep in sync with src/data/products.ts (the function can't import the site's TS).
-const PRODUCT_SLUGS = new Set(["vocotable", "vocoorder", "vococoncierge", "vocodrive", "general", ""]);
+// Legacy voco* slugs stay accepted during the Perk rename transition —
+// cached pages and old outbound links may still post them.
+const PRODUCT_SLUGS = new Set([
+  "perktable", "perkorder", "perkconcierge", "perkdrive",
+  "vocotable", "vocoorder", "vococoncierge", "vocodrive",
+  "general", "",
+]);
 
 const str = (v, max) => (typeof v === "string" ? v : "").trim().slice(0, max); // coerce + cap
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

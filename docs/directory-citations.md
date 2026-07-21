@@ -30,10 +30,10 @@ LinkedIn:        https://www.linkedin.com/company/biteperk
 ```
 
 **Short description (≤160 chars):**
-> Biteperk builds voice AI for Australian hospitality. VocoTable answers every restaurant call in a warm Australian voice and books the table, 24/7.
+> Biteperk builds voice AI for Australian hospitality. PerkTable answers every restaurant call in a warm Australian voice and books the table, 24/7.
 
 **Medium description (~300 chars):**
-> Biteperk is a Sydney-based voice/AI company for hospitality. Our flagship, VocoTable, is an AI phone host that answers every restaurant call in a warm Australian voice, checks live availability and books the table 24/7 — from $80/month, no per-call fees. Built, hosted and supported in Sydney.
+> Biteperk is a Sydney-based voice/AI company for hospitality. Our flagship, PerkTable, is an AI phone host that answers every restaurant call in a warm Australian voice, checks live availability and books the table 24/7 — from $80/month, no per-call fees. Built, hosted and supported in Sydney.
 
 **Long description (~600 chars):** use the Google Business Profile description (in docs / GBP).
 
@@ -58,11 +58,11 @@ LinkedIn:        https://www.linkedin.com/company/biteperk
 | Directory | URL | Notes |
 |---|---|---|
 | Crunchbase | crunchbase.com | ⭐ Free company profile. Heavily referenced by AI + investors/press. |
-| G2 | g2.com | Software review platform; create a product listing for VocoTable. |
+| G2 | g2.com | Software review platform; create a product listing for PerkTable. |
 | Capterra AU | capterra.com.au | Software directory; restaurants research tools here. |
 | GetApp | getapp.com.au | Sister to Capterra. |
-| SaaSHub | saashub.com | Free; lists software alternatives — good for "VocoTable alternative" discovery. |
-| Product Hunt | producthunt.com | One-off launch post for VocoTable; great for buzz + a backlink. |
+| SaaSHub | saashub.com | Free; lists software alternatives — good for "PerkTable alternative" discovery. |
+| Product Hunt | producthunt.com | One-off launch post for PerkTable; great for buzz + a backlink. |
 | LinkedIn Company Page | linkedin.com/company/biteperk | ✅ exists — keep it complete & active. |
 
 ## Tier 3 — local/industry & nice-to-have
@@ -82,7 +82,7 @@ LinkedIn:        https://www.linkedin.com/company/biteperk
 2. Then **Tier 2** — these are where a SaaS gets discovered & cited by AI; worth the effort.
 3. Paste the **exact NAP block** every time. Don't improvise wording on name/address/phone.
 4. Add the **logo + 1–2 photos** where allowed (same images as Google Business Profile, for consistency).
-5. Where a listing allows a **link**, point it to the most relevant page (home for company, /products/vocotable/ for the product).
+5. Where a listing allows a **link**, point it to the most relevant page (home for company, /products/perktable/ for the product).
 6. Keep a simple tracker (below). If you ever change phone/address, you'll need to update each one.
 
 ## Tracker (tick as you go)
@@ -95,11 +95,11 @@ LinkedIn:        https://www.linkedin.com/company/biteperk
 - [ ] Bing Places
 - [ ] Apple Business Connect
 - [ ] Crunchbase
-- [ ] G2 (VocoTable)
+- [ ] G2 (PerkTable)
 - [ ] Capterra AU
 - [ ] GetApp
 - [ ] SaaSHub
-- [ ] Product Hunt (VocoTable launch)
+- [ ] Product Hunt (PerkTable launch)
 - [ ] LinkedIn (complete profile)
 - [ ] dLook / Aussie Web / Local Search
 - [ ] Business NSW

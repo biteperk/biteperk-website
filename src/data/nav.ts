@@ -27,7 +27,7 @@ export interface NavColumn {
  *
  * `activeMatch: "never"` is for hash links (the server can't see the
  * fragment, and lighting them by base path causes double-active states —
- * e.g. Pricing + the Products trigger both lit on /products/vocotable/).
+ * e.g. Pricing + the Products trigger both lit on /products/perktable/).
  */
 export interface HeaderNavLink extends NavLink {
   /** Render in the desktop centre cluster. Default true. */
@@ -38,7 +38,7 @@ export interface HeaderNavLink extends NavLink {
 }
 
 export const headerNav: ReadonlyArray<HeaderNavLink> = [
-  { label: "Pricing", href: "/products/vocotable/#pricing", activeMatch: "never" },
+  { label: "Pricing", href: "/products/perktable/#pricing", activeMatch: "never" },
   { label: "Platform", href: "/platform/" },
   { label: "How it works", href: "/technology/" },
   { label: "Guides", href: "/blog/" },

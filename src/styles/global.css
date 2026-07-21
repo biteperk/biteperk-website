@@ -23,7 +23,7 @@
 
 :where(html) {
   scroll-behavior: smooth;
-  /* Anchor targets (e.g. /products/vocotable/#pricing) land clear of the
+  /* Anchor targets (e.g. /products/perktable/#pricing) land clear of the
      fixed nav; measured against the scrolled (compressed) bar height. */
   scroll-padding-top: calc(var(--nav-h-scrolled, 68px) + 16px);
   text-size-adjust: 100%;

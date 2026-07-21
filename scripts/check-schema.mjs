@@ -40,7 +40,7 @@ const expect = (page, id) => {
 // Anchors that must never drift (v1 baseline: docs/v1-baseline/schema/).
 expect("index.html", `${SITE}/#organization`);
 expect("index.html", `${SITE}/#website`);
-expect("products/index.html", `${SITE}/products/#voco`);
+expect("products/index.html", `${SITE}/products/#perk`);
 expect("sydney/index.html", `${SITE}/#organization`); // Service.provider link
 expect("sydney/index.html", `${SITE}/sydney/#service`);
 expect("melbourne/index.html", `${SITE}/melbourne/#service`);
