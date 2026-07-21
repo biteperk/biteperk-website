@@ -13,7 +13,7 @@
  * behaviour depicted (answers fast, checks real availability, human in
  * the loop when unsure) is a claim already published on the site.
  */
-import { vocoProof } from "@/data/products";
+import { perkProof } from "@/data/products";
 
 const lines = [
   {
@@ -66,19 +66,19 @@ const lines = [
           a human calls back. That's by design.
         </p>
         <div class="callsim-ctas">
-          <a class="btn-ghost link-arrow callsim-cta" href="/products/vocotable/">
-            See how VocoTable works
+          <a class="btn-ghost link-arrow callsim-cta" href="/products/perktable/">
+            See how PerkTable works
             <span class="arrow" aria-hidden="true">→</span>
           </a>
-          {vocoProof.demo && (
+          {perkProof.demo && (
             <a
               class="callsim-audio-link link-arrow"
-              href={vocoProof.demo.href}
+              href={perkProof.demo.href}
               rel="noopener"
               target="_blank"
               data-cta="audio-demo"
             >
-              {vocoProof.demo.label}
+              {perkProof.demo.label}
               <span class="arrow" aria-hidden="true">→</span>
             </a>
           )}

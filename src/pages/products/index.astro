@@ -7,13 +7,13 @@ import FAQ from "@/components/FAQ.astro";
 import Cta from "@/components/Cta.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import ImageBlock from "@/components/ImageBlock.astro";
-import { coreProduct, addonProducts, vocoProof, vocoBundle, vocoFaq, foundingVenues } from "@/data/products";
-import { buildFaqPage, buildVocoApplication, vocoEditionId } from "@/data/schema";
+import { coreProduct, addonProducts, perkProof, perkBundle, perkFaq, foundingVenues } from "@/data/products";
+import { buildFaqPage, buildPerkApplication, perkEditionId } from "@/data/schema";
 import { site } from "@/data/site";
 
-const title = "Voco — AI phone host for restaurants · Biteperk";
+const title = "Perk — AI phone host for restaurants · Biteperk";
 const description =
-  "Voco is one AI phone host for your restaurant — a warm Australian voice that answers every call and books the table, day or night. Start with bookings; add takeaway, concierge and drive-thru as you grow.";
+  "Perk is one AI phone host for your restaurant — a warm Australian voice that answers every call and books the table, day or night. Start with bookings; add takeaway, concierge and drive-thru as you grow.";
 
 // One product, four capabilities — core first, then add-ons (from products.ts).
 const capabilities = [coreProduct, ...addonProducts];
@@ -28,17 +28,17 @@ const breadcrumbJsonLd = {
 };
 
 // Page-level FAQPage, linked into the sitewide entity graph by @id.
-const faqJsonLd = buildFaqPage(vocoFaq);
+const faqJsonLd = buildFaqPage(perkFaq);
 
-// Voco-level SoftwareApplication — the ONE product (vs the four per-capability
+// Perk-level SoftwareApplication — the ONE product (vs the four per-capability
 // nodes on the /products/<slug>/ pages). Prices come from the live capability's
 // real tiers; featureList is live-only so the schema never overpromises.
 const corePrices = (coreProduct.pricing?.tiers ?? [])
   .map((t) => Number(t.amount.replace(/[^0-9.]/g, "")))
   .filter((n) => Number.isFinite(n) && n > 0);
-const vocoAppJsonLd = buildVocoApplication({
+const perkAppJsonLd = buildPerkApplication({
   description:
-    'Voco is one AI phone host for restaurants, voiced by "Bella" — a warm Australian voice that answers every call and books the table, 24/7. Bookings and takeaway ordering are live today; concierge and drive-thru capabilities are rolling out.',
+    'Perk is one AI phone host for restaurants, voiced by "Bella" — a warm Australian voice that answers every call and books the table, 24/7. Bookings and takeaway ordering are live today; concierge and drive-thru capabilities are rolling out.',
   featureList: [
     "24/7 phone answering in a natural Australian voice",
     "Live table bookings written straight into your diary",
@@ -50,7 +50,7 @@ const vocoAppJsonLd = buildVocoApplication({
     "Australian data residency, Privacy Act compliant",
   ],
   prices: corePrices,
-  editionIds: capabilities.map((p) => vocoEditionId(p.slug)),
+  editionIds: capabilities.map((p) => perkEditionId(p.slug)),
 });
 
 // Decorative hospitality floor under the hero (real alts; aria-hidden as a set).
@@ -79,7 +79,7 @@ const collage = [
     is:inline
     type="application/ld+json"
     slot="jsonld"
-    set:html={JSON.stringify(vocoAppJsonLd)}
+    set:html={JSON.stringify(perkAppJsonLd)}
   />
 
   {/* ── Hero ─────────────────────────────────────────────────────── */}
@@ -92,7 +92,7 @@ const collage = [
 
       <SectionHeader
         as="h1"
-        eyebrow="Meet Voco"
+        eyebrow="Meet Perk"
         lede="A warm Australian voice that answers every call, day or night. Start with bookings; add takeaway, concierge and drive-thru as you need them — same agent, same voice, your whole front-of-house line handled."
       >
         <Fragment slot="headline">
@@ -106,15 +106,15 @@ const collage = [
           high, right under the lede, next to the primary CTA. */}
       <div class="vx-hero-cta reveal">
         <a class="btn" href="/contact/?intent=demo">Book a demo</a>
-        {vocoProof.demo && (
+        {perkProof.demo && (
           <a
             class="btn-ghost vx-demo"
-            href={vocoProof.demo.href}
-            rel={vocoProof.demo.href.startsWith("http") ? "noopener" : undefined}
-            target={vocoProof.demo.href.startsWith("http") ? "_blank" : undefined}
+            href={perkProof.demo.href}
+            rel={perkProof.demo.href.startsWith("http") ? "noopener" : undefined}
+            target={perkProof.demo.href.startsWith("http") ? "_blank" : undefined}
           >
             <span class="vx-demo-play" aria-hidden="true">▶</span>
-            {vocoProof.demo.label}
+            {perkProof.demo.label}
           </a>
         )}
       </div>
@@ -133,9 +133,9 @@ const collage = [
   <section class="vx-section vx-caps">
     <div class="wrap">
       <SectionHeader
-        eyebrow="What Voco does"
+        eyebrow="What Perk does"
         headline="Four jobs. One agent, one voice."
-        lede="Voco handles your phone line end to end. Bookings and takeaway ordering are live today; the rest switch on as they ship — no new number, no second system to learn."
+        lede="Perk handles your phone line end to end. Bookings and takeaway ordering are live today; the rest switch on as they ship — no new number, no second system to learn."
       />
       <div class="vx-caps-grid reveal reveal-stagger">
         {capabilities.map((p) => <CapabilityCard product={p} />)}
@@ -150,7 +150,7 @@ const collage = [
         <span class="eyebrow">How we keep it accurate</span>
         <h2 class="vx-h2">A human in the loop, by design.</h2>
         <p class="vx-trust-body">
-          Voco is built to know the limits of a phone call. When Bella is confident, she handles the
+          Perk is built to know the limits of a phone call. When Bella is confident, she handles the
           whole conversation — the booking, the details, the confirmation. When she isn't — a tricky
           request, a name she can't quite catch — she doesn't guess. She takes the caller's details and
           a message, and flags your team to call them back.
@@ -172,18 +172,18 @@ const collage = [
   {/* ── Proof ────────────────────────────────────────────────────── */}
   <section class="vx-section vx-proof">
     <div class="wrap">
-      {vocoProof.testimonials.length > 0 ? (
+      {perkProof.testimonials.length > 0 ? (
         <div class="reveal">
           <PullQuote
-            quote={vocoProof.testimonials[0].quote}
-            author={vocoProof.testimonials[0].author}
-            role={vocoProof.testimonials[0].role}
+            quote={perkProof.testimonials[0].quote}
+            author={perkProof.testimonials[0].author}
+            role={perkProof.testimonials[0].role}
           />
         </div>
       ) : (
         <div class="vx-proof-placeholder reveal">
           <span class="eyebrow">From the floor</span>
-          <p>Early Sydney venues are running Voco now. Their words are coming soon.</p>
+          <p>Early Sydney venues are running Perk now. Their words are coming soon.</p>
         </div>
       )}
 
@@ -213,7 +213,7 @@ const collage = [
 
       {/*
         FUTURE — scale proof. Add ONLY when the data is real:
-          • logo wall of venues using Voco (needs permission + real logos)
+          • logo wall of venues using Perk (needs permission + real logos)
           • big-number counters (calls answered / bookings made) wired to counter.ts
         Left out on purpose: a hollow scale claim lowers trust more than no claim.
       */}
@@ -225,10 +225,10 @@ const collage = [
     <div class="wrap">
       <div class="vx-faq-head reveal">
         <span class="eyebrow">Common questions</span>
-        <h2 class="vx-h2">Voco, answered plainly.</h2>
+        <h2 class="vx-h2">Perk, answered plainly.</h2>
       </div>
       <div class="reveal" style="margin-top:40px">
-        <FAQ items={vocoFaq} />
+        <FAQ items={perkFaq} />
       </div>
     </div>
   </section>
@@ -238,21 +238,21 @@ const collage = [
     <div class="wrap">
       <div class="vx-bundle-card reveal">
         <span class="eyebrow">The whole line, one agent</span>
-        <h2 class="vx-h2">{vocoBundle.name}</h2>
-        <p class="vx-bundle-tag">{vocoBundle.tagline}</p>
+        <h2 class="vx-h2">{perkBundle.name}</h2>
+        <p class="vx-bundle-tag">{perkBundle.tagline}</p>
         <p class="vx-bundle-note">
-          Start with bookings and takeaway today. As concierge and drive-thru ship, Voco can run your
+          Start with bookings and takeaway today. As concierge and drive-thru ship, Perk can run your
           entire front-of-house line — one agent, one voice, one bill.
         </p>
-        <a class="btn" href={vocoBundle.cta.href}>{vocoBundle.cta.label}</a>
+        <a class="btn" href={perkBundle.cta.href}>{perkBundle.cta.label}</a>
       </div>
     </div>
   </section>
 
   <Cta
     eyebrow="Have a venue?"
-    headline="Book a demo and hear Voco on your line."
-    lede="We work with a small number of venues at a time. Tell us about your phone and we'll show you what Voco can take off your team's plate."
+    headline="Book a demo and hear Perk on your line."
+    lede="We work with a small number of venues at a time. Tell us about your phone and we'll show you what Perk can take off your team's plate."
     primary={{ label: "Book a demo", href: "/contact/?intent=demo" }}
     secondary={{ label: `Call us · ${site.phone.display}`, href: site.phone.href }}
   />

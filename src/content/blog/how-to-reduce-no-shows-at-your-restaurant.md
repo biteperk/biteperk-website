@@ -24,7 +24,7 @@ So the problem isn't only the guest. It's often the gap in how bookings are capt
 
 Two of those four come back to one thing: **answering the phone, every time.** If callers can always reach you, they can always cancel — and you can always confirm. Miss the calls, and you lose both ends of the no-show problem at once. (If you've never put a number on your missed calls, our guide on [what missed calls really cost your restaurant](/blog/what-missed-calls-cost-your-restaurant/) shows you how.)
 
-This is part of why an always-on phone host helps beyond just taking new bookings. [VocoTable](/products/vocotable/) answers every call in a warm Australian voice, 24/7, so guests can reach you to book, change, or cancel at any hour — and every booking lands in your diary with the details correct. Fewer dropped calls means fewer accidental no-shows and more tables you can re-sell the moment they free up.
+This is part of why an always-on phone host helps beyond just taking new bookings. [PerkTable](/products/perktable/) answers every call in a warm Australian voice, 24/7, so guests can reach you to book, change, or cancel at any hour — and every booking lands in your diary with the details correct. Fewer dropped calls means fewer accidental no-shows and more tables you can re-sell the moment they free up.
 
 ## Start with confirmations
 

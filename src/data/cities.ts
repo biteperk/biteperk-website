@@ -53,7 +53,7 @@ export interface City {
   /** Hand-written intro — the city's dining reality + the missed-call problem. */
   readonly intro: readonly string[];
   readonly suburbs: readonly string[];
-  /** Localised "how Voco fits this city" cards. */
+  /** Localised "how Perk fits this city" cards. */
   readonly scenarios: readonly CityScenario[];
   readonly faqs: readonly CityFaq[];
   /** The AI/ML explainer, localised to this city. */
@@ -88,7 +88,7 @@ export const cities: readonly City[] = [
     intro: [
       "Every night, Sydney venues lose tables to a phone nobody can reach during service. At 7:30 on a Friday in Surry Hills or the CBD, your floor staff are carrying plates, not picking up the phone — and in a city with this much choice, callers rarely ring back. A handful of missed calls a week quietly adds up to thousands of dollars a month in lost covers.",
       "Biteperk is built, hosted and supported right here in Sydney. Bella answers every call in a warm Australian voice, checks your live availability, and books the table — 24/7, including the public-holiday Monday your voicemail usually eats. Voicemail doesn't fix the problem; diners want an answer now, not a callback after the kitchen has closed.",
-      "From harbourside fine dining to a Newtown wine bar doing forty covers, the pattern is the same: the phone rings most exactly when nobody can answer it. That's the gap VocoTable closes — and being in the same time zone, we're on the phone ourselves when you need a human.",
+      "From harbourside fine dining to a Newtown wine bar doing forty covers, the pattern is the same: the phone rings most exactly when nobody can answer it. That's the gap PerkTable closes — and being in the same time zone, we're on the phone ourselves when you need a human.",
     ],
     suburbs: [
       "Sydney CBD", "Surry Hills", "Newtown", "Darlinghurst", "Potts Point",
@@ -124,11 +124,11 @@ export const cities: readonly City[] = [
       },
       {
         q: "Do you only work with restaurants in Sydney?",
-        a: "Sydney is home — we're built, hosted and supported here — but VocoTable works for restaurants and venues right across Australia. Sydney venues just get the bonus of a team in the same time zone who knows the local suburbs and the rhythm of a Sydney Friday night.",
+        a: "Sydney is home — we're built, hosted and supported here — but PerkTable works for restaurants and venues right across Australia. Sydney venues just get the bonus of a team in the same time zone who knows the local suburbs and the rhythm of a Sydney Friday night.",
       },
       {
         q: "How does AI phone answering work for a Sydney restaurant?",
-        a: "You forward your existing venue number to your VocoTable line — about five minutes with Telstra, Optus or your VoIP provider. From then on, Bella answers every call in a natural Australian voice, checks your live availability, and writes the booking straight to your dashboard. No app for guests to download, no menus, no hold music.",
+        a: "You forward your existing venue number to your PerkTable line — about five minutes with Telstra, Optus or your VoIP provider. From then on, Bella answers every call in a natural Australian voice, checks your live availability, and writes the booking straight to your dashboard. No app for guests to download, no menus, no hold music.",
       },
       {
         q: "Will the voice sound local?",
@@ -140,7 +140,7 @@ export const cities: readonly City[] = [
       },
       {
         q: "What does it cost?",
-        a: "VocoTable starts at a flat $80/month with no per-cover or per-call fees, scaling up for busier venues and multi-location groups. Most Sydney venues make it back from the bookings they stop missing in the first week.",
+        a: "PerkTable starts at a flat $80/month with no per-cover or per-call fees, scaling up for busier venues and multi-location groups. Most Sydney venues make it back from the bookings they stop missing in the first week.",
       },
       {
         q: "Is Bella an AI receptionist or just an answering service?",
@@ -148,7 +148,7 @@ export const cities: readonly City[] = [
       },
     ],
     aiLocal: {
-      lead: "Voco is built and trained in Sydney, and it shows in the details. The speech model is tuned for Australian English and the way this city actually talks — so Bella isn't guessing at the names your guests take for granted.",
+      lead: "Perk is built and trained in Sydney, and it shows in the details. The speech model is tuned for Australian English and the way this city actually talks — so Bella isn't guessing at the names your guests take for granted.",
       points: [
         {
           icon: "pin-au",
@@ -232,7 +232,7 @@ export const cities: readonly City[] = [
     faqs: [
       {
         q: "Does Biteperk have a Melbourne office?",
-        a: "Our team is based in Sydney — same time zone, one hour of the year excepted. VocoTable itself is fully remote to set up: you forward your existing Melbourne number, and support is a phone call or email away during Australian business hours.",
+        a: "Our team is based in Sydney — same time zone, one hour of the year excepted. PerkTable itself is fully remote to set up: you forward your existing Melbourne number, and support is a phone call or email away during Australian business hours.",
       },
       {
         q: "Will Bella cope with Melbourne suburb and street names?",
@@ -240,7 +240,7 @@ export const cities: readonly City[] = [
       },
       {
         q: "We're a small laneway venue. Is this overkill?",
-        a: "Small rooms benefit most. If you seat forty, two missed bookings on a Friday is five percent of your night gone. VocoTable's entry tier is a flat $80/month — no per-call or per-cover fees — which most small venues cover with the first table they stop losing.",
+        a: "Small rooms benefit most. If you seat forty, two missed bookings on a Friday is five percent of your night gone. PerkTable's entry tier is a flat $80/month — no per-call or per-cover fees — which most small venues cover with the first table they stop losing.",
       },
       {
         q: "Can Bella handle our group bookings and function enquiries?",
@@ -589,7 +589,7 @@ export const cities: readonly City[] = [
         a: "In Australia, processed onshore, Privacy Act compliant, retained only as long as needed and never used to train outside models.",
       },
       {
-        q: "What does VocoTable cost for a small Adelaide venue?",
+        q: "What does PerkTable cost for a small Adelaide venue?",
         a: "The entry tier is a flat $80/month with no per-call or per-cover fees — festival fortnights included. For a twelve-table room, one saved Saturday booking usually covers it.",
       },
       {

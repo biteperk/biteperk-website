@@ -55,7 +55,7 @@ If you're weighing one up, five questions cut through the marketing:
 
 The pricing *model* matters as much as the number. Per-call or per-booking fees mean your bill spikes on exactly the nights you're winning — the opposite of what a small room wants.
 
-[VocoTable](/products/vocotable/), our AI phone host, starts at a flat **$80/month** with no per-cover or per-call charges, scaling up for busier venues and groups. Most venues make it back from the covers they stop missing in the first week — you can estimate your own number with [what missed calls really cost your restaurant](/blog/what-missed-calls-cost-your-restaurant/).
+[PerkTable](/products/perktable/), our AI phone host, starts at a flat **$80/month** with no per-cover or per-call charges, scaling up for busier venues and groups. Most venues make it back from the covers they stop missing in the first week — you can estimate your own number with [what missed calls really cost your restaurant](/blog/what-missed-calls-cost-your-restaurant/).
 
 ## Getting started
 

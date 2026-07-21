@@ -30,7 +30,7 @@ After `npm run check` + `npm run build`, CI runs these **generated/data-driven g
 - `node scripts/check-routes.mjs` — expected route list is **generated from `cities.ts` + the blog collection**, not hard-coded. Adding a city or guide needs no CI edit.
 - `node scripts/check-contrast.mjs` — WCAG AA over the colour pairs declared in the `contrast-manifest` comment block at the bottom of `tokens.css`. Add a pair there when you add a text/surface token.
 - `node scripts/check-cities.mjs` — anti-doorway gate: every `published` city needs ≥600 words of unique copy, <35% cross-city intro similarity, an OG card, valid `relatedGuides`, and an `llms.txt` entry.
-- `node scripts/check-schema.mjs` — asserts stable JSON-LD `@id`s (`#organization`, `#website`, `#voco`, per-city `#service`) and byte-exact Haymarket NAP in the built HTML.
+- `node scripts/check-schema.mjs` — asserts stable JSON-LD `@id`s (`#organization`, `#website`, `#perk`, per-city `#service`) and byte-exact Haymarket NAP in the built HTML.
 - `node scripts/check-images.mjs` — any image-manifest slot referenced by the site must be `reviewed: true`.
 - Then Playwright + axe (`npm run test:e2e`), Lighthouse budgets (`npm run lhci`), sitemap sanity, and lychee.
 
@@ -38,7 +38,7 @@ There are no unit tests; the gates above are the safety net.
 
 ## Deploy
 
-Site is one Firebase project (`vocotable`) with hosting target `biteperk`:
+Site is one Firebase project (id `vocotable` — a legacy id, do **not** "fix" it; project ids are immutable) with hosting target `biteperk`:
 
 ```bash
 firebase deploy --only hosting:biteperk
@@ -57,7 +57,7 @@ The Cloud Function needs the `ZOHO_SMTP_PASS` secret (`firebase functions:secret
 - `src/data/products.ts` — full product catalogue (slug, copy, features, metrics, FAQ, pricing tiers). Statuses: `live` | `in-development` | `concept`. Adding a product = one entry here; pages, nav, footer, and JSON-LD all derive from it.
 - `src/data/nav.ts` — top nav + footer structure. Footer "Locations" column is derived from `publishedCities`.
 - `src/data/cities.ts` — **city landing-page engine.** One entry per city drives `/[city].astro`, its JSON-LD `Service` node, OG card, nav/footer links, and homepage `CityStrip`. Sydney is the flagship (`isHQ`, real NAP); other cities are honestly remote-served (`areaServed` on the LocalBusiness, **never** a fake per-city premises). Set `published: false` until copy passes `check-cities.mjs`. All non-suburb copy is hand-written per city — templated copy is a doorway-spam risk the gate blocks.
-- `src/data/schema.ts` — sitewide JSON-LD `@graph` (Organization+LocalBusiness, WebSite) emitted once by `Base.astro`. LocalBusiness `areaServed` is generated from `publishedCities`. Page-specific schema (BreadcrumbList, FAQPage, Article, SoftwareApplication, per-city Service) is built on the page and references `ORG_ID`/`WEBSITE_ID`/`VOCO_ID` by `@id` so Google merges them into one entity. `check-schema.mjs` guards these @ids and the NAP.
+- `src/data/schema.ts` — sitewide JSON-LD `@graph` (Organization+LocalBusiness, WebSite) emitted once by `Base.astro`. LocalBusiness `areaServed` is generated from `publishedCities`. Page-specific schema (BreadcrumbList, FAQPage, Article, SoftwareApplication, per-city Service) is built on the page and references `ORG_ID`/`WEBSITE_ID`/`PERK_ID` by `@id` so Google merges them into one entity. `check-schema.mjs` guards these @ids and the NAP.
 
 ### Layouts & routing
 
@@ -97,7 +97,7 @@ Form posts same-origin to `/api/contact` → Firebase Hosting rewrites to `conta
 
 ## Redirects to remember
 
-`firebase.json` 301s the bare product slugs (`/vocotable`, `/vocoorder`, `/vococoncierge`, `/vocodrive`) and legal short-paths (`/privacy`, `/terms`) to their canonical `/products/<slug>/` and `/legal/<page>/` URLs. Don't change these without updating any external links/citations.
+`firebase.json` 301s the bare product slugs (`/perktable`, `/perkorder`, `/perkconcierge`, `/perkdrive`) and legal short-paths (`/privacy`, `/terms`) to their canonical `/products/<slug>/` and `/legal/<page>/` URLs. It also 301s the **legacy voco-era URLs** — bare `/voco*` slugs and full `/products/voco*` paths — to the new Perk product pages; keep these forever (external links, directory citations, and printed collateral still use them). Don't change any of these without updating external links/citations.
 
 ## Image pipeline
 
@@ -112,3 +112,16 @@ For **AI-generated photography** there's a separate intake pipeline (`scripts/im
 - `docs/directory-citations.md` — tiered AU/SaaS directory submission plan + canonical NAP block (paste-ready).
 - `docs/review-requests.md` — Google review request templates (post-GBP verification).
 - `docs/v1-baseline/` — pre-rebuild sitemap/schema snapshot + the contact-form contract (`contact-contract.md`); the diff target the CI schema/route gates protect against.
+
+## Claude-generated deliverables
+
+One-off documents Claude produces for this project — pitch decks, proposals, exported reports, and similar working material — are saved to `deliverables/` at the repo root, not `docs/`. `docs/` is committed source content (site copy, ops docs, art direction); `deliverables/` is local-only working material and is **gitignored**. Save future generated docs there by default, in a dated, descriptive subfolder per deliverable with its source assets alongside (e.g. `deliverables/2026-07-ludovic-wiziu-pitch/` containing the .pptx + `assets/`).
+
+## Product naming (renamed to Perk, July 2026)
+
+- **The product family is now `Perk*` everywhere**: **PerkTable** (bookings), **PerkOrder** (takeaway & pickup), **PerkConcierge** (front-of-house concierge), **PerkDrive** (drive-thru concept). The umbrella product is **Perk**; the voice persona is **Bella**. The former `Voco*` names were dropped because `voco™` is IHG's hotel brand.
+- The rename (branch `rename/perk-products`) covered: slugs & routes, JSON-LD (`#perk` @id, `PERK_ID`), `firebase.json` redirects incl. legacy voco→perk 301s, `PRODUCT_SLUGS` (accepts legacy voco slugs during transition), site copy, blog posts, `llms.txt`, CI gates, tests, and OG cards.
+- **Not renamed (deliberately):** the Firebase project id `vocotable` (immutable), the `docs/v1-baseline/` snapshot (historical diff target), and the booking-app subdomain `vocotable.biteperk.com.au` (`site.perktableUrl` still points there until the app + DNS migrate — see the note in `src/data/site.ts`).
+- For hotel-prospect pitches (WiZiU / Ludovic Roux), the deck presents **PerkStay** (room bookings) alongside PerkTable/PerkOrder/PerkConcierge — PerkStay is pitch-only until a hotel product ships.
+- ⚠️ "Perk" collides with TravelPerk's "Perk" rebrand (which ships a voice-AI agent). Formal trademark clearance is still outstanding — resolve before major marketing spend. (Clean alternatives previously researched: Vireo, Vocelle.)
+- Post-rename follow-ups: external directory listings & GBP, printed collateral in `marketing/` (regenerate via its build scripts), and the app subdomain. Decision log: claude.ai Project → `claude/Ludovic-WiZiU-Pitch.md`.

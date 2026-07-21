@@ -47,7 +47,7 @@ There are only a few honest options, and most have a catch:
 - **Push everyone to online booking.** Helps, but a large share of diners — especially older guests, large groups, and anyone with a special request — still pick up the phone. Online-only leaves money on the table.
 - **Let an AI host answer every call.** This is the option that's become genuinely good in the last couple of years. A voice agent picks up on the first ring, every time, 24/7, checks your real availability, and writes the booking straight to your diary.
 
-That last option is what we built [VocoTable](/products/vocotable/) to do. Bella answers in a warm Australian voice, handles the back-and-forth of finding a table, and never sleeps — so the 9pm Sunday call and the Tuesday-lunch rush both get the same fast, friendly answer.
+That last option is what we built [PerkTable](/products/perktable/) to do. Bella answers in a warm Australian voice, handles the back-and-forth of finding a table, and never sleeps — so the 9pm Sunday call and the Tuesday-lunch rush both get the same fast, friendly answer.
 
 ## Do the audit this week
 

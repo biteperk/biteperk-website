@@ -4,7 +4,7 @@ import SectionHeader from "@/components/SectionHeader.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import ImageBlock from "@/components/ImageBlock.astro";
 import { site } from "@/data/site";
-import { products, vocoProof } from "@/data/products";
+import { products, perkProof } from "@/data/products";
 
 const title = "Contact Biteperk — Restaurant voice AI, Sydney & Australia-wide";
 const description =
@@ -21,7 +21,7 @@ const description =
       <SectionHeader
         as="h1"
         eyebrow="Talk to a human"
-        lede="We work with a small number of venues at a time. Whether you want to talk about VocoTable, a future product, or just the missed-call problem — say hello."
+        lede="We work with a small number of venues at a time. Whether you want to talk about PerkTable, a future product, or just the missed-call problem — say hello."
       >
         <Fragment slot="headline">
           One conversation away
@@ -84,17 +84,17 @@ const description =
             <a class="contact-side-v" href={site.email.href}>{site.email.display}</a>
             <div class="contact-side-h">We reply, usually within a few hours.</div>
           </div>
-          {vocoProof.demo && (
+          {perkProof.demo && (
             <div class="contact-side-block">
               <div class="contact-side-l">Hear her first</div>
               <a
                 class="contact-side-v"
-                href={vocoProof.demo.href}
+                href={perkProof.demo.href}
                 rel="noopener"
                 target="_blank"
                 data-cta="audio-demo"
               >
-                {vocoProof.demo.label} →
+                {perkProof.demo.label} →
               </a>
               <div class="contact-side-h">Real Bella audio, one minute.</div>
             </div>
@@ -181,7 +181,7 @@ const description =
               rows="5"
               required
               maxlength="5000"
-              placeholder="What would you want VocoTable (or its next sibling) to do for your venue?"
+              placeholder="What would you want PerkTable (or its next sibling) to do for your venue?"
             ></textarea>
           </div>
 

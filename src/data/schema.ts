@@ -18,10 +18,10 @@ import { publishedCities } from "./cities";
 
 export const ORG_ID = `${site.url}/#organization`;
 export const WEBSITE_ID = `${site.url}/#website`;
-/** Stable @id for the one Voco product (defined on /products/, referenced by the per-capability pages). */
-export const VOCO_ID = `${site.url}/products/#voco`;
-/** Stable @id for a per-capability SoftwareApplication "edition" of Voco. */
-export const vocoEditionId = (slug: string) => `${site.url}/products/${slug}/#software`;
+/** Stable @id for the one Perk product (defined on /products/, referenced by the per-capability pages). */
+export const PERK_ID = `${site.url}/products/#perk`;
+/** Stable @id for a per-capability SoftwareApplication "edition" of Perk. */
+export const perkEditionId = (slug: string) => `${site.url}/products/${slug}/#software`;
 
 const telephone = site.phone.href.replace("tel:", "");
 const email = site.email.href.replace("mailto:", "");
@@ -140,9 +140,9 @@ export function buildFaqPage(
 }
 
 /**
- * Build the Voco SoftwareApplication node for the /products overview.
+ * Build the Perk SoftwareApplication node for the /products overview.
  *
- * Voco is ONE product. This single node — as opposed to the four per-capability
+ * Perk is ONE product. This single node — as opposed to the four per-capability
  * SoftwareApplication nodes on the /products/<slug>/ pages — is what tells
  * Google the brand sells one product (with capabilities), not four. Linked to
  * the Organization (publisher) and WebSite (isPartOf) by @id so it merges into
@@ -152,12 +152,12 @@ export function buildFaqPage(
  * capability's tiers) — never fabricated. `featureList` should list live
  * features only, so the structured data doesn't overpromise unshipped work.
  */
-export function buildVocoApplication(opts: {
+export function buildPerkApplication(opts: {
   readonly description: string;
   readonly featureList: ReadonlyArray<string>;
   /** Numeric AUD prices already parsed from the live capability's tiers. */
   readonly prices?: ReadonlyArray<number>;
-  /** @ids of the per-capability "edition" nodes (build with `vocoEditionId(slug)`). */
+  /** @ids of the per-capability "edition" nodes (build with `perkEditionId(slug)`). */
   readonly editionIds?: ReadonlyArray<string>;
 }) {
   const priced = (opts.prices ?? []).filter((n) => Number.isFinite(n) && n > 0);
@@ -165,12 +165,12 @@ export function buildVocoApplication(opts: {
   return {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    "@id": VOCO_ID,
-    name: "Voco",
+    "@id": PERK_ID,
+    name: "Perk",
     url: `${site.url}/products/`,
     // The live app runs on the product subdomain — declare it as the same
     // entity's other home so the two properties consolidate into one.
-    sameAs: [site.vocotableUrl],
+    sameAs: [site.perktableUrl],
     description: opts.description,
     applicationCategory: "BusinessApplication",
     operatingSystem: "Web, Phone",

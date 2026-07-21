@@ -51,7 +51,7 @@ const companyLinks = headerNav.filter((l) => l.mobile !== false);
     <nav class="mm-body" aria-label="Mobile">
       <div class="mm-section">
         <div class="mm-heading">Products</div>
-        <p class="mm-subheading">Voco is one AI phone host. Bookings and takeaway are live; concierge and drive-thru roll out as add-ons.</p>
+        <p class="mm-subheading">Perk is one AI phone host. Bookings and takeaway are live; concierge and drive-thru roll out as add-ons.</p>
         {products.map((p) => (
           <a
             class:list={["mm-link", "mm-product", { active: isActive(productUrl(p)) }]}
@@ -65,7 +65,7 @@ const companyLinks = headerNav.filter((l) => l.mobile !== false);
           class:list={["mm-link", "mm-all", { active: isNavActive(pathname, { label: "", href: "/products/", activeMatch: "exact" }) }]}
           href="/products/"
         >
-          See the Voco overview →
+          See the Perk overview →
         </a>
       </div>
 
@@ -109,8 +109,8 @@ const companyLinks = headerNav.filter((l) => l.mobile !== false);
           Call {site.phone.display}
         </a>
         <a class="mm-email" href={site.email.href}>Email hello@biteperk.com.au</a>
-        <a class="mm-email" href={site.vocotableUrl} target="_blank" rel="noopener" data-cta="sign-in">
-          Sign in to VocoTable ↗
+        <a class="mm-email" href={site.perktableUrl} target="_blank" rel="noopener" data-cta="sign-in">
+          Sign in to PerkTable ↗
         </a>
       </div>
     </nav>
