@@ -98,15 +98,21 @@ def draw_mark(c, x, y, size, star_fill=GOLD, fork_fill=GREEN, outline=None):
     c.restoreState()
 
 
-def draw_wordmark(c, x, baseline, size, bite_color, vox_color):
-    """Lowercase 'biteperk' lockup: 'bite' upright + 'vox' oblique."""
+def draw_wordmark(c, x, baseline, size, bite_color, perk_color):
+    """Lowercase 'biteperk' lockup: 'bite' upright + 'perk' oblique.
+
+    This is the COMPANY wordmark and never changes with the product family —
+    the products renamed Voco -> Perk -> Vox, biteperk did not. A bulk rename
+    turned this into 'bitevox' once; it reads correct in pdftotext (the
+    product name is right) and is only visible by rendering the page.
+    """
     c.setFont(SANSB, size)
     c.setFillColor(bite_color)
     c.drawString(x, baseline, "bite")
-    c.setFillColor(vox_color)
+    c.setFillColor(perk_color)
     c.setFont("Helvetica-BoldOblique", size)
-    c.drawString(x + c.stringWidth("bite", SANSB, size), baseline, "vox")
-    return x + c.stringWidth("bite", SANSB, size) + c.stringWidth("vox", "Helvetica-BoldOblique", size)
+    c.drawString(x + c.stringWidth("bite", SANSB, size), baseline, "perk")
+    return x + c.stringWidth("bite", SANSB, size) + c.stringWidth("perk", "Helvetica-BoldOblique", size)
 
 
 def wrap(c, text, font, size, max_w):
@@ -300,7 +306,7 @@ def draw_door(c, cx, cy, guide):
     c.setFillColor(WHITE)
     c.setFont(SANSB, 10)
     c.drawCentredString(0, -27.5 * mm, "VoxTable")
-    w = c.stringWidth("by ", SANS, 7) + c.stringWidth("bite", SANSB, 7) + c.stringWidth("vox", "Helvetica-BoldOblique", 7)
+    w = c.stringWidth("by ", SANS, 7) + c.stringWidth("bite", SANSB, 7) + c.stringWidth("perk", "Helvetica-BoldOblique", 7)
     x0 = -w / 2
     c.setFillColor(MIST)
     c.setFont(SANS, 7)
