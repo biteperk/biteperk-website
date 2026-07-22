@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""PerkTable A5 double-sided flyer — 'Golden Hour Service'.
+"""VoxTable A5 double-sided flyer — 'Golden Hour Service'.
 
 Outputs:
-  perktable-flyer-a5.pdf            — trim size (screen / home printing)
-  perktable-flyer-a5-print.pdf      — 3mm bleed + crop marks (commercial print)
+  voxtable-flyer-a5.pdf            — trim size (screen / home printing)
+  voxtable-flyer-a5-print.pdf      — 3mm bleed + crop marks (commercial print)
 """
 import qrcode
 from reportlab.lib.pagesizes import A5
@@ -90,7 +90,7 @@ def draw_front(bleed):
     y = H - 15 * mm
     c.setFont("Mono", 6.4)
     c.setFillColor(MIST)
-    c.drawString(M, y, "BITEPERK  ·  FOR SYDNEY RESTAURANTS")
+    c.drawString(M, y, "BITEVOX  ·  FOR SYDNEY RESTAURANTS")
     c.setFillColor(GREEN)
     c.circle(W - M - 1.2 * mm, y + 1.0 * mm, 1.0 * mm, stroke=0, fill=1)
     c.setFillColor(MIST)
@@ -103,9 +103,9 @@ def draw_front(bleed):
     y -= 15 * mm
     c.setFont("SansB", 19)
     c.setFillColor(WHITE)
-    c.drawString(M, y, "Perk")
+    c.drawString(M, y, "Vox")
     c.setFillColor(GOLD)
-    c.drawString(M + c.stringWidth("Perk", "SansB", 19), y, "Table")
+    c.drawString(M + c.stringWidth("Vox", "SansB", 19), y, "Table")
     c.setFont("Sans", 8.2)
     c.setFillColor(MIST)
     c.drawString(M, y - 5.2 * mm, "The AI phone host for restaurants")
@@ -213,7 +213,7 @@ def draw_back(bleed):
     y = H - 15 * mm
     c.setFont("Mono", 6.4)
     c.setFillColor(MIST)
-    c.drawString(M, y, "PERKTABLE  ·  HOW IT WORKS")
+    c.drawString(M, y, "VOXTABLE  ·  HOW IT WORKS")
     c.setFillColor(GOLD)
     c.drawRightString(W - M, y, "NO HARDWARE  ·  NO APPS")
     c.setStrokeColor(LINE)
@@ -315,16 +315,16 @@ def draw_back(bleed):
     c.drawCentredString(W - M - qs2 / 2, fy - 6.5 * mm - qs2, "FREE WEEK")
     c.setFillColor(WHITE)
     c.setFont("SansB", 9.5)
-    c.drawString(M, fy - 7.5 * mm, "Perk")
+    c.drawString(M, fy - 7.5 * mm, "Vox")
     c.setFillColor(GOLD)
-    c.drawString(M + c.stringWidth("Perk", "SansB", 9.5), fy - 7.5 * mm, "Table")
+    c.drawString(M + c.stringWidth("Vox", "SansB", 9.5), fy - 7.5 * mm, "Table")
     c.setFillColor(MIST2)
     c.setFont("Mono", 7.2)
     c.drawString(M, fy - 13 * mm, "+61 2 5504 1140   ·   hello@biteperk.com.au")
     c.drawString(M, fy - 17.8 * mm, "vocotable.biteperk.com.au")
     c.setFillColor(MIST)
     c.setFont("Mono", 5.8)
-    c.drawString(M, fy - 22.5 * mm, "BITEPERK  ·  LEVEL 1, 477 PITT ST, HAYMARKET NSW 2000  ·  MADE IN SYDNEY")
+    c.drawString(M, fy - 22.5 * mm, "BITEVOX  ·  LEVEL 1, 477 PITT ST, HAYMARKET NSW 2000  ·  MADE IN SYDNEY")
 
 
 def crop_marks(pad, bleed):
@@ -343,7 +343,7 @@ def render(path, bleed=0, marks=False):
     pad = 6 * mm if marks else 0
     page = (W + 2 * (bleed + pad), H + 2 * (bleed + pad))
     c = pdfcanvas.Canvas(path, pagesize=page)
-    c.setTitle("PerkTable — Never miss another booking")
+    c.setTitle("VoxTable — Never miss another booking")
     for draw in (draw_front, draw_back):
         c.saveState()
         c.translate(bleed + pad, bleed + pad)
@@ -356,5 +356,5 @@ def render(path, bleed=0, marks=False):
     print("done:", path)
 
 
-render(f"{OUTDIR}/perktable-flyer-a5.pdf")
-render(f"{OUTDIR}/perktable-flyer-a5-print.pdf", bleed=3 * mm, marks=True)
+render(f"{OUTDIR}/voxtable-flyer-a5.pdf")
+render(f"{OUTDIR}/voxtable-flyer-a5-print.pdf", bleed=3 * mm, marks=True)

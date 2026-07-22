@@ -1,9 +1,9 @@
 ---
 /**
- * /platform/ — the Perk dashboard, marketed.
+ * /platform/ — the Vox dashboard, marketed.
  *
  * The trust page: restaurant owners fear a black box answering their
- * phone, so this page shows the owner's side of Perk — the operations
+ * phone, so this page shows the owner's side of Vox — the operations
  * hub every venue gets. Each capability block's eyebrow is the REAL
  * sidebar name in the product (Live Feed, Booking Log, Analytics, Live
  * Tables, Kitchen, Manage Menu), so a visitor who later opens the
@@ -22,12 +22,12 @@ import Illustration from "@/components/Illustration.astro";
 import FAQ from "@/components/FAQ.astro";
 import Cta from "@/components/Cta.astro";
 import { site } from "@/data/site";
-import { perkProof } from "@/data/products";
-import { ORG_ID, WEBSITE_ID, PERK_ID } from "@/data/schema";
+import { voxProof } from "@/data/products";
+import { ORG_ID, WEBSITE_ID, VOX_ID } from "@/data/schema";
 
-const title = "The Perk dashboard — see every call, booking and order · Biteperk";
+const title = "The Vox dashboard — see every call, booking and order · Biteperk";
 const description =
-  "Every Perk venue gets a live operations dashboard: every AI call with its transcript and recording, a full booking log, analytics with PDF and CSV export, live tables, a kitchen display and menu management — with logins for owners, managers, staff and kitchen.";
+  "Every Vox venue gets a live operations dashboard: every AI call with its transcript and recording, a full booking log, analytics with PDF and CSV export, live tables, a kitchen display and menu management — with logins for owners, managers, staff and kitchen.";
 const path = "/platform/";
 
 const proofStats = [
@@ -66,7 +66,7 @@ const capabilities = [
     icon: "pin-au" as const,
     eyebrow: "Kitchen",
     title: "Orders straight to the pass.",
-    body: "A kitchen display screen shows orders the moment they're placed — the same clean ticket PerkOrder promises, on a screen built for a working kitchen rather than a printer spitting dockets.",
+    body: "A kitchen display screen shows orders the moment they're placed — the same clean ticket VoxOrder promises, on a screen built for a working kitchen rather than a printer spitting dockets.",
   },
   {
     icon: "shield" as const,
@@ -79,7 +79,7 @@ const capabilities = [
 const platformFaqs = [
   {
     q: "Do I get the dashboard on the $80 plan?",
-    a: "Yes. Every PerkTable plan includes the dashboard — the live call feed, transcripts and recordings, the booking log, and unlimited dashboard users are part of Solo at $80/month. Deeper analytics and multi-venue roll-ups come with the higher tiers.",
+    a: "Yes. Every VoxTable plan includes the dashboard — the live call feed, transcripts and recordings, the booking log, and unlimited dashboard users are part of Solo at $80/month. Deeper analytics and multi-venue roll-ups come with the higher tiers.",
   },
   {
     q: "Can my staff have their own logins?",
@@ -107,7 +107,7 @@ const webpageJsonLd = {
   name: title,
   description,
   isPartOf: { "@id": WEBSITE_ID },
-  about: { "@id": PERK_ID },
+  about: { "@id": VOX_ID },
   publisher: { "@id": ORG_ID },
 };
 const breadcrumbJsonLd = {
@@ -129,7 +129,7 @@ const faqJsonLd = {
   })),
 };
 
-const heroTestimonial = perkProof.testimonials[0];
+const heroTestimonial = voxProof.testimonials[0];
 ---
 
 <Base title={title} description={description} path={path} ogImage="/og/platform.png">
@@ -147,7 +147,7 @@ const heroTestimonial = perkProof.testimonials[0];
       <SectionHeader
         as="h1"
         eyebrow="The platform"
-        lede="Handing your phone to an AI shouldn't mean losing sight of it. The Perk dashboard shows you every call Bella takes — transcript, recording, outcome — the moment it happens, alongside your bookings, tables, kitchen and menu."
+        lede="Handing your phone to an AI shouldn't mean losing sight of it. The Vox dashboard shows you every call Bella takes — transcript, recording, outcome — the moment it happens, alongside your bookings, tables, kitchen and menu."
       >
         <Fragment slot="headline">
           Your restaurant's
@@ -156,10 +156,10 @@ const heroTestimonial = perkProof.testimonials[0];
         </Fragment>
       </SectionHeader>
       <div class="pl-hero-ctas reveal">
-        <a class="btn" href={site.perktableUrl} rel="noopener" target="_blank" data-cta="platform-trial">
+        <a class="btn" href={site.voxtableUrl} rel="noopener" target="_blank" data-cta="platform-trial">
           Start your free week →
         </a>
-        <a class="btn-ghost" href="/products/perktable/#pricing">See pricing</a>
+        <a class="btn-ghost" href="/products/voxtable/#pricing">See pricing</a>
       </div>
     </div>
   </section>
@@ -186,7 +186,7 @@ const heroTestimonial = perkProof.testimonials[0];
         <h2 class="pl-h2">The same names you'll see in the sidebar.</h2>
         <p class="pl-head-lede">
           Nothing here is a mock-up feature. These are the six panels of the
-          dashboard every Perk venue signs into — described exactly as
+          dashboard every Vox venue signs into — described exactly as
           you'll find them.
         </p>
       </div>
@@ -257,8 +257,8 @@ const heroTestimonial = perkProof.testimonials[0];
     eyebrow="See your side of it"
     headline="The dashboard is included. Not an add-on."
     lede="Every plan comes with the full command centre from day one. Start the free week, forward your phone, and watch the first booking land on your screen."
-    primary={{ label: "Start your free week →", href: site.perktableUrl }}
-    secondary={{ label: "See PerkTable pricing", href: "/products/perktable/#pricing" }}
+    primary={{ label: "Start your free week →", href: site.voxtableUrl }}
+    secondary={{ label: "See VoxTable pricing", href: "/products/voxtable/#pricing" }}
   />
 </Base>
 

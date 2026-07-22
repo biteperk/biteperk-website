@@ -19,7 +19,7 @@ import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import Cta from "@/components/Cta.astro";
 import type { Product } from "@/data/products";
 import { site } from "@/data/site";
-import { PERK_ID, perkEditionId } from "@/data/schema";
+import { VOX_ID, voxEditionId } from "@/data/schema";
 
 interface Props {
   product: Product;
@@ -40,13 +40,13 @@ const breadcrumbJsonLd = {
 const productJsonLd = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  "@id": perkEditionId(product.slug),
+  "@id": voxEditionId(product.slug),
   name: product.name,
   description: product.summary,
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web, Phone",
-  // This capability page is an edition of the one Perk product.
-  isPartOf: { "@id": PERK_ID },
+  // This capability page is an edition of the one Vox product.
+  isPartOf: { "@id": VOX_ID },
   brand: { "@type": "Organization", name: site.name },
   // Cross-link to the running app (same entity, its live location) so the
   // marketing page and the product subdomain resolve to one entity. Only
@@ -90,7 +90,7 @@ const faqJsonLd = product.faq && product.faq.length > 0
   description={product.seo.description}
   path={path}
   ogImage={`/og/${product.slug}.png`}
-  preloadComposite={product.slug === "perktable" ? "perktable-hero" : undefined}
+  preloadComposite={product.slug === "voxtable" ? "voxtable-hero" : undefined}
 >
   <Fragment slot="jsonld">
     <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />

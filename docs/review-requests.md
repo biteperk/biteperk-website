@@ -18,10 +18,10 @@ Tip: shorten it (e.g. bit.ly) so it looks tidy in a text.
 ---
 
 ## 1. SMS / text — short (best response rate)
-> Hi [Name], it's [Your name] from Biteperk. So glad PerkTable's been picking up the calls for [Venue] 🙌 If you've got 30 seconds, a quick Google review would mean the world to a small Sydney team like us: [REVIEW LINK]. No worries if not — thanks either way!
+> Hi [Name], it's [Your name] from Biteperk. So glad VoxTable's been picking up the calls for [Venue] 🙌 If you've got 30 seconds, a quick Google review would mean the world to a small Sydney team like us: [REVIEW LINK]. No worries if not — thanks either way!
 
 ## 2. SMS / text — even shorter
-> Hi [Name], [Your name] from Biteperk here. If PerkTable's been earning its keep at [Venue], would you mind leaving us a quick Google review? It genuinely helps other venues find us 🙏 [REVIEW LINK]
+> Hi [Name], [Your name] from Biteperk here. If VoxTable's been earning its keep at [Venue], would you mind leaving us a quick Google review? It genuinely helps other venues find us 🙏 [REVIEW LINK]
 
 ## 3. Email
 **Subject:** A quick favour, [Name]?
@@ -30,7 +30,7 @@ Tip: shorten it (e.g. bit.ly) so it looks tidy in a text.
 >
 > Hope things are running a little smoother at [Venue] now that Bella's answering the phone.
 >
-> We're a small team in Sydney, and honest reviews from venues like yours are the main way other restaurants discover us. If you've got a spare minute, we'd be hugely grateful if you'd share a few words about your experience with PerkTable:
+> We're a small team in Sydney, and honest reviews from venues like yours are the main way other restaurants discover us. If you've got a spare minute, we'd be hugely grateful if you'd share a few words about your experience with VoxTable:
 >
 > 👉 [REVIEW LINK]
 >
@@ -53,6 +53,6 @@ Tip: shorten it (e.g. bit.ly) so it looks tidy in a text.
 > Hi [Name], no pressure at all — just floating this back up in case it got buried. That quick review link if you have a moment: [REVIEW LINK]. Either way, thanks for backing a small local team 🙏
 
 ## Make it a habit
-- Add the review link to your **email signature**: "Happy with PerkTable? Leave us a review →".
+- Add the review link to your **email signature**: "Happy with VoxTable? Leave us a review →".
 - Ask at natural high points: after a record-booking week, when a customer compliments the service, at the end of a successful first month.
 - Aim for a **steady trickle** (1–2/week) rather than a one-off batch — Google trusts consistent reviews more.

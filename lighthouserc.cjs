@@ -13,7 +13,7 @@ module.exports = {
       // Representative page of each template; port is injected by LHCI.
       url: [
         "http://localhost/",
-        "http://localhost/products/perktable/",
+        "http://localhost/products/voxtable/",
         "http://localhost/sydney/",
         "http://localhost/blog/what-missed-calls-cost-your-restaurant/",
         "http://localhost/contact/",

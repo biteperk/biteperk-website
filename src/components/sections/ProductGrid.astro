@@ -1,6 +1,6 @@
 ---
 /**
- * Home page product grid — PerkTable spotlighted as the feature, then
+ * Home page product grid — VoxTable spotlighted as the feature, then
  * the upcoming products in a 3-up row.
  *
  * A 3-image context strip sits above the section header so the
@@ -11,8 +11,8 @@ import ProductCard from "@/components/ProductCard.astro";
 import ImageBlock from "@/components/ImageBlock.astro";
 import { products, getProduct } from "@/data/products";
 
-const perktable = getProduct("perktable");
-const upcoming = products.filter((p) => p.slug !== "perktable");
+const voxtable = getProduct("voxtable");
+const upcoming = products.filter((p) => p.slug !== "voxtable");
 
 const stripPhotos = [
   { slug: "restaurant-evening", alt: "A dim restaurant interior with candlelit tables." },
@@ -43,7 +43,7 @@ const stripPhotos = [
     </SectionHeader>
 
     <div class="feature-wrap reveal">
-      {perktable && <ProductCard product={perktable} variant="feature" />}
+      {voxtable && <ProductCard product={voxtable} variant="feature" />}
     </div>
 
     <div class="grid-tiles reveal reveal-stagger">

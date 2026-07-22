@@ -46,6 +46,9 @@ jobs:
       - name: Smoke-test built routes (generated from cities.ts + blog)
         run: node scripts/check-routes.mjs
 
+      - name: Asset references in built HTML must resolve (OG cards, composites, preloads)
+        run: node scripts/check-assets.mjs
+
       - name: WCAG contrast gate (both themes)
         run: node scripts/check-contrast.mjs
 
@@ -60,7 +63,7 @@ jobs:
           set -e
           test -f dist/sitemap-0.xml || { echo "Missing dist/sitemap-0.xml"; exit 1; }
           grep -q 'biteperk.com.au' dist/sitemap-0.xml
-          grep -q 'products/perktable' dist/sitemap-0.xml
+          grep -q 'products/voxtable' dist/sitemap-0.xml
           echo "Sitemap looks healthy."
 
       - name: Internal link check (lychee)

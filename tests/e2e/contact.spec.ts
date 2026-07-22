@@ -25,7 +25,7 @@ test.describe("contact form", () => {
     await page.goto("/contact/");
     await fillForm(page);
     await page.fill("#cf-venue", "QA Bistro");
-    await page.selectOption("#cf-product", "perktable");
+    await page.selectOption("#cf-product", "voxtable");
     await page.click(".contact-submit");
 
     await expect(page.locator(".contact-success")).toBeVisible();
@@ -37,7 +37,7 @@ test.describe("contact form", () => {
       email: "diner@example.com",
       message: "Automated QA message — please ignore.",
       venue: "QA Bistro",
-      product: "perktable",
+      product: "voxtable",
       _gotcha: "",
     });
   });
@@ -108,7 +108,7 @@ test.describe("contact form", () => {
   });
 
   test("?product= preselects the About dropdown", async ({ page }) => {
-    await page.goto("/contact/?product=perkorder");
-    await expect(page.locator("#cf-product")).toHaveValue("perkorder");
+    await page.goto("/contact/?product=voxorder");
+    await expect(page.locator("#cf-product")).toHaveValue("voxorder");
   });
 });
