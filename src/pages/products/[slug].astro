@@ -5,19 +5,19 @@ import PullQuote from "@/components/PullQuote.astro";
 import Composite from "@/components/Composite.astro";
 import ImageBlock from "@/components/ImageBlock.astro";
 import Illustration from "@/components/Illustration.astro";
-import { products, perkProof, type Product } from "@/data/products";
+import { products, voxProof, type Product } from "@/data/products";
 
 // Slug-keyed ambient photo for in-development / concept products.
 const ambientBySlug: Record<string, { slug: string; alt: string }> = {
-  perkorder: {
+  voxorder: {
     slug: "kitchen-rush",
     alt: "Kitchen rush during service, tickets piling on a printer.",
   },
-  perkconcierge: {
+  voxconcierge: {
     slug: "restaurant-host",
     alt: "Front-of-house host scene in a dim restaurant.",
   },
-  perkdrive: {
+  voxdrive: {
     slug: "coffee-window",
     alt: "Café service window at morning, warm amber light.",
   },
@@ -26,10 +26,10 @@ const ambientBySlug: Record<string, { slug: string; alt: string }> = {
 // Per-feature illustration mapping. Caps the family at six icons.
 const featureIcon = (productSlug: string, idx: number) => {
   const map: Record<string, Array<"phone-wave" | "calendar-tick" | "pin-au" | "shield" | "ticket" | "clock-247">> = {
-    perktable: ["phone-wave", "calendar-tick", "pin-au", "shield", "phone-wave", "calendar-tick", "ticket", "shield"],
-    perkorder: ["phone-wave", "ticket", "clock-247"],
-    perkconcierge: ["phone-wave", "calendar-tick", "shield"],
-    perkdrive: ["clock-247", "pin-au", "ticket"],
+    voxtable: ["phone-wave", "calendar-tick", "pin-au", "shield", "phone-wave", "calendar-tick", "ticket", "shield"],
+    voxorder: ["phone-wave", "ticket", "clock-247"],
+    voxconcierge: ["phone-wave", "calendar-tick", "shield"],
+    voxdrive: ["clock-247", "pin-au", "ticket"],
   };
   return map[productSlug]?.[idx] ?? "phone-wave";
 };
@@ -52,10 +52,10 @@ const isConcept = product.status === "concept";
   <section class="p-section p-hero-visual">
     <div class="wrap">
       <div class="reveal">
-        {product.slug === "perktable" ? (
+        {product.slug === "voxtable" ? (
           <Composite
-            name="perktable-hero"
-            alt="A dim restaurant interior with two PerkTable cards floating: an incoming call from 0411 234 567 with Bella answering, and a confirmed booking for Friday 8:00pm, four guests, Sarah."
+            name="voxtable-hero"
+            alt="A dim restaurant interior with two VoxTable cards floating: an incoming call from 0411 234 567 with Bella answering, and a confirmed booking for Friday 8:00pm, four guests, Sarah."
             priority
           />
         ) : (
@@ -90,8 +90,8 @@ const isConcept = product.status === "concept";
     </div>
   </section>
 
-  {/* ── How it works (PerkTable only for now) ───────────────────── */}
-  {product.slug === "perktable" && (
+  {/* ── How it works (VoxTable only for now) ───────────────────── */}
+  {product.slug === "voxtable" && (
     <section class="cv-auto p-section p-how">
       <div class="wrap">
         <div class="p-how-head reveal">
@@ -105,7 +105,7 @@ const isConcept = product.status === "concept";
               <Illustration name={stepIcons[0]} size={36} />
             </div>
             <h3>Forward your number</h3>
-            <p>Point your venue's phone to your PerkTable number. Takes five minutes with your provider.</p>
+            <p>Point your venue's phone to your VoxTable number. Takes five minutes with your provider.</p>
           </li>
           <li>
             <div class="p-how-row">
@@ -219,15 +219,15 @@ const isConcept = product.status === "concept";
     </section>
   )}
 
-  {/* ── Testimonial (PerkTable) ─────────────────────────────────── */}
-  {product.slug === "perktable" && (
+  {/* ── Testimonial (VoxTable) ─────────────────────────────────── */}
+  {product.slug === "voxtable" && (
     <section class="cv-auto p-section p-quote">
       <div class="wrap">
         <div class="reveal">
           <PullQuote
-            quote={perkProof.testimonials[0].quote}
-            author={perkProof.testimonials[0].author}
-            role={perkProof.testimonials[0].role}
+            quote={voxProof.testimonials[0].quote}
+            author={voxProof.testimonials[0].author}
+            role={voxProof.testimonials[0].role}
             variant="compact"
           />
         </div>
@@ -235,9 +235,9 @@ const isConcept = product.status === "concept";
     </section>
   )}
 
-  {/* ── Your data, plainly (PerkTable) — surfaces the privacy facts
+  {/* ── Your data, plainly (VoxTable) — surfaces the privacy facts
        already published at /legal/privacy/ where buyers actually look */}
-  {product.slug === "perktable" && (
+  {product.slug === "voxtable" && (
     <section class="cv-auto p-section p-data">
       <div class="wrap">
         <div class="p-data-head reveal">

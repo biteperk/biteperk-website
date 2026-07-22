@@ -47,7 +47,7 @@ Not all voice agents are equal. When you're weighing one up, ask:
 
 Pricing varies, but the model matters as much as the number. Per-call or per-booking fees mean your bill spikes exactly when you're doing well — the opposite of what you want.
 
-[PerkTable](/products/perktable/), our AI phone host, starts at a flat **$80/month** with no per-cover or per-call charges, scaling up for busier venues and multi-location groups. Most venues recover the cost from the bookings they stop missing in the first week — there's a way to estimate that in our guide on [what missed calls really cost your restaurant](/blog/what-missed-calls-cost-your-restaurant/).
+[VoxTable](/products/voxtable/), our AI phone host, starts at a flat **$80/month** with no per-cover or per-call charges, scaling up for busier venues and multi-location groups. Most venues recover the cost from the bookings they stop missing in the first week — there's a way to estimate that in our guide on [what missed calls really cost your restaurant](/blog/what-missed-calls-cost-your-restaurant/).
 
 ## Getting started is smaller than you'd expect
 

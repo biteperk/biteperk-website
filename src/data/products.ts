@@ -21,8 +21,8 @@ import { site } from "./site";
 export type ProductStatus = "live" | "in-development" | "concept";
 
 /**
- * Packaging role within the Perk product line. Orthogonal to `status`:
- *   - `core`  — Perk itself; every restaurant gets it (currently the Table
+ * Packaging role within the Vox product line. Orthogonal to `status`:
+ *   - `core`  — Vox itself; every restaurant gets it (currently the Table
  *               capability / bookings, which is `live`).
  *   - `addon` — a capability switched on alongside the same core agent
  *               (takeaway, concierge, drive-thru).
@@ -74,12 +74,12 @@ export interface PricingTier {
 export interface Product {
   readonly slug: string;
   readonly name: string;
-  /** Wordmark split for typographic treatment (e.g. "Perk" + "Table"). */
+  /** Wordmark split for typographic treatment (e.g. "Vox" + "Table"). */
   readonly wordmark: { readonly prefix: string; readonly suffix: string };
   readonly tagline: string;
   readonly summary: string;
   readonly status: ProductStatus;
-  /** Packaging role in the Perk line — the one `core` product vs `addon` capabilities. */
+  /** Packaging role in the Vox line — the one `core` product vs `addon` capabilities. */
   readonly role: ProductRole;
   /** Owner-outcome headline for the /products capabilities grid (falls back to `tagline`). */
   readonly outcome?: string;
@@ -107,10 +107,10 @@ export interface Product {
   };
 }
 
-const perktable: Product = {
-  slug: "perktable",
-  name: "PerkTable",
-  wordmark: { prefix: "Perk", suffix: "Table" },
+const voxtable: Product = {
+  slug: "voxtable",
+  name: "VoxTable",
+  wordmark: { prefix: "Vox", suffix: "Table" },
   tagline: "The AI phone host for restaurants.",
   summary:
     "Bella answers every call in a warm Australian voice, books the table, and never sleeps — the AI phone host built for Sydney restaurants.",
@@ -118,12 +118,12 @@ const perktable: Product = {
   role: "core",
   outcome: "Never miss another booking — even when every line's busy.",
   accent: "rgba(245, 196, 24, 0.32)",
-  externalUrl: site.perktableUrl,
+  externalUrl: site.voxtableUrl,
   hero: {
     headline: "Never miss another booking.",
     sub: "Bella answers every call in a warm Australian voice, books the table, and never sleeps — the AI phone host built for Sydney restaurants.",
-    primaryCta: { label: "Start your free week →", href: site.perktableUrl },
-    secondaryCta: { label: "Hear Bella live", href: `${site.perktableUrl}#meet-bella` },
+    primaryCta: { label: "Start your free week →", href: site.voxtableUrl },
+    secondaryCta: { label: "Hear Bella live", href: `${site.voxtableUrl}#meet-bella` },
   },
   features: [
     {
@@ -186,7 +186,7 @@ const perktable: Product = {
           "Email support, business hours",
           "After 300 bookings, you'll be invited to upgrade — no surprise charge",
         ],
-        cta: { label: "Start with Solo →", href: `${site.perktableUrl}/?plan=solo` },
+        cta: { label: "Start with Solo →", href: `${site.voxtableUrl}/?plan=solo` },
         footer: "Live in 48 hours",
       },
       {
@@ -207,7 +207,7 @@ const perktable: Product = {
           "Deeper analytics, call-quality reports, peak-hour insights",
           "Priority Sydney support, 7 days a week",
         ],
-        cta: { label: "Start with Pro →", href: `${site.perktableUrl}/?plan=pro` },
+        cta: { label: "Start with Pro →", href: `${site.voxtableUrl}/?plan=pro` },
         footer: "Live in 48 hours",
       },
       {
@@ -226,7 +226,7 @@ const perktable: Product = {
           "99.9% uptime SLA",
           "Priority onboarding — we set it up for you",
         ],
-        cta: { label: "Start with Group →", href: `${site.perktableUrl}/?plan=group` },
+        cta: { label: "Start with Group →", href: `${site.voxtableUrl}/?plan=group` },
         footer: "Live in 48 hours",
       },
       {
@@ -255,8 +255,8 @@ const perktable: Product = {
       a: "Very. The model is trained on Australian English and we hand-tune it for the suburbs and venues we serve. Edge cases get caught by our Sydney team — not an overseas help desk.",
     },
     {
-      q: "Does PerkTable plug into my booking system?",
-      a: "Today we sync to your PerkTable diary directly; integrations with the major Australian booking platforms are on the roadmap. Existing bookings stay yours and can be exported at any time.",
+      q: "Does VoxTable plug into my booking system?",
+      a: "Today we sync to your VoxTable diary directly; integrations with the major Australian booking platforms are on the roadmap. Existing bookings stay yours and can be exported at any time.",
     },
     {
       q: "What happens to call recordings and data?",
@@ -264,11 +264,11 @@ const perktable: Product = {
     },
     {
       q: "Can I cancel if it doesn't work for my venue?",
-      a: "Yes — PerkTable is month to month, no lock-in. You can cancel any time and your data is exported within 24 hours.",
+      a: "Yes — VoxTable is month to month, no lock-in. You can cancel any time and your data is exported within 24 hours.",
     },
     {
       q: "How is the price so low?",
-      a: "We built PerkTable from the ground up for hospitality, on infrastructure we run ourselves. Flat $80 a month, unlimited calls. No per-cover fees, ever.",
+      a: "We built VoxTable from the ground up for hospitality, on infrastructure we run ourselves. Flat $80 a month, unlimited calls. No per-cover fees, ever.",
     },
     {
       q: "Where is support based?",
@@ -276,16 +276,16 @@ const perktable: Product = {
     },
   ],
   seo: {
-    title: "PerkTable — AI phone host for restaurants · Biteperk",
+    title: "VoxTable — AI phone host for restaurants · Biteperk",
     description:
-      "PerkTable answers every restaurant call in a warm Australian voice and books the table directly into your diary. $80/month flat, no per-cover fees. Made in Sydney.",
+      "VoxTable answers every restaurant call in a warm Australian voice and books the table directly into your diary. $80/month flat, no per-cover fees. Made in Sydney.",
   },
 };
 
-const perkorder: Product = {
-  slug: "perkorder",
-  name: "PerkOrder",
-  wordmark: { prefix: "Perk", suffix: "Order" },
+const voxorder: Product = {
+  slug: "voxorder",
+  name: "VoxOrder",
+  wordmark: { prefix: "Vox", suffix: "Order" },
   tagline: "AI phone ordering for takeaway and pickup.",
   summary:
     "A voice agent that takes pickup orders, reads the menu in your accent, and drops the ticket straight into your POS — so no order is ever lost to a busy line.",
@@ -295,9 +295,9 @@ const perkorder: Product = {
   accent: "rgba(255, 184, 64, 0.28)",
   hero: {
     headline: "Pick up every order, even when your kitchen is on the floor.",
-    sub: "PerkOrder is the takeaway twin of PerkTable. A voice agent that handles the order, the modifiers, and the pickup time — and sends a clean ticket to your POS.",
-    primaryCta: { label: "Book a demo", href: "/contact/?product=perkorder" },
-    secondaryCta: { label: "Hear Bella live", href: `${site.perktableUrl}#meet-bella` },
+    sub: "VoxOrder is the takeaway twin of VoxTable. A voice agent that handles the order, the modifiers, and the pickup time — and sends a clean ticket to your POS.",
+    primaryCta: { label: "Book a demo", href: "/contact/?product=voxorder" },
+    secondaryCta: { label: "Hear Bella live", href: `${site.voxtableUrl}#meet-bella` },
   },
   features: [
     {
@@ -314,16 +314,16 @@ const perkorder: Product = {
     },
   ],
   seo: {
-    title: "PerkOrder — AI phone ordering for hospitality · Biteperk",
+    title: "VoxOrder — AI phone ordering for hospitality · Biteperk",
     description:
-      "PerkOrder is Biteperk's AI voice agent for takeaway and pickup — clean tickets straight to your POS, so no order is lost to a busy line. Live now; book a demo.",
+      "VoxOrder is Biteperk's AI voice agent for takeaway and pickup — clean tickets straight to your POS, so no order is lost to a busy line. Live now; book a demo.",
   },
 };
 
-const perkconcierge: Product = {
-  slug: "perkconcierge",
-  name: "PerkConcierge",
-  wordmark: { prefix: "Perk", suffix: "Concierge" },
+const voxconcierge: Product = {
+  slug: "voxconcierge",
+  name: "VoxConcierge",
+  wordmark: { prefix: "Vox", suffix: "Concierge" },
   tagline: "Voice + SMS front-of-house concierge.",
   summary:
     "The bit between the booking and the guest sitting down. Waitlist management, post-booking texts, no-show recovery — quietly handled.",
@@ -333,9 +333,9 @@ const perkconcierge: Product = {
   accent: "rgba(74, 138, 72, 0.32)",
   hero: {
     headline: "Everything between the booking and the table — handled.",
-    sub: "PerkConcierge nudges the waitlist, confirms tomorrow's covers, recovers the no-shows, and writes back when guests reply. So your front-of-house can run the floor.",
-    primaryCta: { label: "Join the waitlist", href: "/contact/?product=perkconcierge" },
-    secondaryCta: { label: "See PerkTable instead →", href: "/products/perktable/" },
+    sub: "VoxConcierge nudges the waitlist, confirms tomorrow's covers, recovers the no-shows, and writes back when guests reply. So your front-of-house can run the floor.",
+    primaryCta: { label: "Join the waitlist", href: "/contact/?product=voxconcierge" },
+    secondaryCta: { label: "See VoxTable instead →", href: "/products/voxtable/" },
   },
   features: [
     {
@@ -352,16 +352,16 @@ const perkconcierge: Product = {
     },
   ],
   seo: {
-    title: "PerkConcierge — Voice + SMS concierge for hospitality · Biteperk",
+    title: "VoxConcierge — Voice + SMS concierge for hospitality · Biteperk",
     description:
-      "PerkConcierge handles waitlist, post-booking texts, and no-show recovery for restaurants and venues. In development — join the waitlist.",
+      "VoxConcierge handles waitlist, post-booking texts, and no-show recovery for restaurants and venues. In development — join the waitlist.",
   },
 };
 
-const perkdrive: Product = {
-  slug: "perkdrive",
-  name: "PerkDrive",
-  wordmark: { prefix: "Perk", suffix: "Drive" },
+const voxdrive: Product = {
+  slug: "voxdrive",
+  name: "VoxDrive",
+  wordmark: { prefix: "Vox", suffix: "Drive" },
   tagline: "Drive-thru voice AI, built for the Australian window.",
   summary:
     "A voice agent for the drive-thru window, built for the Australian morning rush — local accents, local orders, local rhythm. Not a US franchise script bolted onto an Aussie café.",
@@ -371,8 +371,8 @@ const perkdrive: Product = {
   accent: "rgba(245, 196, 24, 0.22)",
   hero: {
     headline: "An order taker that knows the Saturday-morning queue.",
-    sub: "We're thinking out loud. PerkDrive imagines a voice agent at the window — fast, polite, Australian, and built around the way a queue actually moves at 8:42am on a Saturday.",
-    primaryCta: { label: "Register interest", href: "/contact/?product=perkdrive" },
+    sub: "We're thinking out loud. VoxDrive imagines a voice agent at the window — fast, polite, Australian, and built around the way a queue actually moves at 8:42am on a Saturday.",
+    primaryCta: { label: "Register interest", href: "/contact/?product=voxdrive" },
     secondaryCta: { label: "See what's shipping →", href: "/products/" },
   },
   features: [
@@ -390,21 +390,21 @@ const perkdrive: Product = {
     },
   ],
   seo: {
-    title: "PerkDrive — Drive-thru voice AI for cafes · Biteperk",
+    title: "VoxDrive — Drive-thru voice AI for cafes · Biteperk",
     description:
-      "PerkDrive is a concept-stage voice AI for cafe and QSR drive-thrus, built for the Australian morning rush. Register your interest.",
+      "VoxDrive is a concept-stage voice AI for cafe and QSR drive-thrus, built for the Australian morning rush. Register your interest.",
   },
 };
 
 export const products: ReadonlyArray<Product> = [
-  perktable,
-  perkorder,
-  perkconcierge,
-  perkdrive,
+  voxtable,
+  voxorder,
+  voxconcierge,
+  voxdrive,
 ];
 
 /**
- * Perk is ONE product. `coreProduct` is the always-on agent every venue gets
+ * Vox is ONE product. `coreProduct` is the always-on agent every venue gets
  * (the live Table/bookings capability); `addonProducts` are the capabilities
  * switched on alongside it. The /products overview renders from these so the
  * page reads as "one product + add-ons", not a grid of four equals.
@@ -423,7 +423,7 @@ export const addonProducts: ReadonlyArray<Product> = products.filter(
  * slots render honest placeholders rather than fabricated scale — so the page
  * can grow real proof later without a refactor.
  */
-export const perkProof: {
+export const voxProof: {
   readonly testimonials: ReadonlyArray<Testimonial>;
   readonly demo?: { readonly label: string; readonly href: string };
 } = {
@@ -437,12 +437,12 @@ export const perkProof: {
   ],
   // Real Bella audio only — points at the live app's demo anchor. Swap to a
   // self-hosted <audio> source here if a standalone clip is produced.
-  demo: { label: "Hear Bella take a booking", href: `${site.perktableUrl}#meet-bella` },
+  demo: { label: "Hear Bella take a booking", href: `${site.voxtableUrl}#meet-bella` },
 };
 
 /**
  * Real venues in the founding cohort — names only until each supplies a
- * quote and permission (same honesty rule as perkProof: never fabricate).
+ * quote and permission (same honesty rule as voxProof: never fabricate).
  */
 export const foundingVenues: ReadonlyArray<{
   readonly name: string;
@@ -454,42 +454,42 @@ export const foundingVenues: ReadonlyArray<{
 ];
 
 /**
- * The optional full-front-of-house bundle: Perk running every line at once.
+ * The optional full-front-of-house bundle: Vox running every line at once.
  * Presented as a single CTA, NOT a fifth product/slug. `name` is a provisional
  * working name — change in one place here when it's locked.
  */
-export const perkBundle = {
+export const voxBundle = {
   name: "The Lot",
   fallbackName: "Full Service",
-  tagline: "Perk running your whole front-of-house — one agent, one voice, one bill.",
+  tagline: "Vox running your whole front-of-house — one agent, one voice, one bill.",
   cta: { label: "Book a demo", href: "/contact/?product=general" },
 } as const;
 
 /** Product-line FAQ for the /products overview (distinct from per-capability FAQs). */
-export const perkFaq: ReadonlyArray<ProductFAQ> = [
+export const voxFaq: ReadonlyArray<ProductFAQ> = [
   {
     q: "How hard is it to get started?",
-    a: "It's a phone number, not a hardware install. You forward your existing line to Perk — about five minutes with your phone provider — with no new hardware, no apps, and nothing for your team to learn. You keep your number, and most venues are live the same day.",
+    a: "It's a phone number, not a hardware install. You forward your existing line to Vox — about five minutes with your phone provider — with no new hardware, no apps, and nothing for your team to learn. You keep your number, and most venues are live the same day.",
   },
   {
-    q: "What can Perk do today, and what's coming?",
-    a: "Today Perk does two live jobs: it takes bookings (already serving paying venues) and it handles takeaway and pickup orders. The front-of-house concierge is in active development, and a drive-thru capability is on the drawing board. Start with what you need now and switch the rest on as they ship — same agent, same voice.",
+    q: "What can Vox do today, and what's coming?",
+    a: "Today Vox does two live jobs: it takes bookings (already serving paying venues) and it handles takeaway and pickup orders. The front-of-house concierge is in active development, and a drive-thru capability is on the drawing board. Start with what you need now and switch the rest on as they ship — same agent, same voice.",
   },
   {
     q: "Can I start with just bookings?",
-    a: "Yes — that's exactly how Perk works. Every venue starts with the live bookings capability, then turns on add-ons when they need them. They're capabilities of the same agent, not separate products to buy and wire up again.",
+    a: "Yes — that's exactly how Vox works. Every venue starts with the live bookings capability, then turns on add-ons when they need them. They're capabilities of the same agent, not separate products to buy and wire up again.",
   },
   {
     q: "What happens if Bella isn't sure what a caller wants?",
     a: "She doesn't guess. If a call is unclear — a tricky request, a name she can't quite catch — Bella takes the caller's details and a message and flags your team to call them back, so an uncertain moment becomes a callback rather than a wrong booking.",
   },
   {
-    q: "Does Perk actually sound Australian?",
+    q: "Does Vox actually sound Australian?",
     a: "Yes. Bella speaks natural Australian English and is tuned for local suburb and street names — not an overseas call centre. It's one of the first things owners notice.",
   },
   {
-    q: "What does Perk cost?",
-    a: "The live bookings capability is flat monthly pricing with a free week to try it — no per-call or per-cover fees. See the PerkTable page for current plans. As new capabilities ship, we'll price them honestly and only for what you switch on.",
+    q: "What does Vox cost?",
+    a: "The live bookings capability is flat monthly pricing with a free week to try it — no per-call or per-cover fees. See the VoxTable page for current plans. As new capabilities ship, we'll price them honestly and only for what you switch on.",
   },
 ];
 

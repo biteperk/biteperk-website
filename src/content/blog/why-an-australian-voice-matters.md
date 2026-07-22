@@ -26,7 +26,7 @@ A genuinely local agent is trained on Australian English and tuned for local pro
 
 Local isn't only how it sounds — it's where the call goes. When your guest's voice and details are processed and stored **onshore in Australia**, you keep things simple under the Privacy Act and you can answer the question every careful guest eventually asks: *where does my information go?*
 
-The honest answer should be short: it stays here, it's kept only as long as needed to confirm the booking, and it isn't shipped off to train someone else's models. That's the standard we hold [PerkTable](/products/perktable/) to.
+The honest answer should be short: it stays here, it's kept only as long as needed to confirm the booking, and it isn't shipped off to train someone else's models. That's the standard we hold [VoxTable](/products/voxtable/) to.
 
 ## It's a quiet competitive edge
 
@@ -34,4 +34,4 @@ Plenty of venues will end up using AI on the phone — the technology is too use
 
 A local voice that greets your guests the way you would, books the table cleanly, and never makes anyone sigh is a small thing that compounds. It's the same instinct as plating with care or remembering a regular's order — hospitality in a detail most people never consciously notice but always feel.
 
-That's the whole idea behind Bella, the voice that answers for PerkTable: built in Sydney, trained on Australian English, and meant to sound like one of your own. If you want to hear the difference, [give us a call](/contact/) — or read our plain-English overview of [AI phone answering for Sydney restaurants](/blog/ai-phone-answering-for-sydney-restaurants/).
+That's the whole idea behind Bella, the voice that answers for VoxTable: built in Sydney, trained on Australian English, and meant to sound like one of your own. If you want to hear the difference, [give us a call](/contact/) — or read our plain-English overview of [AI phone answering for Sydney restaurants](/blog/ai-phone-answering-for-sydney-restaurants/).

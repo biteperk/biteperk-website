@@ -47,7 +47,7 @@ A model trained on Australian English gets those names right, so a Brisbane call
 
 Mind the pricing *model*, not just the headline. Per-call or per-cover fees mean your bill climbs on your best nights — a strange thing to sign up for.
 
-[PerkTable](/products/perktable/) starts at a flat **$80/month** with no per-call or per-cover charges, scaling up for busier venues and multi-venue groups. Most rooms recover it from the covers they stop missing in the first week.
+[VoxTable](/products/voxtable/) starts at a flat **$80/month** with no per-call or per-cover charges, scaling up for busier venues and multi-venue groups. Most rooms recover it from the covers they stop missing in the first week.
 
 ## Setting it up in an afternoon
 
