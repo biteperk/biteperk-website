@@ -44,15 +44,20 @@ const DIMS: Record<Props["name"], { d: [number, number]; m: [number, number] }> 
 const dims = DIMS[name];
 ---
 
+<!--
+  Only AVIF/WebP are referenced — never the .png. The PNGs are build
+  intermediates and are gitignored (see .gitignore), so a CI checkout has no
+  copy of them: referencing one made the built HTML depend on a file that
+  exists on a dev machine but not in CI, so what CI validated was not what got
+  deployed. WebP is the universal fallback here. Don't add a .png source back.
+-->
 <figure class:list={["composite", `is-${name}`, extraClass]}>
   <picture>
     <source media="(min-width: 768px)" type="image/avif" srcset={`${desktop}.avif${qs}`} width={dims.d[0]} height={dims.d[1]} />
     <source media="(min-width: 768px)" type="image/webp" srcset={`${desktop}.webp${qs}`} width={dims.d[0]} height={dims.d[1]} />
-    <source media="(min-width: 768px)" srcset={`${desktop}.png${qs}`} width={dims.d[0]} height={dims.d[1]} />
     <source type="image/avif" srcset={`${mobile}.avif${qs}`} width={dims.m[0]} height={dims.m[1]} />
-    <source type="image/webp" srcset={`${mobile}.webp${qs}`} width={dims.m[0]} height={dims.m[1]} />
     <img
-      src={`${mobile}.png${qs}`}
+      src={`${mobile}.webp${qs}`}
       alt={alt}
       width={dims.m[0]}
       height={dims.m[1]}
