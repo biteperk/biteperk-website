@@ -44,10 +44,11 @@ const [interBold, interRegular] = await Promise.all([
 console.log(`  Inter 800: ${Math.round(interBold.length / 1024)} KB`);
 console.log(`  Inter 500: ${Math.round(interRegular.length / 1024)} KB`);
 
-// ── Bella portrait as base64 ───────────────────────────────────────
-const bellaPath = join(PUBLIC, "bella", "portrait.png");
+// ── Bella slot image as base64 (on-brand editorial host on a booking headset;
+//    art-direction forbids sci-fi/robot portraits) ───────────────────
+const bellaPath = join(PUBLIC, "images", "hands-headset-1920.jpg");
 const bellaB64 = existsSync(bellaPath)
-  ? `data:image/png;base64,${readFileSync(bellaPath).toString("base64")}`
+  ? `data:image/jpeg;base64,${readFileSync(bellaPath).toString("base64")}`
   : null;
 
 // ── Card template ──────────────────────────────────────────────────
@@ -240,7 +241,7 @@ function card({ eyebrow, headline, accent = "#f5c418", showBella = true }) {
                               width: "360px",
                               height: "450px",
                               objectFit: "cover",
-                              objectPosition: "right center",
+                              objectPosition: "center",
                             },
                           },
                         },
