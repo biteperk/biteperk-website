@@ -41,9 +41,9 @@ This is the only sum that matters. Take your missed-call estimate — if you hav
 
 The arithmetic is usually lopsided. If an AI host recovers even **one or two bookings a week** that would otherwise have rung out, it has almost certainly paid for a whole month. Everything after that is margin you were previously leaving on the table.
 
-## Where PerkTable sits
+## Where VoxTable sits
 
-We built [PerkTable](/products/perktable/) on the flat-monthly model on purpose: **$80/month, no per-call fees, no per-cover cut**, with bookings written straight to your diary. It answers every call in a warm Australian voice, 24/7 — and it costs the same whether you take ten calls a day or a hundred. Built, hosted and supported in Sydney.
+We built [VoxTable](/products/voxtable/) on the flat-monthly model on purpose: **$80/month, no per-call fees, no per-cover cut**, with bookings written straight to your diary. It answers every call in a warm Australian voice, 24/7 — and it costs the same whether you take ten calls a day or a hundred. Built, hosted and supported in Sydney.
 
 If you want help running the payback maths for your own venue, [have a chat with us](/contact/) — we'll be honest about whether it's worth it for you.
 

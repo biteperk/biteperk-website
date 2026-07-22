@@ -3,7 +3,7 @@
  * The command-centre peek — the homepage's "what you see" beat.
  *
  * CallSim (directly above) shows the call; this shows the owner's side:
- * a hand-built, theme-aware mock of the real Perk dashboard (same
+ * a hand-built, theme-aware mock of the real Vox dashboard (same
  * sidebar names, same gold active state as the live product). CSS only —
  * no screenshot, so no caller data ever appears, and it renders crisp in
  * both site themes.
@@ -46,7 +46,7 @@ const rows = [
           <span class="gold">You see every call she takes.</span>
         </h2>
         <p class="lede platform-lede">
-          Every Perk venue gets the full operations hub — every call with its
+          Every Vox venue gets the full operations hub — every call with its
           transcript and recording, every booking in the log, analytics you can
           export, plus live tables, a kitchen screen and your menu. One
           dashboard, one login away.
@@ -66,7 +66,7 @@ const rows = [
       <figure class="platform-card reveal">
         <div class="pf-frame">
           <div class="pf-side">
-            <span class="pf-brand" aria-hidden="true">Perk</span>
+            <span class="pf-brand" aria-hidden="true">Vox</span>
             <ul class="pf-nav">
               {sideItems.map((item) => (
                 <li class:list={["pf-nav-item", { "is-active": item.active }]}>
@@ -112,7 +112,7 @@ const rows = [
         </div>
         <figcaption class="platform-disclaimer">
           Illustrative — a fictional venue, but the real dashboard layout every
-          Perk venue gets.
+          Vox venue gets.
         </figcaption>
       </figure>
     </div>

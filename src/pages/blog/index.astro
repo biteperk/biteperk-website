@@ -15,7 +15,7 @@ import { WEBSITE_ID } from "@/data/schema";
 const path = "/blog/";
 const title = "Guides for restaurant owners — Biteperk";
 const description =
-  "Practical, plain-English guides on missed calls, AI phone answering, bookings and running a busy restaurant phone — written for Australian venues by the team behind PerkTable.";
+  "Practical, plain-English guides on missed calls, AI phone answering, bookings and running a busy restaurant phone — written for Australian venues by the team behind VoxTable.";
 
 const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort((a, b) => {
   if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
@@ -70,7 +70,7 @@ const breadcrumbJsonLd = {
       <h1 class="blog-h1">Field notes for a <span class="gold">busier, calmer floor.</span></h1>
       <p class="lede blog-lede">
         Practical, no-jargon guides on the unglamorous bits — the phone, the missed calls,
-        the bookings — written for Australian restaurants by the team behind PerkTable.
+        the bookings — written for Australian restaurants by the team behind VoxTable.
       </p>
     </div>
   </section>
@@ -103,7 +103,7 @@ const breadcrumbJsonLd = {
   <Cta
     eyebrow="Have a venue?"
     headline="Rather skip the reading and just hear it?"
-    lede="PerkTable answers a real restaurant phone in a warm Australian voice. Call us and listen, or book a 15-minute walkthrough."
+    lede="VoxTable answers a real restaurant phone in a warm Australian voice. Call us and listen, or book a 15-minute walkthrough."
   />
 </Base>
 

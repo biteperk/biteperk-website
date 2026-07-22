@@ -7,12 +7,12 @@
  * Each variant ships as PNG + AVIF + WebP so the live site stays light.
  *
  * Props:
- *   - name      Composite name: home-in-the-wild / perktable-hero / footer-mood-band
+ *   - name      Composite name: home-in-the-wild / voxtable-hero / footer-mood-band
  *   - alt       Required alt text
  *   - priority  Eager + fetchpriority=high (for LCP candidate)
  */
 interface Props {
-  name: "home-in-the-wild" | "perktable-hero" | "footer-mood-band";
+  name: "home-in-the-wild" | "voxtable-hero" | "footer-mood-band";
   alt: string;
   priority?: boolean;
   class?: string;
@@ -35,9 +35,9 @@ const decoding = "async";
 // Intrinsic pixel dims per variant (from generate-images.mjs output).
 // width/height on each <source>/<img> reserve layout space before the
 // image loads — without them the composite shifts the page (CLS ~0.078
-// measured on /products/perktable/). Keep in sync when regenerating.
+// measured on /products/voxtable/). Keep in sync when regenerating.
 const DIMS: Record<Props["name"], { d: [number, number]; m: [number, number] }> = {
-  "perktable-hero": { d: [1800, 1200], m: [800, 1200] },
+  "voxtable-hero": { d: [1800, 1200], m: [800, 1200] },
   "home-in-the-wild": { d: [1600, 1000], m: [800, 1000] },
   "footer-mood-band": { d: [1920, 360], m: [800, 360] },
 };

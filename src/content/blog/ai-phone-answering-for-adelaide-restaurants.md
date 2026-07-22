@@ -43,7 +43,7 @@ There's a fuller comparison on our [AI for Adelaide restaurants](/adelaide/) pag
 
 ## What it costs
 
-Mind the model. Per-call or per-cover fees punish you for a busy Fringe week — exactly backwards. [PerkTable](/products/perktable/) starts at a flat **$80/month**, no per-call or per-cover charges, scaling up for busier venues and groups. Most rooms make it back from the covers they stop missing in the first week — there's a way to estimate that in [what missed calls really cost your restaurant](/blog/what-missed-calls-cost-your-restaurant/).
+Mind the model. Per-call or per-cover fees punish you for a busy Fringe week — exactly backwards. [VoxTable](/products/voxtable/) starts at a flat **$80/month**, no per-call or per-cover charges, scaling up for busier venues and groups. Most rooms make it back from the covers they stop missing in the first week — there's a way to estimate that in [what missed calls really cost your restaurant](/blog/what-missed-calls-cost-your-restaurant/).
 
 ## Getting started
 
