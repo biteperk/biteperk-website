@@ -46,6 +46,9 @@ jobs:
       - name: Smoke-test built routes (generated from cities.ts + blog)
         run: node scripts/check-routes.mjs
 
+      - name: Asset references in built HTML must resolve (OG cards, composites, preloads)
+        run: node scripts/check-assets.mjs
+
       - name: WCAG contrast gate (both themes)
         run: node scripts/check-contrast.mjs
 

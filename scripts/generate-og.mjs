@@ -145,7 +145,7 @@ function card({ eyebrow, headline, accent = "#f5c418", showBella = true }) {
                             type: "span",
                             props: {
                               style: { color: accent, fontStyle: "italic" },
-                              children: "vox",
+                              children: "perk",
                             },
                           },
                         ],
