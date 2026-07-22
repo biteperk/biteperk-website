@@ -43,7 +43,7 @@ Small thing, big signal: Subiaco is "Subi-AH-co," and Cottesloe and Fremantle ha
 
 Watch the pricing model. Per-call or per-cover fees mean the bill rises with your best nights, which is a strange thing to want. And for a Perth venue running 24/7 coverage, a flat fee is what makes round-the-clock answering actually economic — you're not paying per interstate call that lands at 6am.
 
-[PerkTable](/products/perktable/) starts at a flat **$80/month**, no per-call or per-cover charges, scaling up for busier venues and groups. There's a fuller breakdown in [how much AI phone answering costs for a restaurant](/blog/how-much-does-ai-phone-answering-cost-for-a-restaurant/).
+[VoxTable](/products/voxtable/) starts at a flat **$80/month**, no per-call or per-cover charges, scaling up for busier venues and groups. There's a fuller breakdown in [how much AI phone answering costs for a restaurant](/blog/how-much-does-ai-phone-answering-cost-for-a-restaurant/).
 
 ## Getting started
 

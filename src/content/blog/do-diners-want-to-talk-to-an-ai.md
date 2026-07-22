@@ -36,6 +36,6 @@ Clear that bar, and the "robot" worry evaporates — because it no longer feels 
 
 The pattern we see is consistent: guests barely comment on *how* the call was answered — they comment that it *was* answered. The complaints owners feared don't materialise. What does show up is the bookings they used to miss.
 
-That's exactly what we built [PerkTable](/products/perktable/) to do: answer every call in a warm Australian voice, handle the booking, and hand off gracefully when it should. If you'd like to hear what it actually sounds like before you decide, [give us a ring](/contact/) — and judge it the way your guests would.
+That's exactly what we built [VoxTable](/products/voxtable/) to do: answer every call in a warm Australian voice, handle the booking, and hand off gracefully when it should. If you'd like to hear what it actually sounds like before you decide, [give us a ring](/contact/) — and judge it the way your guests would.
 
 *Next read: [AI receptionist vs answering service vs voicemail: what's best for a restaurant?](/blog/ai-receptionist-vs-answering-service-vs-voicemail/)*

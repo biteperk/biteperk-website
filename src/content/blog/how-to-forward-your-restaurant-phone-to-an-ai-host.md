@@ -63,7 +63,7 @@ Five minutes of testing saves any "is it actually working?" doubt later.
 
 ## What happens on the host's side
 
-Once calls arrive, a good AI host does the rest — greeting the caller, checking availability, and confirming the table. With [PerkTable](/products/perktable/), Bella answers in a natural Australian voice and writes confirmed bookings straight to your diary, so there's nothing to transcribe and nothing to miss. Setup on our side is typically done within 48 hours.
+Once calls arrive, a good AI host does the rest — greeting the caller, checking availability, and confirming the table. With [VoxTable](/products/voxtable/), Bella answers in a natural Australian voice and writes confirmed bookings straight to your diary, so there's nothing to transcribe and nothing to miss. Setup on our side is typically done within 48 hours.
 
 Not sure which forwarding option fits your venue? [Tell us how your phone is set up](/contact/) and we'll point you to the right one — or just call and we'll walk you through it on the spot.
 

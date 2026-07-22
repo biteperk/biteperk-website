@@ -57,7 +57,7 @@ export const GOALS = {
   view_pricing: "view_pricing",
   view_platform: "view_platform",
   submit_contact: "submit_contact",
-  outbound_perktable: "outbound_perktable",
+  outbound_voxtable: "outbound_voxtable",
   audio_demo: "audio_demo",
 } as const;
 export type GoalName = keyof typeof GOALS;

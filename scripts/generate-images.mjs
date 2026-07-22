@@ -287,7 +287,7 @@ const composites = [
     layout: (w, h) => [positioned(bookedCard({ time: "Fri 8:00pm" }), undefined, 40, 80, 40)],
   },
   {
-    name: "perktable-hero-desktop",
+    name: "voxtable-hero-desktop",
     width: 1800,
     height: 1200,
     photoSlug: "restaurant-evening",
@@ -298,7 +298,7 @@ const composites = [
     ],
   },
   {
-    name: "perktable-hero-mobile",
+    name: "voxtable-hero-mobile",
     width: 800,
     height: 1200,
     photoSlug: "restaurant-evening",

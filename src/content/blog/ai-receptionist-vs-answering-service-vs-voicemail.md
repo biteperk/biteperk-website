@@ -37,4 +37,4 @@ Every restaurant eventually hits the same wall: the phone rings during service a
 
 The reason AI has pulled ahead is simple: it's the only option that's always on, always on-brand, and *predictably priced*. If you want the detail on how it actually works, start with our plain-English guide to [AI phone answering for restaurants](/blog/ai-phone-answering-for-sydney-restaurants/), or the breakdown of [what it costs](/blog/how-much-does-ai-phone-answering-cost-for-a-restaurant/).
 
-That's exactly what we built [PerkTable](/products/perktable/) to be — a warm Australian voice that answers every call, books the table, and never sleeps, for one flat monthly price. Want to hear it for yourself? [Give us a ring](/contact/) — the phone company that always picks up.
+That's exactly what we built [VoxTable](/products/voxtable/) to be — a warm Australian voice that answers every call, books the table, and never sleeps, for one flat monthly price. Want to hear it for yourself? [Give us a ring](/contact/) — the phone company that always picks up.

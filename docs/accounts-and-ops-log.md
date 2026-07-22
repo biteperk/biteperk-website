@@ -13,7 +13,7 @@ All addresses below are **aliases on the single Zoho mailbox** `biteperk@biteper
 | `biteperk@biteperk.com.au` | Biteperk | Primary mailbox address (Zoho login). Back-office / account owner. |
 | `hello@biteperk.com.au` | BitePerk | Public/general contact. Canonical address on the website, `site.ts`, and directory listings. Website contact-form notifications are currently **sent from** here (consider moving them to `no-reply@`). |
 | `sam@biteperk.com.au` | Sam · BitePerk | **Personal / founder address. Use for warm 1:1 sales replies** (e.g. following up inbound leads). Converts better than a role inbox. |
-| `perktable@biteperk.com.au` | BitePerk · PerkTable | Product/brand address for PerkTable — put on the PerkTable product page and in campaigns so inbound interest is self-sorting. |
+| `voxtable@biteperk.com.au` | BitePerk · VoxTable | Product/brand address for VoxTable — put on the VoxTable product page and in campaigns so inbound interest is self-sorting. |
 | `support@biteperk.com.au` | BitePerk Support | Customer support once venues are live. Route to a Support folder via a Zoho filter. |
 | `accounts@biteperk.com.au` | BitePerk Accounts | Invoices, billing, payment/receipt questions. |
 | `no-reply@biteperk.com.au` | BitePerk | Automated/system mail (form notifications, alerts) so those don't come from a human address. |
@@ -22,7 +22,7 @@ All of the above are **aliases created 2026-07-16** on the single mailbox `bitep
 
 **Still recommended, not yet created:** `sales@` (or `bookings@`) for inbound commercial/demo enquiries; `privacy@` as the privacy-policy contact (good practice under the Australian Privacy Act, which the site copy references).
 
-**Convention going forward:** warm one-to-one replies go from `sam@`; general/public contact stays `hello@`; product-page/campaign capture uses `perktable@`; support and billing use `support@` / `accounts@`; automated mail uses `no-reply@`. House style for display names: real name for personal (`Sam · BitePerk`), `BitePerk` / `BitePerk <Function>` / `BitePerk · <Product>` for role and product addresses. As the alias list grows, set up **Zoho filters/folders** so mail to each address is auto-filed and they don't blur together in the one inbox.
+**Convention going forward:** warm one-to-one replies go from `sam@`; general/public contact stays `hello@`; product-page/campaign capture uses `voxtable@`; support and billing use `support@` / `accounts@`; automated mail uses `no-reply@`. House style for display names: real name for personal (`Sam · BitePerk`), `BitePerk` / `BitePerk <Function>` / `BitePerk · <Product>` for role and product addresses. As the alias list grows, set up **Zoho filters/folders** so mail to each address is auto-filed and they don't blur together in the one inbox.
 
 ---
 
@@ -66,8 +66,8 @@ Full extract with classification: **`BitePerk_website_enquiries_2026-07-16.xlsx`
 
 | Date | Name | Venue | Product | Email | Notes |
 |---|---|---|---|---|---|
-| 2026-07-03 | aqila | darbar cafe | PerkTable | agha.kh7@gmail.com | "phone answering ai for taking orders and booking requests" — strong fit, ~2 wks old. Best lead. |
-| 2026-05-29 | John | Jimmy on the Mall | PerkTable | john@cur.com.au | "Hey, I wanna get into this" — hot but terse, ~7 wks stale; contact ASAP. Brisbane venue. |
+| 2026-07-03 | aqila | darbar cafe | VoxTable | agha.kh7@gmail.com | "phone answering ai for taking orders and booking requests" — strong fit, ~2 wks old. Best lead. |
+| 2026-05-29 | John | Jimmy on the Mall | VoxTable | john@cur.com.au | "Hey, I wanna get into this" — hot but terse, ~7 wks stale; contact ASAP. Brisbane venue. |
 
 **Spam / cold-pitches (ignore):** two "Davidziz" chat-spam (Telegram/WhatsApp +375 Belarus), "Layne MKT" (UI/UX agency), "Alice" & "Katiyar" (SEO pitches). **Internal tests:** "Prod Test", "Smoke Test".
 

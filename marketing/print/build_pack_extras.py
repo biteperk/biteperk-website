@@ -99,7 +99,13 @@ def draw_mark(c, x, y, size, star_fill=GOLD, fork_fill=GREEN, outline=None):
 
 
 def draw_wordmark(c, x, baseline, size, bite_color, perk_color):
-    """Lowercase 'biteperk' lockup: 'bite' upright + 'perk' oblique."""
+    """Lowercase 'biteperk' lockup: 'bite' upright + 'perk' oblique.
+
+    This is the COMPANY wordmark and never changes with the product family —
+    the products renamed Voco -> Perk -> Vox, biteperk did not. A bulk rename
+    turned this into 'bitevox' once; it reads correct in pdftotext (the
+    product name is right) and is only visible by rendering the page.
+    """
     c.setFont(SANSB, size)
     c.setFillColor(bite_color)
     c.drawString(x, baseline, "bite")
@@ -182,7 +188,7 @@ def card_back(c, b):
     c.drawImage("/tmp/bp_qr_card.png", CW - 8 * mm - qs, 6.5 * mm, qs, qs)
 
     c.setFont(SANSB, 7.0)
-    c.drawString(8 * mm, 10.5 * mm, "PerkTable")
+    c.drawString(8 * mm, 10.5 * mm, "VoxTable")
     c.setFont(SANS, 6.0)
     c.drawString(8 * mm, 6.5 * mm, f"by BitePerk · {WEB}")
 
@@ -299,7 +305,7 @@ def draw_door(c, cx, cy, guide):
 
     c.setFillColor(WHITE)
     c.setFont(SANSB, 10)
-    c.drawCentredString(0, -27.5 * mm, "PerkTable")
+    c.drawCentredString(0, -27.5 * mm, "VoxTable")
     w = c.stringWidth("by ", SANS, 7) + c.stringWidth("bite", SANSB, 7) + c.stringWidth("perk", "Helvetica-BoldOblique", 7)
     x0 = -w / 2
     c.setFillColor(MIST)
@@ -332,7 +338,7 @@ def draw_counter(c, x, y, guide):
     c.drawString(tx, 16.2 * mm, "Calls answered 24/7")
     c.setFillColor(GOLD)
     c.setFont(SANSB, 8)
-    c.drawString(tx, 11.2 * mm, "Powered by PerkTable")
+    c.drawString(tx, 11.2 * mm, "Powered by VoxTable")
     c.setFillColor(MIST)
     c.setFont(SANS, 5.2)
     c.drawString(tx, 6.4 * mm, "by ")
@@ -430,7 +436,7 @@ def build_demo_card():
     W, H = A4
     M = 18 * mm
     c = pdfcanvas.Canvas(path, pagesize=A4)
-    c.setTitle("PerkTable live demo — talk to Bella")
+    c.setTitle("VoxTable live demo — talk to Bella")
 
     c.setFillColor(CHAR)
     c.rect(0, 0, W, H, stroke=0, fill=1)
@@ -441,7 +447,7 @@ def build_demo_card():
     draw_wordmark(c, M + 14 * mm, y, 15, WHITE, GOLD)
     c.setFillColor(MIST)
     c.setFont(SANS, 8)
-    c.drawRightString(W - M, y, "PerkTable live demo")
+    c.drawRightString(W - M, y, "VoxTable live demo")
 
     # Bella portrait
     try:
@@ -557,7 +563,7 @@ def build_followup():
     W, H = A4
     M = 16 * mm
     c = pdfcanvas.Canvas(path, pagesize=A4)
-    c.setTitle("PerkTable — what happens next")
+    c.setTitle("VoxTable — what happens next")
 
     c.setFillColor(CHAR)
     c.rect(0, 0, W, H, stroke=0, fill=1)
@@ -567,7 +573,7 @@ def build_followup():
     draw_wordmark(c, M + 13 * mm, y, 13.5, WHITE, GOLD)
     c.setFillColor(MIST)
     c.setFont(SANS, 7)
-    c.drawRightString(W - M, y, "PerkTable · getting your venue live")
+    c.drawRightString(W - M, y, "VoxTable · getting your venue live")
 
     y -= 16 * mm
     c.setFillColor(WHITE)
