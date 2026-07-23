@@ -5,7 +5,8 @@
   "targets": {
     "vocotable": {
       "hosting": {
-        "biteperk": ["biteperk"]
+        "biteperk": ["biteperk"],
+        "biteperk-global": ["biteperk-global"]
       }
     }
   }

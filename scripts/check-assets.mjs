@@ -23,10 +23,12 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const DIST = join(ROOT, "dist");
+const TARGET = process.env.BUILD_TARGET === "global" ? "global" : "au";
+const DIST_NAME = TARGET === "global" ? "dist-global" : "dist";
+const DIST = join(ROOT, DIST_NAME);
 
 if (!existsSync(DIST)) {
-  console.error("check-assets: dist/ not found — run `astro build` first.");
+  console.error(`check-assets: ${DIST_NAME}/ not found — run the build first.`);
   process.exit(1);
 }
 
@@ -39,6 +41,8 @@ const LOCAL_ORIGINS = [
   "https://biteperk.com.au",
   "https://www.biteperk.com.au",
   "http://biteperk.com.au",
+  "https://biteperk.com",
+  "https://www.biteperk.com",
 ];
 
 function walk(dir, acc = []) {

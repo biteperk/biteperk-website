@@ -5,110 +5,184 @@
   "firestore": [
     { "database": "biteperk-leads", "rules": "firestore.rules", "indexes": "firestore.indexes.json" }
   ],
-  "hosting": {
-    "target": "biteperk",
-    "public": "dist",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-    "cleanUrls": true,
-    "rewrites": [
-      {
-        "source": "/api/contact",
-        "function": { "functionId": "contactForm", "region": "australia-southeast1" }
-      },
-      {
-        "source": "/api/event",
-        "function": { "functionId": "analyticsEvent", "region": "australia-southeast1" }
-      }
-    ],
-    "redirects": [
-      { "source": "/voxtable", "destination": "/products/voxtable/", "type": 301 },
-      { "source": "/voxorder", "destination": "/products/voxorder/", "type": 301 },
-      { "source": "/voxconcierge", "destination": "/products/voxconcierge/", "type": 301 },
-      { "source": "/voxdrive", "destination": "/products/voxdrive/", "type": 301 },
-      { "source": "/vocotable", "destination": "/products/voxtable/", "type": 301 },
-      { "source": "/vocoorder", "destination": "/products/voxorder/", "type": 301 },
-      { "source": "/vococoncierge", "destination": "/products/voxconcierge/", "type": 301 },
-      { "source": "/vocodrive", "destination": "/products/voxdrive/", "type": 301 },
-      { "source": "/products/vocotable{,/**}", "destination": "/products/voxtable/", "type": 301 },
-      { "source": "/products/vocoorder{,/**}", "destination": "/products/voxorder/", "type": 301 },
-      { "source": "/products/vococoncierge{,/**}", "destination": "/products/voxconcierge/", "type": 301 },
-      { "source": "/products/vocodrive{,/**}", "destination": "/products/voxdrive/", "type": 301 },
-      { "source": "/perktable", "destination": "/products/voxtable/", "type": 301 },
-      { "source": "/perkorder", "destination": "/products/voxorder/", "type": 301 },
-      { "source": "/perkconcierge", "destination": "/products/voxconcierge/", "type": 301 },
-      { "source": "/perkdrive", "destination": "/products/voxdrive/", "type": 301 },
-      { "source": "/products/perktable{,/**}", "destination": "/products/voxtable/", "type": 301 },
-      { "source": "/products/perkorder{,/**}", "destination": "/products/voxorder/", "type": 301 },
-      { "source": "/products/perkconcierge{,/**}", "destination": "/products/voxconcierge/", "type": 301 },
-      { "source": "/products/perkdrive{,/**}", "destination": "/products/voxdrive/", "type": 301 },
-      { "source": "/privacy", "destination": "/legal/privacy/", "type": 301 },
-      { "source": "/terms", "destination": "/legal/terms/", "type": 301 },
-      { "source": "/cookies", "destination": "/legal/cookies/", "type": 301 }
-    ],
-    "headers": [
-      {
-        "source": "**",
-        "headers": [
-          { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" },
-          { "key": "X-Content-Type-Options", "value": "nosniff" },
-          { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-          { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), interest-cohort=()" },
-          { "key": "Cross-Origin-Opener-Policy", "value": "same-origin" },
-          { "key": "X-Frame-Options", "value": "DENY" },
-          {
-            "key": "Content-Security-Policy",
-            "value": "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://snap.licdn.com; font-src 'self' data:; connect-src 'self' https://px.ads.linkedin.com https://px4.ads.linkedin.com; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests"
-          }
-        ]
-      },
-      {
-        "source": "**/*.@(js|css|woff2)",
-        "headers": [
-          { "key": "Cache-Control", "value": "public,max-age=31536000,immutable" }
-        ]
-      },
-      {
-        "source": "**/*.@(svg|png|jpeg|jpg|ico|webp|avif|webmanifest)",
-        "headers": [
-          { "key": "Cache-Control", "value": "public,max-age=2592000,immutable" }
-        ]
-      },
-      {
-        "source": "/og/**",
-        "headers": [
-          { "key": "Cache-Control", "value": "public,max-age=31536000,immutable" }
-        ]
-      },
-      {
-        "source": "/images/**",
-        "headers": [
-          { "key": "Cache-Control", "value": "public,max-age=31536000,immutable" }
-        ]
-      },
-      {
-        "source": "/illustrations/**",
-        "headers": [
-          { "key": "Cache-Control", "value": "public,max-age=31536000,immutable" }
-        ]
-      },
-      {
-        "source": "**/*.@(html)",
-        "headers": [
-          { "key": "Cache-Control", "value": "public,max-age=300,must-revalidate" }
-        ]
-      },
-      {
-        "source": "/sitemap-index.xml",
-        "headers": [
-          { "key": "Cache-Control", "value": "public,max-age=3600" }
-        ]
-      },
-      {
-        "source": "/robots.txt",
-        "headers": [
-          { "key": "Cache-Control", "value": "public,max-age=86400" }
-        ]
-      }
-    ]
-  }
+  "hosting": [
+    {
+      "target": "biteperk",
+      "public": "dist",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "cleanUrls": true,
+      "rewrites": [
+        {
+          "source": "/api/contact",
+          "function": { "functionId": "contactForm", "region": "australia-southeast1" }
+        },
+        {
+          "source": "/api/event",
+          "function": { "functionId": "analyticsEvent", "region": "australia-southeast1" }
+        }
+      ],
+      "redirects": [
+        { "source": "/voxtable", "destination": "/products/voxtable/", "type": 301 },
+        { "source": "/voxorder", "destination": "/products/voxorder/", "type": 301 },
+        { "source": "/voxconcierge", "destination": "/products/voxconcierge/", "type": 301 },
+        { "source": "/voxdrive", "destination": "/products/voxdrive/", "type": 301 },
+        { "source": "/vocotable", "destination": "/products/voxtable/", "type": 301 },
+        { "source": "/vocoorder", "destination": "/products/voxorder/", "type": 301 },
+        { "source": "/vococoncierge", "destination": "/products/voxconcierge/", "type": 301 },
+        { "source": "/vocodrive", "destination": "/products/voxdrive/", "type": 301 },
+        { "source": "/products/vocotable{,/**}", "destination": "/products/voxtable/", "type": 301 },
+        { "source": "/products/vocoorder{,/**}", "destination": "/products/voxorder/", "type": 301 },
+        { "source": "/products/vococoncierge{,/**}", "destination": "/products/voxconcierge/", "type": 301 },
+        { "source": "/products/vocodrive{,/**}", "destination": "/products/voxdrive/", "type": 301 },
+        { "source": "/perktable", "destination": "/products/voxtable/", "type": 301 },
+        { "source": "/perkorder", "destination": "/products/voxorder/", "type": 301 },
+        { "source": "/perkconcierge", "destination": "/products/voxconcierge/", "type": 301 },
+        { "source": "/perkdrive", "destination": "/products/voxdrive/", "type": 301 },
+        { "source": "/products/perktable{,/**}", "destination": "/products/voxtable/", "type": 301 },
+        { "source": "/products/perkorder{,/**}", "destination": "/products/voxorder/", "type": 301 },
+        { "source": "/products/perkconcierge{,/**}", "destination": "/products/voxconcierge/", "type": 301 },
+        { "source": "/products/perkdrive{,/**}", "destination": "/products/voxdrive/", "type": 301 },
+        { "source": "/privacy", "destination": "/legal/privacy/", "type": 301 },
+        { "source": "/terms", "destination": "/legal/terms/", "type": 301 },
+        { "source": "/cookies", "destination": "/legal/cookies/", "type": 301 }
+      ],
+      "headers": [
+        {
+          "source": "**",
+          "headers": [
+            { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" },
+            { "key": "X-Content-Type-Options", "value": "nosniff" },
+            { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+            { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), interest-cohort=()" },
+            { "key": "Cross-Origin-Opener-Policy", "value": "same-origin" },
+            { "key": "X-Frame-Options", "value": "DENY" },
+            {
+              "key": "Content-Security-Policy",
+              "value": "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://snap.licdn.com; font-src 'self' data:; connect-src 'self' https://px.ads.linkedin.com https://px4.ads.linkedin.com; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests"
+            }
+          ]
+        },
+        {
+          "source": "**/*.@(js|css|woff2)",
+          "headers": [
+            { "key": "Cache-Control", "value": "public,max-age=31536000,immutable" }
+          ]
+        },
+        {
+          "source": "**/*.@(svg|png|jpeg|jpg|ico|webp|avif|webmanifest)",
+          "headers": [
+            { "key": "Cache-Control", "value": "public,max-age=2592000,immutable" }
+          ]
+        },
+        {
+          "source": "/og/**",
+          "headers": [
+            { "key": "Cache-Control", "value": "public,max-age=31536000,immutable" }
+          ]
+        },
+        {
+          "source": "/images/**",
+          "headers": [
+            { "key": "Cache-Control", "value": "public,max-age=31536000,immutable" }
+          ]
+        },
+        {
+          "source": "/illustrations/**",
+          "headers": [
+            { "key": "Cache-Control", "value": "public,max-age=31536000,immutable" }
+          ]
+        },
+        {
+          "source": "**/*.@(html)",
+          "headers": [
+            { "key": "Cache-Control", "value": "public,max-age=300,must-revalidate" }
+          ]
+        },
+        {
+          "source": "/sitemap-index.xml",
+          "headers": [
+            { "key": "Cache-Control", "value": "public,max-age=3600" }
+          ]
+        },
+        {
+          "source": "/robots.txt",
+          "headers": [
+            { "key": "Cache-Control", "value": "public,max-age=86400" }
+          ]
+        }
+      ]
+    },
+    {
+      "target": "biteperk-global",
+      "public": "dist-global",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "cleanUrls": true,
+      "rewrites": [
+        {
+          "source": "/api/contact",
+          "function": { "functionId": "contactForm", "region": "australia-southeast1" }
+        },
+        {
+          "source": "/api/event",
+          "function": { "functionId": "analyticsEvent", "region": "australia-southeast1" }
+        }
+      ],
+      "redirects": [
+        { "source": "/", "destination": "/en/", "type": 301 }
+      ],
+      "headers": [
+        {
+          "source": "**",
+          "headers": [
+            { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" },
+            { "key": "X-Content-Type-Options", "value": "nosniff" },
+            { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+            { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), interest-cohort=()" },
+            { "key": "Cross-Origin-Opener-Policy", "value": "same-origin" },
+            { "key": "X-Frame-Options", "value": "DENY" },
+            {
+              "key": "Content-Security-Policy",
+              "value": "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://snap.licdn.com; font-src 'self' data:; connect-src 'self' https://px.ads.linkedin.com https://px4.ads.linkedin.com; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests"
+            }
+          ]
+        },
+        {
+          "source": "**/*.@(js|css|woff2)",
+          "headers": [
+            { "key": "Cache-Control", "value": "public,max-age=31536000,immutable" }
+          ]
+        },
+        {
+          "source": "**/*.@(svg|png|jpeg|jpg|ico|webp|avif|webmanifest)",
+          "headers": [
+            { "key": "Cache-Control", "value": "public,max-age=2592000,immutable" }
+          ]
+        },
+        {
+          "source": "/og/**",
+          "headers": [
+            { "key": "Cache-Control", "value": "public,max-age=31536000,immutable" }
+          ]
+        },
+        {
+          "source": "**/*.@(html)",
+          "headers": [
+            { "key": "Cache-Control", "value": "public,max-age=300,must-revalidate" }
+          ]
+        },
+        {
+          "source": "/sitemap-index.xml",
+          "headers": [
+            { "key": "Cache-Control", "value": "public,max-age=3600" }
+          ]
+        },
+        {
+          "source": "/robots.txt",
+          "headers": [
+            { "key": "Cache-Control", "value": "public,max-age=86400" }
+          ]
+        }
+      ]
+    }
+  ]
 }

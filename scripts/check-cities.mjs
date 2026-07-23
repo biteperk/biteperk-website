@@ -21,6 +21,13 @@ import { transformSync } from "esbuild";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 
+// The city-page engine is an AU concept; the global (biteperk.com) build has no
+// city pages, so this gate is AU-only.
+if (process.env.BUILD_TARGET === "global") {
+  console.log("check-cities: AU-only gate; skipped for the global build.");
+  process.exit(0);
+}
+
 const src = readFileSync(join(ROOT, "src/data/cities.ts"), "utf8");
 const { code } = transformSync(src, { loader: "ts", format: "esm" });
 const dataUrl = "data:text/javascript;base64," + Buffer.from(code).toString("base64");
