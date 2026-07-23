@@ -2,6 +2,7 @@
 import Base from "@/layouts/Base.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import { site } from "@/data/site";
+import { u } from "@/data/locales";
 
 const title = "Terms of service — Biteperk";
 const description =
@@ -12,8 +13,8 @@ const description =
   <article class="legal">
     <div class="wrap">
       <Breadcrumbs items={[
-        { label: "Home", href: "/" },
-        { label: "Legal", href: "/legal/terms/" },
+        { label: "Home", href: u("/") },
+        { label: "Legal", href: u("/legal/terms/") },
         { label: "Terms" },
       ]} />
       <header class="legal-head">

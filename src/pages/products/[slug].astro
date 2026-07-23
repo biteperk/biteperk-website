@@ -6,6 +6,7 @@ import Composite from "@/components/Composite.astro";
 import ImageBlock from "@/components/ImageBlock.astro";
 import Illustration from "@/components/Illustration.astro";
 import { products, voxProof, type Product } from "@/data/products";
+import { u } from "@/data/locales";
 
 // Slug-keyed ambient photo for in-development / concept products.
 const ambientBySlug: Record<string, { slug: string; alt: string }> = {
@@ -262,7 +263,7 @@ const isConcept = product.status === "concept";
           </div>
         </div>
         <p class="p-data-link reveal">
-          The fine print, in plain English: <a href="/legal/privacy/">our privacy policy</a>.
+          The fine print, in plain English: <a href={u("/legal/privacy/")}>our privacy policy</a>.
         </p>
       </div>
     </section>

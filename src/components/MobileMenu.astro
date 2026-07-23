@@ -11,6 +11,7 @@ import { products, statusLabel, productUrl } from "@/data/products";
 import { headerNav, isNavActive } from "@/data/nav";
 import { publishedCities, cityUrl } from "@/data/cities";
 import { site } from "@/data/site";
+import { u } from "@/data/locales";
 
 const pathname = Astro.url.pathname;
 const isActive = (href: string) => isNavActive(pathname, { label: "", href });
@@ -29,7 +30,7 @@ const companyLinks = headerNav.filter((l) => l.mobile !== false);
   <div class="mm-backdrop" data-mobile-menu-backdrop aria-hidden="true"></div>
   <div class="mm-panel">
     <div class="mm-header">
-      <a class="brand" href="/" aria-label="Biteperk home">
+      <a class="brand" href={u("/")} aria-label="Biteperk home">
         <StarMark size={32} />
         <span class="brand-name">bite<span class="perk">perk</span></span>
       </a>
@@ -63,7 +64,7 @@ const companyLinks = headerNav.filter((l) => l.mobile !== false);
         ))}
         <a
           class:list={["mm-link", "mm-all", { active: isNavActive(pathname, { label: "", href: "/products/", activeMatch: "exact" }) }]}
-          href="/products/"
+          href={u("/products/")}
         >
           See the Vox overview →
         </a>
@@ -98,7 +99,7 @@ const companyLinks = headerNav.filter((l) => l.mobile !== false);
       </div>
 
       <div class="mm-cta">
-        <a class="btn" href="/contact/?intent=demo" data-cta="book-demo">
+        <a class="btn" href={u("/contact/?intent=demo")} data-cta="book-demo">
           Book a demo
           <span aria-hidden="true">→</span>
         </a>

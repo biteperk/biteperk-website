@@ -14,6 +14,7 @@ import Cta from "@/components/Cta.astro";
 import FooterMood from "@/components/sections/FooterMood.astro";
 import FAQ from "@/components/FAQ.astro";
 import { getCollection } from "astro:content";
+import { u } from "@/data/locales";
 
 // Latest guides — surfaces the content engine from the homepage (internal
 // links from the highest-authority page + a freshness signal for crawlers).
@@ -101,12 +102,12 @@ const faqJsonLd = {
             <span class="eyebrow">From the guides</span>
             <h2 class="home-guides-h">Plain-English help for a busy phone.</h2>
           </div>
-          <a class="home-guides-all" href="/blog/">All guides →</a>
+          <a class="home-guides-all" href={u("/blog/")}>All guides →</a>
         </div>
         <ul class="home-guides-grid reveal-stagger">
           {latestGuides.map((post) => (
             <li>
-              <a class="home-guide pressable" href={`/blog/${post.id}/`} data-glow>
+              <a class="home-guide pressable" href={u(`/blog/${post.id}/`)} data-glow>
                 <div class="home-guide-meta">
                   <time datetime={post.data.publishDate.toISOString().slice(0, 10)}>
                     {fmtGuideDate(post.data.publishDate)}

@@ -11,8 +11,11 @@
  */
 import Base from "@/layouts/Base.astro";
 import { chrome, type Lang } from "@/data/intl-copy";
-import { localesForTarget, localeUrl, buildGlobalHreflang } from "@/data/locales";
-import { AU_HOST } from "@/data/locales";
+import {
+  localesForTarget, localeUrl, buildHreflang, isSharedPage, INTL_LAUNCHED, AU_HOME,
+  type BuildTarget,
+} from "@/data/locales";
+import LocalePicker from "@/components/LocalePicker.astro";
 
 interface Props {
   lang: Lang;
@@ -24,12 +27,17 @@ interface Props {
   noindex?: boolean;
 }
 
-const { lang, page, title, description, ogImage, noindex = true } = Astro.props;
+const { lang, page, title, description, ogImage, noindex = !INTL_LAUNCHED } = Astro.props;
 const c = chrome[lang];
 
 const pagePath = page ? `${page}/` : "";
 const canonicalPath = `/${lang}/${pagePath}`;
-const { alternates, xDefault } = buildGlobalHreflang(pagePath);
+// Once launched, shared pages (home/about/contact/legal) join the AU site in a
+// 3-way au-en ↔ en ↔ fr cluster; /how-it-works stays en+fr. Pre-launch: en+fr only.
+const baseLessPath = pagePath ? `/${pagePath}` : "/";
+const targets: readonly BuildTarget[] =
+  INTL_LAUNCHED && isSharedPage(baseLessPath) ? ["au", "global"] : ["global"];
+const { alternates, xDefault } = buildHreflang(pagePath, targets);
 
 const other = localesForTarget("global").find((l) => l.lang === c.switchTo.lang)!;
 const switchHref = new URL(localeUrl(other, pagePath)).pathname;
@@ -62,9 +70,7 @@ const year = new Date().getFullYear();
           <a href={p("contact")}>{c.nav.contact}</a>
         </nav>
         <div class="intl-actions">
-          <a class="intl-lang" href={switchHref} rel="alternate" hreflang={c.switchTo.lang} aria-label={c.switchLabel}>
-            {c.switchTo.label}
-          </a>
+          <LocalePicker />
           <a class="btn intl-cta-btn" href={p("contact")}>{c.cta}</a>
         </div>
       </div>
@@ -85,7 +91,7 @@ const year = new Date().getFullYear();
             <a href={p("contact")}>{c.nav.contact}</a>
             <a href={p("legal/privacy")}>{c.privacy}</a>
             <a href={p("legal/terms")}>{c.terms}</a>
-            <a href={AU_HOST + "/"}>{c.auSite} ↗</a>
+            <a href={AU_HOME + "/"}>{c.auSite} ↗</a>
             <a href={switchHref} rel="alternate" hreflang={c.switchTo.lang}>{c.switchTo.label}</a>
           </nav>
         </div>

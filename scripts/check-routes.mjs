@@ -8,19 +8,15 @@
  * Run after a build: node scripts/check-routes.mjs
  * (set BUILD_TARGET=global for the global pass).
  */
-import { readFileSync, existsSync, readdirSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { transformSync } from "esbuild";
+import { loadTS as loadTSAbs } from "./_load-ts.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const TARGET = process.env.BUILD_TARGET === "global" ? "global" : "au";
 
-async function loadTS(rel) {
-  const src = readFileSync(join(ROOT, rel), "utf8");
-  const { code } = transformSync(src, { loader: "ts", format: "esm" });
-  return import("data:text/javascript;base64," + Buffer.from(code).toString("base64"));
-}
+const loadTS = (rel) => loadTSAbs(join(ROOT, rel));
 
 const INFRA = ["404.html", "sitemap-index.xml", "sitemap-0.xml", "robots.txt", "llms.txt"];
 

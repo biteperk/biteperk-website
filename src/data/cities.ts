@@ -13,6 +13,7 @@
  * Add a city: one entry here (published: false until its copy is done and
  * its hero image slot exists), then flip `published`.
  */
+import { u } from "./locales";
 
 export interface CityFaq {
   readonly q: string;
@@ -753,4 +754,4 @@ export const publishedCities = cities.filter((c) => c.published);
 
 export const getCity = (slug: string) => cities.find((c) => c.slug === slug);
 
-export const cityUrl = (c: City) => `/${c.slug}/`;
+export const cityUrl = (c: City) => u(`/${c.slug}/`);

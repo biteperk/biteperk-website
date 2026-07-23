@@ -8,6 +8,7 @@
  * single link to /products/ so it functions as discovery, not décor.
  */
 import ImageBlock from "@/components/ImageBlock.astro";
+import { u } from "@/data/locales";
 
 const tiles = [
   { slug: "sydney-cafe-morning", alt: "Sydney café interior, morning amber light." },
@@ -23,14 +24,14 @@ const tiles = [
   <div class="wrap">
     <div class="marquee-head">
       <span class="eyebrow" id="marquee-eyebrow">Built for Sydney's restaurants</span>
-      <a class="marquee-link" href="/products/">
+      <a class="marquee-link" href={u("/products/")}>
         See the catalogue
         <span aria-hidden="true">→</span>
       </a>
     </div>
     <div class="marquee-row reveal-stagger" role="list" style="--stagger-step: 50ms">
       {tiles.map((t) => (
-        <a class="marquee-tile pressable" href="/products/" aria-label={`Open product catalogue — context photo: ${t.alt}`} role="listitem">
+        <a class="marquee-tile pressable" href={u("/products/")} aria-label={`Open product catalogue — context photo: ${t.alt}`} role="listitem">
           <ImageBlock slug={t.slug} alt={t.alt} aspect="1 / 1" widths="(min-width:1024px) 12vw, 30vw" />
         </a>
       ))}

@@ -17,7 +17,7 @@
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { transformSync } from "esbuild";
+import { loadTS } from "./_load-ts.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -28,10 +28,7 @@ if (process.env.BUILD_TARGET === "global") {
   process.exit(0);
 }
 
-const src = readFileSync(join(ROOT, "src/data/cities.ts"), "utf8");
-const { code } = transformSync(src, { loader: "ts", format: "esm" });
-const dataUrl = "data:text/javascript;base64," + Buffer.from(code).toString("base64");
-const { cities } = await import(dataUrl);
+const { cities } = await loadTS(join(ROOT, "src/data/cities.ts"));
 
 const words = (s) => s.split(/\s+/).filter(Boolean);
 const shingles = (s, n = 4) => {
