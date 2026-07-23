@@ -18,7 +18,7 @@ import { getCollection } from "astro:content";
 // Latest guides — surfaces the content engine from the homepage (internal
 // links from the highest-authority page + a freshness signal for crawlers).
 const latestGuides = (await getCollection("blog", ({ data }) => !data.draft))
-  .sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime())
+  .sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime() || a.id.localeCompare(b.id))
   .slice(0, 3);
 const fmtGuideDate = (d: Date) =>
   new Intl.DateTimeFormat("en-AU", { day: "numeric", month: "short", year: "numeric" }).format(d);
