@@ -1,0 +1,235 @@
+---
+/**
+ * International locale tree (biteperk.com) — /en/ and /fr/.
+ *
+ * A single catch-all that emits both locale trees for the GLOBAL build only:
+ * in the AU build `getStaticPaths` returns [], so this file contributes
+ * nothing and biteperk.com.au is unaffected.
+ *
+ * Copy lives in src/data/intl-copy.ts (Europe-truthful: no AU price, no NAP,
+ * no AU phone — PLAN.md §8). Chrome + shared styling live in IntlLayout.astro.
+ * Pages are `noindex` until biteperk.com is connected and the launch flip
+ * happens (one prop below + drop the staging note in CLAUDE.md).
+ */
+import IntlLayout from "@/layouts/IntlLayout.astro";
+import { localesForTarget, INTL_PAGE_PATHS, currentTarget, type Locale } from "@/data/locales";
+import { home, howItWorks, about, contact, privacy, terms, type Lang } from "@/data/intl-copy";
+
+export function getStaticPaths() {
+  if (currentTarget() !== "global") return [];
+  const out: { params: { intl: string }; props: { locale: Locale; page: string } }[] = [];
+  for (const locale of localesForTarget("global")) {
+    for (const page of INTL_PAGE_PATHS) {
+      const seg = [locale.path, page].filter(Boolean).join("/");
+      out.push({ params: { intl: seg }, props: { locale, page } });
+    }
+  }
+  return out;
+}
+
+const { locale, page } = Astro.props;
+const lang: Lang = locale.lang === "fr" ? "fr" : "en";
+const p = (seg: string) => `/${lang}/${seg ? `${seg}/` : ""}`;
+
+const h = home[lang];
+const hiw = howItWorks[lang];
+const ab = about[lang];
+const ct = contact[lang];
+const pv = privacy[lang];
+const tm = terms[lang];
+
+const simple = page === "how-it-works" ? hiw : page === "about" ? ab : page === "legal/privacy" ? pv : page === "legal/terms" ? tm : null;
+const meta =
+  page === ""
+    ? { title: h.title, description: h.description }
+    : page === "contact"
+      ? { title: ct.title, description: ct.description }
+      : { title: simple!.title, description: simple!.description };
+
+const ogImage =
+  page === "contact"
+    ? lang === "fr" ? "/og/intl/contact-fr.png" : "/og/intl/contact.png"
+    : lang === "fr" ? "/og/intl/home-fr.png" : "/og/intl/home.png";
+---
+
+<IntlLayout lang={lang} page={page} title={meta.title} description={meta.description} ogImage={ogImage}>
+  {page === "" && (
+    <>
+      <section class="intl-hero">
+        <div class="wrap">
+          <p class="eyebrow">{h.eyebrow}</p>
+          <h1>{h.h1}</h1>
+          <p class="lede">{h.lede}</p>
+          <div class="intl-ctas">
+            <a class="btn" href={p("contact")}>{h.ctaPrimary}</a>
+            <a class="btn-ghost" href={p("how-it-works")}>{h.ctaSecondary}</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="intl-band">
+        <div class="wrap">
+          <p class="eyebrow">{h.proof.eyebrow}</p>
+          <h2>{h.proof.heading}</h2>
+          <p class="lede">{h.proof.body}</p>
+          <ul class="intl-points">
+            {h.proof.points.map((pt) => <li>{pt}</li>)}
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap">
+          <p class="eyebrow">{h.steps.eyebrow}</p>
+          <h2>{h.steps.heading}</h2>
+          <div class="intl-grid">
+            {h.steps.items.map((s) => (
+              <div class="intl-card">
+                <h3>{s.title}</h3>
+                <p>{s.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section class="intl-band">
+        <div class="wrap">
+          <p class="eyebrow">{h.pilot.eyebrow}</p>
+          <h2>{h.pilot.heading}</h2>
+          <p class="lede">{h.pilot.body}</p>
+          <ul class="intl-points">
+            {h.pilot.points.map((pt) => <li>{pt}</li>)}
+          </ul>
+          <div class="intl-ctas">
+            <a class="btn" href={p("contact")}>{h.pilot.cta}</a>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap">
+          <h2>{h.trust.heading}</h2>
+          <div class="intl-grid">
+            {h.trust.items.map((t) => (
+              <div class="intl-card">
+                <h3>{t.title}</h3>
+                <p>{t.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section class="intl-closing">
+        <div class="wrap">
+          <h2>{h.closing.heading}</h2>
+          <p>{h.closing.body}</p>
+          <div class="intl-ctas" style="justify-content: center;">
+            <a class="btn" href={p("contact")}>{h.closing.cta}</a>
+          </div>
+        </div>
+      </section>
+    </>
+  )}
+
+  {page === "contact" && (
+    <section class="intl-hero">
+      <div class="wrap contact-grid">
+        <div>
+          <p class="eyebrow">{ct.eyebrow}</p>
+          <h1>{ct.h1}</h1>
+          <p class="lede">{ct.intro}</p>
+
+          <form class="intl-form" method="post" action="/api/contact">
+            {/* Honeypot — same contract as the AU form / Cloud Function. */}
+            <p class="hp" aria-hidden="true">
+              <label>Leave this field empty<input type="text" name="_gotcha" tabindex="-1" autocomplete="off" /></label>
+            </p>
+            <input type="hidden" name="product" value="general" />
+            <div class="field">
+              <label for="if-name">{ct.form.name}</label>
+              <input id="if-name" name="name" type="text" required maxlength="200" autocomplete="name" />
+            </div>
+            <div class="field">
+              <label for="if-email">{ct.form.email}</label>
+              <input id="if-email" name="email" type="email" required maxlength="320" autocomplete="email" />
+            </div>
+            <div class="field">
+              <label for="if-venue">{ct.form.venue}</label>
+              <input id="if-venue" name="venue" type="text" maxlength="200" placeholder={ct.form.venuePlaceholder} />
+            </div>
+            <div class="field">
+              <label for="if-message">{ct.form.message}</label>
+              <textarea id="if-message" name="message" required maxlength="4000" rows="5" placeholder={ct.form.messagePlaceholder}></textarea>
+            </div>
+            <button class="btn" type="submit">{ct.form.submit}</button>
+            <p class="muted form-note">{ct.form.note}</p>
+          </form>
+        </div>
+        <aside class="intl-card contact-aside">
+          <h3>{ct.aside.heading}</h3>
+          <p>{ct.aside.body}</p>
+          <p><a class="link-arrow" href="mailto:hello@biteperk.com.au">{ct.aside.emailLabel}</a></p>
+        </aside>
+      </div>
+    </section>
+  )}
+
+  {simple && (
+    <section class="intl-hero">
+      <div class="wrap intl-prose">
+        <p class="eyebrow">{simple.eyebrow}</p>
+        <h1>{simple.h1}</h1>
+        <p class="lede">{simple.intro}</p>
+        {simple.sections.map((s) => (
+          <section>
+            <h2>{s.heading}</h2>
+            {s.body.map((para) => <p>{para}</p>)}
+          </section>
+        ))}
+        {simple.cta && (
+          <div class="intl-ctas">
+            <a class="btn" href={p("contact")}>{simple.cta.label}</a>
+            {simple.cta.sub && <p class="muted" style="align-self: center; margin: 0;">{simple.cta.sub}</p>}
+          </div>
+        )}
+      </div>
+    </section>
+  )}
+</IntlLayout>
+
+<style>
+  .contact-grid {
+    display: grid;
+    gap: var(--space-8);
+    grid-template-columns: minmax(0, 1.5fr) minmax(240px, 1fr);
+    align-items: start;
+  }
+  @media (max-width: 860px) {
+    .contact-grid { grid-template-columns: 1fr; }
+  }
+  .contact-aside { position: sticky; top: 96px; }
+
+  .intl-form { margin-top: var(--space-6); display: grid; gap: var(--space-5); max-width: 560px; }
+  .intl-form .hp { position: absolute; left: -9999px; height: 0; overflow: hidden; }
+  .intl-form .field { display: grid; gap: var(--space-2); }
+  .intl-form label { font-weight: 600; font-size: var(--fs-small); }
+  .intl-form input,
+  .intl-form textarea {
+    background: var(--ink-1);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    color: var(--text);
+    font: inherit;
+    padding: 12px 14px;
+  }
+  .intl-form input:focus-visible,
+  .intl-form textarea:focus-visible {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: var(--ring-focus);
+  }
+  .intl-form .btn { justify-self: start; }
+  .form-note { font-size: var(--fs-small); margin: 0; }
+</style>

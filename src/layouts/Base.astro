@@ -35,6 +35,16 @@ interface Props {
   title: string;
   description?: string;
   path?: string;
+  /** `<html lang>` — defaults to en-AU (AU build); global locales pass en / fr. */
+  lang?: string;
+  /** og:locale — defaults to en_AU. */
+  ogLocale?: string;
+  /** Emit robots noindex (used by the international staging scaffold). */
+  noindex?: boolean;
+  /** hreflang cluster for this page (international builds only; AU emits none). */
+  alternates?: { hreflang: string; href: string }[];
+  /** x-default href for the hreflang cluster. */
+  xDefaultHref?: string;
   /** Absolute path under /public to preload (e.g. "/bella/portrait.png") */
   preloadImage?: string;
   /** Responsive LCP-image preload (ImageBlock slug + its `sizes` value).
@@ -48,22 +58,31 @@ interface Props {
   ogImage?: string;
   /** Skip the global Nav (e.g. on the 404 page if a custom chrome is wanted). */
   hideNav?: boolean;
+  /** Skip the AU Footer (the international pages carry their own chrome —
+      the AU footer links routes that don't exist on biteperk.com). */
+  hideFooter?: boolean;
 }
 
 const {
   title,
   description,
   path,
+  lang = "en-AU",
+  ogLocale = "en_AU",
+  noindex = false,
+  alternates,
+  xDefaultHref,
   preloadImage,
   preloadSlug,
   preloadComposite,
   ogImage,
   hideNav = false,
+  hideFooter = false,
 } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en-AU">
+<html lang={lang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -123,9 +142,16 @@ const {
       </>
     )}
 
-    <SEO title={title} description={description} path={path} ogImage={ogImage}>
+    <SEO title={title} description={description} path={path} ogImage={ogImage} noindex={noindex} ogLocale={ogLocale}>
       <slot name="jsonld" slot="jsonld" />
     </SEO>
+
+    {/* hreflang cluster — international builds only; the AU build passes none,
+        so its <head> is unchanged. */}
+    {alternates?.map((a) => (
+      <link rel="alternate" hreflang={a.hreflang} href={a.href} />
+    ))}
+    {xDefaultHref && <link rel="alternate" hreflang="x-default" href={xDefaultHref} />}
 
     {/* Sitewide brand graph (Organization + WebSite), linked by @id. */}
     <script is:inline type="application/ld+json" set:html={JSON.stringify(siteGraph)} />
@@ -138,7 +164,7 @@ const {
     <main id="main">
       <slot />
     </main>
-    <Footer />
+    {!hideFooter && <Footer />}
     {/* Persisted across View Transitions so its shown/animated state never
         replays on soft navigation. */}
     <ConsentBanner transition:persist />

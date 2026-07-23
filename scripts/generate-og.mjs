@@ -22,7 +22,13 @@ import { Resvg } from "@resvg/resvg-js";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
 const PUBLIC = join(ROOT, "public");
-const OG_DIR = join(PUBLIC, "og");
+// International architecture (PLAN.md §7): cards are per-host. The AU build
+// writes public/og/*.png (unchanged); the global build writes public/og/intl/*
+// so the two sets never clobber each other. Regenerate with `npm run og` and
+// `BUILD_TARGET=global npm run og`, and PIXEL-REVIEW the PNGs before deploy.
+const TARGET = process.env.BUILD_TARGET === "global" ? "global" : "au";
+const OG_DIR = TARGET === "global" ? join(PUBLIC, "og", "intl") : join(PUBLIC, "og");
+const OG_FOOTER = TARGET === "global" ? "biteperk.com" : "biteperk.com.au · Sydney, Australia";
 
 if (!existsSync(OG_DIR)) mkdirSync(OG_DIR, { recursive: true });
 
@@ -199,7 +205,7 @@ function card({ eyebrow, headline, accent = "#f5c418", showBella = true }) {
                     color: "#9aa1ad",
                     letterSpacing: "1.2px",
                   },
-                  children: "biteperk.com.au · Sydney, Australia",
+                  children: OG_FOOTER,
                 },
               },
             ],
@@ -257,7 +263,43 @@ function card({ eyebrow, headline, accent = "#f5c418", showBella = true }) {
   };
 }
 
-const cards = [
+/**
+ * International cards (BUILD_TARGET=global → public/og/intl/). Their own set:
+ * the AU cards' copy is AU-specific (city pages, "Made in Sydney"), and the
+ * French pages need French cards. Headlines mirror src/data/intl-copy.ts —
+ * keep them in sync when the copy changes.
+ */
+const globalCards = [
+  {
+    file: "default.png",
+    eyebrow: "Voice + AI for hospitality",
+    headline: "Every call answered. Every booking captured.",
+  },
+  {
+    file: "home.png",
+    eyebrow: "Vox · AI phone host",
+    headline: "Every call answered. Every booking captured.",
+  },
+  {
+    file: "contact.png",
+    eyebrow: "European pilots",
+    headline: "Let's talk about your venue.",
+    showBella: false,
+  },
+  {
+    file: "home-fr.png",
+    eyebrow: "Vox · Hôte téléphonique IA",
+    headline: "Chaque appel décroché. Chaque réservation enregistrée.",
+  },
+  {
+    file: "contact-fr.png",
+    eyebrow: "Pilotes européens",
+    headline: "Parlons de votre établissement.",
+    showBella: false,
+  },
+];
+
+const auCards = [
   {
     file: "default.png",
     eyebrow: "Voice + AI for hospitality",
@@ -354,6 +396,8 @@ const cards = [
   },
 ];
 
+const cards = TARGET === "global" ? globalCards : auCards;
+
 for (const c of cards) {
   const tree = card({
     eyebrow: c.eyebrow,
@@ -378,4 +422,4 @@ for (const c of cards) {
   console.log(`✓ ${c.file} (${kb} KB)`);
 }
 
-console.log(`\n${cards.length} OG cards written to public/og/`);
+console.log(`\n${cards.length} OG cards written to ${OG_DIR}/`);

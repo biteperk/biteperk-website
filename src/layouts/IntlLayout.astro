@@ -1,0 +1,226 @@
+---
+/**
+ * Layout for the international (biteperk.com) pages — /en/ and /fr/.
+ *
+ * Wraps Base with the AU Nav + Footer hidden and provides its own slim chrome:
+ * the AU chrome carries the AU phone number and links to routes (/products/,
+ * cities, blog) that are pruned from the global build — both are forbidden on
+ * these pages (PLAN.md §8). Everything visual reuses the design tokens and
+ * shared classes (.wrap, .btn, .btn-ghost, .pill, .brand-name) so the two
+ * properties read as one brand.
+ */
+import Base from "@/layouts/Base.astro";
+import { chrome, type Lang } from "@/data/intl-copy";
+import { localesForTarget, localeUrl, buildGlobalHreflang } from "@/data/locales";
+import { AU_HOST } from "@/data/locales";
+
+interface Props {
+  lang: Lang;
+  /** Page path within the locale ("" for home, "about", "legal/privacy", …). */
+  page: string;
+  title: string;
+  description: string;
+  ogImage?: string;
+  noindex?: boolean;
+}
+
+const { lang, page, title, description, ogImage, noindex = true } = Astro.props;
+const c = chrome[lang];
+
+const pagePath = page ? `${page}/` : "";
+const canonicalPath = `/${lang}/${pagePath}`;
+const { alternates, xDefault } = buildGlobalHreflang(pagePath);
+
+const other = localesForTarget("global").find((l) => l.lang === c.switchTo.lang)!;
+const switchHref = new URL(localeUrl(other, pagePath)).pathname;
+const p = (seg: string) => `/${lang}/${seg ? `${seg}/` : ""}`;
+const year = new Date().getFullYear();
+---
+
+<Base
+  title={title}
+  description={description}
+  path={canonicalPath}
+  lang={lang}
+  ogLocale={lang === "fr" ? "fr_FR" : "en"}
+  ogImage={ogImage ?? (lang === "fr" ? "/og/intl/home-fr.png" : "/og/intl/home.png")}
+  noindex={noindex}
+  alternates={alternates}
+  xDefaultHref={xDefault}
+  hideNav={true}
+  hideFooter={true}
+>
+  <div class="intl">
+    <header class="intl-nav">
+      <div class="wrap intl-nav-row">
+        <a class="brand" href={p("")} aria-label="BitePerk home">
+          <span class="brand-name">bite<span class="perk">perk</span></span>
+        </a>
+        <nav class="intl-links" aria-label="Site">
+          <a href={p("how-it-works")}>{c.nav.howItWorks}</a>
+          <a href={p("about")}>{c.nav.about}</a>
+          <a href={p("contact")}>{c.nav.contact}</a>
+        </nav>
+        <div class="intl-actions">
+          <a class="intl-lang" href={switchHref} rel="alternate" hreflang={c.switchTo.lang} aria-label={c.switchLabel}>
+            {c.switchTo.label}
+          </a>
+          <a class="btn intl-cta-btn" href={p("contact")}>{c.cta}</a>
+        </div>
+      </div>
+    </header>
+
+    <slot />
+
+    <footer class="intl-footer">
+      <div class="wrap">
+        <div class="intl-footer-grid">
+          <div>
+            <span class="brand-name">bite<span class="perk">perk</span></span>
+            <p class="intl-footer-blurb">{c.footerBlurb}</p>
+          </div>
+          <nav class="intl-footer-links" aria-label="Footer">
+            <a href={p("how-it-works")}>{c.nav.howItWorks}</a>
+            <a href={p("about")}>{c.nav.about}</a>
+            <a href={p("contact")}>{c.nav.contact}</a>
+            <a href={p("legal/privacy")}>{c.privacy}</a>
+            <a href={p("legal/terms")}>{c.terms}</a>
+            <a href={AU_HOST + "/"}>{c.auSite} ↗</a>
+            <a href={switchHref} rel="alternate" hreflang={c.switchTo.lang}>{c.switchTo.label}</a>
+          </nav>
+        </div>
+        <p class="intl-footer-legal">
+          © {year} BitePerk Pty Ltd · <a href={`mailto:${c.email}`}>{c.email}</a> · {c.rights}
+        </p>
+      </div>
+    </footer>
+  </div>
+</Base>
+
+<style is:global>
+  /* Chrome + shared section styling for the international pages. Global (not
+     scoped) because it styles content rendered by the page inside the slot;
+     everything is namespaced under .intl so nothing can leak into AU pages
+     (which never render this layout). */
+  .intl-nav {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-nav);
+    background: color-mix(in srgb, var(--ink-0) 88%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+  }
+  .intl-nav-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+    min-height: 64px;
+  }
+  .intl-links {
+    display: flex;
+    gap: var(--space-5);
+    margin-inline-start: auto;
+  }
+  .intl-links a {
+    color: var(--text);
+    text-decoration: none;
+    font-size: var(--fs-small);
+    font-weight: 600;
+  }
+  .intl-links a:hover { color: var(--gold); }
+  .intl-actions { display: flex; align-items: center; gap: var(--space-4); }
+  .intl-lang {
+    color: var(--mist);
+    text-decoration: none;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    border: 1px solid var(--line);
+    border-radius: var(--r-pill);
+    padding: 6px 14px;
+  }
+  .intl-lang:hover { color: var(--gold); border-color: var(--line-gold); }
+  .intl-cta-btn { white-space: nowrap; }
+
+  /* ── Shared section building blocks ── */
+  .intl section { padding-block: var(--space-9); }
+  .intl .intl-hero { padding-block: calc(var(--space-10) * 1.2) var(--space-9); }
+  .intl .eyebrow {
+    font-size: var(--fs-eyebrow);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+    margin-bottom: var(--space-3);
+  }
+  .intl h1 {
+    font-size: var(--fs-h1);
+    line-height: var(--lh-display);
+    letter-spacing: -0.02em;
+    margin: 0 0 var(--space-4);
+    max-width: 21ch;
+  }
+  .intl h2 {
+    font-size: var(--fs-h2);
+    line-height: var(--lh-heading);
+    letter-spacing: -0.015em;
+    margin: 0 0 var(--space-4);
+    max-width: 26ch;
+  }
+  .intl h3 { font-size: var(--fs-h3); margin: 0 0 var(--space-2); }
+  .intl .lede {
+    font-size: var(--fs-lede);
+    line-height: var(--lh-lede);
+    color: var(--mist-2);
+    max-width: 58ch;
+  }
+  .intl p { line-height: var(--lh-body); }
+  .intl .muted { color: var(--mist); }
+  .intl .intl-ctas { display: flex; flex-wrap: wrap; gap: var(--space-4); margin-top: var(--space-6); }
+
+  .intl .intl-grid {
+    display: grid;
+    gap: var(--space-6);
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    margin-top: var(--space-7);
+  }
+  .intl .intl-card {
+    background: var(--ink-1);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: var(--space-6);
+  }
+  .intl .intl-card p { color: var(--mist-2); margin: 0; }
+
+  .intl .intl-points { list-style: none; padding: 0; margin: var(--space-5) 0 0; display: grid; gap: var(--space-3); }
+  .intl .intl-points li { padding-inline-start: 1.6em; position: relative; color: var(--mist-2); }
+  .intl .intl-points li::before { content: "✓"; position: absolute; inset-inline-start: 0; color: var(--gold); font-weight: 700; }
+
+  .intl .intl-band {
+    background: var(--ink-1);
+    border-block: 1px solid var(--line);
+  }
+  .intl .intl-closing { text-align: center; }
+  .intl .intl-closing h2 { margin-inline: auto; }
+  .intl .intl-closing p { max-width: 52ch; margin-inline: auto; color: var(--mist-2); }
+
+  .intl .intl-prose { max-width: 68ch; }
+  .intl .intl-prose section { padding-block: var(--space-6) 0; }
+  .intl .intl-prose p + p { margin-top: var(--space-4); }
+
+  /* ── Footer ── */
+  .intl-footer { border-top: 1px solid var(--line); padding-block: var(--space-8); margin-top: var(--space-9); }
+  .intl-footer-grid { display: grid; gap: var(--space-7); grid-template-columns: minmax(240px, 1.2fr) 1fr; }
+  .intl-footer-blurb { color: var(--mist); max-width: 44ch; margin-top: var(--space-3); font-size: var(--fs-small); }
+  .intl-footer-links { display: flex; flex-wrap: wrap; gap: var(--space-4) var(--space-5); align-content: start; }
+  .intl-footer-links a { color: var(--mist-2); text-decoration: none; font-size: var(--fs-small); }
+  .intl-footer-links a:hover { color: var(--gold); }
+  .intl-footer-legal { color: var(--mist); font-size: var(--fs-small); margin-top: var(--space-7); }
+  .intl-footer-legal a { color: inherit; }
+
+  @media (max-width: 720px) {
+    .intl-links { display: none; }
+    .intl-actions { margin-inline-start: auto; }
+    .intl-footer-grid { grid-template-columns: 1fr; }
+  }
+</style>
