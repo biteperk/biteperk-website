@@ -37,13 +37,32 @@ After `npm run check` + `npm run build`, CI runs these **generated/data-driven g
 
 There are no unit tests; the gates above are the safety net.
 
+## International builds (biteperk.com — added 23 Jul 2026)
+
+This repo emits **two sites from one codebase**, selected by `BUILD_TARGET` (full architecture: `deliverables/2026-07-23-intl-site-architecture/PLAN.md`):
+
+- `au` (default) → `biteperk.com.au` → `dist/` — the existing AU site, output unchanged.
+- `global` → `biteperk.com` → `dist-global/` — the `/en/` + `/fr/` international tree.
+
+Key facts:
+
+- **`src/data/locales.ts` is the single source of truth** (locales, hosts, hreflang cluster, intl page list). `src/data/intl-copy.ts` holds all EN/FR copy — French needs a native review (Ludovic) before marketing pushes.
+- `npm run build:global` = build + `prune-global.mjs` (removes the AU pages that build alongside — biteperk.com must never serve them) + `llms-global.mjs` (global `llms.txt` **and** `robots.txt` — the copied AU robots points at the wrong host's sitemap).
+- Gates run per target: `npm run gates:au` / `npm run gates:global`. New `check-hreflang.mjs` (global) asserts the complete reciprocal cluster; `check-schema.mjs` (global) asserts the **shared AU-anchored org `@id`** (entity merge), Organization-only, and sweeps every page for AU-only strings (both phone numbers, Haymarket, `$80`).
+- **Europe-truthful content rules (PLAN.md §8): no AU price, no NAP, no AU phone on any global page** — the sweep enforces it. CTA is "book a pilot".
+- The intl pages use `IntlLayout.astro` (own chrome) — the AU Nav/Footer carry the AU phone and link pruned routes; never render them on global pages.
+- International pages are **`noindex` until biteperk.com is connected** (flip: `noindex` default in `IntlLayout.astro`). The AU↔EU cross-domain hreflang is deliberately **not emitted yet** — both hosts must serve reciprocal tags together at launch.
+- OG cards: `BUILD_TARGET=global npm run og` → `public/og/intl/` (en + fr sets, footer `biteperk.com`). Pixel-review before deploy, as always.
+- CI (`web.yml`) runs an `[au, global]` matrix; e2e/Lighthouse/contrast run on the AU pass.
+
 ## Deploy
 
-Site is one Firebase project (id `vocotable` — a legacy id, do **not** "fix" it; project ids are immutable) with hosting target `biteperk`:
+Site is one Firebase project (id `vocotable` — a legacy id, do **not** "fix" it; project ids are immutable) with hosting targets `biteperk` (AU) and `biteperk-global` (biteperk.com):
 
 ```bash
 firebase deploy --only hosting:biteperk
 firebase deploy --only functions:biteperk-website   # contact form
+npm run build:global && firebase deploy --only hosting:biteperk-global   # international
 ```
 
 `firebase.json` defines the rewrite `/api/contact → contactForm` (region `australia-southeast1`), the CSP, and immutable cache headers for static assets. HTML is `max-age=300`.
