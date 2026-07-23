@@ -141,3 +141,5 @@ BitePerk_website_enquiries_*.xlsx
 
 # Claude-generated deliverables — pitch decks, proposals, exported docs (see CLAUDE.md)
 deliverables/
+dist-site/
+dist-cctld/
