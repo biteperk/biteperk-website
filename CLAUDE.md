@@ -106,6 +106,8 @@ Form posts same-origin to `/api/contact` → Firebase Hosting rewrites to `conta
 
 For **AI-generated photography** there's a separate intake pipeline (`scripts/img/`): drop masters in `scripts/img/intake/<slot>.png`, run `scripts/img/process.mjs`, and mark the manifest slot `reviewed: true` (enforced by `check-images.mjs`). Art direction + prompt library: `docs/art-direction.md`. No sci-fi/robot imagery — real hospitality photography only.
 
+- **OG card slot image** (`scripts/generate-og.mjs`): the right-hand photo on image-bearing cards is sourced from `public/images/hands-headset-1920.jpg` (tracked — so `npm run og` runs from a clean checkout) via the `bellaPath` constant. It replaced a robotic AI "Bella" portrait that violated the no-sci-fi rule above and had shipped on every social card since the Perk era (fixed `be7a419`, 22 Jul 2026). To change it, point `bellaPath` at another tracked file in `public/images/` and re-run `npm run og`; **review the rendered PNGs** (`public/og/*.png`) before deploy — the crop lands in a 360×450 slot. The five text-only cards (products, voxdrive, contact, blog, platform) render no image slot and are unaffected. After a card image changes, LinkedIn/Facebook share caches must be re-scraped or they keep serving the old image for weeks.
+
 ## Docs
 
 - `docs/art-direction.md` — AI imagery prompt library + hard rules (no fake venues/faces/signage) + pipeline spec.
