@@ -17,9 +17,15 @@ permissions:
 
 jobs:
   build:
-    name: Type-check, build, link-check
+    name: Build & gate (${{ matrix.target }})
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [au, global]
+    env:
+      BUILD_TARGET: ${{ matrix.target }}
 
     steps:
       - name: Checkout
@@ -37,33 +43,54 @@ jobs:
       - name: Type-check
         run: npm run check
 
+      # BUILD_TARGET (job env) drives astro.config: au → dist/, global → dist-global/.
       - name: Build
         run: npm run build
+
+      # Global pass: prune the AU pages that build alongside, write global llms.txt.
+      - name: Finalize global build
+        if: matrix.target == 'global'
+        run: |
+          node scripts/prune-global.mjs
+          node scripts/llms-global.mjs
+
+      - name: Resolve dist dir
+        run: echo "DIST=$([ "$BUILD_TARGET" = "global" ] && echo dist-global || echo dist)" >> "$GITHUB_ENV"
 
       - name: Imagery review gate (manifest slots must be human-reviewed)
         run: node scripts/check-images.mjs
 
-      - name: Smoke-test built routes (generated from cities.ts + blog)
+      - name: Smoke-test built routes (generated per target)
         run: node scripts/check-routes.mjs
 
-      - name: Asset references in built HTML must resolve (OG cards, composites, preloads)
+      - name: Asset references in built HTML must resolve
         run: node scripts/check-assets.mjs
 
-      - name: WCAG contrast gate (both themes)
+      - name: JSON-LD @id + NAP / cross-domain entity integrity
+        run: node scripts/check-schema.mjs
+
+      - name: WCAG contrast gate (shared themes — run on the AU pass)
+        if: matrix.target == 'au'
         run: node scripts/check-contrast.mjs
 
-      - name: City-page anti-doorway gate
+      - name: City-page anti-doorway gate (AU only)
+        if: matrix.target == 'au'
         run: node scripts/check-cities.mjs
 
-      - name: JSON-LD @id + NAP integrity
-        run: node scripts/check-schema.mjs
+      - name: hreflang integrity (global only)
+        if: matrix.target == 'global'
+        run: node scripts/check-hreflang.mjs
 
       - name: Sanity-check sitemap
         run: |
           set -e
-          test -f dist/sitemap-0.xml || { echo "Missing dist/sitemap-0.xml"; exit 1; }
-          grep -q 'biteperk.com.au' dist/sitemap-0.xml
-          grep -q 'products/voxtable' dist/sitemap-0.xml
+          test -f "$DIST/sitemap-0.xml" || { echo "Missing $DIST/sitemap-0.xml"; exit 1; }
+          if [ "$BUILD_TARGET" = "global" ]; then
+            grep -q 'biteperk.com/en/' "$DIST/sitemap-0.xml"
+          else
+            grep -q 'biteperk.com.au' "$DIST/sitemap-0.xml"
+            grep -q 'products/voxtable' "$DIST/sitemap-0.xml"
+          fi
           echo "Sitemap looks healthy."
 
       - name: Internal link check (lychee)
@@ -73,21 +100,25 @@ jobs:
             --no-progress
             --exclude-mail
             --exclude '^https://(vocotable\.biteperk|formspree)'
-            --base ./dist
-            ./dist/**/*.html
+            --base ./${{ env.DIST }}
+            ./${{ env.DIST }}/**/*.html
           fail: false
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      # ---- Phase 7 automated QA (runs after the existing gates) ----
+      # ---- Behavioural QA runs on the AU pass. The /en/ + /fr/ pages are
+      # noindex Phase-1 placeholders; their Playwright specs and Lighthouse
+      # budgets land with the Phase-2 Europe-truthful content. ----
 
       - name: Install Playwright browsers
+        if: matrix.target == 'au'
         run: npx playwright install --with-deps chromium webkit
 
       - name: Playwright E2E + axe (theme, menus, contact, routes, a11y)
+        if: matrix.target == 'au'
         run: npm run test:e2e
 
       - name: Upload Playwright report
-        if: failure()
+        if: failure() && matrix.target == 'au'
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
@@ -95,11 +126,12 @@ jobs:
           retention-days: 7
 
       - name: Lighthouse CI budgets (perf ≥95, LCP ≤2.0s, CLS ≤0.02, JS ≤60KB)
+        if: matrix.target == 'au'
         run: npm run lhci
 
       - name: Upload build artefact
         uses: actions/upload-artifact@v4
         with:
-          name: dist
-          path: dist
+          name: dist-${{ matrix.target }}
+          path: ${{ env.DIST }}
           retention-days: 7

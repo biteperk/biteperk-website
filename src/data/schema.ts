@@ -12,27 +12,48 @@
  *
  * Stable @ids let Google merge the nodes into one knowledge graph instead
  * of treating each page's copy as a separate entity.
+ *
+ * Cross-domain (international architecture — PLAN.md §6b): the Organization
+ * `@id` is SHARED, anchored to the AU host, on BOTH the biteperk.com.au and
+ * biteperk.com builds — that's precisely how Google merges the two properties
+ * into one company entity. The AU build emits the full LocalBusiness (NAP, geo,
+ * hours, areaServed); the global build emits Organization only — the local
+ * entity is Australia's. Nothing here changes the AU build's output.
  */
 import { site } from "./site";
 import { publishedCities } from "./cities";
+import { AU_HOST, GLOBAL_HOST, currentHost, currentTarget } from "./locales";
 
-export const ORG_ID = `${site.url}/#organization`;
-export const WEBSITE_ID = `${site.url}/#website`;
-/** Stable @id for the one Vox product (defined on /products/, referenced by the per-capability pages). */
-export const VOX_ID = `${site.url}/products/#vox`;
+// Organization @id is shared across both hosts and anchored to the AU property.
+export const ORG_ID = `${AU_HOST}/#organization`;
+// Each property is its own WebSite node — @id'd per host.
+export const WEBSITE_ID = `${currentHost()}/#website`;
+/** Stable @id for the one Vox product (shared identity, AU-anchored). */
+export const VOX_ID = `${AU_HOST}/products/#vox`;
 /** Stable @id for a per-capability SoftwareApplication "edition" of Vox. */
-export const voxEditionId = (slug: string) => `${site.url}/products/${slug}/#software`;
+export const voxEditionId = (slug: string) => `${AU_HOST}/products/${slug}/#software`;
 
 const telephone = site.phone.href.replace("tel:", "");
 const email = site.email.href.replace("mailto:", "");
+
+const IS_GLOBAL = currentTarget() === "global";
+
+const KNOWS_ABOUT = [
+  "Restaurant phone answering",
+  "AI receptionist for restaurants",
+  "Voice AI for hospitality",
+  "Restaurant booking automation",
+];
 
 /**
  * The company. Typed as both Organization and LocalBusiness so Google can
  * treat Biteperk as a real, physically-located business (Haymarket) AND as
  * the brand/publisher behind the site. Full NAP + geo + hours + priceRange
  * are what let it anchor local results and a knowledge panel.
+ *
+ * AU build only — the local entity belongs to Australia.
  */
-export const organizationNode = {
+const auOrganizationNode = {
   "@type": ["Organization", "LocalBusiness"],
   "@id": ORG_ID,
   name: site.name,
@@ -74,12 +95,7 @@ export const organizationNode = {
       containedInPlace: { "@type": "State" as const, name: c.stateName },
     })),
   ],
-  knowsAbout: [
-    "Restaurant phone answering",
-    "AI receptionist for restaurants",
-    "Voice AI for hospitality",
-    "Restaurant booking automation",
-  ],
+  knowsAbout: KNOWS_ABOUT,
   openingHoursSpecification: [
     {
       "@type": "OpeningHoursSpecification",
@@ -100,14 +116,50 @@ export const organizationNode = {
   ],
 };
 
-/** The website as an entity — lets the brand own its name in search. */
+/**
+ * The company as brand/publisher only — NO LocalBusiness, NAP, geo, hours or
+ * areaServed (those are Australia's local entity). Same shared @id merges it
+ * with the AU node; `sameAs` lists both properties so Google links them.
+ *
+ * Global (biteperk.com) build only.
+ */
+const globalOrganizationNode = {
+  "@type": "Organization",
+  "@id": ORG_ID,
+  name: site.name,
+  legalName: "Biteperk Pty Ltd",
+  url: AU_HOST,
+  logo: {
+    "@type": "ImageObject",
+    url: `${AU_HOST}/favicon.svg`,
+  },
+  image: `${GLOBAL_HOST}/og/intl/home.png`,
+  description: site.description,
+  email,
+  // No `telephone` here deliberately: the published line is Australian, and the
+  // EU surfaces carry no AU phone (PLAN.md §8) — schema included.
+  sameAs: [site.social.linkedin, AU_HOST, GLOBAL_HOST],
+  knowsAbout: KNOWS_ABOUT,
+  contactPoint: [
+    {
+      "@type": "ContactPoint",
+      email,
+      contactType: "customer service",
+      availableLanguage: ["en", "fr"],
+    },
+  ],
+};
+
+export const organizationNode = IS_GLOBAL ? globalOrganizationNode : auOrganizationNode;
+
+/** The website as an entity — lets the brand own its name in search. Per-host. */
 export const websiteNode = {
   "@type": "WebSite",
   "@id": WEBSITE_ID,
-  url: site.url,
+  url: currentHost(),
   name: site.name,
   description: site.description,
-  inLanguage: "en-AU",
+  inLanguage: IS_GLOBAL ? "en" : "en-AU",
   publisher: { "@id": ORG_ID },
 };
 

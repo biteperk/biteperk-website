@@ -1,9 +1,12 @@
 #!/usr/bin/env node
 /**
- * Route smoke-test over dist/. The expected list is GENERATED from the same
- * data that generates the pages (cities.ts, src/content/blog/) plus the
- * static route list — so the check can't drift when a city or guide ships.
- * Run after `astro build`: node scripts/check-routes.mjs
+ * Route smoke-test over the build output, per BUILD_TARGET:
+ *   au     → dist/:        GENERATED from cities.ts + the blog collection + the
+ *            static AU route list, so it can't drift when a city or guide ships.
+ *   global → dist-global/: GENERATED from src/data/locales.ts (the /en/ + /fr/
+ *            locale trees) + the shared infra files.
+ * Run after a build: node scripts/check-routes.mjs
+ * (set BUILD_TARGET=global for the global pass).
  */
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { join, dirname } from "node:path";
@@ -11,50 +14,57 @@ import { fileURLToPath } from "node:url";
 import { transformSync } from "esbuild";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+const TARGET = process.env.BUILD_TARGET === "global" ? "global" : "au";
 
-const src = readFileSync(join(ROOT, "src/data/cities.ts"), "utf8");
-const { code } = transformSync(src, { loader: "ts", format: "esm" });
-const { cities } = await import(
-  "data:text/javascript;base64," + Buffer.from(code).toString("base64")
-);
+async function loadTS(rel) {
+  const src = readFileSync(join(ROOT, rel), "utf8");
+  const { code } = transformSync(src, { loader: "ts", format: "esm" });
+  return import("data:text/javascript;base64," + Buffer.from(code).toString("base64"));
+}
 
-const blogSlugs = readdirSync(join(ROOT, "src/content/blog"))
-  .filter((f) => f.endsWith(".md"))
-  .map((f) => f.replace(/\.md$/, ""));
+const INFRA = ["404.html", "sitemap-index.xml", "sitemap-0.xml", "robots.txt", "llms.txt"];
 
-const expected = [
-  "index.html",
-  "products/index.html",
-  "products/voxtable/index.html",
-  "products/voxorder/index.html",
-  "products/voxconcierge/index.html",
-  "products/voxdrive/index.html",
-  "contact/index.html",
-  "about/index.html",
-  "technology/index.html",
-  "platform/index.html",
-  "blog/index.html",
-  ...blogSlugs.map((s) => `blog/${s}/index.html`),
-  ...cities.filter((c) => c.published).map((c) => `${c.slug}/index.html`),
-  "legal/privacy/index.html",
-  "legal/terms/index.html",
-  "legal/cookies/index.html",
-  "404.html",
-  "sitemap-index.xml",
-  "sitemap-0.xml",
-  "robots.txt",
-  "llms.txt",
-];
+let DIST, expected;
+if (TARGET === "global") {
+  const locales = await loadTS("src/data/locales.ts");
+  DIST = "dist-global";
+  expected = [...locales.pageRoutesForTarget("global"), ...INFRA];
+} else {
+  const { cities } = await loadTS("src/data/cities.ts");
+  const blogSlugs = readdirSync(join(ROOT, "src/content/blog"))
+    .filter((f) => f.endsWith(".md"))
+    .map((f) => f.replace(/\.md$/, ""));
+  DIST = "dist";
+  expected = [
+    "index.html",
+    "products/index.html",
+    "products/voxtable/index.html",
+    "products/voxorder/index.html",
+    "products/voxconcierge/index.html",
+    "products/voxdrive/index.html",
+    "contact/index.html",
+    "about/index.html",
+    "technology/index.html",
+    "platform/index.html",
+    "blog/index.html",
+    ...blogSlugs.map((s) => `blog/${s}/index.html`),
+    ...cities.filter((c) => c.published).map((c) => `${c.slug}/index.html`),
+    "legal/privacy/index.html",
+    "legal/terms/index.html",
+    "legal/cookies/index.html",
+    ...INFRA,
+  ];
+}
 
 let failed = 0;
 for (const route of expected) {
-  if (!existsSync(join(ROOT, "dist", route))) {
-    console.error(`FAIL  missing dist/${route}`);
+  if (!existsSync(join(ROOT, DIST, route))) {
+    console.error(`FAIL  missing ${DIST}/${route}`);
     failed++;
   }
 }
 if (failed) {
-  console.error(`\ncheck-routes: ${failed} missing route(s).`);
+  console.error(`\ncheck-routes (${TARGET}): ${failed} missing route(s).`);
   process.exit(1);
 }
-console.log(`check-routes: all ${expected.length} expected routes present.`);
+console.log(`check-routes (${TARGET}): all ${expected.length} expected routes present in ${DIST}/.`);
