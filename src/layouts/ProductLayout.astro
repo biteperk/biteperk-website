@@ -20,6 +20,7 @@ import Cta from "@/components/Cta.astro";
 import type { Product } from "@/data/products";
 import { site } from "@/data/site";
 import { VOX_ID, voxEditionId } from "@/data/schema";
+import { u, abs } from "@/data/locales";
 
 interface Props {
   product: Product;
@@ -31,9 +32,9 @@ const breadcrumbJsonLd = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: site.url },
-    { "@type": "ListItem", position: 2, name: "Products", item: `${site.url}/products/` },
-    { "@type": "ListItem", position: 3, name: product.name, item: `${site.url}${path}` },
+    { "@type": "ListItem", position: 1, name: "Home", item: abs("/") },
+    { "@type": "ListItem", position: 2, name: "Products", item: abs("/products/") },
+    { "@type": "ListItem", position: 3, name: product.name, item: abs(path) },
   ],
 };
 
@@ -104,8 +105,8 @@ const faqJsonLd = product.faq && product.faq.length > 0
     <div class="prod-hero-glow" aria-hidden="true" style={`--accent:${product.accent}`}></div>
     <div class="wrap">
       <Breadcrumbs items={[
-        { label: "Home", href: "/" },
-        { label: "Products", href: "/products/" },
+        { label: "Home", href: u("/") },
+        { label: "Products", href: u("/products/") },
         { label: product.name },
       ]} />
       <div class="prod-hero-row">

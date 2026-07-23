@@ -18,32 +18,35 @@ function auRoutes(): string[] {
   const blogSlugs = readdirSync(join(ROOT, "src/content/blog"))
     .filter((f) => f.endsWith(".md"))
     .map((f) => f.replace(/\.md$/, ""));
+  // The AU site is served under /au-en on biteperk.com (single-domain rev.3).
+  const b = "/au-en";
   return [
-    "/",
-    "/products/",
-    "/products/voxtable/",
-    "/products/voxorder/",
-    "/products/voxconcierge/",
-    "/products/voxdrive/",
-    "/contact/",
-    "/about/",
-    "/technology/",
-    "/platform/",
-    "/blog/",
-    ...blogSlugs.map((s) => `/blog/${s}/`),
-    ...cities.filter((c) => c.published).map((c) => `/${c.slug}/`),
-    "/legal/privacy/",
-    "/legal/terms/",
-    "/legal/cookies/",
-    "/404.html",
+    `${b}/`,
+    `${b}/products/`,
+    `${b}/products/voxtable/`,
+    `${b}/products/voxorder/`,
+    `${b}/products/voxconcierge/`,
+    `${b}/products/voxdrive/`,
+    `${b}/contact/`,
+    `${b}/about/`,
+    `${b}/technology/`,
+    `${b}/platform/`,
+    `${b}/blog/`,
+    ...blogSlugs.map((s) => `${b}/blog/${s}/`),
+    ...cities.filter((c) => c.published).map((c) => `${b}/${c.slug}/`),
+    `${b}/legal/privacy/`,
+    `${b}/legal/terms/`,
+    `${b}/legal/cookies/`,
+    `${b}/404.html`,
   ];
 }
 
 function globalRoutes(): string[] {
   const out: string[] = [];
   for (const l of localesForTarget("global")) {
+    const seg0 = l.base.replace(/^\//, "");
     for (const p of INTL_PAGE_PATHS) {
-      const seg = [l.path, p].filter(Boolean).join("/");
+      const seg = [seg0, p].filter(Boolean).join("/");
       out.push(`/${seg}/`);
     }
   }

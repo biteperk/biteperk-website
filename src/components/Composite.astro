@@ -11,6 +11,8 @@
  *   - alt       Required alt text
  *   - priority  Eager + fetchpriority=high (for LCP candidate)
  */
+import { u } from "@/data/locales";
+
 interface Props {
   name: "home-in-the-wild" | "voxtable-hero" | "footer-mood-band";
   alt: string;
@@ -24,8 +26,8 @@ const { name, alt, priority = false, class: extraClass } = Astro.props;
 // past the 1y immutable cache. Cheaper than renaming files; only this
 // one file changes.
 const v = "v2";
-const desktop = `/images/composites/${name}-desktop`;
-const mobile = `/images/composites/${name}-mobile`;
+const desktop = u(`/images/composites/${name}-desktop`);
+const mobile = u(`/images/composites/${name}-mobile`);
 const qs = `?${v}`;
 const loading = priority ? "eager" : "lazy";
 const fetchpriority = priority ? "high" : "auto";

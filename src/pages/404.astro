@@ -1,7 +1,7 @@
 ---
 import Base from "@/layouts/Base.astro";
 import StarMark from "@/components/StarMark.astro";
-import { currentTarget } from "@/data/locales";
+import { currentTarget, u } from "@/data/locales";
 
 // The global (biteperk.com) build gets its own 404: the AU version's chrome
 // carries the AU footer (NAP + phone) and links to routes pruned from that
@@ -47,9 +47,9 @@ const description = "We couldn't find that page. Here are a few useful places to
             rather hear an Australian voice.
           </p>
           <div class="nf-cta">
-            <a class="btn" href="/">Back to home</a>
-            <a class="btn-ghost" href="/products/">See the products</a>
-            <a class="btn-ghost" href="/contact/">Get in touch</a>
+            <a class="btn" href={u("/")}>Back to home</a>
+            <a class="btn-ghost" href={u("/products/")}>See the products</a>
+            <a class="btn-ghost" href={u("/contact/")}>Get in touch</a>
           </div>
         </div>
       </div>

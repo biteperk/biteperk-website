@@ -17,6 +17,7 @@
  */
 
 import { site } from "./site";
+import { u } from "./locales";
 
 export type ProductStatus = "live" | "in-development" | "concept";
 
@@ -243,7 +244,7 @@ const voxtable: Product = {
           "Bespoke SLA & 24×7 incident response",
           "Custom onboarding, training & playbooks",
         ],
-        cta: { label: "Book a 20-min call →", href: "/contact/?plan=enterprise" },
+        cta: { label: "Book a 20-min call →", href: u("/contact/?plan=enterprise") },
         footer: `Or call ${site.phone.display}`,
       },
     ],
@@ -296,7 +297,7 @@ const voxorder: Product = {
   hero: {
     headline: "Pick up every order, even when your kitchen is on the floor.",
     sub: "VoxOrder is the takeaway twin of VoxTable. A voice agent that handles the order, the modifiers, and the pickup time — and sends a clean ticket to your POS.",
-    primaryCta: { label: "Book a demo", href: "/contact/?product=voxorder" },
+    primaryCta: { label: "Book a demo", href: u("/contact/?product=voxorder") },
     secondaryCta: { label: "Hear Bella live", href: `${site.voxtableUrl}#meet-bella` },
   },
   features: [
@@ -334,8 +335,8 @@ const voxconcierge: Product = {
   hero: {
     headline: "Everything between the booking and the table — handled.",
     sub: "VoxConcierge nudges the waitlist, confirms tomorrow's covers, recovers the no-shows, and writes back when guests reply. So your front-of-house can run the floor.",
-    primaryCta: { label: "Join the waitlist", href: "/contact/?product=voxconcierge" },
-    secondaryCta: { label: "See VoxTable instead →", href: "/products/voxtable/" },
+    primaryCta: { label: "Join the waitlist", href: u("/contact/?product=voxconcierge") },
+    secondaryCta: { label: "See VoxTable instead →", href: u("/products/voxtable/") },
   },
   features: [
     {
@@ -372,8 +373,8 @@ const voxdrive: Product = {
   hero: {
     headline: "An order taker that knows the Saturday-morning queue.",
     sub: "We're thinking out loud. VoxDrive imagines a voice agent at the window — fast, polite, Australian, and built around the way a queue actually moves at 8:42am on a Saturday.",
-    primaryCta: { label: "Register interest", href: "/contact/?product=voxdrive" },
-    secondaryCta: { label: "See what's shipping →", href: "/products/" },
+    primaryCta: { label: "Register interest", href: u("/contact/?product=voxdrive") },
+    secondaryCta: { label: "See what's shipping →", href: u("/products/") },
   },
   features: [
     {
@@ -462,7 +463,7 @@ export const voxBundle = {
   name: "The Lot",
   fallbackName: "Full Service",
   tagline: "Vox running your whole front-of-house — one agent, one voice, one bill.",
-  cta: { label: "Book a demo", href: "/contact/?product=general" },
+  cta: { label: "Book a demo", href: u("/contact/?product=general") },
 } as const;
 
 /** Product-line FAQ for the /products overview (distinct from per-capability FAQs). */
@@ -509,5 +510,5 @@ export function statusLabel(status: ProductStatus): string {
 }
 
 export function productUrl(p: Product): string {
-  return `/products/${p.slug}/`;
+  return u(`/products/${p.slug}/`);
 }

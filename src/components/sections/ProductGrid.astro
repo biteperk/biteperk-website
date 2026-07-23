@@ -10,6 +10,7 @@ import SectionHeader from "@/components/SectionHeader.astro";
 import ProductCard from "@/components/ProductCard.astro";
 import ImageBlock from "@/components/ImageBlock.astro";
 import { products, getProduct } from "@/data/products";
+import { u } from "@/data/locales";
 
 const voxtable = getProduct("voxtable");
 const upcoming = products.filter((p) => p.slug !== "voxtable");
@@ -51,7 +52,7 @@ const stripPhotos = [
     </div>
 
     <div class="grid-foot reveal">
-      <a class="lnk-arrow" href="/products/">
+      <a class="lnk-arrow" href={u("/products/")}>
         See the full product catalogue
         <span aria-hidden="true">→</span>
       </a>

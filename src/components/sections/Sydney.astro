@@ -4,6 +4,7 @@
  * framed Sydney-harbour photo on the right with a single-line caption.
  */
 import ImageBlock from "@/components/ImageBlock.astro";
+import { u } from "@/data/locales";
 ---
 
 <section class="sydney cv-auto">
@@ -45,7 +46,7 @@ import ImageBlock from "@/components/ImageBlock.astro";
             <div class="meta-l">human support, AEST</div>
           </div>
         </div>
-        <a class="sydney-link" href="/sydney/">
+        <a class="sydney-link" href={u("/sydney/")}>
           AI phone answering for Sydney restaurants →
         </a>
       </div>

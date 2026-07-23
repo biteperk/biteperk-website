@@ -1,0 +1,90 @@
+---
+/**
+ * Country / region picker — the Accenture-style globe.
+ *
+ * Lists every live locale (Australia / International English / Français), marks
+ * the current one, and links each to its home. No JS: a native <details> menu.
+ * Rendered on every page by Base.astro. Links use absolute locale homes so it
+ * works identically on the AU build (/au-en) and the international build (/en,/fr).
+ */
+import { locales, localeHome } from "@/data/locales";
+
+// Derive the active locale from the served path (/au-en/…, /en/…, /fr/…) so the
+// component is self-contained on both the AU and international builds.
+const path = new URL(Astro.request.url).pathname;
+const current =
+  locales.find((l) => path === l.base || path.startsWith(l.base + "/")) ??
+  locales.find((l) => l.xDefault);
+---
+
+<details class="locale-picker">
+  <summary aria-label="Choose country and language">
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6">
+      <circle cx="12" cy="12" r="9"></circle>
+      <path d="M3 12h18M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18"></path>
+    </svg>
+    <span class="lp-current">{current?.label ?? "Region"}</span>
+    <svg class="lp-caret" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg>
+  </summary>
+  <ul class="lp-menu" role="list">
+    {locales.map((l) => (
+      <li>
+        <a href={localeHome(l)} aria-current={l === current ? "true" : undefined} hreflang={l.hreflang[0]}>
+          {l.label}
+          {l === current && <span class="lp-dot" aria-hidden="true">●</span>}
+        </a>
+      </li>
+    ))}
+  </ul>
+</details>
+
+<style>
+  .locale-picker {
+    position: relative;
+    font-size: 0.82rem;
+    line-height: 1;
+  }
+  .locale-picker > summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    list-style: none;
+    white-space: nowrap;
+    color: inherit;
+  }
+  .locale-picker > summary::-webkit-details-marker { display: none; }
+  .locale-picker > summary:hover { border-color: color-mix(in srgb, currentColor 45%, transparent); }
+  .lp-caret { opacity: 0.6; transition: transform 0.15s ease; }
+  .locale-picker[open] .lp-caret { transform: rotate(180deg); }
+  .lp-menu {
+    position: absolute;
+    right: 0;
+    margin: 0.4rem 0 0;
+    padding: 0.3rem;
+    min-width: 14rem;
+    list-style: none;
+    background: var(--surface, #14151a);
+    color: var(--text, #f3f2ee);
+    border: 1px solid color-mix(in srgb, currentColor 16%, transparent);
+    border-radius: 0.6rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+    z-index: 60;
+  }
+  .lp-menu a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.55rem 0.6rem;
+    border-radius: 0.4rem;
+    color: inherit;
+    text-decoration: none;
+  }
+  .lp-menu a:hover { background: color-mix(in srgb, currentColor 8%, transparent); }
+  .lp-menu a[aria-current="true"] { font-weight: 600; }
+  .lp-dot { color: var(--gold, #c8a53a); font-size: 0.6rem; }
+</style>

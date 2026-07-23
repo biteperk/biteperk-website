@@ -3,6 +3,7 @@ import Base from "@/layouts/Base.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import { site } from "@/data/site";
 import { categories, plausibleReady, linkedInPartnerId } from "@/data/consent";
+import { u } from "@/data/locales";
 
 const title = "Cookie policy — Biteperk";
 const description =
@@ -20,8 +21,8 @@ const marketing = categories.find((c) => c.id === "marketing")!;
   <article class="legal">
     <div class="wrap">
       <Breadcrumbs items={[
-        { label: "Home", href: "/" },
-        { label: "Legal", href: "/legal/privacy/" },
+        { label: "Home", href: u("/") },
+        { label: "Legal", href: u("/legal/privacy/") },
         { label: "Cookies" },
       ]} />
       <header class="legal-head">
@@ -93,7 +94,7 @@ const marketing = categories.find((c) => c.id === "marketing")!;
         <p>
           Open <button type="button" class="legal-inline-btn" data-cookie-settings>Cookie settings</button> any
           time to update your choice, or clear this site's data in your browser to reset it. See our
-          <a href="/legal/privacy/">Privacy Policy</a> for how we handle information more broadly.
+          <a href={u("/legal/privacy/")}>Privacy Policy</a> for how we handle information more broadly.
         </p>
       </section>
 

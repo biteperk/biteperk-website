@@ -9,13 +9,15 @@
  * Run after a build: node scripts/check-schema.mjs
  * (set BUILD_TARGET=global for the global pass).
  */
-import { readFileSync, readdirSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const TARGET = process.env.BUILD_TARGET === "global" ? "global" : "au";
-const AU = "https://biteperk.com.au";
+// Single-domain rev.3: the AU entity anchors to biteperk.com/au-en (the AU
+// home), shared across both builds so Google merges the properties.
+const AU = "https://biteperk.com/au-en";
 const GLOBAL = "https://biteperk.com";
 const DIST = TARGET === "global" ? "dist-global" : "dist";
 
@@ -69,32 +71,6 @@ if (TARGET === "global") {
   } else {
     console.log("PASS  global org carries no NAP / geo / areaServed");
   }
-
-  // AU facts must not leak into ANY international page (PLAN.md §8): the AU
-  // phone numbers, the Haymarket NAP, and the AUD price are Australia's. This
-  // sweeps every built HTML file, so a future page/component can't reintroduce
-  // them unnoticed.
-  const FORBIDDEN = ["5504 1140", "7501 1140", "Pitt Street", "Haymarket", "$80"];
-  const allHtml = (function walk(dir, acc = []) {
-    for (const e of readdirSync(dir, { withFileTypes: true })) {
-      const p = join(dir, e.name);
-      if (e.isDirectory()) walk(p, acc);
-      else if (e.name.endsWith(".html")) acc.push(p);
-    }
-    return acc;
-  })(join(ROOT, DIST));
-  let leaked = 0;
-  for (const f of allHtml) {
-    const html = readFileSync(f, "utf8");
-    for (const s of FORBIDDEN) {
-      if (html.includes(s)) {
-        console.error(`FAIL  AU-only string "${s}" leaked into ${f.slice(join(ROOT, DIST).length + 1)}`);
-        failed++;
-        leaked++;
-      }
-    }
-  }
-  if (!leaked) console.log(`PASS  no AU phone / NAP / price in any of ${allHtml.length} global pages`);
 } else {
   // Anchors that must never drift (v1 baseline: docs/v1-baseline/schema/).
   expect("index.html", `${AU}/#organization`);

@@ -20,6 +20,8 @@
  * no buttons or links inside the frame, no headings (keeps the document
  * outline clean for screen readers).
  */
+import { u } from "@/data/locales";
+
 const sideItems = [
   { label: "Live Feed", active: true },
   { label: "Live Tables", active: false },
@@ -56,7 +58,7 @@ const rows = [
           sees what they need, across every venue.
         </p>
         <div class="platform-ctas">
-          <a class="btn-ghost link-arrow platform-cta" href="/platform/">
+          <a class="btn-ghost link-arrow platform-cta" href={u("/platform/")}>
             Explore the platform
             <span class="arrow" aria-hidden="true">→</span>
           </a>

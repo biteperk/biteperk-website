@@ -45,7 +45,7 @@ function htmlFiles(dir, acc = []) {
   }
   return acc;
 }
-const pages = globals.flatMap((l) => htmlFiles(join(DIST, l.path)));
+const pages = globals.flatMap((l) => htmlFiles(join(DIST, l.base.replace(/^\//, ""))));
 
 function alternatesOf(html) {
   const out = [];

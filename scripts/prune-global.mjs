@@ -12,10 +12,10 @@
  * Run after `BUILD_TARGET=global npm run build`, before the gates:
  *   node scripts/prune-global.mjs
  */
-import { readFileSync, rmSync, existsSync } from "node:fs";
+import { rmSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { transformSync } from "esbuild";
+import { loadTS } from "./_load-ts.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const DIST = join(ROOT, "dist-global");
@@ -31,9 +31,7 @@ const STATIC = [
 ];
 
 // AU city outputs — derived from cities.ts so the list can't drift.
-const src = readFileSync(join(ROOT, "src/data/cities.ts"), "utf8");
-const { code } = transformSync(src, { loader: "ts", format: "esm" });
-const { cities } = await import("data:text/javascript;base64," + Buffer.from(code).toString("base64"));
+const { cities } = await loadTS(join(ROOT, "src/data/cities.ts"));
 const citySlugs = cities.filter((c) => c.published).map((c) => c.slug);
 
 const remove = [...STATIC, ...citySlugs];
