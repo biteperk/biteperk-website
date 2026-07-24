@@ -2,9 +2,10 @@
 import { defineConfig } from "astro/config";
 import sitemap, { ChangeFreqEnum } from "@astrojs/sitemap";
 import { visit } from "unist-util-visit";
+import { localesForTarget } from "./src/data/locales";
 
 // Single-domain international architecture (Option B, rev.3) — see
-// deliverables/2026-07-23-intl-site-architecture/ACCENTURE-GRADE-INTL-PLAN.md.
+// deliverables/2026-07-23-intl-site-architecture/PLAN.md.
 //
 // BOTH targets serve one domain, biteperk.com:
 //   au     (default) → base /au-en → dist/         → merged to /au-en/** on biteperk.com
@@ -12,8 +13,9 @@ import { visit } from "unist-util-visit";
 // biteperk.com.au becomes a redirect-only host → biteperk.com/au-en/** (firebase.json).
 //
 // src/data/locales.ts is the single source of truth for locales, the origin,
-// and each locale's base path; the constants are mirrored here because the
-// Astro config is evaluated before the project's TypeScript module graph.
+// and each locale's base path (Astro bundles this config with esbuild, so the
+// TS import above resolves fine); only TARGET/SITE/BASE are mirrored because
+// they configure the build that compiles that very module graph.
 const TARGET = process.env.BUILD_TARGET === "global" ? "global" : "au";
 const SITE = "https://biteperk.com";
 const BASE = TARGET === "global" ? undefined : "/au-en";
@@ -73,14 +75,27 @@ export default defineConfig({
     sitemap({
       filter: (page) => {
         if (page.includes("/kitchen-sink") || page.includes("/404")) return false;
-        // Global build: only the /en/ and /fr/ locale trees ship on biteperk.com
-        // (the AU pages built alongside are pruned post-build by prune-global.mjs).
-        if (TARGET === "global") return /\/(en|fr)(\/|$)/.test(page);
+        // Global build: only the locale trees from locales.ts ship on
+        // biteperk.com (the AU pages built alongside are pruned post-build by
+        // prune-global.mjs). Derived, NOT a regex literal: a hardcoded (en|fr)
+        // silently dropped every /gb-en//be-*/ page from the sitemap.
+        if (TARGET === "global")
+          return localesForTarget("global").some(
+            (l) => page === `${SITE}${l.base}/` || page.startsWith(`${SITE}${l.base}/`),
+          );
         return true;
       },
       changefreq: "monthly",
       priority: 0.7,
       serialize(item) {
+        // Locale homes are entry points for their whole market.
+        if (
+          TARGET === "global" &&
+          localesForTarget("global").some((l) => item.url === `${SITE}${l.base}/`)
+        ) {
+          item.priority = 0.9;
+          return item;
+        }
         if (item.url === `${HOME}/`) item.priority = 1.0;
         else if (item.url === `${HOME}/technology/`) item.priority = 0.8;
         else if (item.url === `${HOME}/platform/`) item.priority = 0.8;

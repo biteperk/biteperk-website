@@ -15,7 +15,7 @@
  *                 --gold-fill-text on top. Never use as text colour.
  *   Scrim/overlay tokens are theme-invariant (they sit over photos).
  *
- * scripts/check-contrast.mjs parses the pairs declared in the manifest at
+ * scripts/gates/check-contrast.mjs parses the pairs declared in the manifest at
  * the bottom of this file and fails CI if any drops below WCAG AA.
  */
 
@@ -259,7 +259,7 @@
 }
 
 /*
- * contrast-manifest (parsed by scripts/check-contrast.mjs — keep format):
+ * contrast-manifest (parsed by scripts/gates/check-contrast.mjs — keep format):
  * pair dark  --white  #f7f8fa on --ink-0 #0a0b0d
  * pair dark  --white  #f7f8fa on --ink-1 #111317
  * pair dark  --text   #d5d9e0 on --ink-0 #0a0b0d

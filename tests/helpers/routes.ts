@@ -1,6 +1,6 @@
 /**
  * Route list for the E2E/axe suites — generated from the SAME data as
- * scripts/check-routes.mjs, per BUILD_TARGET, so it cannot drift when a city,
+ * scripts/gates/check-routes.mjs, per BUILD_TARGET, so it cannot drift when a city,
  * guide, or locale ships.
  *   au     → cities.ts + blog collection + the static AU list
  *   global → src/data/locales.ts (the /en/ + /fr/ locale trees)

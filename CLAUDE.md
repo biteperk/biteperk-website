@@ -12,12 +12,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
+Scripts are grouped: `scripts/gates/` (CI gates) · `scripts/build/` (merge/prune/llms + `_load-ts`) · `scripts/images/` (photo pipeline) · `scripts/brand/` (OG cards + logo kit). A README.md at the repo root maps the whole tree.
+
 ```bash
 npm run dev        # astro dev
 npm run build      # astro build → dist/
 npm run preview    # astro preview
 npm run check      # astro check (type-check, what CI runs)
-npm run og         # regenerate Open Graph cards (scripts/generate-og.mjs)
+npm run og         # regenerate Open Graph cards (scripts/brand/generate-og.mjs)
 npm run images     # fetch → grade → composite illustration pipeline
 npm run test:e2e   # Playwright (chromium+webkit) + axe — needs a build first
 npm run lhci       # Lighthouse CI budgets against astro preview
@@ -27,33 +29,34 @@ npm run lhci       # Lighthouse CI budgets against astro preview
 
 After `npm run check` + `npm run build`, CI runs these **generated/data-driven gates** (run any locally after a build):
 
-- `node scripts/check-routes.mjs` — expected route list is **generated from `cities.ts` + the blog collection**, not hard-coded. Adding a city or guide needs no CI edit.
-- `node scripts/check-contrast.mjs` — WCAG AA over the colour pairs declared in the `contrast-manifest` comment block at the bottom of `tokens.css`. Add a pair there when you add a text/surface token.
-- `node scripts/check-cities.mjs` — anti-doorway gate: every `published` city needs ≥600 words of unique copy, <35% cross-city intro similarity, an OG card, valid `relatedGuides`, and an `llms.txt` entry.
-- `node scripts/check-schema.mjs` — asserts stable JSON-LD `@id`s (`#organization`, `#website`, `#vox`, per-city `#service`) and byte-exact Haymarket NAP in the built HTML.
-- `node scripts/check-images.mjs` — any image-manifest slot referenced by the site must be `reviewed: true`. **Note: `src/data/image-manifest.json` is currently empty, so this gate exits 0 and checks nothing.** Don't rely on it to catch a missing or renamed image — that's `check-assets.mjs`'s job.
-- `node scripts/check-assets.mjs` — every local asset URL in the built HTML (`img`/`srcset`/`preload`/`imagesrcset`/`og:image`/`twitter:image`) must resolve in `dist/`. Derived from the build, so new products/cities/guides are covered automatically. This is what catches a renamed product whose OG card or hero composite was never regenerated — a bug that shipped twice before the gate existed.
+- `node scripts/gates/check-routes.mjs` — expected route list is **generated from `cities.ts` + the blog collection**, not hard-coded. Adding a city or guide needs no CI edit.
+- `node scripts/gates/check-contrast.mjs` — WCAG AA over the colour pairs declared in the `contrast-manifest` comment block at the bottom of `tokens.css`. Add a pair there when you add a text/surface token.
+- `node scripts/gates/check-cities.mjs` — anti-doorway gate: every `published` city needs ≥600 words of unique copy, <35% cross-city intro similarity, an OG card, valid `relatedGuides`, and an `llms.txt` entry.
+- `node scripts/gates/check-schema.mjs` — asserts stable JSON-LD `@id`s (`#organization`, `#website`, `#vox`, per-city `#service`) and byte-exact Haymarket NAP in the built HTML.
+- `node scripts/gates/check-images.mjs` — any image-manifest slot referenced by the site must be `reviewed: true`. **Note: `src/data/image-manifest.json` is currently empty, so this gate exits 0 and checks nothing.** Don't rely on it to catch a missing or renamed image — that's `check-assets.mjs`'s job.
+- `node scripts/gates/check-assets.mjs` — every local asset URL in the built HTML (`img`/`srcset`/`preload`/`imagesrcset`/`og:image`/`twitter:image`) must resolve in `dist/`. Derived from the build, so new products/cities/guides are covered automatically. This is what catches a renamed product whose OG card or hero composite was never regenerated — a bug that shipped twice before the gate existed.
 - Then Playwright + axe (`npm run test:e2e`), Lighthouse budgets (`npm run lhci`), sitemap sanity, and lychee.
 
 There are no unit tests; the gates above are the safety net.
 
-## International builds (biteperk.com — added 23 Jul 2026)
+## International — single domain, six locales (rev. 24 Jul 2026)
 
-This repo emits **two sites from one codebase**, selected by `BUILD_TARGET` (full architecture: `deliverables/2026-07-23-intl-site-architecture/PLAN.md`):
+One codebase emits **one domain, biteperk.com**, in two build passes selected by `BUILD_TARGET` (architecture: `deliverables/2026-07-23-intl-site-architecture/PLAN.md`):
 
-- `au` (default) → `biteperk.com.au` → `dist/` — the existing AU site, output unchanged.
-- `global` → `biteperk.com` → `dist-global/` — the `/en/` + `/fr/` international tree.
+- `au` (default) → `dist/` — the AU site, Astro base `/au-en`; merged under `biteperk.com/au-en/**`. `biteperk.com.au` is a redirect-only host (301, path-preserving).
+- `global` → `dist-global/` — the international trees: **`/en` (x-default) · `/gb-en` (UK) · `/fr` (France) · `/be-en` + `/be-fr` (Belgium)**.
+- `npm run build:site` = both passes + `scripts/build/merge-dist.mjs` → `dist-site/` (what `hosting:biteperk-global` serves) + `dist-cctld/` (the redirect host).
 
 Key facts:
 
-- **`src/data/locales.ts` is the single source of truth** (locales, hosts, hreflang cluster, intl page list). `src/data/intl-copy.ts` holds all EN/FR copy — French needs a native review (Ludovic) before marketing pushes.
-- `npm run build:global` = build + `prune-global.mjs` (removes the AU pages that build alongside — biteperk.com must never serve them) + `llms-global.mjs` (global `llms.txt` **and** `robots.txt` — the copied AU robots points at the wrong host's sitemap).
-- Gates run per target: `npm run gates:au` / `npm run gates:global`. New `check-hreflang.mjs` (global) asserts the complete reciprocal cluster; `check-schema.mjs` (global) asserts the **shared AU-anchored org `@id`** (entity merge), Organization-only, and sweeps every page for AU-only strings (both phone numbers, Haymarket, `$80`).
-- **Europe-truthful content rules (PLAN.md §8): no AU price, no NAP, no AU phone on any global page** — the sweep enforces it. CTA is "book a pilot".
-- The intl pages use `IntlLayout.astro` (own chrome) — the AU Nav/Footer carry the AU phone and link pruned routes; never render them on global pages.
-- International pages are **`noindex` until biteperk.com is connected** (flip: `noindex` default in `IntlLayout.astro`). The AU↔EU cross-domain hreflang is deliberately **not emitted yet** — both hosts must serve reciprocal tags together at launch.
-- OG cards: `BUILD_TARGET=global npm run og` → `public/og/intl/` (en + fr sets, footer `biteperk.com`). Pixel-review before deploy, as always.
-- CI (`web.yml`) runs an `[au, global]` matrix; e2e/Lighthouse/contrast run on the AU pass.
+- **`src/data/locales.ts` is the SSOT** — bases, `lang`/`copyLang`/`market`, hreflang codes, x-default, the `u()`/`abs()` helpers, `localeSwitchUrl` (page-carrying region switch). Every locale-aware surface DERIVES from it: `[...intl].astro` page trees, LocalePicker, hreflang, sitemap filter/priorities (astro.config imports the TS module directly), `check-links`/`check-schema`/`check-hreflang`/`check-truthful`, llms-global, OG cards, the e2e route list. **Add a locale = one array entry + copy + OG regen; never extend a hardcoded en/fr list — if you find one, derive it instead.**
+- **Copy = language cores × market overrides** (`src/data/intl/`): `copy.ts` holds the full EN/FR bundles and must stay **market-neutral** (France-specific lines live in the `/fr` override or `be-fr` inherits them); `markets.ts` layers per-base overrides + the imagery band (cityscape/hospitality slugs + alts); `index.ts` resolves via `merge()` — **arrays replace wholesale** (contract unit-tested in `tests/unit/`, run by `gates:global` and CI). French (core + `/fr` + `/be-fr`) needs Ludovic's native review before launch.
+- **Europe-truthful rules (PLAN.md §8): no AU price, no NAP, no AU phone on any global page** — enforced twice: `check-schema` (global) asserts the shared AU-anchored org `@id`, Organization-only, no address/geo/areaServed on EVERY locale home; `check-truthful` sweeps every built global page's HTML for the phone numbers, Haymarket/477 Pitt and `$80` (this sweep caught the AU phone hiding in the global org JSON-LD — structured data is part of the page). CTA is "book a pilot". No fake local offices — market pages localise the conversation and imagery, never invent a presence.
+- The intl pages use `IntlLayout.astro` (own chrome, carries the StarMark since 24 Jul) — never render the AU Nav/Footer on global pages (AU phone + pruned routes). The footer's region links and the LocalePicker both carry the current page across locales via `localeSwitchUrl`.
+- International pages are **`noindex` behind `INTL_LAUNCHED`** (env flag, default off). Launch = `INTL_LAUNCHED=true npm run build:site` + deploy: flips indexability AND emits the full cross-locale hreflang cluster in one step. The flag is all-or-nothing across the five global locales — flipping it is a deliberate five-market decision.
+- OG cards: `BUILD_TARGET=global npm run og` → `public/og/intl/` — **derived from `resolveCopy` per locale** (11 cards; `/en` keeps legacy unsuffixed filenames). Pixel-review before deploy, as always.
+- `firebase.json` (biteperk-global): apex `/` → `/en/`; country shortcuts `/gb` `/uk` → `/gb-en/`, `/be` → `/be-en/`.
+- CI (`web.yml`) runs an `[au, global]` matrix — all gates incl. `check-links` + `check-truthful` + the unit tests; e2e/Lighthouse/contrast run on the AU pass (Lighthouse measures `dist-site/`, the merged tree).
 
 ## Deploy
 
@@ -123,9 +126,9 @@ Form posts same-origin to `/api/contact` → Firebase Hosting rewrites to `conta
 
 `scripts/{fetch-images,grade,generate-images,generate-og}.mjs` are one-shot generators run via `npm run images` / `npm run og`. Outputs land in `public/` (committed). Don't run in CI — they're for content updates.
 
-For **AI-generated photography** there's a separate intake pipeline (`scripts/img/`): drop masters in `scripts/img/intake/<slot>.png`, run `scripts/img/process.mjs`, and mark the manifest slot `reviewed: true` (enforced by `check-images.mjs`). Art direction + prompt library: `docs/art-direction.md`. No sci-fi/robot imagery — real hospitality photography only.
+For **AI-generated photography** there's a separate intake pipeline (`scripts/images/img/`): drop masters in `scripts/images/img/intake/<slot>.png`, run `scripts/images/img/process.mjs`, and mark the manifest slot `reviewed: true` (enforced by `check-images.mjs`). Art direction + prompt library: `docs/art-direction.md`. No sci-fi/robot imagery — real hospitality photography only.
 
-- **OG card slot image** (`scripts/generate-og.mjs`): the right-hand photo on image-bearing cards is sourced from `public/images/hands-headset-1920.jpg` (tracked — so `npm run og` runs from a clean checkout) via the `bellaPath` constant. It replaced a robotic AI "Bella" portrait that violated the no-sci-fi rule above and had shipped on every social card since the Perk era (fixed `be7a419`, 22 Jul 2026). To change it, point `bellaPath` at another tracked file in `public/images/` and re-run `npm run og`; **review the rendered PNGs** (`public/og/*.png`) before deploy — the crop lands in a 360×450 slot. The five text-only cards (products, voxdrive, contact, blog, platform) render no image slot and are unaffected. After a card image changes, LinkedIn/Facebook share caches must be re-scraped or they keep serving the old image for weeks.
+- **OG card slot image** (`scripts/brand/generate-og.mjs`): the right-hand photo on image-bearing cards is sourced from `public/images/hands-headset-1920.jpg` (tracked — so `npm run og` runs from a clean checkout) via the `bellaPath` constant. It replaced a robotic AI "Bella" portrait that violated the no-sci-fi rule above and had shipped on every social card since the Perk era (fixed `be7a419`, 22 Jul 2026). To change it, point `bellaPath` at another tracked file in `public/images/` and re-run `npm run og`; **review the rendered PNGs** (`public/og/*.png`) before deploy — the crop lands in a 360×450 slot. The five text-only cards (products, voxdrive, contact, blog, platform) render no image slot and are unaffected. After a card image changes, LinkedIn/Facebook share caches must be re-scraped or they keep serving the old image for weeks.
 
 ## Docs
 
@@ -152,6 +155,7 @@ One-off documents Claude produces for this project — pitch decks, proposals, e
 | Company | **BitePerk** / `biteperk` / `biteperk.com.au` / `@biteperk.com.au` | **Never.** Wordmark renders `bite`+`<span class="perk">perk</span>`; the `.perk` class is company styling, not a product token. |
 | Products | **Vox** (umbrella), **VoxTable**, **VoxOrder**, **VoxConcierge**, **VoxDrive** (concept) | Yes — this is the family that renamed. CamelCase, "by BitePerk". **VoxStay** is pitch-only (hotel prospects); never put it in site code. |
 | Persona | **Bella** | Never. |
+| Brand assets | `public/brand/` export kit (mark SVG/PNG, dark+light lockups) + `public/apple-touch-icon.png`, all generated by `npm run brand` (`scripts/brand/generate-brand.mjs`) — never hand-edit the exports; `biteperk-logo.jpeg` is the reference master and is never shipped into a page. On-site the mark is the inline `StarMark.astro` + CSS wordmark (site palette: white/ink "bite", gold italic "perk"; green only inside the mark). Schema.org logo = `/brand/biteperk-mark-512.png`. | Regenerate, don't redraw. |
 | Contact | Published line `+61 2 5504 1140`; NAP Level 1, 477 Pitt St, Haymarket NSW 2000 — byte-identical everywhere. Print-only demo line `(02) 7501 1140` stays off the website and all directories. | Never. |
 | Legacy slugs | `voco*` and `perk*` redirects + `PRODUCT_SLUGS` entries | **Keep forever** — printed collateral and cached links still use them. |
 | Infra ids | Firebase project `vocotable`, the app subdomain, GCP project `vocotable-497209`, DB/image/package names, localStorage + event keys | Never — these are identity, not brand. |
@@ -162,5 +166,5 @@ One-off documents Claude produces for this project — pitch decks, proposals, e
 - **Post-ship follow-ups (owner: Sam):** Search Console — resubmit the sitemap and URL-inspect the four new product URLs; re-scrape LinkedIn Post Inspector + Facebook Sharing Debugger so old Perk cards don't linger in social caches; add Vox picklist values in Zoho CRM (keep perk/voco for existing leads); launch GBP + directory citations Vox-native (none exist yet, so there are no external Perk citations to chase).
 - Post-rename follow-ups: external directory listings & GBP, and the app subdomain. Decision log: claude.ai Project → `claude/Ludovic-WiZiU-Pitch.md`.
 - **`marketing/` collateral — partly rebuilt.** The 7 PDFs from `marketing/print/build_pack_extras.py` (business cards, stickers, demo card, follow-up) are rebuilt as VoxTable and verified. Still **VocoTable and still without a generator**: `BitePerk_VocoTable_Brochure_A5.pdf`, `BitePerk_VocoTable_Deck_Print.pdf`, `BitePerk_Walkin_Demo_Kit.pdf`, and the two `vocotable-flyer-a5*.pdf`. `build_flyer.py` is Vox-clean in its copy but still hardcodes dead sandbox paths (`/sessions/dreamy-kind-fermi/...`) for its fonts and Bella image, so it cannot run as-is. **Deliberately deferred until the VoxTable trademark clears** (decision, 22 Jul 2026) — writing generators that bake in a name clearance might reject is the exact risk the trademark gate exists for. The 7 pieces actually handed to prospects are already rebuilt, so nothing is blocked on this.
-- ⚠️ **When renaming, the company wordmark `biteperk` is NOT a product token.** A bulk `Perk*`→`Vox*` pass turned `bite`+`perk` into `bite`+`vox` in six places. Four were caught in `src/`; two were not — `scripts/generate-og.mjs` (every social card) and `marketing/print/build_pack_extras.py` (physical business cards). Both are now fixed and commented. The print one is the dangerous shape: the wordmark is drawn as two separately-positioned strings, so grepping "bitevox" finds nothing, and `pdftotext` looks perfect because the *product* name is right. **Verify branding by rendering to pixels (`pdftoppm -png`), never by text extraction.**
+- ⚠️ **When renaming, the company wordmark `biteperk` is NOT a product token.** A bulk `Perk*`→`Vox*` pass turned `bite`+`perk` into `bite`+`vox` in six places. Four were caught in `src/`; two were not — `scripts/brand/generate-og.mjs` (every social card) and `marketing/print/build_pack_extras.py` (physical business cards). Both are now fixed and commented. The print one is the dangerous shape: the wordmark is drawn as two separately-positioned strings, so grepping "bitevox" finds nothing, and `pdftotext` looks perfect because the *product* name is right. **Verify branding by rendering to pixels (`pdftoppm -png`), never by text extraction.**
 - Composite images: `public/images/composites/*.png` is gitignored (only `.avif`/`.webp` are tracked), so renaming a composite needs `git mv` for the tracked pair **and** a plain `mv` for the PNGs. The built HTML deliberately references **only** AVIF/WebP — never the `.png`. Referencing a PNG makes the output depend on a file that exists locally but never in a CI checkout, so CI would validate a different tree than the local `firebase deploy` ships. Don't add a `.png` source back to `Composite.astro`.
