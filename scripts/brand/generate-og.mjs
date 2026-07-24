@@ -265,39 +265,44 @@ function card({ eyebrow, headline, accent = "#f5c418", showBella = true }) {
 
 /**
  * International cards (BUILD_TARGET=global → public/og/intl/). Their own set:
- * the AU cards' copy is AU-specific (city pages, "Made in Sydney"), and the
- * French pages need French cards. Headlines mirror src/data/intl-copy.ts —
- * keep them in sync when the copy changes.
+ * the AU cards' copy is AU-specific (city pages, "Made in Sydney").
+ *
+ * DERIVED from src/data/intl (the same resolveCopy the pages render), so the
+ * cards can never drift from the on-page copy and every locale in locales.ts
+ * gets its pair automatically — the old hand-written list had to be kept in
+ * sync by comment. Filenames follow the [...intl].astro suffix rule: /en keeps
+ * the legacy unsuffixed home.png/contact.png (already-shared URLs never
+ * churn); every other locale gets -<seg> (home-fr.png, home-gb-en.png, …).
  */
-const globalCards = [
-  {
-    file: "default.png",
-    eyebrow: "Voice + AI for hospitality",
-    headline: "Every call answered. Every booking captured.",
-  },
-  {
-    file: "home.png",
-    eyebrow: "Vox · AI phone host",
-    headline: "Every call answered. Every booking captured.",
-  },
-  {
-    file: "contact.png",
-    eyebrow: "European pilots",
-    headline: "Let's talk about your venue.",
-    showBella: false,
-  },
-  {
-    file: "home-fr.png",
-    eyebrow: "Vox · Hôte téléphonique IA",
-    headline: "Chaque appel décroché. Chaque réservation enregistrée.",
-  },
-  {
-    file: "contact-fr.png",
-    eyebrow: "Pilotes européens",
-    headline: "Parlons de votre établissement.",
-    showBella: false,
-  },
-];
+async function buildGlobalCards() {
+  const { loadTS } = await import("../build/_load-ts.mjs");
+  const { localesForTarget, locales } = await loadTS(join(ROOT, "src/data/locales.ts"));
+  const { resolveCopy } = await loadTS(join(ROOT, "src/data/intl/index.ts"));
+
+  const en = locales.find((l) => l.base === "/en");
+  const cards = [
+    {
+      file: "default.png",
+      eyebrow: "Voice + AI for hospitality",
+      headline: resolveCopy(en).home.h1,
+    },
+  ];
+  for (const l of localesForTarget("global")) {
+    const c = resolveCopy(l);
+    const suffix = l.base === "/en" ? "" : `-${l.base.slice(1)}`;
+    cards.push(
+      { file: `home${suffix}.png`, eyebrow: c.home.eyebrow, headline: c.home.h1 },
+      {
+        file: `contact${suffix}.png`,
+        eyebrow: c.home.pilot.eyebrow,
+        headline: c.contact.h1,
+        showBella: false,
+      },
+    );
+  }
+  return cards;
+}
+const globalCards = TARGET === "global" ? await buildGlobalCards() : [];
 
 const auCards = [
   {
