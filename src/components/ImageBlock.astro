@@ -17,6 +17,7 @@
  *   - scrim     If true, layers --overlay-scrim gradient over the photo
  */
 import placeholders from "@/data/image-placeholders.json";
+import { u } from "@/data/locales";
 
 interface Props {
   slug: string;
@@ -42,7 +43,7 @@ const {
 
 const map = placeholders as Record<string, string>;
 const lqip = map[slug];
-const base = `/images/${slug}`;
+const base = u(`/images/${slug}`);
 const loading = priority ? "eager" : "lazy";
 const fetchpriority = priority ? "high" : "auto";
 // Always async: sync decode blocks the main thread at exactly the moment

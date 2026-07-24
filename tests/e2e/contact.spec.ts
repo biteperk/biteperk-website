@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { p } from "../helpers/routes";
 
 /**
  * Contact form states against a MOCKED /api/contact — the real contract is
@@ -22,7 +23,7 @@ test.describe("contact form", () => {
       await route.fulfill({ status: 200, json: { ok: true } });
     });
 
-    await page.goto("/contact/");
+    await page.goto(p("/contact/"));
     await fillForm(page);
     await page.fill("#cf-venue", "QA Bistro");
     await page.selectOption("#cf-product", "voxtable");
@@ -48,7 +49,7 @@ test.describe("contact form", () => {
       await route.fulfill({ status: 200, json: { ok: true } });
     });
 
-    await page.goto("/contact/");
+    await page.goto(p("/contact/"));
     await fillForm(page);
     const btn = page.locator(".contact-submit");
     await btn.click();
@@ -63,7 +64,7 @@ test.describe("contact form", () => {
       route.fulfill({ status: 400, json: { ok: false, error: "Please check your email address." } })
     );
 
-    await page.goto("/contact/");
+    await page.goto(p("/contact/"));
     await fillForm(page);
     await page.click(".contact-submit");
 
@@ -80,7 +81,7 @@ test.describe("contact form", () => {
   test("network failure shows retry guidance with email fallback", async ({ page }) => {
     await page.route("**/api/contact", (route) => route.abort("connectionfailed"));
 
-    await page.goto("/contact/");
+    await page.goto(p("/contact/"));
     await fillForm(page);
     await page.click(".contact-submit");
 
@@ -99,7 +100,7 @@ test.describe("contact form", () => {
       return route.fulfill({ status: 200, json: { ok: true } });
     });
 
-    await page.goto("/contact/");
+    await page.goto(p("/contact/"));
     await page.click(".contact-submit");
     // Native validation stops submission; name is the first invalid field.
     expect(await page.evaluate(() => !document.querySelector<HTMLInputElement>("#cf-name")!.checkValidity())).toBe(true);
@@ -108,7 +109,7 @@ test.describe("contact form", () => {
   });
 
   test("?product= preselects the About dropdown", async ({ page }) => {
-    await page.goto("/contact/?product=voxorder");
+    await page.goto(p("/contact/?product=voxorder"));
     await expect(page.locator("#cf-product")).toHaveValue("voxorder");
   });
 });

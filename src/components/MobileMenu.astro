@@ -11,8 +11,12 @@ import { products, statusLabel, productUrl } from "@/data/products";
 import { headerNav, isNavActive } from "@/data/nav";
 import { publishedCities, cityUrl } from "@/data/cities";
 import { site } from "@/data/site";
+import { u, locales, localeFromPath, localeSwitchUrl } from "@/data/locales";
 
 const pathname = Astro.url.pathname;
+// The desktop picker lives in .nav-right, which is display:none under 980px —
+// so without this section the region picker simply does not exist on phones.
+const currentLocale = localeFromPath(pathname);
 const isActive = (href: string) => isNavActive(pathname, { label: "", href });
 const companyLinks = headerNav.filter((l) => l.mobile !== false);
 ---
@@ -29,7 +33,7 @@ const companyLinks = headerNav.filter((l) => l.mobile !== false);
   <div class="mm-backdrop" data-mobile-menu-backdrop aria-hidden="true"></div>
   <div class="mm-panel">
     <div class="mm-header">
-      <a class="brand" href="/" aria-label="Biteperk home">
+      <a class="brand" href={u("/")} aria-label="Biteperk home">
         <StarMark size={32} />
         <span class="brand-name">bite<span class="perk">perk</span></span>
       </a>
@@ -63,7 +67,7 @@ const companyLinks = headerNav.filter((l) => l.mobile !== false);
         ))}
         <a
           class:list={["mm-link", "mm-all", { active: isNavActive(pathname, { label: "", href: "/products/", activeMatch: "exact" }) }]}
-          href="/products/"
+          href={u("/products/")}
         >
           See the Vox overview →
         </a>
@@ -97,8 +101,29 @@ const companyLinks = headerNav.filter((l) => l.mobile !== false);
         </ul>
       </div>
 
+      <div class="mm-section">
+        <div class="mm-heading">Region</div>
+        <ul class="mm-regions" role="list">
+          {locales.map((l) => (
+            <li>
+              <a
+                class:list={["mm-region", { active: l.base === currentLocale.base }]}
+                href={localeSwitchUrl(pathname, l)}
+                hreflang={l.hreflang[0]}
+                lang={l.lang}
+                aria-current={l.base === currentLocale.base ? "true" : undefined}
+              >
+                <span class="mm-region-chip" aria-hidden="true">{l.short}</span>
+                <span class="mm-region-label">{l.label}</span>
+                <svg class="mm-region-check" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.2 5.2L20 7"></path></svg>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
       <div class="mm-cta">
-        <a class="btn" href="/contact/?intent=demo" data-cta="book-demo">
+        <a class="btn" href={u("/contact/?intent=demo")} data-cta="book-demo">
           Book a demo
           <span aria-hidden="true">→</span>
         </a>
@@ -280,6 +305,60 @@ const companyLinks = headerNav.filter((l) => l.mobile !== false);
     border-color: color-mix(in srgb, var(--gold) 35%, var(--line));
   }
 
+  /* Region — full-width rows, not the cities' 2-up grid: the labels
+     ("International — Français") don't fit a half-width pill. */
+  .mm-regions {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .mm-region {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 48px;
+    padding: 10px 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--ink-1);
+    color: var(--text);
+    font-size: 15px;
+  }
+  .mm-region.active {
+    color: var(--white);
+    font-weight: 600;
+    border-color: color-mix(in srgb, var(--gold) 35%, var(--line));
+  }
+  .mm-region-chip {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 24px;
+    border-radius: 6px;
+    background: var(--fill-subtle);
+    border: 1px solid var(--line);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--mist-2);
+  }
+  .mm-region.active .mm-region-chip {
+    background: color-mix(in srgb, var(--gold) 14%, transparent);
+    border-color: color-mix(in srgb, var(--gold) 34%, transparent);
+    color: var(--gold);
+  }
+  .mm-region-label { flex: 1 1 auto; }
+  .mm-region-check {
+    flex: none;
+    color: var(--gold);
+    opacity: 0;
+  }
+  .mm-region.active .mm-region-check { opacity: 1; }
+
   .mm-cta {
     margin-top: 24px;
     display: grid;
@@ -301,7 +380,10 @@ const companyLinks = headerNav.filter((l) => l.mobile !== false);
   }
   .mm-email:hover { color: var(--white); }
 
-  @media (min-width: 981px) {
+  /* Above the hand-off the desktop bar carries everything, so the overlay is
+     inert. Keep this in lockstep with Nav.astro's max-width: 1180px rule and
+     megamenu.css — a mismatch leaves a band with neither nav. */
+  @media (min-width: 1181px) {
     .mm { display: none; }
   }
 </style>

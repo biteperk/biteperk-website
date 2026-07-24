@@ -1,4 +1,5 @@
 import { test, expect, devices } from "@playwright/test";
+import { p } from "../helpers/routes";
 
 /**
  * Keyboard flows for the Products mega-menu (desktop) and the mobile
@@ -10,7 +11,7 @@ test.describe("mega-menu (desktop keyboard)", () => {
   test.use({ viewport: { width: 1280, height: 800 } });
 
   test("Enter opens + focuses first item, Esc closes + returns focus", async ({ page }) => {
-    await page.goto("/");
+    await page.goto(p());
     const trigger = page.locator("[data-megamenu-trigger]");
     const panel = page.locator("[data-megamenu-panel]");
 
@@ -29,7 +30,7 @@ test.describe("mega-menu (desktop keyboard)", () => {
   });
 
   test("arrow keys cycle menu items, Home/End jump", async ({ page }) => {
-    await page.goto("/");
+    await page.goto(p());
     const trigger = page.locator("[data-megamenu-trigger]");
     const panel = page.locator("[data-megamenu-panel]");
     const items = panel.locator('a[role="menuitem"]');
@@ -52,7 +53,7 @@ test.describe("mega-menu (desktop keyboard)", () => {
   });
 
   test("mega-menu is closed after client-side navigation", async ({ page }) => {
-    await page.goto("/");
+    await page.goto(p());
     const trigger = page.locator("[data-megamenu-trigger]");
     await trigger.focus();
     await page.keyboard.press("Enter");
@@ -72,7 +73,7 @@ test.describe("mobile menu", () => {
   test.use({ viewport: devices["iPhone 13"].viewport, contextOptions: { reducedMotion: "reduce" } });
 
   test("opens from burger, traps focus, Esc closes and restores focus", async ({ page, browserName }) => {
-    await page.goto("/");
+    await page.goto(p());
     const burger = page.locator("[data-mobile-menu-trigger]");
     const panel = page.locator("[data-mobile-menu]");
 
@@ -107,7 +108,7 @@ test.describe("mobile menu", () => {
   });
 
   test("close button and link clicks close the menu", async ({ page }) => {
-    await page.goto("/");
+    await page.goto(p());
     const burger = page.locator("[data-mobile-menu-trigger]");
     const panel = page.locator("[data-mobile-menu]");
 
@@ -119,13 +120,13 @@ test.describe("mobile menu", () => {
     // Re-open, then navigate via a link — menu must close.
     await burger.click();
     await expect(panel).toBeVisible();
-    await panel.locator('a[href="/contact/"]').first().click();
+    await panel.locator(`a[href="${p('/contact/')}"]`).first().click();
     await page.waitForURL("**/contact/");
     await expect(page.locator("[data-mobile-menu]")).toBeHidden();
   });
 
   test("surfaces the primary conversion actions", async ({ page }) => {
-    await page.goto("/");
+    await page.goto(p());
     await page.locator("[data-mobile-menu-trigger]").click();
     const panel = page.locator("[data-mobile-menu]");
     await expect(panel).toBeVisible();
@@ -135,14 +136,29 @@ test.describe("mobile menu", () => {
   });
 });
 
-test.describe("desktop phone affordance", () => {
-  // The phone is the product demo — it must be reachable at every
-  // desktop width, including the 981–1279px icon-pill tier.
-  test.use({ viewport: { width: 1024, height: 768 } });
+test.describe("phone affordance", () => {
+  // The phone is the product demo — it must be reachable at EVERY width.
+  // Above the 1180px hand-off that means the nav's own pill (spelled out
+  // from 1380px, a 44px icon pill below); at or under it, the overlay menu's
+  // call action. The bar cannot hold all 11 controls below ~1180px, so the
+  // contract is "reachable", not "reachable in #nav".
 
-  test("phone link stays visible on mid-width laptops", async ({ page }) => {
-    await page.goto("/");
+  test("nav phone pill is visible above the hand-off", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto(p());
     const phone = page.locator('#nav a[data-cta="call-nav"]');
+    await expect(phone).toBeVisible();
+    await expect(phone).toHaveAttribute("href", /^tel:/);
+  });
+
+  test("overlay menu carries the phone on mid-width laptops", async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 768 });
+    await page.goto(p());
+    // Desktop cluster has handed over to the hamburger at this width.
+    await expect(page.locator('#nav a[data-cta="call-nav"]')).toBeHidden();
+
+    await page.locator("[data-mobile-menu-trigger]").click();
+    const phone = page.locator('[data-mobile-menu] a[data-cta="call-menu"]');
     await expect(phone).toBeVisible();
     await expect(phone).toHaveAttribute("href", /^tel:/);
   });

@@ -2,6 +2,7 @@
 import Base from "@/layouts/Base.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import { site } from "@/data/site";
+import { u } from "@/data/locales";
 
 const title = "Privacy policy — Biteperk";
 const description =
@@ -12,8 +13,8 @@ const description =
   <article class="legal">
     <div class="wrap">
       <Breadcrumbs items={[
-        { label: "Home", href: "/" },
-        { label: "Legal", href: "/legal/privacy/" },
+        { label: "Home", href: u("/") },
+        { label: "Legal", href: u("/legal/privacy/") },
         { label: "Privacy" },
       ]} />
       <header class="legal-head">
@@ -40,7 +41,7 @@ const description =
           For the website itself we use privacy-first, cookieless analytics and, only if you opt in, a LinkedIn
           marketing tag. Nothing non-essential runs until you choose <strong>Accept</strong>; you can change or
           withdraw your choice any time from <strong>Cookie settings</strong> in the footer. Full details are in
-          our <a href="/legal/cookies/">Cookie Policy</a>.
+          our <a href={u("/legal/cookies/")}>Cookie Policy</a>.
         </p>
         <p>
           When you use VoxTable, our product collects the audio and metadata necessary to take the booking —

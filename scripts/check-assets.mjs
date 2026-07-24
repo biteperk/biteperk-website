@@ -26,6 +26,10 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const TARGET = process.env.BUILD_TARGET === "global" ? "global" : "au";
 const DIST_NAME = TARGET === "global" ? "dist-global" : "dist";
 const DIST = join(ROOT, DIST_NAME);
+// The au build is served under /au-en but emits FLAT to dist/ (the /au-en/**
+// nesting is added at the merge step). So strip the locale base before
+// resolving a reference against the flat build dir.
+const BASE = TARGET === "global" ? "" : "/au-en";
 
 if (!existsSync(DIST)) {
   console.error(`check-assets: ${DIST_NAME}/ not found — run the build first.`);
@@ -82,6 +86,11 @@ function toDistPath(raw) {
       url = url.slice(origin.length);
       break;
     }
+  }
+
+  // Strip the locale base (/au-en) — files live at the flat build root.
+  if (BASE && (url === BASE || url.startsWith(BASE + "/"))) {
+    url = url.slice(BASE.length) || "/";
   }
 
   // Skip anything still remote, or non-file schemes.

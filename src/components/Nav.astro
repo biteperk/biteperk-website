@@ -13,15 +13,21 @@
  * Glassy translucent backdrop, gold hairline on scroll. Active link
  * marked with an animated underline pill.
  *
- * Mobile (<= 980px): logo + hamburger only; MobileMenu handles the
- * overlay.
+ * Mobile (<= 1180px): logo + hamburger only; MobileMenu handles the
+ * overlay. The threshold is set by what actually fits: the bar carries 11
+ * controls (6 centre links + region picker + theme + phone + Sign in + CTA),
+ * and below ~1180px they cannot coexist without the centre cluster
+ * overflowing its track and painting over the wordmark. Everything in the bar
+ * also lives in MobileMenu, so nothing is lost by handing over earlier.
  */
 import StarMark from "@/components/StarMark.astro";
 import ThemeToggle from "@/components/ThemeToggle.astro";
+import LocalePicker from "@/components/LocalePicker.astro";
 import NavDropdown from "@/components/NavDropdown.astro";
 import MobileMenu from "@/components/MobileMenu.astro";
 import { site } from "@/data/site";
 import { headerNav, isNavActive } from "@/data/nav";
+import { u } from "@/data/locales";
 
 const pathname = Astro.url.pathname;
 
@@ -32,7 +38,7 @@ const centreLinks = headerNav.filter((l) => l.desktop !== false);
 
 <nav class="nav" id="nav" aria-label="Primary" transition:persist>
   <div class="wrap nav-inner">
-    <a class="brand nav-brand" href="/" aria-label="Biteperk home">
+    <a class="brand nav-brand" href={u("/")} aria-label="Biteperk home">
       <StarMark size={34} />
       <span class="brand-name">bite<span class="perk">perk</span></span>
     </a>
@@ -52,6 +58,7 @@ const centreLinks = headerNav.filter((l) => l.desktop !== false);
     </div>
 
     <div class="nav-right">
+      <LocalePicker />
       <ThemeToggle />
       <a
         class="nav-phone"
@@ -76,7 +83,7 @@ const centreLinks = headerNav.filter((l) => l.desktop !== false);
         <span class="nav-ext" aria-hidden="true">↗</span>
         <span class="sr-only">(opens the VoxTable app in a new tab)</span>
       </a>
-      <a class="btn nav-cta" href="/contact/?intent=demo" data-cta="book-demo">
+      <a class="btn nav-cta" href={u("/contact/?intent=demo")} data-cta="book-demo">
         Book a demo
         <span class="nav-cta-arrow" aria-hidden="true">→</span>
       </a>
@@ -141,8 +148,10 @@ const centreLinks = headerNav.filter((l) => l.desktop !== false);
        theme toggle + the always-on phone number + Sign in + Book a demo),
        so it needs more room than --container-max (1180). Widen it here or
        the centre cluster overflows its 1fr track and — being centred —
-       spills left over the wordmark. */
-    max-width: 1300px;
+       spills left over the wordmark.
+       NB: .wrap's own horizontal padding comes out of this, so the usable
+       content box is ~64px narrower than the number below. */
+    max-width: 1360px;
   }
   /* Bar compresses slightly once scrolled — fixed position, so no CLS. */
   .nav.scrolled .nav-inner {
@@ -309,8 +318,13 @@ const centreLinks = headerNav.filter((l) => l.desktop !== false);
   .nav-burger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
   /* Phone tiers — the number is the product demo; NEVER fully hidden on
-     desktop. Full number ≥1280; icon-only 44×44 pill below that. */
-  @media (max-width: 1279px) {
+     desktop. Full number ≥1380; icon-only 44×44 pill below that.
+     The collapse point is set by the width budget, not taste: the spelled-out
+     number costs 131px, and below ~1380 that is exactly what tips the centre
+     cluster into overflowing (max-width above only binds from 1360). Collapsing
+     to the icon pill here keeps the number on screen at every desktop width
+     AND keeps the links off the wordmark. */
+  @media (max-width: 1379px) {
     .nav-phone-text { display: none; }
     .nav-phone {
       width: 44px;
@@ -321,18 +335,20 @@ const centreLinks = headerNav.filter((l) => l.desktop !== false);
     .nav-phone:hover { border-color: var(--line-strong); }
   }
 
-  /* Compression tiers for the 6-item centre cluster. */
-  @media (max-width: 1160px) {
+  /* Compression tiers for the 6-item centre cluster. Both sit ABOVE the
+     1180px hand-off to the hamburger, so the bar tightens gradually rather
+     than going straight from roomy to overflowing. */
+  @media (max-width: 1340px) {
     .lnk, .nav-centre :global(.megamenu-trigger) { padding: 11px 10px; }
     .nav-cta { padding: 11px 16px; }
   }
-  @media (max-width: 1060px) {
+  @media (max-width: 1220px) {
     .lnk, .nav-centre :global(.megamenu-trigger) { padding: 11px 8px; font-size: 14.5px; }
     .nav-right { gap: 8px; }
     .nav-inner { gap: 12px; }
   }
 
-  @media (max-width: 980px) {
+  @media (max-width: 1180px) {
     .nav-inner { grid-template-columns: auto 1fr auto; gap: 16px; height: var(--nav-h-mobile); }
     .nav.scrolled .nav-inner { height: var(--nav-h-mobile); }
     .nav-centre,

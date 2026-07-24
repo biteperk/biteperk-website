@@ -15,6 +15,7 @@ import Illustration from "@/components/Illustration.astro";
 import Cta from "@/components/Cta.astro";
 import { site } from "@/data/site";
 import { ORG_ID } from "@/data/schema";
+import { u, abs } from "@/data/locales";
 
 const title = "About Biteperk — the Sydney team behind Vox";
 const description =
@@ -23,8 +24,8 @@ const description =
 const aboutJsonLd = {
   "@context": "https://schema.org",
   "@type": "AboutPage",
-  "@id": `${site.url}/about/#aboutpage`,
-  url: `${site.url}/about/`,
+  "@id": `${abs("/about/")}#aboutpage`,
+  url: abs("/about/"),
   name: title,
   about: { "@id": ORG_ID },
 };
@@ -41,7 +42,7 @@ const aboutJsonLd = {
   <section class="about-hero">
     <div class="wrap">
       <div class="about-top">
-        <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "About" }]} />
+        <Breadcrumbs items={[{ label: "Home", href: u("/") }, { label: "About" }]} />
       </div>
       <SectionHeader
         as="h1"

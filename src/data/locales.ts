@@ -1,78 +1,99 @@
 /**
- * Single source of truth for the site's locales and build targets.
+ * Single source of truth for the site's locales, origin, and base paths.
  *
- * International site architecture — see
- * deliverables/2026-07-23-intl-site-architecture/PLAN.md.
+ * Single-domain international architecture (Option B, rev.3) — see
+ * deliverables/2026-07-23-intl-site-architecture/ACCENTURE-GRADE-INTL-PLAN.md.
  *
- * Consumed by:
- *   - astro.config.mjs        — host + sitemap per BUILD_TARGET (mirrors the
- *                               two host constants; config runs before the TS graph)
- *   - src/layouts/Base.astro  — <html lang> + the hreflang cluster (Phase 1)
- *   - scripts/check-*.mjs      — route/schema/hreflang gates, scoped per target
- *   - scripts/generate-og.mjs  — per-locale cards, per-host footer
+ * ONE domain, biteperk.com, addressed Accenture-style with a base path per
+ * locale (accenture.com/au-en, /be-en, /fr-fr …):
  *
- * BUILD_TARGET selects which host + locale subset a build pass emits:
- *   au     → en-AU at the site root, on biteperk.com.au  (the existing shipped site)
- *   global → en (x-default) + fr, path-prefixed, on biteperk.com
+ *   au-en  → biteperk.com/au-en   the Australian site (was biteperk.com.au root)
+ *   en     → biteperk.com/en      international English, the x-default
+ *   fr     → biteperk.com/fr      international French
  *
- * Nothing here alters the AU build's output: the `au` target reproduces the
- * pre-existing single-locale-at-root site exactly.
+ * biteperk.com.au is a redirect-only host → 301 → biteperk.com/au-en/** .
+ *
+ * BUILD_TARGET selects which locale subset a build pass emits, and — because
+ * Astro's `base` is one value per build — which base path Astro prefixes onto
+ * its own bundled assets and the sitemap:
+ *   au     → Astro base "/au-en"; emits the au-en locale.        → dist/
+ *   global → Astro base "/" (root); emits en + fr via [...intl]. → dist-global/
+ * A post-build merge (scripts/merge-dist.mjs) relocates the au build under
+ * /au-en/** and lays the en+fr trees at the root of one biteperk.com deploy.
+ *
+ * Astro only base-prefixes its OWN managed assets + the sitemap. Every literal
+ * URL the code writes — internal links, /og and /images assets, canonical, OG,
+ * JSON-LD @id/url — must be routed through the helpers below (`u`, `abs`) so it
+ * carries the locale base. The check-links gate fails the build if one escapes.
  */
 
 export type BuildTarget = "au" | "global";
 
 export type Locale = {
-  /** URL path segment under the host. "" = served at the site root (AU). */
-  readonly path: string;
+  /** URL base path under the origin, no trailing slash. e.g. "/au-en", "/en". */
+  readonly base: string;
   /** `<html lang>` value for pages in this locale. */
   readonly lang: string;
+  /** og:locale value (underscored), e.g. "en_AU". */
+  readonly ogLocale: string;
   /** hreflang region codes this locale legitimately serves. */
   readonly hreflang: readonly string[];
-  /** Absolute origin this locale is served from. */
-  readonly host: string;
-  /** Human label for the region/language picker. */
+  /** Human label for the region/language picker menu. */
   readonly label: string;
+  /**
+   * 2–3 char chip shown in the picker's collapsed trigger. The full `label`
+   * only ever appears inside the open menu — the nav bar cannot afford the
+   * ~200px a spelled-out label costs (see Nav.astro's width budget).
+   */
+  readonly short: string;
   /** The one x-default of the whole hreflang cluster. Exactly one locale sets this. */
   readonly xDefault?: boolean;
-  /** True when this locale lives on a different host than the current build target. */
-  readonly external?: boolean;
   /** The build target that emits this locale. */
   readonly target: BuildTarget;
 };
 
-export const AU_HOST = "https://biteperk.com.au";
-export const GLOBAL_HOST = "https://biteperk.com";
+/** The one origin every locale is served from. */
+export const ORIGIN = "https://biteperk.com";
+
+/** Canonical home of the Australian site — the entity anchor (stable everywhere). */
+export const AU_BASE = "/au-en";
+export const AU_HOME = `${ORIGIN}${AU_BASE}`;
+
+/** The redirect-only country-code host (front door → AU_HOME). */
+export const AU_CCTLD = "https://biteperk.com.au";
 
 /**
- * The full cross-domain cluster. `external` is relative to the *global* build;
- * Base.astro recomputes it per build target when it emits reciprocal hreflang.
+ * The full locale cluster. Order matters only for display; the hreflang gate
+ * asserts reciprocity + exactly one x-default regardless.
  */
 export const locales: readonly Locale[] = [
   {
-    path: "en",
+    base: "/au-en",
+    lang: "en-AU",
+    ogLocale: "en_AU",
+    hreflang: ["en-AU"],
+    label: "Australia — English",
+    short: "AU",
+    target: "au",
+  },
+  {
+    base: "/en",
     lang: "en",
-    hreflang: ["en", "en-US", "en-GB", "en-BE", "en-IE"],
-    host: GLOBAL_HOST,
+    ogLocale: "en",
+    hreflang: ["en"],
     label: "International — English",
+    short: "EN",
     xDefault: true,
     target: "global",
   },
   {
-    path: "fr",
+    base: "/fr",
     lang: "fr",
-    hreflang: ["fr", "fr-FR", "fr-BE", "fr-LU"],
-    host: GLOBAL_HOST,
-    label: "France — Français",
+    ogLocale: "fr",
+    hreflang: ["fr"],
+    label: "International — Français",
+    short: "FR",
     target: "global",
-  },
-  {
-    path: "",
-    lang: "en-AU",
-    hreflang: ["en-AU"],
-    host: AU_HOST,
-    label: "Australia — English",
-    external: true,
-    target: "au",
   },
 ];
 
@@ -81,11 +102,6 @@ export const DEFAULT_TARGET: BuildTarget = "au";
 /** Resolve a BUILD_TARGET env value, defaulting to `au`. */
 export function resolveTarget(value?: string | null): BuildTarget {
   return value === "global" ? "global" : "au";
-}
-
-/** Absolute site origin Astro should build for a target. */
-export function siteForTarget(target: BuildTarget): string {
-  return target === "global" ? GLOBAL_HOST : AU_HOST;
 }
 
 /** BUILD_TARGET from the build-time environment (undefined in the browser). */
@@ -99,32 +115,75 @@ export function currentTarget(): BuildTarget {
   return resolveTarget(envTarget());
 }
 
-/** The absolute host this build pass emits (biteperk.com.au or biteperk.com). */
-export function currentHost(): string {
-  return siteForTarget(currentTarget());
-}
-
 /** Locales emitted by a given build target. */
 export function localesForTarget(target: BuildTarget): readonly Locale[] {
   return locales.filter((l) => l.target === target);
 }
 
 /**
- * Build the absolute URL for a page path within a locale.
- * `pagePath` is the page's path *within* the locale (e.g. "about/", "" for home).
+ * The Astro `base` path of the CURRENT build, no trailing slash.
+ *   au     → "/au-en"  (single-locale build; base applies to every page)
+ *   global → ""        (root; the /en and /fr prefixes are part of each route)
+ * Mirrors the BASE constant in astro.config.mjs.
  */
-export function localeUrl(locale: Locale, pagePath = ""): string {
-  const clean = pagePath.replace(/^\/+/, "");
-  const prefix = locale.path ? `${locale.path}/` : "";
-  return `${locale.host}/${prefix}${clean}`;
+export function currentBasePath(): string {
+  return currentTarget() === "au" ? AU_BASE : "";
 }
 
-// ── International page scaffold (Phase 1) ────────────────────────────────────
+/** The absolute origin (never includes a base path). */
+export function currentOrigin(): string {
+  return ORIGIN;
+}
+
+/**
+ * Prefix an app-absolute path ("/products/") with the current build's base
+ * ("/au-en/products/"). Non-absolute inputs (relative, external, #, mailto,
+ * tel) are returned untouched. Idempotent: never double-prefixes.
+ */
+export function u(path: string): string {
+  if (!path.startsWith("/")) return path;
+  const base = currentBasePath();
+  if (!base) return path;
+  if (path === base || path.startsWith(base + "/")) return path; // already prefixed
+  return base + path;
+}
+
+/** Strip a leading current-base from a path, yielding a base-less app path. */
+export function stripBase(path: string): string {
+  const base = currentBasePath();
+  if (base && (path === base || path.startsWith(base + "/"))) {
+    const rest = path.slice(base.length);
+    return rest.startsWith("/") ? rest : "/" + rest;
+  }
+  return path;
+}
+
+/** Absolute URL on the current origin + base, for canonical / OG / JSON-LD. */
+export function abs(path: string): string {
+  return ORIGIN + u(path);
+}
+
+/**
+ * Absolute home URL of a specific locale (origin + its base).
+ * Trailing slash kept so this matches what buildHreflang() and u("/") emit —
+ * a picker link that differs from the canonical only by the slash costs an
+ * extra redirect hop and muddies the hreflang signal.
+ */
+export function localeHome(locale: Locale): string {
+  return `${ORIGIN}${locale.base}/`;
+}
+
+/** Build the absolute URL for a page path within a specific locale. */
+export function localeUrl(locale: Locale, pagePath = ""): string {
+  const clean = pagePath.replace(/^\/+/, "");
+  return `${ORIGIN}${locale.base}/${clean}`.replace(/\/$/, "/"); // keep trailing slash on home
+}
+
+// ── International page scaffold ──────────────────────────────────────────────
 export type Alternate = { readonly hreflang: string; readonly href: string };
 
 /**
  * Pages emitted under every global locale (path within the locale; "" = home).
- * Phase-1 placeholders; Phase 2 replaces the content, keeping these routes.
  */
 export const INTL_PAGE_PATHS: readonly string[] = [
   "",
@@ -136,23 +195,92 @@ export const INTL_PAGE_PATHS: readonly string[] = [
 ];
 
 /**
- * The hreflang cluster for a page path across the global locales (en, fr).
- * Self-referencing + bidirectional + absolute + exactly one x-default —
- * everything check-hreflang.mjs asserts. The AU (en-AU) member joins only when
- * the international site goes live (both hosts serving reciprocal tags).
+ * THE LAUNCH FLAG (env-driven; default OFF). While off (the safe default):
+ * /en + /fr stay `noindex` and NO cross-domain hreflang is emitted — output is
+ * byte-identical to the pre-international-launch site. Launch in ONE deploy with
+ *   INTL_LAUNCHED=true npm run build:site
+ * which (a) makes /en + /fr indexable and (b) emits the reciprocal
+ * au-en ↔ en ↔ fr hreflang cluster on shared pages. These must go live together
+ * — see the runbook's launch step.
  */
-export function buildGlobalHreflang(pagePath = ""): {
-  alternates: Alternate[];
-  xDefault: string;
-} {
-  const globals = localesForTarget("global");
+export const INTL_LAUNCHED =
+  (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env
+    ?.INTL_LAUNCHED === "true";
+
+/**
+ * Base-less page paths that exist in ALL locales (au-en + en + fr) and so form
+ * the 3-way hreflang cluster. Everything else is single- or two-locale:
+ * AU-only pages (products, cities, blog, /technology, /platform) emit no
+ * cross-domain hreflang; /how-it-works exists only under /en + /fr.
+ */
+export const SHARED_PAGE_PATHS: readonly string[] = [
+  "/",
+  "/about/",
+  "/contact/",
+  "/legal/privacy/",
+  "/legal/terms/",
+];
+
+/** Is this base-less path shared across au-en + en + fr? */
+export function isSharedPage(baseLessPath: string): boolean {
+  return SHARED_PAGE_PATHS.includes(baseLessPath);
+}
+
+/**
+ * The locale a SERVED path belongs to, matched by base-path prefix
+ * ("/au-en/contact/" → au-en). Falls back to the cluster's x-default so the
+ * picker always has something to mark as current.
+ *
+ * Deliberately keyed off the served path, not the build target: that's the one
+ * signal that reads identically under Astro's `base` (au) and at the root
+ * (global), so one picker component works on both builds.
+ */
+export function localeFromPath(path: string): Locale {
+  return (
+    locales.find((l) => path === l.base || path.startsWith(l.base + "/")) ??
+    locales.find((l) => l.xDefault) ??
+    locales[0]
+  );
+}
+
+/**
+ * Where the picker sends a visitor who switches to `to` while on `path`.
+ *
+ * Pages in SHARED_PAGE_PATHS exist in every locale, so we carry the visitor to
+ * the SAME page across the switch (/au-en/contact/ → /fr/contact/) — landing
+ * someone back on a home page is the classic region-picker annoyance. Anything
+ * else is AU-only (products, cities, guides) or locale-specific, so it falls
+ * back to the target locale's home rather than 404.
+ */
+export function localeSwitchUrl(path: string, to: Locale): string {
+  const from = localeFromPath(path);
+  const rest = path.slice(from.base.length) || "/";
+  const page = rest.endsWith("/") ? rest : rest + "/";
+  return isSharedPage(page) ? `${ORIGIN}${to.base}${page}` : localeHome(to);
+}
+
+/**
+ * The COMPLETE reciprocal hreflang cluster for a page across ALL live locales
+ * (au-en + en + fr) plus exactly one x-default. Every page on every host emits
+ * the same cluster, so Google can map the properties as alternates.
+ *
+ * `pagePath` is the page path WITHIN its locale ("" = the locale home,
+ * "products/voxtable/" = a deeper page). For pages that only exist in some
+ * locales, pass the subset via `only`.
+ */
+export function buildHreflang(
+  pagePath = "",
+  only?: readonly BuildTarget[],
+): { alternates: Alternate[]; xDefault: string } {
+  const clean = pagePath.replace(/^\/+/, "");
+  const pool = only ? locales.filter((l) => only.includes(l.target)) : locales;
   const alternates: Alternate[] = [];
-  for (const l of globals) {
-    const href = localeUrl(l, pagePath);
+  for (const l of pool) {
+    const href = `${ORIGIN}${l.base}/${clean}`;
     for (const code of l.hreflang) alternates.push({ hreflang: code, href });
   }
-  const x = globals.find((l) => l.xDefault) ?? globals[0];
-  return { alternates, xDefault: localeUrl(x, pagePath) };
+  const x = pool.find((l) => l.xDefault) ?? pool[0];
+  return { alternates, xDefault: `${ORIGIN}${x.base}/${clean}` };
 }
 
 /** Expected `dir/index.html` routes for a build target (drives check-routes). */
@@ -160,9 +288,10 @@ export function pageRoutesForTarget(target: BuildTarget): string[] {
   if (target !== "global") return [];
   const out: string[] = [];
   for (const l of localesForTarget("global")) {
+    const seg = l.base.replace(/^\//, "");
     for (const p of INTL_PAGE_PATHS) {
-      const seg = [l.path, p].filter(Boolean).join("/");
-      out.push(`${seg}/index.html`);
+      const full = [seg, p].filter(Boolean).join("/");
+      out.push(`${full}/index.html`);
     }
   }
   return out;

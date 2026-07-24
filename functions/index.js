@@ -30,7 +30,7 @@ const MAIL_FROM = '"Biteperk" <hello@biteperk.com.au>';
 const MAIL_FROM_FALLBACK = '"Biteperk" <biteperk@biteperk.com.au>';
 const MAIL_TO = "hello@biteperk.com.au";
 const MAIL_CC = "biteperk@gmail.com"; // backstop copy
-const SITE_URL = "https://biteperk.com.au";
+const SITE_URL = "https://biteperk.com/au-en";
 // AU site + the international .com hub (EU/UK/US are served from /en/ and /fr/
 // on biteperk.com). Both functions stay in australia-southeast1; only the
 // browser Origin allowlist widens so the EU contact form isn't blocked by CORS.
@@ -40,9 +40,6 @@ const ALLOWED_ORIGINS = [
   "https://www.biteperk.com.au",
   "https://biteperk.com",
   "https://www.biteperk.com",
-  // Firebase staging origin for the global site — without it the contact form
-  // is CORS-dead on staging, which is where the EU form gets exercised first.
-  "https://biteperk-global.web.app",
 ];
 
 // Keep in sync with src/data/products.ts (the function can't import the site's TS).

@@ -10,6 +10,7 @@
 import HeroMarquee from "@/components/HeroMarquee.astro";
 import ImageBlock from "@/components/ImageBlock.astro";
 import { site } from "@/data/site";
+import { u } from "@/data/locales";
 ---
 
 <header class="hero">
@@ -35,8 +36,8 @@ import { site } from "@/data/site";
         answering calls Australia-wide.
       </p>
       <div class="hero-cta">
-        <a class="btn" href="/contact/?intent=demo" data-cta="book-demo">Book a demo →</a>
-        <a class="btn-ghost" href="/technology/">See how it works</a>
+        <a class="btn" href={u("/contact/?intent=demo")} data-cta="book-demo">Book a demo →</a>
+        <a class="btn-ghost" href={u("/technology/")}>See how it works</a>
       </div>
       <p class="hero-phone">
         or call <a href={site.phone.href} data-cta="call-hero">{site.phone.display}</a> — Bella will pick up.

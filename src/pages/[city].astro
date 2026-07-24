@@ -21,6 +21,7 @@ import Illustration from "@/components/Illustration.astro";
 import { site } from "@/data/site";
 import { ORG_ID, WEBSITE_ID } from "@/data/schema";
 import { publishedCities, cityUrl, type City } from "@/data/cities";
+import { u, abs } from "@/data/locales";
 import { getCollection } from "astro:content";
 
 export function getStaticPaths() {
@@ -51,7 +52,7 @@ const fmtGuideDate = (d: Date) =>
 const serviceJsonLd = {
   "@context": "https://schema.org",
   "@type": "Service",
-  "@id": `${site.url}${path}#service`,
+  "@id": `${abs(path)}#service`,
   name: `AI phone answering for ${city.name} restaurants`,
   alternateName: `AI receptionist for ${city.name} restaurants`,
   serviceType: [
@@ -71,7 +72,7 @@ const serviceJsonLd = {
     },
   },
   audience: { "@type": "BusinessAudience", name: "Restaurants, cafés and venues" },
-  url: `${site.url}${path}`,
+  url: abs(path),
   offers: {
     "@type": "Offer",
     priceCurrency: "AUD",
@@ -90,8 +91,8 @@ const breadcrumbJsonLd = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: site.url },
-    { "@type": "ListItem", position: 2, name: `AI for ${city.name} restaurants`, item: `${site.url}${path}` },
+    { "@type": "ListItem", position: 1, name: "Home", item: abs("/") },
+    { "@type": "ListItem", position: 2, name: `AI for ${city.name} restaurants`, item: abs(path) },
   ],
 };
 
@@ -132,7 +133,7 @@ const [headStart, headAccent] = (() => {
     <div class="city-hero-glow" aria-hidden="true"></div>
     <div class="wrap">
       <div class="city-top">
-        <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: city.name }]} />
+        <Breadcrumbs items={[{ label: "Home", href: u("/") }, { label: city.name }]} />
       </div>
       <div class="city-hero-grid">
         <div class="reveal">
@@ -145,7 +146,7 @@ const [headStart, headAccent] = (() => {
           </h1>
           <p class="city-sub lede">{city.intro[0]}</p>
           <div class="city-cta">
-            <a class="btn" href="/products/voxtable/">See how VoxTable works →</a>
+            <a class="btn" href={u("/products/voxtable/")}>See how VoxTable works →</a>
             <a class="btn-ghost" href={site.phone.href}>Call us · {site.phone.display}</a>
           </div>
           <ul class="city-trust">
@@ -204,8 +205,8 @@ const [headStart, headAccent] = (() => {
         ))}
       </div>
       <div class="city-how-cta reveal">
-        <a class="btn" href="/products/voxtable/">Explore VoxTable →</a>
-        <a class="btn-ghost" href="/contact/">Book a 15-minute walkthrough</a>
+        <a class="btn" href={u("/products/voxtable/")}>Explore VoxTable →</a>
+        <a class="btn-ghost" href={u("/contact/")}>Book a 15-minute walkthrough</a>
       </div>
     </div>
   </section>
@@ -228,7 +229,7 @@ const [headStart, headAccent] = (() => {
         ))}
       </div>
       <p class="city-ai-more reveal">
-        <a class="link-arrow" href="/technology/">
+        <a class="link-arrow" href={u("/technology/")}>
           How the whole stack works
           <span class="arrow" aria-hidden="true">→</span>
         </a>
@@ -272,8 +273,8 @@ const [headStart, headAccent] = (() => {
           {city.suburbs.map((s) => <li>{s}</li>)}
         </ul>
         <p class="city-areas-note">
-          Somewhere else? VoxTable works anywhere in Australia — <a href="/products/voxtable/">see the product</a>
-          or <a href="/contact/">get in touch</a>.
+          Somewhere else? VoxTable works anywhere in Australia — <a href={u("/products/voxtable/")}>see the product</a>
+          or <a href={u("/contact/")}>get in touch</a>.
         </p>
       </div>
     </div>
@@ -303,7 +304,7 @@ const [headStart, headAccent] = (() => {
         <ul class="city-guides-grid reveal-stagger">
           {cityGuides.map((post) => (
             <li>
-              <a class="city-guide pressable" href={`/blog/${post.id}/`} data-glow>
+              <a class="city-guide pressable" href={u(`/blog/${post.id}/`)} data-glow>
                 <div class="city-guide-meta">
                   <time datetime={post.data.publishDate.toISOString().slice(0, 10)}>
                     {fmtGuideDate(post.data.publishDate)}
@@ -339,7 +340,7 @@ const [headStart, headAccent] = (() => {
     headline={`Stop losing ${city.name} bookings to a busy line.`}
     lede="Most venues are live within 48 hours. Talk to us about a 15-minute walkthrough, or just call the number and hear Bella for yourself."
     primary={{ label: `Call us · ${site.phone.display}`, href: site.phone.href }}
-    secondary={{ label: "See VoxTable", href: "/products/voxtable/" }}
+    secondary={{ label: "See VoxTable", href: u("/products/voxtable/") }}
   />
 </Base>
 

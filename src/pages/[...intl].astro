@@ -20,7 +20,7 @@ export function getStaticPaths() {
   const out: { params: { intl: string }; props: { locale: Locale; page: string } }[] = [];
   for (const locale of localesForTarget("global")) {
     for (const page of INTL_PAGE_PATHS) {
-      const seg = [locale.path, page].filter(Boolean).join("/");
+      const seg = [locale.base.replace(/^\//, ""), page].filter(Boolean).join("/");
       out.push({ params: { intl: seg }, props: { locale, page } });
     }
   }

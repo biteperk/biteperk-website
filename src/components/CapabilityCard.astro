@@ -17,6 +17,7 @@
 import type { Product } from "@/data/products";
 import { productUrl } from "@/data/products";
 import StatusPill from "@/components/StatusPill.astro";
+import { u } from "@/data/locales";
 
 interface Props {
   product: Product;
@@ -33,8 +34,8 @@ const isLive = product.status === "live";
 const cta = isLive
   ? product.externalUrl
     ? { label: "Get started", href: product.externalUrl }
-    : { label: "Book a demo", href: `/contact/?product=${product.slug}` }
-  : { label: "Join the waitlist", href: `/contact/?product=${product.slug}` };
+    : { label: "Book a demo", href: u(`/contact/?product=${product.slug}`) }
+  : { label: "Join the waitlist", href: u(`/contact/?product=${product.slug}`) };
 
 const ctaExternal = cta.href.startsWith("http");
 ---

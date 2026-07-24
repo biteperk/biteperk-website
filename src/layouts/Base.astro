@@ -29,6 +29,7 @@ import Nav from "@/components/Nav.astro";
 import Footer from "@/components/Footer.astro";
 import ConsentBanner from "@/components/ConsentBanner.astro";
 import { siteGraph } from "@/data/schema";
+import { u, buildHreflang, currentTarget, stripBase, isSharedPage, INTL_LAUNCHED } from "@/data/locales";
 import { ClientRouter } from "astro:transitions";
 
 interface Props {
@@ -79,6 +80,22 @@ const {
   hideNav = false,
   hideFooter = false,
 } = Astro.props;
+
+// Cross-domain hreflang for AU shared pages (home, about, contact, legal) is
+// emitted automatically once the international site launches. The intl /en+/fr
+// pages compute their own cluster in [...intl].astro. Pages that pass explicit
+// `alternates` keep control. Pre-launch (INTL_LAUNCHED=false) the AU build emits
+// no hreflang — byte-identical to today.
+let hreflangAlternates = alternates;
+let hreflangXDefault = xDefaultHref;
+if (!alternates && INTL_LAUNCHED && currentTarget() === "au") {
+  const baseLess = stripBase(path ?? new URL(Astro.request.url).pathname);
+  if (isSharedPage(baseLess)) {
+    const cluster = buildHreflang(baseLess.replace(/^\//, ""), ["au", "global"] as const);
+    hreflangAlternates = cluster.alternates;
+    hreflangXDefault = cluster.xDefault;
+  }
+}
 ---
 
 <!doctype html>
@@ -121,24 +138,24 @@ const {
     <meta name="format-detection" content="telephone=no" />
     <!-- Bing Webmaster Tools site verification -->
     <meta name="msvalidate.01" content="C717E1E48BD4B561E0F2F3B5F733838D" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={u("/favicon.svg")} />
+    <link rel="apple-touch-icon" href={u("/favicon.svg")} />
 
-    {preloadImage && <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />}
+    {preloadImage && <link rel="preload" as="image" href={u(preloadImage)} fetchpriority="high" />}
     {preloadSlug && (
       <link
         rel="preload"
         as="image"
         type="image/avif"
-        imagesrcset={`/images/${preloadSlug.slug}-768.avif 768w, /images/${preloadSlug.slug}-1280.avif 1280w, /images/${preloadSlug.slug}-1920.avif 1920w`}
+        imagesrcset={`${u(`/images/${preloadSlug.slug}-768.avif`)} 768w, ${u(`/images/${preloadSlug.slug}-1280.avif`)} 1280w, ${u(`/images/${preloadSlug.slug}-1920.avif`)} 1920w`}
         imagesizes={preloadSlug.sizes}
         fetchpriority="high"
       />
     )}
     {preloadComposite && (
       <>
-        <link rel="preload" as="image" type="image/avif" href={`/images/composites/${preloadComposite}-mobile.avif?v2`} media="(max-width: 767px)" fetchpriority="high" />
-        <link rel="preload" as="image" type="image/avif" href={`/images/composites/${preloadComposite}-desktop.avif?v2`} media="(min-width: 768px)" fetchpriority="high" />
+        <link rel="preload" as="image" type="image/avif" href={u(`/images/composites/${preloadComposite}-mobile.avif?v2`)} media="(max-width: 767px)" fetchpriority="high" />
+        <link rel="preload" as="image" type="image/avif" href={u(`/images/composites/${preloadComposite}-desktop.avif?v2`)} media="(min-width: 768px)" fetchpriority="high" />
       </>
     )}
 
@@ -148,10 +165,10 @@ const {
 
     {/* hreflang cluster — international builds only; the AU build passes none,
         so its <head> is unchanged. */}
-    {alternates?.map((a) => (
+    {hreflangAlternates?.map((a) => (
       <link rel="alternate" hreflang={a.hreflang} href={a.href} />
     ))}
-    {xDefaultHref && <link rel="alternate" hreflang="x-default" href={xDefaultHref} />}
+    {hreflangXDefault && <link rel="alternate" hreflang="x-default" href={hreflangXDefault} />}
 
     {/* Sitewide brand graph (Organization + WebSite), linked by @id. */}
     <script is:inline type="application/ld+json" set:html={JSON.stringify(siteGraph)} />
@@ -176,6 +193,7 @@ const {
       import "@/scripts/nav.ts";
       import "@/scripts/mobile-menu.ts";
       import "@/scripts/megamenu.ts";
+      import "@/scripts/locale-picker.ts";
       import "@/scripts/counter.ts";
       import "@/scripts/call-sim.ts";
       import "@/scripts/card-glow.ts";
