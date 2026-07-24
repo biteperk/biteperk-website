@@ -25,7 +25,8 @@
     "images:v2": "node scripts/images/img/process.mjs",
     "check:images": "node scripts/gates/check-images.mjs",
     "brand": "node scripts/brand/generate-brand.mjs",
-    "test:unit": "node --test tests/unit/*.test.mjs"
+    "test:unit": "node --test tests/unit/*.test.mjs",
+    "preview:global": "BUILD_TARGET=global astro preview --port 4322"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.6.0",

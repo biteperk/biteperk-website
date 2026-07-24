@@ -124,3 +124,33 @@ gold-coast-skyline
   Photographer: City of Gold Coast
   Original:     https://unsplash.com/photos/city-skyline-near-body-of-water-during-daytime-o5TTYcAlbHc
   Brief:        Gold Coast skyline along the beach at Surfers Paradise
+
+london-skyline
+  Photographer: Benjamin Davies
+  Original:     https://unsplash.com/photos/Oja2ty_9ZLM
+  Brief:        Aerial London — Tower Bridge and the Thames toward the City
+
+bar-moody
+  Photographer: Unsplash contributor
+  Original:     https://images.unsplash.com/photo-1514933651103-005eec06c04b
+  Brief:        Moody bar counter before service — no people, location-neutral
+
+paris-skyline
+  Photographer: Chris Karidis
+  Original:     https://unsplash.com/photos/nnzkZNYWHaU
+  Brief:        Eiffel Tower over the Seine at dusk
+
+paris-street
+  Photographer: Unsplash contributor
+  Original:     https://images.unsplash.com/photo-1549144511-f099e773c147
+  Brief:        Cobbled Paris street beneath the Eiffel Tower
+
+belgium-dinant
+  Photographer: Unsplash contributor
+  Original:     https://images.unsplash.com/photo-1491557345352-5929e343eb89
+  Brief:        Dinant on the Meuse — riverside townhouses, Belgium
+
+cafe-continental
+  Photographer: Unsplash contributor
+  Original:     https://images.unsplash.com/photo-1554118811-1e0d58224f24
+  Brief:        Relaxed continental café interior — one guest, back turned

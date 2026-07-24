@@ -200,6 +200,56 @@ const catalogue = [
     url: "https://unsplash.com/photos/city-skyline-near-body-of-water-during-daytime-o5TTYcAlbHc",
     brief: "Gold Coast skyline along the beach at Surfers Paradise",
   },
+
+  // ── International market bands (/gb-en, /fr, /be-en, /be-fr) ──────
+  // Every ID HEAD-verified against the CDN and pixel-reviewed against the
+  // art-direction hard rules (no readable signage, no identifiable faces, no
+  // implied fake customer venues) before being added — 24 Jul 2026.
+  // "Unsplash contributor": the CDN asset carries no author metadata; backfill
+  // the name from the photo page if it's ever identified. Unsplash's license
+  // doesn't require attribution — this file records it as a courtesy.
+  {
+    slug: "london-skyline",
+    id: "photo-1513635269975-59663e0ac1ad",
+    photographer: "Benjamin Davies",
+    url: "https://unsplash.com/photos/Oja2ty_9ZLM",
+    brief: "Aerial London — Tower Bridge and the Thames toward the City",
+  },
+  {
+    slug: "bar-moody",
+    id: "photo-1514933651103-005eec06c04b",
+    photographer: "Unsplash contributor",
+    url: "https://images.unsplash.com/photo-1514933651103-005eec06c04b",
+    brief: "Moody bar counter before service — no people, location-neutral",
+  },
+  {
+    slug: "paris-skyline",
+    id: "photo-1502602898657-3e91760cbb34",
+    photographer: "Chris Karidis",
+    url: "https://unsplash.com/photos/nnzkZNYWHaU",
+    brief: "Eiffel Tower over the Seine at dusk",
+  },
+  {
+    slug: "paris-street",
+    id: "photo-1549144511-f099e773c147",
+    photographer: "Unsplash contributor",
+    url: "https://images.unsplash.com/photo-1549144511-f099e773c147",
+    brief: "Cobbled Paris street beneath the Eiffel Tower",
+  },
+  {
+    slug: "belgium-dinant",
+    id: "photo-1491557345352-5929e343eb89",
+    photographer: "Unsplash contributor",
+    url: "https://images.unsplash.com/photo-1491557345352-5929e343eb89",
+    brief: "Dinant on the Meuse — riverside townhouses, Belgium",
+  },
+  {
+    slug: "cafe-continental",
+    id: "photo-1554118811-1e0d58224f24",
+    photographer: "Unsplash contributor",
+    url: "https://images.unsplash.com/photo-1554118811-1e0d58224f24",
+    brief: "Relaxed continental café interior — one guest, back turned",
+  },
 ];
 
 const FETCH_W = 2000;
