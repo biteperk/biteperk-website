@@ -2,7 +2,7 @@
  * Single source of truth for the site's locales, origin, and base paths.
  *
  * Single-domain international architecture (Option B, rev.3) — see
- * deliverables/2026-07-23-intl-site-architecture/ACCENTURE-GRADE-INTL-PLAN.md.
+ * deliverables/2026-07-23-intl-site-architecture/PLAN.md.
  *
  * ONE domain, biteperk.com, addressed Accenture-style with a base path per
  * locale (accenture.com/au-en, /be-en, /fr-fr …):

@@ -4,7 +4,7 @@ import sitemap, { ChangeFreqEnum } from "@astrojs/sitemap";
 import { visit } from "unist-util-visit";
 
 // Single-domain international architecture (Option B, rev.3) — see
-// deliverables/2026-07-23-intl-site-architecture/ACCENTURE-GRADE-INTL-PLAN.md.
+// deliverables/2026-07-23-intl-site-architecture/PLAN.md.
 //
 // BOTH targets serve one domain, biteperk.com:
 //   au     (default) → base /au-en → dist/         → merged to /au-en/** on biteperk.com
