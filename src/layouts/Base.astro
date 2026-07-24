@@ -139,7 +139,8 @@ if (!alternates && INTL_LAUNCHED && currentTarget() === "au") {
     <!-- Bing Webmaster Tools site verification -->
     <meta name="msvalidate.01" content="C717E1E48BD4B561E0F2F3B5F733838D" />
     <link rel="icon" type="image/svg+xml" href={u("/favicon.svg")} />
-    <link rel="apple-touch-icon" href={u("/favicon.svg")} />
+    {/* iOS ignores SVG touch icons — this must stay a PNG (npm run brand). */}
+    <link rel="apple-touch-icon" sizes="180x180" href={u("/apple-touch-icon.png")} />
 
     {preloadImage && <link rel="preload" as="image" href={u(preloadImage)} fetchpriority="high" />}
     {preloadSlug && (

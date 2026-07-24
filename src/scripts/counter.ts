@@ -1,5 +1,5 @@
 /**
- * Number counter for MetricStat.
+ * Number counter (data-counter elements — e.g. the Sydney section stats).
  *
  * Markup contract:
  *   <span data-counter data-counter-to="1248" data-counter-format="number"

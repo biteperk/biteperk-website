@@ -63,7 +63,9 @@ const auOrganizationNode = {
   url: AU_HOME,
   logo: {
     "@type": "ImageObject",
-    url: `${AU_HOME}/favicon.svg`,
+    // Google requires a raster ≥112×112 for logo rich results — never the SVG
+    // favicon. Regenerate with `npm run brand`.
+    url: `${AU_HOME}/brand/biteperk-mark-512.png`,
   },
   image: `${AU_HOME}/og/home.png`,
   description: site.description,
@@ -133,7 +135,9 @@ const globalOrganizationNode = {
   url: AU_HOME,
   logo: {
     "@type": "ImageObject",
-    url: `${AU_HOME}/favicon.svg`,
+    // Google requires a raster ≥112×112 for logo rich results — never the SVG
+    // favicon. Regenerate with `npm run brand`.
+    url: `${AU_HOME}/brand/biteperk-mark-512.png`,
   },
   image: `${AU_HOME}/og/home.png`,
   description: site.description,
