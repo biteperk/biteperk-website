@@ -1,19 +1,22 @@
 ---
 /**
- * International locale tree (biteperk.com) — /en/ and /fr/.
+ * International locale trees (biteperk.com) — every global locale in
+ * src/data/locales.ts (/en, /gb-en, /fr, /be-en, /be-fr).
  *
- * A single catch-all that emits both locale trees for the GLOBAL build only:
+ * A single catch-all that emits all locale trees for the GLOBAL build only:
  * in the AU build `getStaticPaths` returns [], so this file contributes
- * nothing and biteperk.com.au is unaffected.
+ * nothing and the /au-en output is unaffected.
  *
- * Copy lives in src/data/intl-copy.ts (Europe-truthful: no AU price, no NAP,
- * no AU phone — PLAN.md §8). Chrome + shared styling live in IntlLayout.astro.
- * Pages are `noindex` until biteperk.com is connected and the launch flip
- * happens (one prop below + drop the staging note in CLAUDE.md).
+ * Copy = language core (src/data/intl/copy.ts) + market override
+ * (src/data/intl/markets.ts), resolved per locale by resolveCopy(). Never
+ * key anything off `locale.lang` here — "fr-BE" is not "fr"; the locale
+ * object carries copyLang/base for everything. Europe-truthful rules
+ * (no AU price/phone/NAP) are enforced by scripts/gates/check-truthful.mjs.
  */
 import IntlLayout from "@/layouts/IntlLayout.astro";
 import { localesForTarget, INTL_PAGE_PATHS, currentTarget, type Locale } from "@/data/locales";
-import { home, howItWorks, about, contact, privacy, terms, type Lang } from "@/data/intl-copy";
+import { resolveCopy, resolveMedia } from "@/data/intl";
+import ImageBlock from "@/components/ImageBlock.astro";
 
 export function getStaticPaths() {
   if (currentTarget() !== "global") return [];
@@ -28,17 +31,20 @@ export function getStaticPaths() {
 }
 
 const { locale, page } = Astro.props;
-const lang: Lang = locale.lang === "fr" ? "fr" : "en";
-const p = (seg: string) => `/${lang}/${seg ? `${seg}/` : ""}`;
+// Links must come from the BASE ("/gb-en/…"), never the lang ("en-GB" → 404).
+const p = (seg: string) => `${locale.base}/${seg ? `${seg}/` : ""}`;
 
-const h = home[lang];
-const hiw = howItWorks[lang];
-const ab = about[lang];
-const ct = contact[lang];
-const pv = privacy[lang];
-const tm = terms[lang];
+const c = resolveCopy(locale);
+const media = resolveMedia(locale);
+const { home: h, contact: ct } = c;
 
-const simple = page === "how-it-works" ? hiw : page === "about" ? ab : page === "legal/privacy" ? pv : page === "legal/terms" ? tm : null;
+const simple =
+  page === "how-it-works" ? c.howItWorks
+  : page === "about" ? c.about
+  : page === "legal/privacy" ? c.privacy
+  : page === "legal/terms" ? c.terms
+  : null;
+
 const meta =
   page === ""
     ? { title: h.title, description: h.description }
@@ -46,13 +52,14 @@ const meta =
       ? { title: ct.title, description: ct.description }
       : { title: simple!.title, description: simple!.description };
 
-const ogImage =
-  page === "contact"
-    ? lang === "fr" ? "/og/intl/contact-fr.png" : "/og/intl/contact.png"
-    : lang === "fr" ? "/og/intl/home-fr.png" : "/og/intl/home.png";
+// OG cards are per-locale (generate-brand's sibling, scripts/brand/generate-og.mjs,
+// derives them from this same copy). /en keeps the legacy unsuffixed filenames so
+// already-shared card URLs never churn.
+const ogSuffix = locale.base === "/en" ? "" : `-${locale.base.slice(1)}`;
+const ogImage = `/og/intl/${page === "contact" ? "contact" : "home"}${ogSuffix}.png`;
 ---
 
-<IntlLayout lang={lang} page={page} title={meta.title} description={meta.description} ogImage={ogImage}>
+<IntlLayout locale={locale} page={page} title={meta.title} description={meta.description} ogImage={ogImage}>
   {page === "" && (
     <>
       <section class="intl-hero">
@@ -77,6 +84,21 @@ const ogImage =
           </ul>
         </div>
       </section>
+
+      {media && (
+        <section class="intl-market">
+          <div class="wrap">
+            <p class="eyebrow">{media.eyebrow}</p>
+            <h2>{media.heading}</h2>
+            <p class="lede">{media.body}</p>
+            <div class="intl-market-grid">
+              {/* No `priority`: the hero headline stays the LCP element. */}
+              <ImageBlock slug={media.cityscape.slug} alt={media.cityscape.alt} aspect="16 / 10" rounded />
+              <ImageBlock slug={media.hospitality.slug} alt={media.hospitality.alt} aspect="16 / 10" rounded />
+            </div>
+          </div>
+        </section>
+      )}
 
       <section>
         <div class="wrap">
@@ -210,6 +232,16 @@ const ogImage =
     .contact-grid { grid-template-columns: 1fr; }
   }
   .contact-aside { position: sticky; top: 96px; }
+
+  .intl-market-grid {
+    display: grid;
+    gap: var(--space-5);
+    grid-template-columns: 1fr 1fr;
+    margin-top: var(--space-6);
+  }
+  @media (max-width: 720px) {
+    .intl-market-grid { grid-template-columns: 1fr; }
+  }
 
   .intl-form { margin-top: var(--space-6); display: grid; gap: var(--space-5); max-width: 560px; }
   .intl-form .hp { position: absolute; left: -9999px; height: 0; overflow: hidden; }

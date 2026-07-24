@@ -10,39 +10,44 @@
  * properties read as one brand.
  */
 import Base from "@/layouts/Base.astro";
-import { chrome, type Lang } from "@/data/intl-copy";
+import { resolveCopy } from "@/data/intl";
 import {
-  localesForTarget, localeUrl, buildHreflang, isSharedPage, INTL_LAUNCHED, AU_HOME,
-  type BuildTarget,
+  localesForTarget, buildHreflang, isSharedPage, localeSwitchUrl, INTL_LAUNCHED, AU_HOME,
+  type BuildTarget, type Locale,
 } from "@/data/locales";
 import LocalePicker from "@/components/LocalePicker.astro";
 import StarMark from "@/components/StarMark.astro";
 
 interface Props {
-  lang: Lang;
+  /** The locale this page belongs to — everything derives from it. */
+  locale: Locale;
   /** Page path within the locale ("" for home, "about", "legal/privacy", …). */
   page: string;
   title: string;
   description: string;
-  ogImage?: string;
+  ogImage: string;
   noindex?: boolean;
 }
 
-const { lang, page, title, description, ogImage, noindex = !INTL_LAUNCHED } = Astro.props;
-const c = chrome[lang];
+const { locale, page, title, description, ogImage, noindex = !INTL_LAUNCHED } = Astro.props;
+const c = resolveCopy(locale).chrome;
 
 const pagePath = page ? `${page}/` : "";
-const canonicalPath = `/${lang}/${pagePath}`;
-// Once launched, shared pages (home/about/contact/legal) join the AU site in a
-// 3-way au-en ↔ en ↔ fr cluster; /how-it-works stays en+fr. Pre-launch: en+fr only.
+// Paths come from the BASE ("/gb-en/…"), never from lang ("en-GB" → 404).
+const canonicalPath = `${locale.base}/${pagePath}`;
+// Once launched, shared pages (home/about/contact/legal) join the AU site in
+// the full cross-locale cluster; /how-it-works stays global-only. Pre-launch:
+// global locales only.
 const baseLessPath = pagePath ? `/${pagePath}` : "/";
 const targets: readonly BuildTarget[] =
   INTL_LAUNCHED && isSharedPage(baseLessPath) ? ["au", "global"] : ["global"];
 const { alternates, xDefault } = buildHreflang(pagePath, targets);
 
-const other = localesForTarget("global").find((l) => l.lang === c.switchTo.lang)!;
-const switchHref = new URL(localeUrl(other, pagePath)).pathname;
-const p = (seg: string) => `/${lang}/${seg ? `${seg}/` : ""}`;
+// Footer language/region alternates — derived from the locale array (no
+// per-language link copy to maintain; labels are already locale-appropriate)
+// and page-carrying via localeSwitchUrl, so /gb-en/about/ → /fr/about/.
+const alternateLocales = localesForTarget("global").filter((l) => l.base !== locale.base);
+const p = (seg: string) => `${locale.base}/${seg ? `${seg}/` : ""}`;
 const year = new Date().getFullYear();
 ---
 
@@ -50,9 +55,9 @@ const year = new Date().getFullYear();
   title={title}
   description={description}
   path={canonicalPath}
-  lang={lang}
-  ogLocale={lang === "fr" ? "fr_FR" : "en"}
-  ogImage={ogImage ?? (lang === "fr" ? "/og/intl/home-fr.png" : "/og/intl/home.png")}
+  lang={locale.lang}
+  ogLocale={locale.ogLocale}
+  ogImage={ogImage}
   noindex={noindex}
   alternates={alternates}
   xDefaultHref={xDefault}
@@ -97,7 +102,16 @@ const year = new Date().getFullYear();
             <a href={p("legal/privacy")}>{c.privacy}</a>
             <a href={p("legal/terms")}>{c.terms}</a>
             <a href={AU_HOME + "/"}>{c.auSite} ↗</a>
-            <a href={switchHref} rel="alternate" hreflang={c.switchTo.lang}>{c.switchTo.label}</a>
+            {alternateLocales.map((l) => (
+              <a
+                href={new URL(localeSwitchUrl(canonicalPath, l)).pathname}
+                rel="alternate"
+                hreflang={l.hreflang[0]}
+                lang={l.lang}
+              >
+                {l.label}
+              </a>
+            ))}
           </nav>
         </div>
         <p class="intl-footer-legal">

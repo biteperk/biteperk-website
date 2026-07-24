@@ -1,7 +1,11 @@
 /**
- * International (biteperk.com) page copy — the single source of truth for the
- * /en/ and /fr/ trees. Rendered by src/pages/[...intl].astro inside
- * src/layouts/IntlLayout.astro.
+ * International (biteperk.com) LANGUAGE-CORE copy — the EN and FR bundles every
+ * global locale renders (en/gb-en share `en`; fr/be-fr share `fr`). Market
+ * colour (UK/France/Belgium touches, local imagery) is layered on top by
+ * src/data/intl/markets.ts via resolveCopy() in src/data/intl/index.ts —
+ * keep this file MARKET-NEUTRAL: anything France-specific belongs in the /fr
+ * override, or be-fr inherits it. Rendered by src/pages/[...intl].astro
+ * inside src/layouts/IntlLayout.astro.
  *
  * Content rules (PLAN.md §8 — Europe-truthful, non-negotiable):
  *   - NO AU pricing ("$80/month" is an Australian fact; EU pricing is a pilot
@@ -16,7 +20,8 @@
  * change here that alters meaning so the two languages stay in sync.
  */
 
-export type Lang = "en" | "fr";
+import type { Lang } from "@/data/locales";
+export type { Lang };
 
 type Step = { title: string; body: string };
 type Principle = { title: string; body: string };
@@ -26,8 +31,6 @@ export type ChromeCopy = {
   nav: { howItWorks: string; about: string; contact: string };
   cta: string;
   auSite: string;
-  switchLabel: string;
-  switchTo: { lang: Lang; label: string };
   footerBlurb: string;
   privacy: string;
   terms: string;
@@ -85,8 +88,6 @@ export const chrome: Record<Lang, ChromeCopy> = {
     nav: { howItWorks: "How it works", about: "About", contact: "Contact" },
     cta: "Book a pilot",
     auSite: "Australia site",
-    switchLabel: "Language",
-    switchTo: { lang: "fr", label: "Français" },
     footerBlurb:
       "BitePerk builds voice and AI tools for hospitality. Vox, our AI phone host, answers restaurant calls in a natural voice and books tables straight into the venue's dashboard.",
     privacy: "Privacy",
@@ -99,8 +100,6 @@ export const chrome: Record<Lang, ChromeCopy> = {
     nav: { howItWorks: "Comment ça marche", about: "À propos", contact: "Contact" },
     cta: "Réserver un pilote",
     auSite: "Site Australie",
-    switchLabel: "Langue",
-    switchTo: { lang: "en", label: "English" },
     footerBlurb:
       "BitePerk conçoit des outils vocaux et d'IA pour l'hôtellerie-restauration. Vox, notre hôte téléphonique IA, répond aux appels d'une voix naturelle et enregistre les réservations directement dans le tableau de bord de l'établissement.",
     privacy: "Confidentialité",

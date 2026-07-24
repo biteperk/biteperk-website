@@ -11,7 +11,7 @@
     "build:global": "BUILD_TARGET=global astro build && node scripts/build/prune-global.mjs && node scripts/build/llms-global.mjs",
     "build:site": "npm run build && npm run build:global && node scripts/build/merge-dist.mjs",
     "gates:au": "node scripts/gates/check-routes.mjs && node scripts/gates/check-schema.mjs && node scripts/gates/check-cities.mjs && node scripts/gates/check-assets.mjs && node scripts/gates/check-links.mjs && node scripts/gates/check-contrast.mjs",
-    "gates:global": "BUILD_TARGET=global node scripts/gates/check-routes.mjs && BUILD_TARGET=global node scripts/gates/check-schema.mjs && BUILD_TARGET=global node scripts/gates/check-assets.mjs && BUILD_TARGET=global node scripts/gates/check-links.mjs && node scripts/gates/check-hreflang.mjs",
+    "gates:global": "node --test tests/unit/*.test.mjs && BUILD_TARGET=global node scripts/gates/check-routes.mjs && BUILD_TARGET=global node scripts/gates/check-schema.mjs && BUILD_TARGET=global node scripts/gates/check-assets.mjs && BUILD_TARGET=global node scripts/gates/check-links.mjs && node scripts/gates/check-hreflang.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "check": "astro check",
@@ -24,7 +24,8 @@
     "images": "npm run images:fetch && npm run images:grade && npm run images:composite",
     "images:v2": "node scripts/images/img/process.mjs",
     "check:images": "node scripts/gates/check-images.mjs",
-    "brand": "node scripts/brand/generate-brand.mjs"
+    "brand": "node scripts/brand/generate-brand.mjs",
+    "test:unit": "node --test tests/unit/*.test.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.6.0",
