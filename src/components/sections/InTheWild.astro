@@ -6,6 +6,7 @@
  * Sits between ProductGrid and Mission.
  */
 import Composite from "@/components/Composite.astro";
+import { u } from "@/data/locales";
 ---
 
 <section class="wild cv-auto">
@@ -25,7 +26,7 @@ import Composite from "@/components/Composite.astro";
           straight into your dashboard — no menus, no hold music, no missed
           tables.
         </p>
-        <a class="lnk-arrow" href="/products/voxtable/">
+        <a class="lnk-arrow" href={u("/products/voxtable/")}>
           See how VoxTable works
           <span aria-hidden="true">→</span>
         </a>

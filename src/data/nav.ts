@@ -8,6 +8,7 @@
 import { site } from "./site";
 import { products, productUrl } from "./products";
 import { publishedCities, cityUrl } from "./cities";
+import { u, stripBase } from "./locales";
 
 export interface NavLink {
   readonly label: string;
@@ -38,23 +39,26 @@ export interface HeaderNavLink extends NavLink {
 }
 
 export const headerNav: ReadonlyArray<HeaderNavLink> = [
-  { label: "Pricing", href: "/products/voxtable/#pricing", activeMatch: "never" },
-  { label: "Platform", href: "/platform/" },
-  { label: "How it works", href: "/technology/" },
-  { label: "Guides", href: "/blog/" },
-  { label: "About", href: "/about/" },
+  { label: "Pricing", href: u("/products/voxtable/#pricing"), activeMatch: "never" },
+  { label: "Platform", href: u("/platform/") },
+  { label: "How it works", href: u("/technology/") },
+  { label: "Guides", href: u("/blog/") },
+  { label: "About", href: u("/about/") },
   // Desktop-hidden: Contact is already reachable from the visible phone
   // number, the "Book a demo" CTA (→ /contact/), and the footer. Keeping it
   // out of the centre cluster lets the remaining links + the phone number
   // breathe. Still shown in the mobile menu.
-  { label: "Contact", href: "/contact/", desktop: false },
+  { label: "Contact", href: u("/contact/"), desktop: false },
 ];
 
-/** Shared active-state rule for header links (used by Nav + MobileMenu). */
+/** Shared active-state rule for header links (used by Nav + MobileMenu).
+ * Base-agnostic: strips the locale base from both the current pathname and the
+ * (now base-prefixed) link href so matching works under /au-en. */
 export function isNavActive(pathname: string, link: HeaderNavLink): boolean {
   if (link.activeMatch === "never" || link.href.includes("#")) return false;
-  const path = pathname.replace(/\/$/, "") || "/";
-  const target = link.href.replace(/\/$/, "") || "/";
+  const norm = (s: string) => (stripBase(s).replace(/\/$/, "") || "/");
+  const path = norm(pathname);
+  const target = norm(link.href);
   if (link.activeMatch === "exact") return path === target;
   return path === target || path.startsWith(target + "/");
 }
@@ -79,19 +83,19 @@ export const footerColumns: ReadonlyArray<NavColumn> = [
   {
     heading: "Company",
     links: [
-      { label: "About", href: "/about/" },
-      { label: "Platform", href: "/platform/" },
-      { label: "How it works", href: "/technology/" },
-      { label: "Guides", href: "/blog/" },
-      { label: "Contact", href: "/contact/" },
+      { label: "About", href: u("/about/") },
+      { label: "Platform", href: u("/platform/") },
+      { label: "How it works", href: u("/technology/") },
+      { label: "Guides", href: u("/blog/") },
+      { label: "Contact", href: u("/contact/") },
       { label: "Careers", href: site.email.href },
     ],
   },
   {
     heading: "Legal",
     links: [
-      { label: "Privacy", href: "/legal/privacy/" },
-      { label: "Terms", href: "/legal/terms/" },
+      { label: "Privacy", href: u("/legal/privacy/") },
+      { label: "Terms", href: u("/legal/terms/") },
     ],
   },
   {

@@ -17,6 +17,7 @@
  */
 import { products, statusLabel, productUrl } from "@/data/products";
 import { site } from "@/data/site";
+import { u } from "@/data/locales";
 
 const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
 function isActive(href: string): boolean {
@@ -80,7 +81,7 @@ const onProducts = pathname === "/products" || pathname.startsWith("/products/")
     </div>
 
     <footer class="megamenu-foot">
-      <a class="megamenu-foot-link" href="/products/" role="menuitem" tabindex="-1">
+      <a class="megamenu-foot-link" href={u("/products/")} role="menuitem" tabindex="-1">
         <span>See how Vox works</span>
         <span aria-hidden="true">→</span>
       </a>

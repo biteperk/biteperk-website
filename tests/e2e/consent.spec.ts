@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { p } from "../helpers/routes";
 
 /**
  * Cookie consent — banner + settings modal.
@@ -13,7 +14,7 @@ import { test, expect } from "@playwright/test";
  * before consent" once a tracker is armed locally.
  */
 
-const PREVIEW = "/?cookie-preview=1";
+const PREVIEW = p("/?cookie-preview=1");
 
 test.describe("cookie consent", () => {
   test.use({ viewport: { width: 1280, height: 800 } });
@@ -35,7 +36,7 @@ test.describe("cookie consent", () => {
     // Does not reappear on reload or client-side navigation.
     await page.reload();
     await expect(bar).toBeHidden();
-    await page.locator('nav a[href="/platform/"]').first().click();
+    await page.locator(`nav a[href="${p('/platform/')}"]`).first().click();
     await page.waitForURL("**/platform/");
     await expect(bar).toBeHidden();
   });

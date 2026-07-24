@@ -15,6 +15,7 @@
  * re-animates on View-Transition navigations.
  */
 import { categories, TRACKING_ARMED } from "@/data/consent";
+import { u } from "@/data/locales";
 
 const toggleable = categories.filter((c) => !c.locked);
 const necessary = categories.find((c) => c.locked)!;
@@ -33,7 +34,7 @@ const necessary = categories.find((c) => c.locked)!;
       <p class="consent-copy">
         We use privacy-first, cookieless analytics and — only if you allow it —
         LinkedIn marketing, to improve the site and reach venues like yours.
-        Nothing runs until you choose. <a href="/legal/cookies/">Cookie Policy</a>.
+        Nothing runs until you choose. <a href={u("/legal/cookies/")}>Cookie Policy</a>.
       </p>
       <div class="consent-actions">
         <button type="button" class="consent-btn-text" data-consent-settings>

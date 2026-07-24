@@ -21,11 +21,21 @@
  */
 import { plausibleReady, CONSENT_KEY, CONSENT_VERSION, GOAL_ALIASES } from "@/data/consent";
 
-const DOMAIN = "biteperk.com.au";
+// Canonical host after the single-domain migration (rev.3). biteperk.com.au
+// now 301-redirects to biteperk.com/au-en, so visitors are on biteperk.com in
+// practice; the legacy host stays in the allowlist for the redirect window.
+// NOTE: the Plausible site id (`d` below) must match this value in the
+// Plausible dashboard — set the site up as "biteperk.com".
+const DOMAIN = "biteperk.com";
 
 function onSite(): boolean {
   const h = window.location.hostname;
-  return h === DOMAIN || h === `www.${DOMAIN}`;
+  return (
+    h === DOMAIN ||
+    h === `www.${DOMAIN}` ||
+    h === "biteperk.com.au" ||
+    h === "www.biteperk.com.au"
+  );
 }
 
 /** Read the analytics-consent flag straight from storage (authoritative). */

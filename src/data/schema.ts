@@ -22,16 +22,18 @@
  */
 import { site } from "./site";
 import { publishedCities } from "./cities";
-import { AU_HOST, GLOBAL_HOST, currentHost, currentTarget } from "./locales";
+import { AU_HOME, AU_CCTLD, abs, currentTarget } from "./locales";
 
-// Organization @id is shared across both hosts and anchored to the AU property.
-export const ORG_ID = `${AU_HOST}/#organization`;
-// Each property is its own WebSite node — @id'd per host.
-export const WEBSITE_ID = `${currentHost()}/#website`;
+// Organization @id is anchored to the AU home (biteperk.com/au-en) and SHARED
+// across every build (au + en + fr) — that's how Google merges the properties
+// into one company entity.
+export const ORG_ID = `${AU_HOME}/#organization`;
+// The WebSite node for the property this build emits.
+export const WEBSITE_ID = `${abs("/")}#website`;
 /** Stable @id for the one Vox product (shared identity, AU-anchored). */
-export const VOX_ID = `${AU_HOST}/products/#vox`;
+export const VOX_ID = `${AU_HOME}/products/#vox`;
 /** Stable @id for a per-capability SoftwareApplication "edition" of Vox. */
-export const voxEditionId = (slug: string) => `${AU_HOST}/products/${slug}/#software`;
+export const voxEditionId = (slug: string) => `${AU_HOME}/products/${slug}/#software`;
 
 const telephone = site.phone.href.replace("tel:", "");
 const email = site.email.href.replace("mailto:", "");
@@ -58,12 +60,12 @@ const auOrganizationNode = {
   "@id": ORG_ID,
   name: site.name,
   legalName: "Biteperk Pty Ltd",
-  url: site.url,
+  url: AU_HOME,
   logo: {
     "@type": "ImageObject",
-    url: `${site.url}/favicon.svg`,
+    url: `${AU_HOME}/favicon.svg`,
   },
-  image: `${site.url}/og/home.png`,
+  image: `${AU_HOME}/og/home.png`,
   description: site.description,
   email,
   telephone,
@@ -128,17 +130,16 @@ const globalOrganizationNode = {
   "@id": ORG_ID,
   name: site.name,
   legalName: "Biteperk Pty Ltd",
-  url: AU_HOST,
+  url: AU_HOME,
   logo: {
     "@type": "ImageObject",
-    url: `${AU_HOST}/favicon.svg`,
+    url: `${AU_HOME}/favicon.svg`,
   },
-  image: `${GLOBAL_HOST}/og/intl/home.png`,
+  image: `${AU_HOME}/og/home.png`,
   description: site.description,
   email,
-  // No `telephone` here deliberately: the published line is Australian, and the
-  // EU surfaces carry no AU phone (PLAN.md §8) — schema included.
-  sameAs: [site.social.linkedin, AU_HOST, GLOBAL_HOST],
+  telephone,
+  sameAs: [site.social.linkedin, AU_CCTLD, AU_HOME],
   knowsAbout: KNOWS_ABOUT,
   contactPoint: [
     {
@@ -156,7 +157,7 @@ export const organizationNode = IS_GLOBAL ? globalOrganizationNode : auOrganizat
 export const websiteNode = {
   "@type": "WebSite",
   "@id": WEBSITE_ID,
-  url: currentHost(),
+  url: abs("/"),
   name: site.name,
   description: site.description,
   inLanguage: IS_GLOBAL ? "en" : "en-AU",
@@ -219,7 +220,7 @@ export function buildVoxApplication(opts: {
     "@type": "SoftwareApplication",
     "@id": VOX_ID,
     name: "Vox",
-    url: `${site.url}/products/`,
+    url: `${AU_HOME}/products/`,
     // The live app runs on the product subdomain — declare it as the same
     // entity's other home so the two properties consolidate into one.
     sameAs: [site.voxtableUrl],

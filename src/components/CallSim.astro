@@ -14,6 +14,7 @@
  * the loop when unsure) is a claim already published on the site.
  */
 import { voxProof } from "@/data/products";
+import { u } from "@/data/locales";
 
 const lines = [
   {
@@ -66,7 +67,7 @@ const lines = [
           a human calls back. That's by design.
         </p>
         <div class="callsim-ctas">
-          <a class="btn-ghost link-arrow callsim-cta" href="/products/voxtable/">
+          <a class="btn-ghost link-arrow callsim-cta" href={u("/products/voxtable/")}>
             See how VoxTable works
             <span class="arrow" aria-hidden="true">→</span>
           </a>

@@ -10,6 +10,7 @@ import ImageBlock from "@/components/ImageBlock.astro";
 import { coreProduct, addonProducts, voxProof, voxBundle, voxFaq, foundingVenues } from "@/data/products";
 import { buildFaqPage, buildVoxApplication, voxEditionId } from "@/data/schema";
 import { site } from "@/data/site";
+import { u, abs } from "@/data/locales";
 
 const title = "Vox — AI phone host for restaurants · Biteperk";
 const description =
@@ -22,8 +23,8 @@ const breadcrumbJsonLd = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: site.url },
-    { "@type": "ListItem", position: 2, name: "Products", item: `${site.url}/products/` },
+    { "@type": "ListItem", position: 1, name: "Home", item: abs("/") },
+    { "@type": "ListItem", position: 2, name: "Products", item: abs("/products/") },
   ],
 };
 
@@ -87,7 +88,7 @@ const collage = [
     <div class="vx-hero-glow" aria-hidden="true"></div>
     <div class="wrap">
       <div class="vx-hero-top">
-        <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Products" }]} />
+        <Breadcrumbs items={[{ label: "Home", href: u("/") }, { label: "Products" }]} />
       </div>
 
       <SectionHeader
@@ -105,7 +106,7 @@ const collage = [
       {/* Proof-forward: a voice product earns trust by being heard. Demo sits
           high, right under the lede, next to the primary CTA. */}
       <div class="vx-hero-cta reveal">
-        <a class="btn" href="/contact/?intent=demo">Book a demo</a>
+        <a class="btn" href={u("/contact/?intent=demo")}>Book a demo</a>
         {voxProof.demo && (
           <a
             class="btn-ghost vx-demo"
@@ -160,7 +161,7 @@ const collage = [
           a voice agent you can leave on the line on a Friday night and one you can't.
         </p>
         <p class="vx-trust-more">
-          <a class="link-arrow" href="/technology/">
+          <a class="link-arrow" href={u("/technology/")}>
             See how the whole stack works
             <span class="arrow" aria-hidden="true">→</span>
           </a>
@@ -206,7 +207,7 @@ const collage = [
           </ul>
           <p class="vx-founding-note">
             Early venues are live now — the founding cohort is still open.
-            <a href="/contact/?intent=demo">Put your venue on the line →</a>
+            <a href={u("/contact/?intent=demo")}>Put your venue on the line →</a>
           </p>
         </div>
       )}
@@ -253,7 +254,7 @@ const collage = [
     eyebrow="Have a venue?"
     headline="Book a demo and hear Vox on your line."
     lede="We work with a small number of venues at a time. Tell us about your phone and we'll show you what Vox can take off your team's plate."
-    primary={{ label: "Book a demo", href: "/contact/?intent=demo" }}
+    primary={{ label: "Book a demo", href: u("/contact/?intent=demo") }}
     secondary={{ label: `Call us · ${site.phone.display}`, href: site.phone.href }}
   />
 </Base>
