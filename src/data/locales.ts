@@ -9,7 +9,10 @@
  *
  *   au-en  → biteperk.com/au-en   the Australian site (was biteperk.com.au root)
  *   en     → biteperk.com/en      international English, the x-default
- *   fr     → biteperk.com/fr      international French
+ *   gb-en  → biteperk.com/gb-en   United Kingdom
+ *   fr     → biteperk.com/fr      France (fr-FR + generic fr)
+ *   be-en  → biteperk.com/be-en   Belgium — English
+ *   be-fr  → biteperk.com/be-fr   Belgique — Français
  *
  * biteperk.com.au is a redirect-only host → 301 → biteperk.com/au-en/** .
  *
@@ -17,7 +20,7 @@
  * Astro's `base` is one value per build — which base path Astro prefixes onto
  * its own bundled assets and the sitemap:
  *   au     → Astro base "/au-en"; emits the au-en locale.        → dist/
- *   global → Astro base "/" (root); emits en + fr via [...intl]. → dist-global/
+ *   global → Astro base "/" (root); emits every global locale via [...intl]. → dist-global/
  * A post-build merge (scripts/build/merge-dist.mjs) relocates the au build under
  * /au-en/** and lays the en+fr trees at the root of one biteperk.com deploy.
  *
@@ -29,11 +32,26 @@
 
 export type BuildTarget = "au" | "global";
 
+/**
+ * The two LANGUAGE CORES that have full copy records (src/data/intl/copy.ts).
+ * Every locale renders one core; market colour is layered on top via the
+ * per-locale overrides in src/data/intl/markets.ts. Adding a third language
+ * (e.g. nl) means widening this union AND writing a full copy core.
+ */
+export type Lang = "en" | "fr";
+
+/** Informational market grouping — overrides key on `base`, not on this. */
+export type Market = "au" | "int" | "gb" | "fr" | "be";
+
 export type Locale = {
   /** URL base path under the origin, no trailing slash. e.g. "/au-en", "/en". */
   readonly base: string;
-  /** `<html lang>` value for pages in this locale. */
+  /** `<html lang>` value for pages in this locale, e.g. "en-GB", "fr-BE". */
   readonly lang: string;
+  /** Which copy core renders this locale (en-GB and en-BE both render `en`). */
+  readonly copyLang: Lang;
+  /** Which market this locale serves. */
+  readonly market: Market;
   /** og:locale value (underscored), e.g. "en_AU". */
   readonly ogLocale: string;
   /** hreflang region codes this locale legitimately serves. */
@@ -70,6 +88,8 @@ export const locales: readonly Locale[] = [
   {
     base: "/au-en",
     lang: "en-AU",
+    copyLang: "en",
+    market: "au",
     ogLocale: "en_AU",
     hreflang: ["en-AU"],
     label: "Australia — English",
@@ -79,6 +99,8 @@ export const locales: readonly Locale[] = [
   {
     base: "/en",
     lang: "en",
+    copyLang: "en",
+    market: "int",
     ogLocale: "en",
     hreflang: ["en"],
     label: "International — English",
@@ -87,12 +109,51 @@ export const locales: readonly Locale[] = [
     target: "global",
   },
   {
+    base: "/gb-en",
+    lang: "en-GB",
+    copyLang: "en",
+    market: "gb",
+    ogLocale: "en_GB",
+    hreflang: ["en-GB"],
+    label: "United Kingdom — English",
+    short: "UK",
+    target: "global",
+  },
+  {
+    // France claims fr-FR explicitly (against fr-BE) AND keeps generic `fr`
+    // as the catch-all for French speakers outside FR/BE. Multiple hreflang
+    // codes on one URL is valid; the gate derives from this same array so
+    // emitter and checker can never disagree.
     base: "/fr",
     lang: "fr",
-    ogLocale: "fr",
-    hreflang: ["fr"],
-    label: "International — Français",
+    copyLang: "fr",
+    market: "fr",
+    ogLocale: "fr_FR",
+    hreflang: ["fr-FR", "fr"],
+    label: "France — Français",
     short: "FR",
+    target: "global",
+  },
+  {
+    base: "/be-en",
+    lang: "en-BE",
+    copyLang: "en",
+    market: "be",
+    ogLocale: "en_GB",
+    hreflang: ["en-BE"],
+    label: "Belgium — English",
+    short: "BE",
+    target: "global",
+  },
+  {
+    base: "/be-fr",
+    lang: "fr-BE",
+    copyLang: "fr",
+    market: "be",
+    ogLocale: "fr_BE",
+    hreflang: ["fr-BE"],
+    label: "Belgique — Français",
+    short: "BE",
     target: "global",
   },
 ];
@@ -196,11 +257,11 @@ export const INTL_PAGE_PATHS: readonly string[] = [
 
 /**
  * THE LAUNCH FLAG (env-driven; default OFF). While off (the safe default):
- * /en + /fr stay `noindex` and NO cross-domain hreflang is emitted — output is
+ * every global locale stays `noindex` and NO cross-domain hreflang is emitted — output is
  * byte-identical to the pre-international-launch site. Launch in ONE deploy with
  *   INTL_LAUNCHED=true npm run build:site
- * which (a) makes /en + /fr indexable and (b) emits the reciprocal
- * au-en ↔ en ↔ fr hreflang cluster on shared pages. These must go live together
+ * which (a) makes the global locales indexable and (b) emits the reciprocal
+ * cross-locale hreflang cluster on shared pages. These must go live together
  * — see the runbook's launch step.
  */
 export const INTL_LAUNCHED =
@@ -227,6 +288,21 @@ export function isSharedPage(baseLessPath: string): boolean {
 }
 
 /**
+ * Does a page (base-less "/x/" form) exist in a given locale?
+ *   - Every GLOBAL locale emits exactly INTL_PAGE_PATHS.
+ *   - The AU locale's full route list is much larger, but for cross-locale
+ *     carrying only the SHARED set matters (products/cities/blog have no
+ *     global counterpart, and how-it-works has no AU counterpart).
+ */
+export function pageExistsInLocale(baseLessPath: string, locale: Locale): boolean {
+  if (locale.target === "global") {
+    const asIntl = baseLessPath.replace(/^\/|\/$/g, ""); // "/about/" → "about"
+    return INTL_PAGE_PATHS.includes(asIntl);
+  }
+  return isSharedPage(baseLessPath);
+}
+
+/**
  * The locale a SERVED path belongs to, matched by base-path prefix
  * ("/au-en/contact/" → au-en). Falls back to the cluster's x-default so the
  * picker always has something to mark as current.
@@ -246,17 +322,18 @@ export function localeFromPath(path: string): Locale {
 /**
  * Where the picker sends a visitor who switches to `to` while on `path`.
  *
- * Pages in SHARED_PAGE_PATHS exist in every locale, so we carry the visitor to
- * the SAME page across the switch (/au-en/contact/ → /fr/contact/) — landing
- * someone back on a home page is the classic region-picker annoyance. Anything
- * else is AU-only (products, cities, guides) or locale-specific, so it falls
- * back to the target locale's home rather than 404.
+ * We carry the visitor to the SAME page across the switch whenever that page
+ * exists in the target locale (/au-en/contact/ → /fr/contact/, and
+ * /gb-en/how-it-works/ → /fr/how-it-works/) — landing someone back on a home
+ * page is the classic region-picker annoyance. Pages with no counterpart
+ * (AU products/cities/blog; how-it-works when switching to AU) fall back to
+ * the target locale's home rather than 404.
  */
 export function localeSwitchUrl(path: string, to: Locale): string {
   const from = localeFromPath(path);
   const rest = path.slice(from.base.length) || "/";
   const page = rest.endsWith("/") ? rest : rest + "/";
-  return isSharedPage(page) ? `${ORIGIN}${to.base}${page}` : localeHome(to);
+  return pageExistsInLocale(page, to) ? `${ORIGIN}${to.base}${page}` : localeHome(to);
 }
 
 /**
