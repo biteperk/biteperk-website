@@ -1,0 +1,87 @@
+/**
+ * International copy resolution — language cores × market overrides.
+ *
+ * Layering model (single-domain matrix: /en /gb-en /fr /be-en /be-fr):
+ *
+ *   resolveCopy(locale) = merge( cores[locale.copyLang],           // copy.ts
+ *                                marketContent[locale.base]?.copy ) // markets.ts
+ *
+ * The cores are complete per-language bundles; overrides are deep-partial
+ * with ONE hard rule — arrays replace wholesale, never element-merge. An
+ * override that touches `pilot.points` supplies the full new list; there is
+ * no index-splicing and no stale trailing items. merge() is unit-tested in
+ * tests/unit/intl-merge.test.mjs (run by gates:global).
+ *
+ * ⚠️ FRENCH REVIEW GATE: the FR core and every fr-* market override need a
+ * native-speaker pass (Ludovic) before INTL_LAUNCHED flips — same rule the
+ * old intl-copy.ts carried. English trees may launch without it.
+ */
+import type { Lang, Locale } from "@/data/locales";
+import {
+  chrome, home, howItWorks, about, contact, privacy, terms,
+  type ChromeCopy, type HomeCopy, type SimplePageCopy, type ContactCopy,
+} from "./copy";
+import { marketContent, type MarketContent, type MarketMedia } from "./markets";
+
+export type CopyBundle = {
+  chrome: ChromeCopy;
+  home: HomeCopy;
+  howItWorks: SimplePageCopy;
+  about: SimplePageCopy;
+  contact: ContactCopy;
+  privacy: SimplePageCopy;
+  terms: SimplePageCopy;
+};
+
+/**
+ * Deep-partial where ARRAYS ARE REPLACED WHOLESALE (they behave like leaves).
+ * Plain objects recurse; primitives replace.
+ */
+export type Override<T> = {
+  [K in keyof T]?: T[K] extends readonly unknown[]
+    ? T[K]
+    : T[K] extends object
+      ? Override<T[K]>
+      : T[K];
+};
+
+const cores: Record<Lang, CopyBundle> = {
+  en: {
+    chrome: chrome.en, home: home.en, howItWorks: howItWorks.en,
+    about: about.en, contact: contact.en, privacy: privacy.en, terms: terms.en,
+  },
+  fr: {
+    chrome: chrome.fr, home: home.fr, howItWorks: howItWorks.fr,
+    about: about.fr, contact: contact.fr, privacy: privacy.fr, terms: terms.fr,
+  },
+};
+
+function isPlainObject(v: unknown): v is Record<string, unknown> {
+  return typeof v === "object" && v !== null && !Array.isArray(v);
+}
+
+/** Merge an override into a base: objects recurse, arrays/primitives replace. */
+export function merge<T>(base: T, over: Override<T> | undefined): T {
+  if (over === undefined) return base;
+  if (!isPlainObject(base) || !isPlainObject(over)) return over as T;
+  const out: Record<string, unknown> = { ...base };
+  for (const [k, v] of Object.entries(over)) {
+    if (v === undefined) continue;
+    const b = (base as Record<string, unknown>)[k];
+    out[k] = isPlainObject(b) && isPlainObject(v) ? merge(b, v as Override<unknown>) : v;
+  }
+  return out as T;
+}
+
+/** The full copy bundle a locale renders (language core + market override). */
+export function resolveCopy(locale: Locale): CopyBundle {
+  return merge(cores[locale.copyLang], marketContent[locale.base]?.copy);
+}
+
+/** The locale's market-imagery band, if it has one (/en deliberately has none). */
+export function resolveMedia(locale: Locale): MarketMedia | undefined {
+  return marketContent[locale.base]?.media;
+}
+
+export type { MarketContent, MarketMedia };
+export type { ChromeCopy, HomeCopy, SimplePageCopy, ContactCopy, Lang };

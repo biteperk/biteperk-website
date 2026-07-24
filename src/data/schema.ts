@@ -63,7 +63,9 @@ const auOrganizationNode = {
   url: AU_HOME,
   logo: {
     "@type": "ImageObject",
-    url: `${AU_HOME}/favicon.svg`,
+    // Google requires a raster ≥112×112 for logo rich results — never the SVG
+    // favicon. Regenerate with `npm run brand`.
+    url: `${AU_HOME}/brand/biteperk-mark-512.png`,
   },
   image: `${AU_HOME}/og/home.png`,
   description: site.description,
@@ -133,12 +135,17 @@ const globalOrganizationNode = {
   url: AU_HOME,
   logo: {
     "@type": "ImageObject",
-    url: `${AU_HOME}/favicon.svg`,
+    // Google requires a raster ≥112×112 for logo rich results — never the SVG
+    // favicon. Regenerate with `npm run brand`.
+    url: `${AU_HOME}/brand/biteperk-mark-512.png`,
   },
   image: `${AU_HOME}/og/home.png`,
   description: site.description,
   email,
-  telephone,
+  // NO telephone: the published line is an AU fact (Europe-truthful, PLAN.md
+  // §8). It shipped here unnoticed until check-truthful started sweeping the
+  // built HTML — structured data is part of the page. International contact
+  // is email-only until local numbers exist.
   sameAs: [site.social.linkedin, AU_CCTLD, AU_HOME],
   knowsAbout: KNOWS_ABOUT,
   contactPoint: [
