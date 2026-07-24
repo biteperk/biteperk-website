@@ -12,6 +12,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
+Scripts are grouped: `scripts/gates/` (CI gates) · `scripts/build/` (merge/prune/llms + `_load-ts`) · `scripts/images/` (photo pipeline) · `scripts/brand/` (OG cards + logo kit). A README.md at the repo root maps the whole tree.
+
 ```bash
 npm run dev        # astro dev
 npm run build      # astro build → dist/
@@ -37,23 +39,24 @@ After `npm run check` + `npm run build`, CI runs these **generated/data-driven g
 
 There are no unit tests; the gates above are the safety net.
 
-## International builds (biteperk.com — added 23 Jul 2026)
+## International — single domain, six locales (rev. 24 Jul 2026)
 
-This repo emits **two sites from one codebase**, selected by `BUILD_TARGET` (full architecture: `deliverables/2026-07-23-intl-site-architecture/PLAN.md`):
+One codebase emits **one domain, biteperk.com**, in two build passes selected by `BUILD_TARGET` (architecture: `deliverables/2026-07-23-intl-site-architecture/PLAN.md`):
 
-- `au` (default) → `biteperk.com.au` → `dist/` — the existing AU site, output unchanged.
-- `global` → `biteperk.com` → `dist-global/` — the `/en/` + `/fr/` international tree.
+- `au` (default) → `dist/` — the AU site, Astro base `/au-en`; merged under `biteperk.com/au-en/**`. `biteperk.com.au` is a redirect-only host (301, path-preserving).
+- `global` → `dist-global/` — the international trees: **`/en` (x-default) · `/gb-en` (UK) · `/fr` (France) · `/be-en` + `/be-fr` (Belgium)**.
+- `npm run build:site` = both passes + `scripts/build/merge-dist.mjs` → `dist-site/` (what `hosting:biteperk-global` serves) + `dist-cctld/` (the redirect host).
 
 Key facts:
 
-- **`src/data/locales.ts` is the single source of truth** (locales, hosts, hreflang cluster, intl page list). `src/data/intl-copy.ts` holds all EN/FR copy — French needs a native review (Ludovic) before marketing pushes.
-- `npm run build:global` = build + `prune-global.mjs` (removes the AU pages that build alongside — biteperk.com must never serve them) + `llms-global.mjs` (global `llms.txt` **and** `robots.txt` — the copied AU robots points at the wrong host's sitemap).
-- Gates run per target: `npm run gates:au` / `npm run gates:global`. New `check-hreflang.mjs` (global) asserts the complete reciprocal cluster; `check-schema.mjs` (global) asserts the **shared AU-anchored org `@id`** (entity merge), Organization-only, and sweeps every page for AU-only strings (both phone numbers, Haymarket, `$80`).
-- **Europe-truthful content rules (PLAN.md §8): no AU price, no NAP, no AU phone on any global page** — the sweep enforces it. CTA is "book a pilot".
-- The intl pages use `IntlLayout.astro` (own chrome) — the AU Nav/Footer carry the AU phone and link pruned routes; never render them on global pages.
-- International pages are **`noindex` until biteperk.com is connected** (flip: `noindex` default in `IntlLayout.astro`). The AU↔EU cross-domain hreflang is deliberately **not emitted yet** — both hosts must serve reciprocal tags together at launch.
-- OG cards: `BUILD_TARGET=global npm run og` → `public/og/intl/` (en + fr sets, footer `biteperk.com`). Pixel-review before deploy, as always.
-- CI (`web.yml`) runs an `[au, global]` matrix; e2e/Lighthouse/contrast run on the AU pass.
+- **`src/data/locales.ts` is the SSOT** — bases, `lang`/`copyLang`/`market`, hreflang codes, x-default, the `u()`/`abs()` helpers, `localeSwitchUrl` (page-carrying region switch). Every locale-aware surface DERIVES from it: `[...intl].astro` page trees, LocalePicker, hreflang, sitemap filter/priorities (astro.config imports the TS module directly), `check-links`/`check-schema`/`check-hreflang`/`check-truthful`, llms-global, OG cards, the e2e route list. **Add a locale = one array entry + copy + OG regen; never extend a hardcoded en/fr list — if you find one, derive it instead.**
+- **Copy = language cores × market overrides** (`src/data/intl/`): `copy.ts` holds the full EN/FR bundles and must stay **market-neutral** (France-specific lines live in the `/fr` override or `be-fr` inherits them); `markets.ts` layers per-base overrides + the imagery band (cityscape/hospitality slugs + alts); `index.ts` resolves via `merge()` — **arrays replace wholesale** (contract unit-tested in `tests/unit/`, run by `gates:global` and CI). French (core + `/fr` + `/be-fr`) needs Ludovic's native review before launch.
+- **Europe-truthful rules (PLAN.md §8): no AU price, no NAP, no AU phone on any global page** — enforced twice: `check-schema` (global) asserts the shared AU-anchored org `@id`, Organization-only, no address/geo/areaServed on EVERY locale home; `check-truthful` sweeps every built global page's HTML for the phone numbers, Haymarket/477 Pitt and `$80` (this sweep caught the AU phone hiding in the global org JSON-LD — structured data is part of the page). CTA is "book a pilot". No fake local offices — market pages localise the conversation and imagery, never invent a presence.
+- The intl pages use `IntlLayout.astro` (own chrome, carries the StarMark since 24 Jul) — never render the AU Nav/Footer on global pages (AU phone + pruned routes). The footer's region links and the LocalePicker both carry the current page across locales via `localeSwitchUrl`.
+- International pages are **`noindex` behind `INTL_LAUNCHED`** (env flag, default off). Launch = `INTL_LAUNCHED=true npm run build:site` + deploy: flips indexability AND emits the full cross-locale hreflang cluster in one step. The flag is all-or-nothing across the five global locales — flipping it is a deliberate five-market decision.
+- OG cards: `BUILD_TARGET=global npm run og` → `public/og/intl/` — **derived from `resolveCopy` per locale** (11 cards; `/en` keeps legacy unsuffixed filenames). Pixel-review before deploy, as always.
+- `firebase.json` (biteperk-global): apex `/` → `/en/`; country shortcuts `/gb` `/uk` → `/gb-en/`, `/be` → `/be-en/`.
+- CI (`web.yml`) runs an `[au, global]` matrix — all gates incl. `check-links` + `check-truthful` + the unit tests; e2e/Lighthouse/contrast run on the AU pass (Lighthouse measures `dist-site/`, the merged tree).
 
 ## Deploy
 
@@ -152,6 +155,7 @@ One-off documents Claude produces for this project — pitch decks, proposals, e
 | Company | **BitePerk** / `biteperk` / `biteperk.com.au` / `@biteperk.com.au` | **Never.** Wordmark renders `bite`+`<span class="perk">perk</span>`; the `.perk` class is company styling, not a product token. |
 | Products | **Vox** (umbrella), **VoxTable**, **VoxOrder**, **VoxConcierge**, **VoxDrive** (concept) | Yes — this is the family that renamed. CamelCase, "by BitePerk". **VoxStay** is pitch-only (hotel prospects); never put it in site code. |
 | Persona | **Bella** | Never. |
+| Brand assets | `public/brand/` export kit (mark SVG/PNG, dark+light lockups) + `public/apple-touch-icon.png`, all generated by `npm run brand` (`scripts/brand/generate-brand.mjs`) — never hand-edit the exports; `biteperk-logo.jpeg` is the reference master and is never shipped into a page. On-site the mark is the inline `StarMark.astro` + CSS wordmark (site palette: white/ink "bite", gold italic "perk"; green only inside the mark). Schema.org logo = `/brand/biteperk-mark-512.png`. | Regenerate, don't redraw. |
 | Contact | Published line `+61 2 5504 1140`; NAP Level 1, 477 Pitt St, Haymarket NSW 2000 — byte-identical everywhere. Print-only demo line `(02) 7501 1140` stays off the website and all directories. | Never. |
 | Legacy slugs | `voco*` and `perk*` redirects + `PRODUCT_SLUGS` entries | **Keep forever** — printed collateral and cached links still use them. |
 | Infra ids | Firebase project `vocotable`, the app subdomain, GCP project `vocotable-497209`, DB/image/package names, localStorage + event keys | Never — these are identity, not brand. |

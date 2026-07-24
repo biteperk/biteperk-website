@@ -69,6 +69,19 @@ jobs:
       - name: JSON-LD @id + NAP / cross-domain entity integrity
         run: node scripts/gates/check-schema.mjs
 
+      # The single-domain migration's safety net — was only in the npm gate
+      # scripts, never in CI, so a base-escaping link couldn't fail a PR.
+      - name: Internal links must carry the locale base
+        run: node scripts/gates/check-links.mjs
+
+      - name: Europe-truthful sweep — no AU phone/NAP/price on global pages
+        if: matrix.target == 'global'
+        run: node scripts/gates/check-truthful.mjs
+
+      - name: Intl copy-merge contract (unit)
+        if: matrix.target == 'global'
+        run: npm run test:unit
+
       - name: WCAG contrast gate (shared themes — run on the AU pass)
         if: matrix.target == 'au'
         run: node scripts/gates/check-contrast.mjs
