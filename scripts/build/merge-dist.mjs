@@ -22,8 +22,10 @@ import {
 } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { loadTS } from "./_load-ts.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
+const locales = await loadTS(join(ROOT, "src/data/locales.ts"));
 const AU = join(ROOT, "dist");
 const GLOBAL = join(ROOT, "dist-global");
 const SITE = join(ROOT, "dist-site");
@@ -120,7 +122,8 @@ writeFileSync(
 );
 
 const count = (d) => readdirSync(d).length;
+const globalBases = locales.localesForTarget("global").map((l) => l.base).join(", ");
 console.log(
   `merge-dist: dist-site/ ready — /au-en (${count(join(SITE, "au-en"))} entries), ` +
-    `/en, /fr, ${allUrls.length} sitemap URLs. dist-cctld/ placeholder written.`,
+    `${globalBases}, ${allUrls.length} sitemap URLs. dist-cctld/ placeholder written.`,
 );
