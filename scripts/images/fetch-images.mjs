@@ -12,14 +12,14 @@
  * License note: Unsplash is free for commercial and non-commercial use.
  * We attribute photographers in public/images/CREDITS.txt anyway.
  *
- * Usage: node scripts/fetch-images.mjs
+ * Usage: node scripts/images/fetch-images.mjs
  */
 import { writeFileSync, existsSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..");
+const ROOT = join(__dirname, "..", "..");
 const RAW = join(ROOT, "public", "images", "raw");
 const CREDITS = join(ROOT, "public", "images", "CREDITS.txt");
 

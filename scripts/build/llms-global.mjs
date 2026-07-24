@@ -7,13 +7,13 @@
  * NAP, no phone. Edit the TEXT below as the international copy firms up.
  *
  * Run after prune-global.mjs, before the gates:
- *   node scripts/llms-global.mjs
+ *   node scripts/build/llms-global.mjs
  */
 import { writeFileSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const DIST = join(ROOT, "dist-global");
 if (!existsSync(DIST)) {
   console.error("llms-global: dist-global/ not found — run BUILD_TARGET=global npm run build first.");

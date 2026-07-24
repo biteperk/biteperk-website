@@ -6,14 +6,14 @@
  *   global → dist-global/: the SHARED org @id (AU-anchored, merges the two
  *            properties into one entity), the per-host #website, and the
  *            ABSENCE of LocalBusiness / NAP / geo / areaServed (those are AU's).
- * Run after a build: node scripts/check-schema.mjs
+ * Run after a build: node scripts/gates/check-schema.mjs
  * (set BUILD_TARGET=global for the global pass).
  */
 import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const TARGET = process.env.BUILD_TARGET === "global" ? "global" : "au";
 // Single-domain rev.3: the AU entity anchors to biteperk.com/au-en (the AU
 // home), shared across both builds so Google merges the properties.

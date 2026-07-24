@@ -10,14 +10,14 @@
  * the biteperk-global hosting config in firebase.json.
  *
  * Run after `BUILD_TARGET=global npm run build`, before the gates:
- *   node scripts/prune-global.mjs
+ *   node scripts/build/prune-global.mjs
  */
 import { rmSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadTS } from "./_load-ts.mjs";
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const DIST = join(ROOT, "dist-global");
 if (!existsSync(DIST)) {
   console.error("prune-global: dist-global/ not found — run BUILD_TARGET=global npm run build first.");

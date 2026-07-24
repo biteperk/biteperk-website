@@ -15,7 +15,7 @@
  *     robots.txt, llms.txt, humans.txt    root, whole-site
  *   dist-cctld/   — placeholder public dir for the redirect-only biteperk.com.au host
  *
- * Run:  npm run build && npm run build:global && node scripts/merge-dist.mjs
+ * Run:  npm run build && npm run build:global && node scripts/build/merge-dist.mjs
  */
 import {
   rmSync, mkdirSync, cpSync, existsSync, readFileSync, writeFileSync, readdirSync,
@@ -23,7 +23,7 @@ import {
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const AU = join(ROOT, "dist");
 const GLOBAL = join(ROOT, "dist-global");
 const SITE = join(ROOT, "dist-site");

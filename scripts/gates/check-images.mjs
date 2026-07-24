@@ -11,13 +11,13 @@
  *   - a slug/slot prop set to it, e.g. slug="city-sydney"
  * Unreferenced slots may stay reviewed:false (staged but not shipped).
  *
- * Run after processing / before build: node scripts/check-images.mjs
+ * Run after processing / before build: node scripts/gates/check-images.mjs
  */
 import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const MANIFEST = join(ROOT, "src", "data", "image-manifest.json");
 
 if (!existsSync(MANIFEST)) {

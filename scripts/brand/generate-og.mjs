@@ -5,7 +5,7 @@
  * Outputs to /public/og/*.png so Astro picks them up during build.
  *
  * Usage:
- *   node scripts/generate-og.mjs
+ *   node scripts/brand/generate-og.mjs
  *
  * Adding a card: append to the `cards` array below.
  *
@@ -20,7 +20,7 @@ import satori from "satori";
 import { Resvg } from "@resvg/resvg-js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..");
+const ROOT = join(__dirname, "..", "..");
 const PUBLIC = join(ROOT, "public");
 // International architecture (PLAN.md §7): cards are per-host. The AU build
 // writes public/og/*.png (unchanged); the global build writes public/og/intl/*
@@ -346,7 +346,7 @@ const auCards = [
     showBella: false,
   },
   // City landing pages — keep slugs in sync with src/data/cities.ts
-  // (scripts/check-cities.mjs fails the build if a published city has no card).
+  // (scripts/gates/check-cities.mjs fails the build if a published city has no card).
   {
     file: "sydney.png",
     eyebrow: "AI for Sydney restaurants",

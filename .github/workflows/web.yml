@@ -51,35 +51,35 @@ jobs:
       - name: Finalize global build
         if: matrix.target == 'global'
         run: |
-          node scripts/prune-global.mjs
-          node scripts/llms-global.mjs
+          node scripts/build/prune-global.mjs
+          node scripts/build/llms-global.mjs
 
       - name: Resolve dist dir
         run: echo "DIST=$([ "$BUILD_TARGET" = "global" ] && echo dist-global || echo dist)" >> "$GITHUB_ENV"
 
       - name: Imagery review gate (manifest slots must be human-reviewed)
-        run: node scripts/check-images.mjs
+        run: node scripts/gates/check-images.mjs
 
       - name: Smoke-test built routes (generated per target)
-        run: node scripts/check-routes.mjs
+        run: node scripts/gates/check-routes.mjs
 
       - name: Asset references in built HTML must resolve
-        run: node scripts/check-assets.mjs
+        run: node scripts/gates/check-assets.mjs
 
       - name: JSON-LD @id + NAP / cross-domain entity integrity
-        run: node scripts/check-schema.mjs
+        run: node scripts/gates/check-schema.mjs
 
       - name: WCAG contrast gate (shared themes — run on the AU pass)
         if: matrix.target == 'au'
-        run: node scripts/check-contrast.mjs
+        run: node scripts/gates/check-contrast.mjs
 
       - name: City-page anti-doorway gate (AU only)
         if: matrix.target == 'au'
-        run: node scripts/check-cities.mjs
+        run: node scripts/gates/check-cities.mjs
 
       - name: hreflang integrity (global only)
         if: matrix.target == 'global'
-        run: node scripts/check-hreflang.mjs
+        run: node scripts/gates/check-hreflang.mjs
 
       - name: Sanity-check sitemap
         run: |
