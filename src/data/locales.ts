@@ -18,7 +18,7 @@
  * its own bundled assets and the sitemap:
  *   au     → Astro base "/au-en"; emits the au-en locale.        → dist/
  *   global → Astro base "/" (root); emits en + fr via [...intl]. → dist-global/
- * A post-build merge (scripts/merge-dist.mjs) relocates the au build under
+ * A post-build merge (scripts/build/merge-dist.mjs) relocates the au build under
  * /au-en/** and lays the en+fr trees at the root of one biteperk.com deploy.
  *
  * Astro only base-prefixes its OWN managed assets + the sitemap. Every literal

@@ -16,13 +16,13 @@
  * The expected list is DERIVED from the built output, not hard-coded, so it
  * covers new products, cities and guides with no edit here.
  *
- * Run after `astro build`: node scripts/check-assets.mjs
+ * Run after `astro build`: node scripts/gates/check-assets.mjs
  */
 import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const TARGET = process.env.BUILD_TARGET === "global" ? "global" : "au";
 const DIST_NAME = TARGET === "global" ? "dist-global" : "dist";
 const DIST = join(ROOT, DIST_NAME);

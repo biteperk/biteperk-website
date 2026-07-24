@@ -9,7 +9,7 @@
  * src/data/image-placeholders.json. The thumbnail is rendered behind
  * every full image until it loads.
  *
- * Usage: node scripts/grade.mjs
+ * Usage: node scripts/images/grade.mjs
  */
 import {
   readdirSync,
@@ -23,7 +23,7 @@ import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..");
+const ROOT = join(__dirname, "..", "..");
 const RAW = join(ROOT, "public", "images", "raw");
 const OUT = join(ROOT, "public", "images");
 const PLACEHOLDERS = join(ROOT, "src", "data", "image-placeholders.json");

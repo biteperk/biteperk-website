@@ -2,7 +2,7 @@
  * City landing-page engine — single source of truth for /[city]/ pages.
  *
  * Every non-suburb text field is HAND-WRITTEN per city. That is a hard
- * anti-doorway rule enforced by scripts/check-cities.mjs (min unique word
+ * anti-doorway rule enforced by scripts/gates/check-cities.mjs (min unique word
  * count + cross-city similarity check): templated copy with a city name
  * swapped in is how sites get classified as doorway spam.
  *

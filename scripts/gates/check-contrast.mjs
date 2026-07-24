@@ -3,11 +3,11 @@
  * WCAG contrast gate. Parses the `contrast-manifest` comment block at the
  * bottom of src/styles/tokens.css and fails (exit 1) if any declared
  * text/surface pair drops below AA (4.5:1). Run in CI and locally:
- *   node scripts/check-contrast.mjs
+ *   node scripts/gates/check-contrast.mjs
  */
 import { readFileSync } from "node:fs";
 
-const css = readFileSync(new URL("../src/styles/tokens.css", import.meta.url), "utf8");
+const css = readFileSync(new URL("../../src/styles/tokens.css", import.meta.url), "utf8");
 
 const lines = [...css.matchAll(/^\s*\*\s*pair\s+(\S+)\s+(\S+)\s+(#[0-9a-fA-F]{6})\s+on\s+(\S+)\s+(#[0-9a-fA-F]{6})/gm)];
 if (lines.length === 0) {

@@ -12,14 +12,14 @@
  *
  * Fault-inject before trusting: break one href in a built file, re-run, confirm
  * exit 1. Run after `BUILD_TARGET=global npm run build`:
- *   node scripts/check-hreflang.mjs
+ *   node scripts/gates/check-hreflang.mjs
  */
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { transformSync } from "esbuild";
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const DIST = join(ROOT, "dist-global");
 const HOST = "https://biteperk.com";
 

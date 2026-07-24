@@ -5,15 +5,15 @@
  *            static AU route list, so it can't drift when a city or guide ships.
  *   global → dist-global/: GENERATED from src/data/locales.ts (the /en/ + /fr/
  *            locale trees) + the shared infra files.
- * Run after a build: node scripts/check-routes.mjs
+ * Run after a build: node scripts/gates/check-routes.mjs
  * (set BUILD_TARGET=global for the global pass).
  */
 import { existsSync, readdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { loadTS as loadTSAbs } from "./_load-ts.mjs";
+import { loadTS as loadTSAbs } from "../build/_load-ts.mjs";
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const TARGET = process.env.BUILD_TARGET === "global" ? "global" : "au";
 
 const loadTS = (rel) => loadTSAbs(join(ROOT, rel));

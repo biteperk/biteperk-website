@@ -2,7 +2,7 @@
  * v2 imagery pipeline — neutral brand grade + responsive variants.
  * See docs/art-direction.md for the slot library and hard rules.
  *
- * Reads masters from scripts/img/intake/<slot>.png (or .jpg), applies
+ * Reads masters from scripts/images/img/intake/<slot>.png (or .jpg), applies
  * the neutral brand grade, and emits AVIF + WebP + JPG at 768/1280/1920
  * into public/images/v2/. Writes LQIP + intrinsic dimensions +
  * reviewed:false per slot into src/data/image-manifest.json.
@@ -11,7 +11,7 @@
  * re-run UNLESS the master file changed (tracked via sourceHash), in
  * which case it resets to false and must be re-reviewed.
  *
- * Usage: npm run images:v2   (node scripts/img/process.mjs)
+ * Usage: npm run images:v2   (node scripts/images/img/process.mjs)
  */
 import {
   readdirSync,
@@ -25,8 +25,8 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
-const INTAKE = join(ROOT, "scripts", "img", "intake");
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
+const INTAKE = join(ROOT, "scripts", "images", "img", "intake");
 const OUT = join(ROOT, "public", "images", "v2");
 const MANIFEST = join(ROOT, "src", "data", "image-manifest.json");
 
@@ -35,7 +35,7 @@ mkdirSync(OUT, { recursive: true });
 
 const widths = [768, 1280, 1920];
 
-// Encoding budgets (match scripts/grade.mjs so perf gates hold)
+// Encoding budgets (match scripts/images/grade.mjs so perf gates hold)
 const avifOpts = { quality: 58, effort: 6 };
 const webpOpts = { quality: 78, effort: 5 };
 const jpgOpts = { quality: 82, mozjpeg: true };
@@ -66,7 +66,7 @@ const masters = existsSync(INTAKE)
 
 if (masters.length === 0) {
   console.error(
-    "No masters in scripts/img/intake/ — drop <slot>.png files per docs/art-direction.md"
+    "No masters in scripts/images/img/intake/ — drop <slot>.png files per docs/art-direction.md"
   );
   process.exit(1);
 }

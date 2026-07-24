@@ -57,12 +57,12 @@ recognisable specific venue.
 
 1. Generate externally (Midjourney / Imagen / gpt-image) with the template + slot fragment.
 2. Review against the hard rules; discard failures.
-3. Drop the master as `scripts/img/intake/<slot>.png` (largest available).
-4. Run `npm run images:v2` → `scripts/img/process.mjs`:
-   - applies the neutral brand grade (adapted from scripts/grade.mjs)
+3. Drop the master as `scripts/images/img/intake/<slot>.png` (largest available).
+4. Run `npm run images:v2` → `scripts/images/img/process.mjs`:
+   - applies the neutral brand grade (adapted from scripts/images/grade.mjs)
    - emits AVIF/WebP/JPG at 768/1280/1920 into `public/images/v2/`
    - writes LQIP + intrinsic dimensions + `reviewed: false` into
      `src/data/image-manifest.json`
 5. Flip `reviewed: true` in the manifest after a final on-page check. The build
-   check (scripts/check-images.mjs) fails if a referenced slot is unreviewed.
+   check (scripts/gates/check-images.mjs) fails if a referenced slot is unreviewed.
 6. OG cards: `npm run og` (satori template) — per-page + per-city.

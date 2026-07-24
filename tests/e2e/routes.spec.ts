@@ -3,7 +3,7 @@ import { routes } from "../helpers/routes";
 
 /**
  * Every route (generated from cities.ts + blog collection, same source as
- * scripts/check-routes.mjs) renders with an <h1>/<main> and produces zero
+ * scripts/gates/check-routes.mjs) renders with an <h1>/<main> and produces zero
  * console errors or uncaught page errors.
  */
 

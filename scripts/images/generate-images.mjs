@@ -9,7 +9,7 @@
  * Re-run whenever the overlay copy or layout changes; the script is
  * idempotent.
  *
- * Usage: node scripts/generate-images.mjs
+ * Usage: node scripts/images/generate-images.mjs
  */
 import { writeFileSync, readFileSync, existsSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
@@ -19,7 +19,7 @@ import { Resvg } from "@resvg/resvg-js";
 import sharp from "sharp";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..");
+const ROOT = join(__dirname, "..", "..");
 const IMAGES = join(ROOT, "public", "images");
 const COMPOSITES = join(IMAGES, "composites");
 

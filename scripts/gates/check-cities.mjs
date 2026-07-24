@@ -9,7 +9,7 @@
  *   3. An OG card exists at public/og/<slug>.png.
  *   4. relatedGuides slugs exist in src/content/blog/.
  *
- * Runs in CI and locally: node scripts/check-cities.mjs
+ * Runs in CI and locally: node scripts/gates/check-cities.mjs
  * cities.ts is transpiled with esbuild (already in the Astro dependency
  * tree) and imported as a data URL — no extra dependencies, no fragile
  * hand-rolled type stripping.
@@ -17,9 +17,9 @@
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { loadTS } from "./_load-ts.mjs";
+import { loadTS } from "../build/_load-ts.mjs";
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
 // The city-page engine is an AU concept; the global (biteperk.com) build has no
 // city pages, so this gate is AU-only.
