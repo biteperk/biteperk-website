@@ -21,7 +21,11 @@ export default defineConfig({
   },
   webServer: {
     command: "npm run preview -- --host 127.0.0.1 --port 4321",
-    url: "http://127.0.0.1:4321",
+    // The AU build is served under /au-en, so the bare origin 404s and
+    // Playwright would never see the server come up. Probe a real page.
+    // Test paths carry the base too — build them with p() from
+    // tests/helpers/routes.ts rather than hand-writing "/contact/".
+    url: "http://127.0.0.1:4321/au-en/",
     reuseExistingServer: !process.env.CI,
     timeout: 30_000,
   },
