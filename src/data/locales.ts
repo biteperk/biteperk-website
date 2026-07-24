@@ -38,8 +38,14 @@ export type Locale = {
   readonly ogLocale: string;
   /** hreflang region codes this locale legitimately serves. */
   readonly hreflang: readonly string[];
-  /** Human label for the region/language picker. */
+  /** Human label for the region/language picker menu. */
   readonly label: string;
+  /**
+   * 2–3 char chip shown in the picker's collapsed trigger. The full `label`
+   * only ever appears inside the open menu — the nav bar cannot afford the
+   * ~200px a spelled-out label costs (see Nav.astro's width budget).
+   */
+  readonly short: string;
   /** The one x-default of the whole hreflang cluster. Exactly one locale sets this. */
   readonly xDefault?: boolean;
   /** The build target that emits this locale. */
@@ -67,6 +73,7 @@ export const locales: readonly Locale[] = [
     ogLocale: "en_AU",
     hreflang: ["en-AU"],
     label: "Australia — English",
+    short: "AU",
     target: "au",
   },
   {
@@ -75,6 +82,7 @@ export const locales: readonly Locale[] = [
     ogLocale: "en",
     hreflang: ["en"],
     label: "International — English",
+    short: "EN",
     xDefault: true,
     target: "global",
   },
@@ -84,6 +92,7 @@ export const locales: readonly Locale[] = [
     ogLocale: "fr",
     hreflang: ["fr"],
     label: "International — Français",
+    short: "FR",
     target: "global",
   },
 ];
@@ -154,9 +163,14 @@ export function abs(path: string): string {
   return ORIGIN + u(path);
 }
 
-/** Absolute home URL of a specific locale (origin + its base). */
+/**
+ * Absolute home URL of a specific locale (origin + its base).
+ * Trailing slash kept so this matches what buildHreflang() and u("/") emit —
+ * a picker link that differs from the canonical only by the slash costs an
+ * extra redirect hop and muddies the hreflang signal.
+ */
 export function localeHome(locale: Locale): string {
-  return `${ORIGIN}${locale.base}`;
+  return `${ORIGIN}${locale.base}/`;
 }
 
 /** Build the absolute URL for a page path within a specific locale. */
@@ -210,6 +224,39 @@ export const SHARED_PAGE_PATHS: readonly string[] = [
 /** Is this base-less path shared across au-en + en + fr? */
 export function isSharedPage(baseLessPath: string): boolean {
   return SHARED_PAGE_PATHS.includes(baseLessPath);
+}
+
+/**
+ * The locale a SERVED path belongs to, matched by base-path prefix
+ * ("/au-en/contact/" → au-en). Falls back to the cluster's x-default so the
+ * picker always has something to mark as current.
+ *
+ * Deliberately keyed off the served path, not the build target: that's the one
+ * signal that reads identically under Astro's `base` (au) and at the root
+ * (global), so one picker component works on both builds.
+ */
+export function localeFromPath(path: string): Locale {
+  return (
+    locales.find((l) => path === l.base || path.startsWith(l.base + "/")) ??
+    locales.find((l) => l.xDefault) ??
+    locales[0]
+  );
+}
+
+/**
+ * Where the picker sends a visitor who switches to `to` while on `path`.
+ *
+ * Pages in SHARED_PAGE_PATHS exist in every locale, so we carry the visitor to
+ * the SAME page across the switch (/au-en/contact/ → /fr/contact/) — landing
+ * someone back on a home page is the classic region-picker annoyance. Anything
+ * else is AU-only (products, cities, guides) or locale-specific, so it falls
+ * back to the target locale's home rather than 404.
+ */
+export function localeSwitchUrl(path: string, to: Locale): string {
+  const from = localeFromPath(path);
+  const rest = path.slice(from.base.length) || "/";
+  const page = rest.endsWith("/") ? rest : rest + "/";
+  return isSharedPage(page) ? `${ORIGIN}${to.base}${page}` : localeHome(to);
 }
 
 /**
