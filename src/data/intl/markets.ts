@@ -40,6 +40,19 @@ export type MarketContent = {
 
 // ── United Kingdom (/gb-en) ─────────────────────────────────────────
 const gbEn: MarketContent = {
+  media: {
+    cityscape: {
+      slug: "london-skyline",
+      alt: "Aerial view of London — Tower Bridge and the Thames winding toward the City",
+    },
+    hospitality: {
+      slug: "bar-moody",
+      alt: "A moody bar counter set and quiet before evening service",
+    },
+    eyebrow: "For UK venues",
+    heading: "Built for the pace of UK hospitality.",
+    body: "From district pubs to West End dining rooms, the phone keeps ringing through service. Vox answers it — every time — so your team can stay on the floor.",
+  },
   copy: {
     home: {
       title: "BitePerk — Vox, the AI phone host for UK restaurants",
@@ -69,6 +82,19 @@ const gbEn: MarketContent = {
 
 // ── France (/fr) — France-specific touches over the neutral FR core ─
 const frFr: MarketContent = {
+  media: {
+    cityscape: {
+      slug: "paris-skyline",
+      alt: "La tour Eiffel au-dessus de la Seine au crépuscule",
+    },
+    hospitality: {
+      slug: "paris-street",
+      alt: "Une rue pavée de Paris au pied de la tour Eiffel",
+    },
+    eyebrow: "Pour les établissements français",
+    heading: "Pensé pour le rythme des services à la française.",
+    body: "Du bistrot de quartier à la grande table, le téléphone sonne en plein coup de feu. Vox décroche — à chaque fois — pour que votre équipe reste en salle.",
+  },
   copy: {
     home: {
       title: "BitePerk — Vox, l'hôte téléphonique IA pour les restaurants en France",
@@ -97,6 +123,19 @@ const frFr: MarketContent = {
 
 // ── Belgium — English (/be-en) ──────────────────────────────────────
 const beEn: MarketContent = {
+  media: {
+    cityscape: {
+      slug: "belgium-dinant",
+      alt: "Riverside townhouses on the Meuse at Dinant, Belgium",
+    },
+    hospitality: {
+      slug: "cafe-continental",
+      alt: "A relaxed continental café interior between services",
+    },
+    eyebrow: "For venues in Belgium",
+    heading: "Built for Belgium's table culture.",
+    body: "From Brussels brasseries to canal-side cafés, the phone rings right through service. Vox answers it — in French or English — so your team can stay with their guests.",
+  },
   copy: {
     home: {
       title: "BitePerk — Vox, the AI phone host for restaurants in Belgium",
@@ -125,6 +164,19 @@ const beEn: MarketContent = {
 
 // ── Belgique — Français (/be-fr) ────────────────────────────────────
 const beFr: MarketContent = {
+  media: {
+    cityscape: {
+      slug: "belgium-dinant",
+      alt: "Maisons en bord de Meuse à Dinant, en Belgique",
+    },
+    hospitality: {
+      slug: "cafe-continental",
+      alt: "L'intérieur d'un café continental entre deux services",
+    },
+    eyebrow: "Pour les établissements belges",
+    heading: "Pensé pour la culture de table belge.",
+    body: "De la brasserie bruxelloise au café de quartier, le téléphone sonne en plein service. Vox décroche — en français comme en anglais — pour que votre équipe reste auprès de ses clients.",
+  },
   copy: {
     home: {
       title: "BitePerk — Vox, l'hôte téléphonique IA pour les restaurants en Belgique",
