@@ -1,6 +1,13 @@
 /**
- * Lighthouse CI budgets (Phase 7 gate). Runs against dist/ via LHCI's
+ * Lighthouse CI budgets (Phase 7 gate). Runs against dist-site/ via LHCI's
  * static server, mobile emulation (Lighthouse default).
+ *
+ * MUST be dist-site/, not dist/: the AU build carries Astro base /au-en, so
+ * its pages sit flat in dist/ while referencing /au-en/_astro/**. Served at
+ * the root, every stylesheet, font and script 404s and the run measures an
+ * unstyled page. dist-site/ is the merged tree the biteperk.com host actually
+ * serves (au-en/** + en/** + fr/**), so the URLs below resolve exactly as in
+ * production. Build it with `npm run build:site`.
  *
  * Budgets: perf ≥95 (mobile), LCP ≤2.0s, CLS ≤0.02, total JS ≤60KB.
  * Note: script:size is transfer size; LHCI's static server doesn't gzip,
@@ -9,14 +16,14 @@
 module.exports = {
   ci: {
     collect: {
-      staticDistDir: "./dist",
+      staticDistDir: "./dist-site",
       // Representative page of each template; port is injected by LHCI.
       url: [
-        "http://localhost/",
-        "http://localhost/products/voxtable/",
-        "http://localhost/sydney/",
-        "http://localhost/blog/what-missed-calls-cost-your-restaurant/",
-        "http://localhost/contact/",
+        "http://localhost/au-en/",
+        "http://localhost/au-en/products/voxtable/",
+        "http://localhost/au-en/sydney/",
+        "http://localhost/au-en/blog/what-missed-calls-cost-your-restaurant/",
+        "http://localhost/au-en/contact/",
       ],
       // Median of 3: single runs on shared 2-core CI runners produce
       // coin-flip TBT/perf numbers (observed 619ms TBT with 26KB of JS).

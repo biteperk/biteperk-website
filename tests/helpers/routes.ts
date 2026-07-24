@@ -14,6 +14,18 @@ import { localesForTarget, INTL_PAGE_PATHS } from "../../src/data/locales";
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const TARGET = process.env.BUILD_TARGET === "global" ? "global" : "au";
 
+/**
+ * The AU build's base path. Playwright's `baseURL` is the bare origin, so a
+ * hand-written `page.goto("/contact/")` lands on the UN-based root — which is
+ * a 404 since the site moved under /au-en. Route those through `p()`.
+ */
+export const AU_BASE = "/au-en";
+
+/** p("/contact/") → "/au-en/contact/". p() → "/au-en/". */
+export function p(path = "/"): string {
+  return `${AU_BASE}${path}`;
+}
+
 function auRoutes(): string[] {
   const blogSlugs = readdirSync(join(ROOT, "src/content/blog"))
     .filter((f) => f.endsWith(".md"))

@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { p } from "../helpers/routes";
 
 /**
  * Theme toggle: persistence across reload, no FOUC (data-theme is set by
@@ -42,7 +43,7 @@ test.describe("theme", () => {
   test("no FOUC: stored theme is applied before first paint and never flips", async ({ page }) => {
     for (const stored of ["light", "dark"] as const) {
       await instrumentThemeLog(page, stored);
-      await page.goto("/", { waitUntil: "networkidle" });
+      await page.goto(p(), { waitUntil: "networkidle" });
       const log = await page.evaluate(() => window.__themeLog);
       expect(log.length, "pre-paint script should set data-theme").toBeGreaterThan(0);
       // First value observed (set during <head> parse) is already correct,
@@ -54,16 +55,16 @@ test.describe("theme", () => {
 
   test("system default applies when nothing is stored", async ({ page }) => {
     await page.emulateMedia({ colorScheme: "light" });
-    await page.goto("/");
+    await page.goto(p());
     await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
     await page.emulateMedia({ colorScheme: "dark" });
-    await page.goto("/");
+    await page.goto(p());
     await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   });
 
   test("toggle switches theme and persists across reload", async ({ page }) => {
     await page.emulateMedia({ colorScheme: "dark" });
-    await page.goto("/");
+    await page.goto(p());
     const html = page.locator("html");
     await expect(html).toHaveAttribute("data-theme", "dark");
 
@@ -86,13 +87,13 @@ test.describe("theme", () => {
 
   test("theme survives client-side navigation (astro:after-swap re-assert)", async ({ page }) => {
     await instrumentThemeLog(page, "light");
-    await page.goto("/");
+    await page.goto(p());
     const html = page.locator("html");
     await expect(html).toHaveAttribute("data-theme", "light");
 
     // Client-side nav via the View Transitions router. Use a link that's
     // visible in the desktop bar (Contact is mobile-menu-only now).
-    await page.locator('nav a[href="/platform/"]').first().click();
+    await page.locator(`nav a[href="${p('/platform/')}"]`).first().click();
     await page.waitForURL("**/platform/");
     await expect(html).toHaveAttribute("data-theme", "light");
 

@@ -86,10 +86,16 @@ jobs:
           set -e
           test -f "$DIST/sitemap-0.xml" || { echo "Missing $DIST/sitemap-0.xml"; exit 1; }
           if [ "$BUILD_TARGET" = "global" ]; then
-            grep -q 'biteperk.com/en/' "$DIST/sitemap-0.xml"
+            grep -qF 'biteperk.com/en/' "$DIST/sitemap-0.xml"
           else
-            grep -q 'biteperk.com.au' "$DIST/sitemap-0.xml"
-            grep -q 'products/voxtable' "$DIST/sitemap-0.xml"
+            # -F (literal): the old pattern 'biteperk.com.au' had unescaped
+            # dots, so it matched 'biteperk.com/au-en' and kept passing after
+            # the single-domain move — a no-op assertion. The AU sitemap must
+            # now point at the /au-en base on the canonical host, and must NOT
+            # still be emitting the retired ccTLD.
+            grep -qF 'https://biteperk.com/au-en/' "$DIST/sitemap-0.xml"
+            grep -qF 'products/voxtable' "$DIST/sitemap-0.xml"
+            ! grep -qF 'https://biteperk.com.au' "$DIST/sitemap-0.xml"
           fi
           echo "Sitemap looks healthy."
 
@@ -125,7 +131,14 @@ jobs:
           path: playwright-report
           retention-days: 7
 
-      - name: Lighthouse CI budgets (perf ≥95, LCP ≤2.0s, CLS ≤0.02, JS ≤60KB)
+      # Lighthouse measures the MERGED tree (dist-site/), because that is what
+      # biteperk.com serves. dist/ alone can't be measured: its pages sit flat
+      # but reference /au-en/** assets, which 404 when served at the root.
+      - name: Build merged site for Lighthouse
+        if: matrix.target == 'au'
+        run: npm run build:site
+
+      - name: Lighthouse CI budgets (perf ≥95, LCP ≤2.5s, CLS ≤0.02, JS ≤60KB)
         if: matrix.target == 'au'
         run: npm run lhci
 
