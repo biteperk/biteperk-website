@@ -12,6 +12,7 @@
 import { writeFileSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { loadTS } from "./_load-ts.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const DIST = join(ROOT, "dist-global");
@@ -19,6 +20,12 @@ if (!existsSync(DIST)) {
   console.error("llms-global: dist-global/ not found — run BUILD_TARGET=global npm run build first.");
   process.exit(1);
 }
+
+// Locale link list derives from locales.ts so a new market can't be missed.
+const { localesForTarget, localeHome } = await loadTS(join(ROOT, "src/data/locales.ts"));
+const localeLines = localesForTarget("global")
+  .map((l) => `- ${l.label}: ${localeHome(l)}`)
+  .join("\n");
 
 // NOTE: Phase-1 scaffold copy. Keep it truthful — AI crawlers quote this file.
 const TEXT = `# BitePerk
@@ -32,8 +39,7 @@ This is the international site (biteperk.com). BitePerk's home market is
 Australia, served at https://biteperk.com.au.
 
 ## Pages
-- International (English): https://biteperk.com/en/
-- France (Français): https://biteperk.com/fr/
+${localeLines}
 - How it works: https://biteperk.com/en/how-it-works/
 - About the company: https://biteperk.com/en/about/
 - Contact / book a pilot: https://biteperk.com/en/contact/
@@ -42,7 +48,7 @@ Australia, served at https://biteperk.com.au.
 - Vox is BitePerk's AI phone host. It answers restaurant calls in a natural
   voice, checks real availability and writes bookings to the venue's dashboard.
 - Bookings are LIVE in production in Australia (shipping as "VoxTable").
-- European availability is via pilot partnerships (France and Belgium first);
+- European availability is via pilot partnerships (the UK, France and Belgium first);
   local languages and local numbers are part of the pilot build, not yet
   generally available.
 

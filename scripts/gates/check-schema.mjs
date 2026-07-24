@@ -49,28 +49,35 @@ const expect = (page, id) => {
 };
 
 if (TARGET === "global") {
-  // Shared, AU-anchored org @id (entity merge) present on both locale homes.
-  expect("en/index.html", `${AU}/#organization`);
-  expect("fr/index.html", `${AU}/#organization`);
-  // Per-host WebSite node.
-  expect("en/index.html", `${GLOBAL}/#website`);
+  // Every global locale home (derived from locales.ts — hardcoding en/fr here
+  // would leave new locales unchecked): shared AU-anchored org @id (entity
+  // merge) + Organization-only with NO local-business signals. This is the
+  // structured-data half of the Europe-truthful rules, per market.
+  const { localesForTarget } = await import("../build/_load-ts.mjs").then((m) =>
+    m.loadTS(join(ROOT, "src/data/locales.ts")),
+  );
+  for (const l of localesForTarget("global")) {
+    const page = `${l.base.replace(/^\//, "")}/index.html`;
+    expect(page, `${AU}/#organization`);
 
-  // The global org must be Organization-only with NO local-business signals.
-  const org = graphOf("en/index.html").find((n) => n["@id"] === `${AU}/#organization`);
-  const types = [].concat(org?.["@type"] ?? []);
-  if (types.includes("LocalBusiness")) {
-    console.error("FAIL  global org is a LocalBusiness (must be Organization only)");
-    failed++;
-  } else {
-    console.log("PASS  global org is Organization-only (no LocalBusiness)");
+    const org = graphOf(page).find((n) => n["@id"] === `${AU}/#organization`);
+    const types = [].concat(org?.["@type"] ?? []);
+    if (types.includes("LocalBusiness")) {
+      console.error(`FAIL  ${page}: global org is a LocalBusiness (must be Organization only)`);
+      failed++;
+    } else {
+      console.log(`PASS  ${page}: org is Organization-only`);
+    }
+    const leaks = ["address", "geo", "areaServed"].filter((k) => org && k in org);
+    if (leaks.length) {
+      console.error(`FAIL  ${page}: global org carries AU-local signals: ${leaks.join(", ")}`);
+      failed++;
+    } else {
+      console.log(`PASS  ${page}: org carries no NAP / geo / areaServed`);
+    }
   }
-  const leaks = ["address", "geo", "areaServed"].filter((k) => org && k in org);
-  if (leaks.length) {
-    console.error(`FAIL  global org carries AU-local signals: ${leaks.join(", ")}`);
-    failed++;
-  } else {
-    console.log("PASS  global org carries no NAP / geo / areaServed");
-  }
+  // Per-host WebSite node (one spot-check on the x-default home).
+  expect("en/index.html", `${GLOBAL}/#website`);
 } else {
   // Anchors that must never drift (v1 baseline: docs/v1-baseline/schema/).
   expect("index.html", `${AU}/#organization`);

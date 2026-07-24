@@ -16,11 +16,19 @@
  * canonical/OG/JSON-LD absolute URLs are checked by check-schema/check-assets.
  */
 import { readFileSync, readdirSync, statSync } from "node:fs";
-import { join } from "node:path";
+import { join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+import { loadTS } from "../build/_load-ts.mjs";
 
 const TARGET = process.env.BUILD_TARGET === "global" ? "global" : "au";
 const DIST = TARGET === "global" ? "dist-global" : "dist";
-const ALLOWED_BASES = TARGET === "global" ? ["/en", "/fr"] : ["/au-en"];
+// Bases derive from locales.ts — a hardcoded list here silently stopped
+// covering new locales (their pages' links passed because their own base
+// wasn't "allowed"… it failed loudly instead, but the fix is the same:
+// one source of truth).
+const ROOT_DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
+const { localesForTarget } = await loadTS(join(ROOT_DIR, "src/data/locales.ts"));
+const ALLOWED_BASES = localesForTarget(TARGET).map((l) => l.base);
 // Root-relative paths that legitimately stay at the origin root.
 const ROOT_OK = ["/api/"];
 // Known pre-existing gaps (documented, not migration regressions). The shared

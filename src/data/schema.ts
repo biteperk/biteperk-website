@@ -142,7 +142,10 @@ const globalOrganizationNode = {
   image: `${AU_HOME}/og/home.png`,
   description: site.description,
   email,
-  telephone,
+  // NO telephone: the published line is an AU fact (Europe-truthful, PLAN.md
+  // §8). It shipped here unnoticed until check-truthful started sweeping the
+  // built HTML — structured data is part of the page. International contact
+  // is email-only until local numbers exist.
   sameAs: [site.social.linkedin, AU_CCTLD, AU_HOME],
   knowsAbout: KNOWS_ABOUT,
   contactPoint: [

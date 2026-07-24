@@ -2,7 +2,7 @@
 /**
  * hreflang integrity gate over the GLOBAL build (dist-global/).
  *
- * For every /en/ and /fr/ page asserts:
+ * For every global-locale page (all bases derived from locales.ts) asserts:
  *   - the complete cluster of hreflang codes (derived from src/data/locales.ts)
  *   - exactly one x-default
  *   - every href is absolute (https://biteperk.com/…) and resolves to a built
@@ -17,7 +17,7 @@
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { transformSync } from "esbuild";
+import { loadTS } from "../build/_load-ts.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const DIST = join(ROOT, "dist-global");
@@ -28,13 +28,20 @@ if (!existsSync(DIST)) {
   process.exit(1);
 }
 
-// locales.ts is the single source of truth — load it the same way the other
-// gates load cities.ts (esbuild → data URL, no extra deps).
-const src = readFileSync(join(ROOT, "src/data/locales.ts"), "utf8");
-const { code } = transformSync(src, { loader: "ts", format: "esm" });
-const locales = await import("data:text/javascript;base64," + Buffer.from(code).toString("base64"));
+// locales.ts is the single source of truth — loadTS (bundling) rather than a
+// raw transform + data URL, so the gate keeps working if locales.ts ever
+// grows a relative import (a data: URL has no base to resolve one against).
+const locales = await loadTS(join(ROOT, "src/data/locales.ts"));
 const globals = locales.localesForTarget("global");
 const EXPECTED_CODES = new Set(globals.flatMap((l) => l.hreflang));
+// Reciprocity key: strip the LOCALE SEGMENT (derived, longest-first so
+// "be-en" wins over any prefix). A hardcoded (en|fr) here silently skipped
+// every page of a new locale — the check "passed" by never comparing them.
+const SEG_ALT = globals
+  .map((l) => l.base.replace(/^\//, ""))
+  .sort((a, b) => b.length - a.length)
+  .join("|");
+const SEG_RE = new RegExp(`^(${SEG_ALT})/`);
 
 function htmlFiles(dir, acc = []) {
   if (!existsSync(dir)) return acc;
@@ -90,14 +97,14 @@ for (const file of pages) {
   if (canonical && !alts.some((a) => a.href === canonical))
     fail(`${rel}: not self-referencing (canonical ${canonical} absent from its alternates)`);
 
-  const key = rel.replace(/^(en|fr)\//, "").replace(/index\.html$/, "");
+  const key = rel.replace(SEG_RE, "").replace(/index\.html$/, "");
   const hrefSet = [...new Set(alts.filter((a) => a.hreflang !== "x-default").map((a) => a.href))].sort().join("|");
   const prev = setsByPath.get(key);
   if (prev && prev !== hrefSet) fail(`${rel}: hreflang set not reciprocal with its "${key}" sibling`);
   else setsByPath.set(key, hrefSet);
 }
 
-if (!pages.length) fail("no /en/ or /fr/ pages found in dist-global");
+if (!pages.length) fail("no global-locale pages found in dist-global");
 
 if (failed) {
   console.error(`\ncheck-hreflang: ${failed} failure(s) across ${pages.length} page(s).`);
