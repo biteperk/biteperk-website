@@ -39,7 +39,32 @@
      NOT exist on the Ubuntu CI runners. The override silently never applied
      there, Chrome fell through to DejaVu (far wider than Inter), and CLS
      didn't move: /fr 0.304 → 0.299. Liberation Sans is Ubuntu's
-     metric-compatible Arial; Helvetica covers macOS/iOS. */
+     metric-compatible Arial; Helvetica covers macOS/iOS.
+
+     CONFIRMED FIXED once Liberation Sans was listed: on CI, /fr went
+     0.304 → 0.0013 and /gb-en 0.0398 → 0.0022, both at perf 0.99. The
+     font-swap diagnosis was right all along; naming only Arial made it look
+     wrong, because the number barely moved.
+
+     To reproduce CI's environment locally instead of guessing against it
+     (note: no "star slash" anywhere in here — that sequence would close this
+     comment and the rest would be parsed as CSS, which is exactly how the
+     first version of this note broke the build):
+       docker run --rm --cpus=2 -v "$PWD/dist-site:/site:ro" \
+         mcr.microsoft.com/playwright:v1.56.0-noble bash -c '
+           export CHROME_PATH=$(find /ms-playwright -name chrome -path "*chrome-linux*" | head -1)
+           cd /tmp && npm init -y && npm i lighthouse serve
+           npx serve /site -l 8080 --no-clipboard & sleep 6
+           npx lighthouse http://127.0.0.1:8080/fr/ --only-categories=performance \
+             --chrome-flags="--headless=new --no-sandbox"'
+     NEVER pass `serve -s`. That is SPA mode: it answers every deep URL with
+     the root index.html, so a run against a blog or city URL silently measures
+     the HOME page. It reported a confident CLS 0.000 five times in a row for a
+     page that was actually failing at 0.0219. Always print the audited page's
+     <title> from curl first and check it is the page you meant.
+     Done right, this matches CI to 17 significant figures.
+     macOS cannot reproduce it: its fallbacks are already metrically close to
+     Inter, so every local measurement reads ~0 whatever you do. */
   src: local("Arial"), local("Helvetica Neue"), local("Helvetica"),
        local("Liberation Sans"), local("Nimbus Sans"), local("DejaVu Sans");
   ascent-override: 90.20%;
