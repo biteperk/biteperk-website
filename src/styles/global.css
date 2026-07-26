@@ -21,6 +21,27 @@
   padding: 0;
 }
 
+/* ── Metrics-matched fallback: the anti-CLS font ──────────────────────
+   Inter loads with font-display:swap (fontsource default), so on a slow
+   connection the fallback paints first and every line reflows when Inter
+   arrives. On fast hardware the font wins the race and nothing shifts —
+   which is exactly why this never showed up locally and only failed on CI's
+   shared runners, worst on /fr where French copy runs longest (CLS 0.30 vs a
+   0.02 budget).
+
+   Overriding the fallback's metrics to Inter's makes the two occupy the same
+   space, so the swap is invisible and costs no layout shift. Values are the
+   standard Inter/Arial set (same ones next/font generates).
+   Keep "Inter Fallback" in --font-sans directly after the real Inter names. */
+@font-face {
+  font-family: "Inter Fallback";
+  src: local("Arial");
+  ascent-override: 90.20%;
+  descent-override: 22.48%;
+  line-gap-override: 0%;
+  size-adjust: 107.12%;
+}
+
 :where(html) {
   scroll-behavior: smooth;
   /* Anchor targets (e.g. /products/voxtable/#pricing) land clear of the
