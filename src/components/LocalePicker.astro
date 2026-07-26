@@ -20,6 +20,12 @@
  */
 import { locales, localeFromPath, localeSwitchUrl } from "@/data/locales";
 
+interface Props {
+  /** Menu heading, localised. Defaults to English for the AU chrome. */
+  title?: string;
+}
+const { title = "Choose your region" } = Astro.props;
+
 const path = Astro.url.pathname;
 const current = localeFromPath(path);
 ---
@@ -36,7 +42,7 @@ const current = localeFromPath(path);
   </summary>
 
   <div class="lp-menu" data-locale-picker-menu>
-    <p class="lp-menu-title">Choose your region</p>
+    <p class="lp-menu-title">{title}</p>
     <ul class="lp-list" role="list">
       {locales.map((l) => (
         <li>
@@ -84,9 +90,14 @@ const current = localeFromPath(path);
       border-color var(--dur-fast) var(--ease-out);
   }
   .lp-trigger::-webkit-details-marker { display: none; }
-  .lp-trigger:hover {
-    background: var(--fill-hover);
-    border-color: var(--line-strong);
+  /* Hover-capable pointers ONLY. On iOS a :hover rule on a control makes the
+     first tap apply the hover state and only the second activate it — the
+     picker measurably needed two taps on a real iPhone before this guard. */
+  @media (hover: hover) {
+    .lp-trigger:hover {
+      background: var(--fill-hover);
+      border-color: var(--line-strong);
+    }
   }
   .lp[open] > .lp-trigger {
     background: var(--fill-hover);
@@ -164,11 +175,17 @@ const current = localeFromPath(path);
       color var(--dur-fast) var(--ease-out),
       border-color var(--dur-fast) var(--ease-out);
   }
-  .lp-item:hover,
   .lp-item:focus-visible {
     background: var(--fill-hover);
     color: var(--white);
     border-color: color-mix(in srgb, var(--gold) 18%, transparent);
+  }
+  @media (hover: hover) {
+    .lp-item:hover {
+      background: var(--fill-hover);
+      color: var(--white);
+      border-color: color-mix(in srgb, var(--gold) 18%, transparent);
+    }
   }
   .lp-item.is-current {
     color: var(--white);
@@ -206,13 +223,26 @@ const current = localeFromPath(path);
   }
   .lp-item.is-current .lp-check { opacity: 1; }
 
-  /* Mobile: the picker rides inside MobileMenu's own section, where it gets
-     full width and drops the floating panel. */
-  @media (max-width: 520px) {
+  /* ── Phones: a viewport-anchored bottom sheet ────────────────────────
+     The trigger sits mid-bar in the intl chrome (brand · picker · toggle), so
+     NEITHER anchor fits a 276px menu: `right:0` overflowed the left edge and
+     `left:0` — what shipped — overflowed the RIGHT edge by ~43px on a 390px
+     screen. Anchoring to the viewport instead of the trigger is the only
+     option that can't overflow, and it gives a calmer, thumb-reachable list.
+
+     Requires no backdrop-filter on any ancestor: a filtered element becomes
+     the containing block for fixed descendants (IntlLayout drops its filter
+     at this breakpoint for exactly this reason). The AU chrome never hits
+     this rule — below 1180px its picker lives in the overlay menu instead. */
+  @media (max-width: 720px) {
     .lp-menu {
-      right: auto;
-      left: 0;
-      min-width: min(17.25rem, calc(100vw - 32px));
+      position: fixed;
+      inset: auto 16px calc(16px + env(safe-area-inset-bottom)) 16px;
+      min-width: 0;
+      max-height: min(60vh, 420px);
+      overflow-y: auto;
+      overscroll-behavior: contain;
     }
+    .lp-item { min-height: 48px; }
   }
 </style>

@@ -33,12 +33,41 @@ export default defineConfig({
     {
       name: "chromium",
       testDir: "./tests/e2e",
+      testIgnore: /mobile\.spec\.ts/,
       use: { ...devices["Desktop Chrome"] },
     },
     {
       name: "webkit",
       testDir: "./tests/e2e",
+      testIgnore: /mobile\.spec\.ts/,
       use: { ...devices["Desktop Safari"] },
+    },
+    // Real device emulation — touch, DPR, mobile UA. Both projects above are
+    // DESKTOP devices, so before these existed no test ever exercised the
+    // touch-vs-hover branches (megamenu's canHover(), :hover affordances) the
+    // way a phone does; "mobile" specs only narrowed the viewport.
+    // Scoped to mobile.spec.ts: the desktop specs deliberately drive the
+    // mega-menu and the 1280px nav, neither of which exists on a phone.
+    {
+      name: "mobile-chrome",
+      testDir: "./tests/e2e",
+      testMatch: /mobile\.spec\.ts/,
+      use: { ...devices["Pixel 7"] },
+    },
+    {
+      name: "mobile-safari",
+      testDir: "./tests/e2e",
+      testMatch: /mobile\.spec\.ts/,
+      use: { ...devices["iPhone 14"] },
+    },
+    // Gecko has its own layout/flexbox rounding — the third major engine, and
+    // the one no test covered. Routes only: it's a rendering safety net, not a
+    // third copy of the interaction suites.
+    {
+      name: "firefox",
+      testDir: "./tests/e2e",
+      testMatch: /routes\.spec\.ts/,
+      use: { ...devices["Desktop Firefox"] },
     },
     {
       name: "a11y",

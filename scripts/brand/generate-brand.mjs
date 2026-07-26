@@ -153,5 +153,20 @@ const touch = markSvg({ size: 180, background: INK, pad: 9 });
 writeFileSync(join(PUBLIC, "apple-touch-icon.png"), png(touch, 180));
 console.log("  public/apple-touch-icon.png (180×180)");
 
+// ── PWA icons ──────────────────────────────────────────────────────
+// Two sizes because Android's launcher wants 192 and the splash/install UI
+// wants 512. Both are MASKABLE: the mark sits inside the safe zone (padded
+// ~20%) so a launcher can crop it to a circle, squircle or rounded square
+// without clipping a star point. A non-maskable icon gets letterboxed in a
+// white box on Android — the classic "installed web app looks broken" tell.
+for (const size of [192, 512]) {
+  const pad = Math.round(64 * 0.22); // ~20% safe zone in the 64-unit viewBox
+  writeFileSync(
+    join(PUBLIC, `icon-${size}.png`),
+    png(markSvg({ size, background: INK, pad }), size),
+  );
+}
+console.log("  public/icon-192.png + icon-512.png (maskable)");
+
 console.log("\nDone. Pixel-review every output before shipping (satori/resvg");
 console.log("rendering can shift between versions — same rule as the OG cards).");

@@ -16,7 +16,9 @@ import {
   type BuildTarget, type Locale,
 } from "@/data/locales";
 import LocalePicker from "@/components/LocalePicker.astro";
+import ThemeToggle from "@/components/ThemeToggle.astro";
 import StarMark from "@/components/StarMark.astro";
+import LocaleSuggest from "@/components/LocaleSuggest.astro";
 
 interface Props {
   /** The locale this page belongs to — everything derives from it. */
@@ -77,7 +79,8 @@ const year = new Date().getFullYear();
           <a href={p("contact")}>{c.nav.contact}</a>
         </nav>
         <div class="intl-actions">
-          <LocalePicker />
+          <LocalePicker title={c.regionTitle} />
+          <ThemeToggle />
           <a class="btn intl-cta-btn" href={p("contact")}>{c.cta}</a>
         </div>
       </div>
@@ -101,6 +104,13 @@ const year = new Date().getFullYear();
             <a href={p("contact")}>{c.nav.contact}</a>
             <a href={p("legal/privacy")}>{c.privacy}</a>
             <a href={p("legal/terms")}>{c.terms}</a>
+            <a href={p("legal/cookies")}>{c.cookies}</a>
+            {/* Withdrawal must be as easy as consent (GDPR art. 7(3)) — this
+                re-opens the consent modal from any page, mirroring the AU
+                footer's control. Styled to match the links around it. */}
+            <button type="button" class="intl-footer-btn" data-cookie-settings>
+              {c.cookieSettings}
+            </button>
             <a href={AU_HOME + "/"}>{c.auSite} ↗</a>
             {alternateLocales.map((l) => (
               <a
@@ -119,6 +129,10 @@ const year = new Date().getFullYear();
         </p>
       </div>
     </footer>
+
+    {/* Offers the visitor's own market if they landed on another one. Never
+        redirects; see the component + scripts/locale-suggest.ts. */}
+    <LocaleSuggest />
   </div>
 </Base>
 
@@ -170,6 +184,24 @@ const year = new Date().getFullYear();
   /* ── Shared section building blocks ── */
   .intl section { padding-block: var(--space-9); }
   .intl .intl-hero { padding-block: calc(var(--space-10) * 1.2) var(--space-9); }
+  /* Short viewports — phone landscape, split-screen tablets, small laptops.
+     At 844×390 the hero measured 681px tall: the headline ran past the fold
+     and the CTAs sat ~200px below it, so a visitor turning their phone
+     sideways saw no call to action at all. The generous top padding is a
+     desktop luxury; compress it rather than letting the fold eat the CTA. */
+  @media (max-height: 620px) {
+    .intl .intl-hero { padding-block: var(--space-4) var(--space-6); }
+    .intl h1 {
+      font-size: clamp(1.5rem, 1rem + 2.2vw, 2.1rem);
+      margin-bottom: var(--space-3);
+    }
+    .intl .intl-hero .lede {
+      font-size: var(--fs-body);
+      margin-bottom: var(--space-3);
+      max-width: 60ch;
+    }
+    .intl .intl-hero .eyebrow { margin-bottom: var(--space-1); }
+  }
   .intl .eyebrow {
     font-size: var(--fs-eyebrow);
     letter-spacing: 0.14em;
@@ -238,15 +270,87 @@ const year = new Date().getFullYear();
   .intl-footer-grid { display: grid; gap: var(--space-7); grid-template-columns: minmax(240px, 1.2fr) 1fr; }
   .intl-footer-brand { display: inline-flex; align-items: center; gap: 8px; }
   .intl-footer-blurb { color: var(--mist); max-width: 44ch; margin-top: var(--space-3); font-size: var(--fs-small); }
-  .intl-footer-links { display: flex; flex-wrap: wrap; gap: var(--space-4) var(--space-5); align-content: start; }
-  .intl-footer-links a { color: var(--mist-2); text-decoration: none; font-size: var(--fs-small); }
+  .intl-footer-links { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); align-content: start; }
+  /* 44px targets: these are navigation, not links inside a sentence, so the
+     WCAG 2.5.8 inline-text exception does NOT apply — and on phones the footer
+     is a primary way to move around the site. */
+  .intl-footer-links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--mist-2);
+    text-decoration: none;
+    font-size: var(--fs-small);
+  }
   .intl-footer-links a:hover { color: var(--gold); }
+  /* Matches .intl-footer-links a exactly — it's a control, not a link, but it
+     sits in the same row and must read and tap identically. */
+  .intl-footer-btn {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0;
+    background: none;
+    border: 0;
+    color: var(--mist-2);
+    font: inherit;
+    font-size: var(--fs-small);
+    cursor: pointer;
+  }
+  .intl-footer-btn:hover { color: var(--gold); }
   .intl-footer-legal { color: var(--mist); font-size: var(--fs-small); margin-top: var(--space-7); }
   .intl-footer-legal a { color: inherit; }
 
+  /* ── Phones & small tablets: a real two-row header ──────────────────
+     Until now `.intl-links` was simply `display:none` here with nothing to
+     replace it — the international pages had NO mobile navigation at all;
+     a phone visitor on /gb-en could only move around via the footer.
+
+     Three links don't justify a hamburger + overlay + focus trap, so the row
+     just wraps: brand + controls on top, links as 44px pills underneath. */
   @media (max-width: 720px) {
-    .intl-links { display: none; }
+    .intl-nav {
+      /* Not sticky on phones: a two-row sticky bar costs ~105px — 12% of an
+         iPhone viewport — permanently. The region picker stays reachable from
+         the footer, which is 44px-tappable as of this change. */
+      position: static;
+      /* No backdrop-filter on mobile: it's expensive on phones, AND a filtered
+         ancestor becomes the containing block for position:fixed descendants,
+         which would trap the locale picker's bottom sheet inside this bar. */
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      background: var(--ink-0);
+    }
+    .intl-nav-row {
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      padding-block: 10px;
+      min-height: 0;
+    }
     .intl-actions { margin-inline-start: auto; }
+    /* The header CTA is redundant here: the bar doesn't stick, so it scrolls
+       away immediately, and every page repeats "book a pilot" in the hero
+       directly below plus the pilot band and closing section. Dropping it is
+       what buys the room for brand + picker + theme toggle on one line. */
+    .intl-cta-btn { display: none; }
+    .intl-links {
+      display: flex;
+      flex-wrap: wrap;
+      order: 3;
+      flex-basis: 100%; /* forces the links onto their own row */
+      margin-inline-start: 0;
+      gap: var(--space-2);
+    }
+    .intl-links a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding-inline: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--r-pill);
+      background: var(--fill-subtle);
+      white-space: nowrap;
+    }
     .intl-footer-grid { grid-template-columns: 1fr; }
   }
 </style>

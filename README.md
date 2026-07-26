@@ -45,7 +45,9 @@ npm run dev          # AU dev server (port 4321)
 npm run build:site   # both targets + merge → dist-site/ (what production serves)
 npm run gates:au     # AU gate suite (needs npm run build first)
 npm run gates:global # global gate suite incl. unit tests (needs build:global)
-npm run test:e2e     # Playwright (chromium+webkit) + axe — needs a build
+npm run test:e2e     # AU: chromium+webkit+firefox, real mobile devices, axe
+npm run test:intl    # global build: device widths, chrome, consent, suggestion
+npm run test:unit    # intl copy-merge contract
 npm run lhci         # Lighthouse budgets (needs build:site)
 npm run brand        # regenerate the logo kit (public/brand/) + touch icon
 npm run og           # regenerate OG cards (BUILD_TARGET=global for intl set)
@@ -68,6 +70,15 @@ npm run images       # photo pipeline: fetch → grade → composites
 
 There are no unit tests beyond `tests/unit/` (the intl copy-merge contract);
 the gates + Playwright + axe + Lighthouse budgets are the safety net.
+
+**Browser suites.** `playwright.config.ts` covers the AU build (desktop
+chromium/webkit/firefox, real Pixel 7 + iPhone 14 device projects, axe);
+`playwright.intl.config.ts` covers the **global** build on its own preview.
+Two configs, not two projects: `webServer` entries all start on every run, so
+a global preview in the main config would break the AU CI leg, which never
+builds `dist-global`. Every route in both suites carries a
+**horizontal-overflow assertion at 390 and 768** — the cheap net for device
+regressions.
 
 ## Directory map
 

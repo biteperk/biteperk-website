@@ -34,6 +34,15 @@ export type ChromeCopy = {
   footerBlurb: string;
   privacy: string;
   terms: string;
+  /** Cookie policy link label. */
+  cookies: string;
+  /** Re-open the consent modal — GDPR requires withdrawal to be as easy as consent. */
+  cookieSettings: string;
+  /** Region picker menu heading. */
+  regionTitle: string;
+  /** Locale-suggestion chip: shown in the TARGET locale's language. */
+  suggest: string;
+  suggestDismiss: string;
   email: string;
   rights: string;
 };
@@ -92,6 +101,11 @@ export const chrome: Record<Lang, ChromeCopy> = {
       "BitePerk builds voice and AI tools for hospitality. Vox, our AI phone host, answers restaurant calls in a natural voice and books tables straight into the venue's dashboard.",
     privacy: "Privacy",
     terms: "Terms",
+    cookies: "Cookies",
+    cookieSettings: "Cookie settings",
+    regionTitle: "Choose your region",
+    suggest: "There's a BitePerk site for your region.",
+    suggestDismiss: "Dismiss",
     email: "hello@biteperk.com.au",
     rights: "All rights reserved.",
   },
@@ -104,6 +118,11 @@ export const chrome: Record<Lang, ChromeCopy> = {
       "BitePerk conçoit des outils vocaux et d'IA pour l'hôtellerie-restauration. Vox, notre hôte téléphonique IA, répond aux appels d'une voix naturelle et enregistre les réservations directement dans le tableau de bord de l'établissement.",
     privacy: "Confidentialité",
     terms: "Conditions",
+    cookies: "Cookies",
+    cookieSettings: "Paramètres des cookies",
+    regionTitle: "Choisissez votre région",
+    suggest: "Un site BitePerk existe pour votre région.",
+    suggestDismiss: "Fermer",
     email: "hello@biteperk.com.au",
     rights: "Tous droits réservés.",
   },
@@ -592,6 +611,89 @@ export const terms: Record<Lang, SimplePageCopy> = {
       {
         heading: "Contact",
         body: ["Pour toute question sur ces conditions : hello@biteperk.com.au."],
+      },
+    ],
+  },
+};
+
+/**
+ * Cookie policy. Emitted for EVERY locale because the consent banner links to
+ * it — a notice whose policy link 404s is a compliance failure, and these are
+ * the strictest cookie regimes (UK GDPR/PECR, CNIL, Belgian DPA).
+ *
+ * Kept factually in step with src/data/consent.ts: the site is strict opt-in,
+ * analytics are cookieless by design, and nothing non-essential is armed yet.
+ */
+export const cookies: Record<Lang, SimplePageCopy> = {
+  en: {
+    title: "Cookie policy — BitePerk",
+    description:
+      "What BitePerk stores in your browser and why. Strict opt-in: nothing non-essential runs until you accept, and you can change your mind at any time.",
+    eyebrow: "Legal",
+    h1: "Cookie policy",
+    intro:
+      "We keep tracking to a minimum and we ask first. Nothing non-essential runs on this site until you choose to allow it, refusing is a single click, and you can change your mind at any time from Cookie settings in the footer of every page.",
+    sections: [
+      {
+        heading: "Strictly necessary",
+        body: [
+          "One small entry remembers your cookie choice so we don't ask again on every page, and another remembers whether you prefer the light or dark theme. These are stored in your browser, are never shared, and cannot be switched off — without them the site cannot honour the choices you have already made.",
+        ],
+      },
+      {
+        heading: "Analytics",
+        body: [
+          "If and when we enable analytics, we use a cookieless product that records page views without cookies, without cross-site tracking and without building a profile of you. It stays off until you allow it, and you can withdraw that permission at any time.",
+        ],
+      },
+      {
+        heading: "Marketing",
+        body: [
+          "We run no advertising or marketing trackers on this site today. If that ever changes, they will be off by default, listed here first, and will only ever load after you switch them on.",
+        ],
+      },
+      {
+        heading: "Changing or withdrawing your choice",
+        body: [
+          "Open Cookie settings in the footer of any page to review or change what you have allowed. Withdrawing permission is exactly as easy as giving it, takes effect immediately, and does not affect anything we did while permission was in place.",
+          "Questions about this policy, or about the personal data behind it, can go to hello@biteperk.com.au — the same address that handles data requests under our privacy notice.",
+        ],
+      },
+    ],
+  },
+  fr: {
+    title: "Politique relative aux cookies — BitePerk",
+    description:
+      "Ce que BitePerk enregistre dans votre navigateur, et pourquoi. Consentement préalable : rien de non essentiel ne se déclenche sans votre accord, révocable à tout moment.",
+    eyebrow: "Mentions légales",
+    h1: "Politique relative aux cookies",
+    intro:
+      "Nous limitons le suivi au strict minimum et nous demandons votre accord au préalable. Rien de non essentiel ne se déclenche sur ce site tant que vous ne l'avez pas autorisé, refuser tient en un clic, et vous pouvez revenir sur votre choix à tout moment depuis « Paramètres des cookies », en bas de chaque page.",
+    sections: [
+      {
+        heading: "Strictement nécessaires",
+        body: [
+          "Une donnée mémorise votre choix en matière de cookies, afin de ne pas vous solliciter à chaque page, et une autre retient si vous préférez le thème clair ou sombre. Elles restent dans votre navigateur, ne sont jamais transmises et ne peuvent être désactivées : sans elles, le site ne peut pas respecter les choix que vous avez déjà exprimés.",
+        ],
+      },
+      {
+        heading: "Mesure d'audience",
+        body: [
+          "Si nous activons un jour la mesure d'audience, nous utiliserons un outil sans cookie, qui comptabilise les pages vues sans cookie, sans suivi inter-sites et sans constituer de profil. Elle reste désactivée tant que vous ne l'avez pas autorisée, et votre accord est révocable à tout moment.",
+        ],
+      },
+      {
+        heading: "Marketing",
+        body: [
+          "Aucun traceur publicitaire ou marketing n'est utilisé sur ce site à ce jour. Si cela devait changer, ces traceurs seraient désactivés par défaut, décrits ici au préalable, et ne se chargeraient qu'après votre autorisation explicite.",
+        ],
+      },
+      {
+        heading: "Modifier ou retirer votre choix",
+        body: [
+          "Ouvrez « Paramètres des cookies » en bas de n'importe quelle page pour revoir ou modifier vos autorisations. Retirer votre accord est aussi simple que de le donner, prend effet immédiatement, et ne remet pas en cause ce qui a été fait tant que l'autorisation était valable.",
+          "Pour toute question sur cette politique, ou sur les données personnelles qu'elle concerne, écrivez à hello@biteperk.com.au — l'adresse qui traite également les demandes prévues par notre politique de confidentialité.",
+        ],
       },
     ],
   },

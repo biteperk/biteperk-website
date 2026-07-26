@@ -43,6 +43,7 @@ const simple =
   : page === "about" ? c.about
   : page === "legal/privacy" ? c.privacy
   : page === "legal/terms" ? c.terms
+  : page === "legal/cookies" ? c.cookies
   : null;
 
 const meta =
@@ -93,8 +94,11 @@ const ogImage = `/og/intl/${page === "contact" ? "contact" : "home"}${ogSuffix}.
             <p class="lede">{media.body}</p>
             <div class="intl-market-grid">
               {/* No `priority`: the hero headline stays the LCP element. */}
-              <ImageBlock slug={media.cityscape.slug} alt={media.cityscape.alt} aspect="16 / 10" rounded />
-              <ImageBlock slug={media.hospitality.slug} alt={media.hospitality.alt} aspect="16 / 10" rounded />
+              {/* widths must match .intl-market-grid's 2-up breakpoint (721px),
+                  not the 1024px default — tablets were fetching ~2x the bytes
+                  they actually render. */}
+              <ImageBlock slug={media.cityscape.slug} alt={media.cityscape.alt} aspect="16 / 10" widths="(min-width: 721px) 50vw, 100vw" rounded />
+              <ImageBlock slug={media.hospitality.slug} alt={media.hospitality.alt} aspect="16 / 10" widths="(min-width: 721px) 50vw, 100vw" rounded />
             </div>
           </div>
         </section>
@@ -179,7 +183,7 @@ const ogImage = `/og/intl/${page === "contact" ? "contact" : "home"}${ogSuffix}.
             </div>
             <div class="field">
               <label for="if-venue">{ct.form.venue}</label>
-              <input id="if-venue" name="venue" type="text" maxlength="200" placeholder={ct.form.venuePlaceholder} />
+              <input id="if-venue" name="venue" type="text" maxlength="200" autocomplete="organization" placeholder={ct.form.venuePlaceholder} />
             </div>
             <div class="field">
               <label for="if-message">{ct.form.message}</label>
