@@ -176,6 +176,15 @@ const marketing = categories.find((c) => c.id === "marketing")!;
     cursor: pointer;
   }
   .legal-inline-btn:hover { text-decoration-thickness: 2px; }
+  /* Constrain rather than scroll — see the blog prose note. */
+  .legal-table th,
+  .legal-table td { overflow-wrap: anywhere; }
+  @media (max-width: 560px) {
+    .legal-table { font-size: 12.5px; }
+    .legal-table th,
+    .legal-table td { padding-inline: 8px; }
+  }
+  .table-scroll:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
   .legal-table {
     width: 100%;
     border-collapse: collapse;

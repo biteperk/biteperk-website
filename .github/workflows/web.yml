@@ -124,23 +124,30 @@ jobs:
           fail: false
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      # ---- Behavioural QA runs on the AU pass. The /en/ + /fr/ pages are
-      # noindex Phase-1 placeholders; their Playwright specs and Lighthouse
-      # budgets land with the Phase-2 Europe-truthful content. ----
+      # ---- Behavioural QA: BOTH legs. The AU leg runs the full e2e + axe +
+      # mobile-device suites and the Lighthouse budgets; the global leg runs
+      # the international browser suite (device widths, chrome, consent). ----
 
       - name: Install Playwright browsers
-        if: matrix.target == 'au'
-        run: npx playwright install --with-deps chromium webkit
+        run: npx playwright install --with-deps chromium webkit firefox
 
-      - name: Playwright E2E + axe (theme, menus, contact, routes, a11y)
+      - name: Playwright E2E + axe (theme, menus, contact, routes, a11y, mobile devices)
         if: matrix.target == 'au'
         run: npm run test:e2e
 
+      # The international pages had NO browser coverage until this step — e2e,
+      # axe and Lighthouse all ran on the AU leg only, which is how a market
+      # tree with no mobile navigation, an off-screen region picker and a
+      # consent banner linking to a 404 reached production.
+      - name: Playwright — global build (device widths, chrome, consent)
+        if: matrix.target == 'global'
+        run: npm run test:intl
+
       - name: Upload Playwright report
-        if: failure() && matrix.target == 'au'
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.target }}
           path: playwright-report
           retention-days: 7
 

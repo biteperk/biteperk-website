@@ -15,7 +15,14 @@
  * re-animates on View-Transition navigations.
  */
 import { categories, TRACKING_ARMED } from "@/data/consent";
-import { u } from "@/data/locales";
+import { localeFromPath } from "@/data/locales";
+
+// The policy link must resolve in the locale the visitor is actually reading.
+// `u()` is a no-op on the global build, so it used to emit a root-level
+// /legal/cookies/ that exists in NO tree — every international page shipped a
+// consent notice whose policy link 404'd. Deriving from the served path works
+// on both builds (the AU build's pathname carries its /au-en base).
+const cookiesHref = `${localeFromPath(Astro.url.pathname).base}/legal/cookies/`;
 
 const toggleable = categories.filter((c) => !c.locked);
 const necessary = categories.find((c) => c.locked)!;
@@ -34,7 +41,7 @@ const necessary = categories.find((c) => c.locked)!;
       <p class="consent-copy">
         We use privacy-first, cookieless analytics and — only if you allow it —
         LinkedIn marketing, to improve the site and reach venues like yours.
-        Nothing runs until you choose. <a href={u("/legal/cookies/")}>Cookie Policy</a>.
+        Nothing runs until you choose. <a href={cookiesHref}>Cookie Policy</a>.
       </p>
       <div class="consent-actions">
         <button type="button" class="consent-btn-text" data-consent-settings>

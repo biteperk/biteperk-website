@@ -21,6 +21,33 @@
   padding: 0;
 }
 
+/* ── Metrics-matched fallback: the anti-CLS font ──────────────────────
+   Inter loads with font-display:swap (fontsource default), so on a slow
+   connection the fallback paints first and every line reflows when Inter
+   arrives. On fast hardware the font wins the race and nothing shifts —
+   which is exactly why this never showed up locally and only failed on CI's
+   shared runners, worst on /fr where French copy runs longest (CLS 0.30 vs a
+   0.02 budget).
+
+   Overriding the fallback's metrics to Inter's makes the two occupy the same
+   space, so the swap is invisible and costs no layout shift. Values are the
+   standard Inter/Arial set (same ones next/font generates).
+   Keep "Inter Fallback" in --font-sans directly after the real Inter names. */
+@font-face {
+  font-family: "Inter Fallback";
+  /* Several locals, because the first attempt named only Arial — which does
+     NOT exist on the Ubuntu CI runners. The override silently never applied
+     there, Chrome fell through to DejaVu (far wider than Inter), and CLS
+     didn't move: /fr 0.304 → 0.299. Liberation Sans is Ubuntu's
+     metric-compatible Arial; Helvetica covers macOS/iOS. */
+  src: local("Arial"), local("Helvetica Neue"), local("Helvetica"),
+       local("Liberation Sans"), local("Nimbus Sans"), local("DejaVu Sans");
+  ascent-override: 90.20%;
+  descent-override: 22.48%;
+  line-gap-override: 0%;
+  size-adjust: 107.12%;
+}
+
 :where(html) {
   scroll-behavior: smooth;
   /* Anchor targets (e.g. /products/voxtable/#pricing) land clear of the
@@ -28,6 +55,31 @@
   scroll-padding-top: calc(var(--nav-h-scrolled, 68px) + 16px);
   text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
+  /* Suppress the grey iOS/Android tap flash sitewide. It was set on exactly
+     two components before, so touch feedback was inconsistent: most controls
+     flashed a system grey, a couple didn't. The site provides its own
+     feedback via :active below. */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Touch feedback: a real, immediate press state on the things people tap.
+   Pointer-coarse only — on a mouse the :hover styles already do this job,
+   and a click is too brief for a press state to read. */
+@media (hover: none) and (pointer: coarse) {
+  a:active,
+  button:active,
+  summary:active,
+  [role="button"]:active {
+    opacity: 0.72;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    a:active,
+    button:active,
+    summary:active,
+    [role="button"]:active {
+      transition: opacity 60ms linear;
+    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
