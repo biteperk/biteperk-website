@@ -165,6 +165,21 @@ const breadcrumbJsonLd = {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     max-width: 100%;
+    /* Hide the scrollbar chrome, keep the scrolling. A classic horizontal
+       scrollbar (Linux/Windows) sits INSIDE this box and adds ~15px of height
+       when it appears, pushing everything below it down — measured as CLS
+       0.022 on CI against a 0.02 budget, invisible on macOS where scrollbars
+       overlay. Removing it removes the variable entirely.
+       Scrollability stays reachable: the wrapper is tabindex=0 with
+       role=region + aria-label, and the fade below signals there is more. */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .prose :global(.table-scroll::-webkit-scrollbar) { display: none; }
+  /* Right-edge fade — the affordance that replaces the scrollbar. */
+  .prose :global(.table-scroll) {
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent 100%);
+    mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent 100%);
   }
   .prose :global(.table-scroll:focus-visible) {
     outline: 2px solid var(--gold);
