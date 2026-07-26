@@ -20,6 +20,12 @@
  */
 import { locales, localeFromPath, localeSwitchUrl } from "@/data/locales";
 
+interface Props {
+  /** Menu heading, localised. Defaults to English for the AU chrome. */
+  title?: string;
+}
+const { title = "Choose your region" } = Astro.props;
+
 const path = Astro.url.pathname;
 const current = localeFromPath(path);
 ---
@@ -36,7 +42,7 @@ const current = localeFromPath(path);
   </summary>
 
   <div class="lp-menu" data-locale-picker-menu>
-    <p class="lp-menu-title">Choose your region</p>
+    <p class="lp-menu-title">{title}</p>
     <ul class="lp-list" role="list">
       {locales.map((l) => (
         <li>

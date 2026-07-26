@@ -18,6 +18,7 @@ import {
 import LocalePicker from "@/components/LocalePicker.astro";
 import ThemeToggle from "@/components/ThemeToggle.astro";
 import StarMark from "@/components/StarMark.astro";
+import LocaleSuggest from "@/components/LocaleSuggest.astro";
 
 interface Props {
   /** The locale this page belongs to — everything derives from it. */
@@ -78,7 +79,7 @@ const year = new Date().getFullYear();
           <a href={p("contact")}>{c.nav.contact}</a>
         </nav>
         <div class="intl-actions">
-          <LocalePicker />
+          <LocalePicker title={c.regionTitle} />
           <ThemeToggle />
           <a class="btn intl-cta-btn" href={p("contact")}>{c.cta}</a>
         </div>
@@ -128,6 +129,10 @@ const year = new Date().getFullYear();
         </p>
       </div>
     </footer>
+
+    {/* Offers the visitor's own market if they landed on another one. Never
+        redirects; see the component + scripts/locale-suggest.ts. */}
+    <LocaleSuggest />
   </div>
 </Base>
 
