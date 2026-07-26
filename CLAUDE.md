@@ -21,7 +21,9 @@ npm run preview    # astro preview
 npm run check      # astro check (type-check, what CI runs)
 npm run og         # regenerate Open Graph cards (scripts/brand/generate-og.mjs)
 npm run images     # fetch → grade → composite illustration pipeline
-npm run test:e2e   # Playwright (chromium+webkit) + axe — needs a build first
+npm run test:e2e   # AU build: chromium+webkit+firefox, Pixel 7 + iPhone 14, axe
+npm run test:intl  # GLOBAL build browser suite (own config + preview)
+npm run brand      # logo kit, apple-touch-icon, maskable PWA icons
 npm run lhci       # Lighthouse CI budgets against astro preview
 ```
 
@@ -58,6 +60,42 @@ Key facts:
 - `firebase.json` (biteperk-global): apex `/` → `/en/`; country shortcuts `/gb` `/uk` → `/gb-en/`, `/be` → `/be-en/`.
 - **ccTLD front doors (rev. 26 Jul 2026):** `biteperk.uk` → `/gb-en`, `biteperk.fr` → `/fr`, `biteperk.be` → `/be-en` (apex + www, path + query preserved, single-hop 301). These live in **Cloudflare Redirect Rules — deliberately NOT firebase.json** (`biteperk.com.au` is the one Firebase-hosted redirect exception). The per-locale `cctld` field in `locales.ts` is the SSOT list (feeds org `sameAs` in `schema.ts`); the exact zone rules, DNS records and edge settings are in `docs/accounts-and-ops-log.md`. Do not add uk/fr/be redirects to firebase.json.
 - CI (`web.yml`) runs an `[au, global]` matrix — all gates incl. `check-links` + `check-truthful` + the unit tests; e2e/Lighthouse/contrast run on the AU pass (Lighthouse measures `dist-site/`, the merged tree).
+
+## Device & browser experience (rev. 26 Jul 2026)
+
+The international pages had never had a device pass; the fixes and the guards
+that keep them fixed:
+
+- **Intl chrome is responsive below 720px** — `.intl-nav-row` wraps into two
+  rows (brand + picker + theme toggle, then the links as 44px pills). It was
+  `display:none` with no replacement, i.e. NO mobile navigation at all. The bar
+  is non-sticky and drops its header CTA there (it scrolls away instantly, and
+  the hero repeats it) — that's what buys room for the controls.
+- **The bar also drops its `backdrop-filter` on mobile**, deliberately: a
+  filtered ancestor becomes the containing block for `position:fixed`
+  descendants, which would trap the locale picker's bottom sheet inside it.
+  If you re-add a filter there, the picker breaks on phones.
+- **LocalePicker is a viewport-anchored bottom sheet ≤720px.** Neither `left:0`
+  nor `right:0` can work — the trigger sits mid-bar and the menu is 276px wide.
+- **Short viewports** (`max-height: 620px` — phone landscape) compress the hero;
+  it was 681px tall on a 844×390 screen with the CTA 200px below the fold.
+- **Cookie policy exists in every locale** (`legal/cookies` in `INTL_PAGE_PATHS`)
+  and `ConsentBanner` derives its href from the served path via `localeFromPath`
+  — `u()` is a no-op on the global build, so the banner used to link to a root
+  path that existed in no tree. `check-links` KNOWN_GAPS is empty and must stay
+  empty: an entry there is a live broken link.
+- **PWA**: per-locale manifests (`src/pages/manifest/[loc].webmanifest.ts`) so an
+  install from `/gb-en/` opens on the UK site. Maskable icons from `npm run
+  brand`. **No service worker** — this site ships too often to risk a stale
+  shell.
+- **LocaleSuggest** offers (never redirects to) the visitor's market from
+  `navigator.languages`, matched against locale `hreflang` codes. Dismissible,
+  remembered, silent for anyone already in their market or with no market.
+- **Guards**: both browser suites assert **no horizontal overflow at 390 and
+  768 on every route**; CI runs the global suite on the global matrix leg (it
+  previously ran zero browser tests there — that's how the above shipped).
+  Markdown and legal tables are wrapped in accessible scroll boxes rather than
+  allowed to widen the page.
 
 ## Deploy
 
