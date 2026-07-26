@@ -68,6 +68,15 @@ export type Locale = {
   readonly xDefault?: boolean;
   /** The build target that emits this locale. */
   readonly target: BuildTarget;
+  /**
+   * Country-code front-door domain that 301s into this locale, if one exists
+   * (Accenture model: biteperk.com.au → /au-en, biteperk.uk → /gb-en,
+   * biteperk.fr → /fr, biteperk.be → /be-en). The com.au redirect lives in
+   * firebase.json (Firebase host); the uk/fr/be redirects live in Cloudflare
+   * Redirect Rules — deliberately NOT in firebase.json. See
+   * docs/accounts-and-ops-log.md for the exact rule expressions.
+   */
+  readonly cctld?: string;
 };
 
 /** The one origin every locale is served from. */
@@ -76,9 +85,6 @@ export const ORIGIN = "https://biteperk.com";
 /** Canonical home of the Australian site — the entity anchor (stable everywhere). */
 export const AU_BASE = "/au-en";
 export const AU_HOME = `${ORIGIN}${AU_BASE}`;
-
-/** The redirect-only country-code host (front door → AU_HOME). */
-export const AU_CCTLD = "https://biteperk.com.au";
 
 /**
  * The full locale cluster. Order matters only for display; the hreflang gate
@@ -95,6 +101,7 @@ export const locales: readonly Locale[] = [
     label: "Australia — English",
     short: "AU",
     target: "au",
+    cctld: "https://biteperk.com.au",
   },
   {
     base: "/en",
@@ -118,6 +125,7 @@ export const locales: readonly Locale[] = [
     label: "United Kingdom — English",
     short: "UK",
     target: "global",
+    cctld: "https://biteperk.uk",
   },
   {
     // France claims fr-FR explicitly (against fr-BE) AND keeps generic `fr`
@@ -133,6 +141,7 @@ export const locales: readonly Locale[] = [
     label: "France — Français",
     short: "FR",
     target: "global",
+    cctld: "https://biteperk.fr",
   },
   {
     base: "/be-en",
@@ -144,6 +153,7 @@ export const locales: readonly Locale[] = [
     label: "Belgium — English",
     short: "BE",
     target: "global",
+    cctld: "https://biteperk.be",
   },
   {
     base: "/be-fr",
@@ -157,6 +167,19 @@ export const locales: readonly Locale[] = [
     target: "global",
   },
 ];
+
+/**
+ * Every country-code front-door domain in the estate, derived from the locale
+ * array (single source of truth) — consumed by schema.ts `sameAs` so Google
+ * links each front door to the one BitePerk org.
+ */
+export const CCTLDS: readonly string[] = locales
+  .map((l) => l.cctld)
+  .filter((c): c is string => Boolean(c));
+
+/** The redirect-only AU country-code host (front door → AU_HOME). Derived. */
+export const AU_CCTLD =
+  locales.find((l) => l.market === "au")?.cctld ?? "https://biteperk.com.au";
 
 export const DEFAULT_TARGET: BuildTarget = "au";
 
