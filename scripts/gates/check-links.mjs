@@ -34,7 +34,7 @@ const ROOT_OK = ["/api/"];
 // No exemptions. /legal/cookies/ was carried here for a while because the
 // shared ConsentBanner linked to a page the international tree didn't have —
 // which meant every global page shipped a consent notice whose policy link
-// 404'd. Every locale now emits the page (INTL_PAGE_PATHS), so the gate holds
+// 404'd. Every locale now emits the page (it is in pagesForLocale), so the gate holds
 // it. Resist re-adding entries: an exemption here is a live broken link.
 const KNOWN_GAPS = [];
 
