@@ -47,6 +47,15 @@ const FORBIDDEN = [
   { label: "print-only demo line (02) 7501 1140", re: /7501[\s ]?1140/ },
   { label: "Haymarket NAP", re: /Haymarket|477[\s ]?Pitt/i },
   { label: "AU price $80", re: /\$[\s ]?80\b|80[\s ]?AUD/ },
+  // PLAN.md §8 has forbidden this on EU pages since the intl build existed,
+  // but nothing enforced it. "Data stays in Australia" is a trust line in the
+  // AU market and a cross-border transfer problem under GDPR (there is no
+  // adequacy decision for Australia) — it must never reach a European page,
+  // in either language. Added before the market copy multiplies.
+  {
+    label: "AU data-residency claim (GDPR transfer problem)",
+    re: /data\s+(?:stays|is\s+stored|resides|remains)\s+in\s+australia|(?:données|hébergées?)[^.]{0,40}en\s+australie/i,
+  },
 ];
 
 function htmlFiles(dir, acc = []) {
