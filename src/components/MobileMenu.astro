@@ -238,6 +238,13 @@ const companyLinks = headerNav.filter((l) => l.mobile !== false);
     overflow-y: auto;
     padding: 24px 22px 32px;
   }
+  /* Tablets: cap the reading column instead of stretching phone layout across
+     834px, where line lengths and the 2-up grids both go slack. The panel
+     stays full-bleed; only its content is measured. */
+  @media (min-width: 768px) {
+    .mm-body,
+    .mm-header { width: min(100%, 620px); margin-inline: auto; }
+  }
   .mm-section { margin-bottom: 28px; }
   .mm-heading {
     font-size: 11px;

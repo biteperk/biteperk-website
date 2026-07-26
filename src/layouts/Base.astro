@@ -29,7 +29,7 @@ import Nav from "@/components/Nav.astro";
 import Footer from "@/components/Footer.astro";
 import ConsentBanner from "@/components/ConsentBanner.astro";
 import { siteGraph } from "@/data/schema";
-import { u, buildHreflang, currentTarget, stripBase, isSharedPage, INTL_LAUNCHED } from "@/data/locales";
+import { u, buildHreflang, currentTarget, stripBase, isSharedPage, localeFromPath, INTL_LAUNCHED } from "@/data/locales";
 import { ClientRouter } from "astro:transitions";
 
 interface Props {
@@ -80,6 +80,9 @@ const {
   hideNav = false,
   hideFooter = false,
 } = Astro.props;
+
+// Which locale tree this page belongs to — drives the per-locale manifest.
+const manifestLoc = localeFromPath(Astro.url.pathname).base.replace(/^\//, "");
 
 // Cross-domain hreflang for AU shared pages (home, about, contact, legal) is
 // emitted automatically once the international site launches. The intl /en+/fr
@@ -141,6 +144,9 @@ if (!alternates && INTL_LAUNCHED && currentTarget() === "au") {
     <link rel="icon" type="image/svg+xml" href={u("/favicon.svg")} />
     {/* iOS ignores SVG touch icons — this must stay a PNG (npm run brand). */}
     <link rel="apple-touch-icon" sizes="180x180" href={u("/apple-touch-icon.png")} />
+    {/* Per-locale manifest so an install from /gb-en/ opens on the UK site,
+        not the international one. See src/pages/manifest/[loc].webmanifest.ts */}
+    <link rel="manifest" href={u(`/manifest/${manifestLoc}.webmanifest`)} />
 
     {preloadImage && <link rel="preload" as="image" href={u(preloadImage)} fetchpriority="high" />}
     {preloadSlug && (

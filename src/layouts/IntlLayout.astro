@@ -179,6 +179,24 @@ const year = new Date().getFullYear();
   /* ── Shared section building blocks ── */
   .intl section { padding-block: var(--space-9); }
   .intl .intl-hero { padding-block: calc(var(--space-10) * 1.2) var(--space-9); }
+  /* Short viewports — phone landscape, split-screen tablets, small laptops.
+     At 844×390 the hero measured 681px tall: the headline ran past the fold
+     and the CTAs sat ~200px below it, so a visitor turning their phone
+     sideways saw no call to action at all. The generous top padding is a
+     desktop luxury; compress it rather than letting the fold eat the CTA. */
+  @media (max-height: 620px) {
+    .intl .intl-hero { padding-block: var(--space-4) var(--space-6); }
+    .intl h1 {
+      font-size: clamp(1.5rem, 1rem + 2.2vw, 2.1rem);
+      margin-bottom: var(--space-3);
+    }
+    .intl .intl-hero .lede {
+      font-size: var(--fs-body);
+      margin-bottom: var(--space-3);
+      max-width: 60ch;
+    }
+    .intl .intl-hero .eyebrow { margin-bottom: var(--space-1); }
+  }
   .intl .eyebrow {
     font-size: var(--fs-eyebrow);
     letter-spacing: 0.14em;

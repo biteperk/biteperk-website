@@ -60,6 +60,15 @@ export default defineConfig({
       testMatch: /mobile\.spec\.ts/,
       use: { ...devices["iPhone 14"] },
     },
+    // Gecko has its own layout/flexbox rounding — the third major engine, and
+    // the one no test covered. Routes only: it's a rendering safety net, not a
+    // third copy of the interaction suites.
+    {
+      name: "firefox",
+      testDir: "./tests/e2e",
+      testMatch: /routes\.spec\.ts/,
+      use: { ...devices["Desktop Firefox"] },
+    },
     {
       name: "a11y",
       testDir: "./tests/a11y",
