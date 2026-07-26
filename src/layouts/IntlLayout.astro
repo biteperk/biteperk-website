@@ -16,6 +16,7 @@ import {
   type BuildTarget, type Locale,
 } from "@/data/locales";
 import LocalePicker from "@/components/LocalePicker.astro";
+import ThemeToggle from "@/components/ThemeToggle.astro";
 import StarMark from "@/components/StarMark.astro";
 
 interface Props {
@@ -78,6 +79,7 @@ const year = new Date().getFullYear();
         </nav>
         <div class="intl-actions">
           <LocalePicker />
+          <ThemeToggle />
           <a class="btn intl-cta-btn" href={p("contact")}>{c.cta}</a>
         </div>
       </div>
@@ -238,15 +240,72 @@ const year = new Date().getFullYear();
   .intl-footer-grid { display: grid; gap: var(--space-7); grid-template-columns: minmax(240px, 1.2fr) 1fr; }
   .intl-footer-brand { display: inline-flex; align-items: center; gap: 8px; }
   .intl-footer-blurb { color: var(--mist); max-width: 44ch; margin-top: var(--space-3); font-size: var(--fs-small); }
-  .intl-footer-links { display: flex; flex-wrap: wrap; gap: var(--space-4) var(--space-5); align-content: start; }
-  .intl-footer-links a { color: var(--mist-2); text-decoration: none; font-size: var(--fs-small); }
+  .intl-footer-links { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); align-content: start; }
+  /* 44px targets: these are navigation, not links inside a sentence, so the
+     WCAG 2.5.8 inline-text exception does NOT apply — and on phones the footer
+     is a primary way to move around the site. */
+  .intl-footer-links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--mist-2);
+    text-decoration: none;
+    font-size: var(--fs-small);
+  }
   .intl-footer-links a:hover { color: var(--gold); }
   .intl-footer-legal { color: var(--mist); font-size: var(--fs-small); margin-top: var(--space-7); }
   .intl-footer-legal a { color: inherit; }
 
+  /* ── Phones & small tablets: a real two-row header ──────────────────
+     Until now `.intl-links` was simply `display:none` here with nothing to
+     replace it — the international pages had NO mobile navigation at all;
+     a phone visitor on /gb-en could only move around via the footer.
+
+     Three links don't justify a hamburger + overlay + focus trap, so the row
+     just wraps: brand + controls on top, links as 44px pills underneath. */
   @media (max-width: 720px) {
-    .intl-links { display: none; }
+    .intl-nav {
+      /* Not sticky on phones: a two-row sticky bar costs ~105px — 12% of an
+         iPhone viewport — permanently. The region picker stays reachable from
+         the footer, which is 44px-tappable as of this change. */
+      position: static;
+      /* No backdrop-filter on mobile: it's expensive on phones, AND a filtered
+         ancestor becomes the containing block for position:fixed descendants,
+         which would trap the locale picker's bottom sheet inside this bar. */
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      background: var(--ink-0);
+    }
+    .intl-nav-row {
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      padding-block: 10px;
+      min-height: 0;
+    }
     .intl-actions { margin-inline-start: auto; }
+    /* The header CTA is redundant here: the bar doesn't stick, so it scrolls
+       away immediately, and every page repeats "book a pilot" in the hero
+       directly below plus the pilot band and closing section. Dropping it is
+       what buys the room for brand + picker + theme toggle on one line. */
+    .intl-cta-btn { display: none; }
+    .intl-links {
+      display: flex;
+      flex-wrap: wrap;
+      order: 3;
+      flex-basis: 100%; /* forces the links onto their own row */
+      margin-inline-start: 0;
+      gap: var(--space-2);
+    }
+    .intl-links a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding-inline: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--r-pill);
+      background: var(--fill-subtle);
+      white-space: nowrap;
+    }
     .intl-footer-grid { grid-template-columns: 1fr; }
   }
 </style>
