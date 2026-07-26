@@ -46,10 +46,13 @@
      font-swap diagnosis was right all along; naming only Arial made it look
      wrong, because the number barely moved.
 
-     To reproduce CI's environment locally instead of guessing against it:
+     To reproduce CI's environment locally instead of guessing against it
+     (note: no "star slash" anywhere in here — that sequence would close this
+     comment and the rest would be parsed as CSS, which is exactly how the
+     first version of this note broke the build):
        docker run --rm -v "$PWD/dist-site:/site:ro" \
          mcr.microsoft.com/playwright:v1.56.0-noble bash -c '
-           export CHROME_PATH=$(ls -d /ms-playwright/chromium-*/chrome-linux/chrome | head -1)
+           export CHROME_PATH=$(find /ms-playwright -name chrome -path "*chrome-linux*" | head -1)
            cd /tmp && npm init -y && npm i lighthouse serve
            npx serve -s /site -l 8080 & sleep 5
            npx lighthouse http://127.0.0.1:8080/fr/ --only-categories=performance \
