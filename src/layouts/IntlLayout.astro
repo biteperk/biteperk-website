@@ -103,6 +103,13 @@ const year = new Date().getFullYear();
             <a href={p("contact")}>{c.nav.contact}</a>
             <a href={p("legal/privacy")}>{c.privacy}</a>
             <a href={p("legal/terms")}>{c.terms}</a>
+            <a href={p("legal/cookies")}>{c.cookies}</a>
+            {/* Withdrawal must be as easy as consent (GDPR art. 7(3)) — this
+                re-opens the consent modal from any page, mirroring the AU
+                footer's control. Styled to match the links around it. */}
+            <button type="button" class="intl-footer-btn" data-cookie-settings>
+              {c.cookieSettings}
+            </button>
             <a href={AU_HOME + "/"}>{c.auSite} ↗</a>
             {alternateLocales.map((l) => (
               <a
@@ -253,6 +260,21 @@ const year = new Date().getFullYear();
     font-size: var(--fs-small);
   }
   .intl-footer-links a:hover { color: var(--gold); }
+  /* Matches .intl-footer-links a exactly — it's a control, not a link, but it
+     sits in the same row and must read and tap identically. */
+  .intl-footer-btn {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0;
+    background: none;
+    border: 0;
+    color: var(--mist-2);
+    font: inherit;
+    font-size: var(--fs-small);
+    cursor: pointer;
+  }
+  .intl-footer-btn:hover { color: var(--gold); }
   .intl-footer-legal { color: var(--mist); font-size: var(--fs-small); margin-top: var(--space-7); }
   .intl-footer-legal a { color: inherit; }
 

@@ -276,6 +276,10 @@ export const INTL_PAGE_PATHS: readonly string[] = [
   "how-it-works",
   "legal/privacy",
   "legal/terms",
+  // Every locale MUST emit this: the cookie banner links to it, and a consent
+  // notice whose policy link 404s is a compliance failure — least acceptable
+  // in exactly these markets (UK GDPR, CNIL, Belgian DPA).
+  "legal/cookies",
 ];
 
 /**

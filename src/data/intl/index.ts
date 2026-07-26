@@ -18,7 +18,7 @@
  */
 import type { Lang, Locale } from "@/data/locales";
 import {
-  chrome, home, howItWorks, about, contact, privacy, terms,
+  chrome, home, howItWorks, about, contact, privacy, terms, cookies,
   type ChromeCopy, type HomeCopy, type SimplePageCopy, type ContactCopy,
 } from "./copy";
 import { marketContent, type MarketContent, type MarketMedia } from "./markets";
@@ -31,6 +31,7 @@ export type CopyBundle = {
   contact: ContactCopy;
   privacy: SimplePageCopy;
   terms: SimplePageCopy;
+  cookies: SimplePageCopy;
 };
 
 /**
@@ -49,10 +50,12 @@ const cores: Record<Lang, CopyBundle> = {
   en: {
     chrome: chrome.en, home: home.en, howItWorks: howItWorks.en,
     about: about.en, contact: contact.en, privacy: privacy.en, terms: terms.en,
+    cookies: cookies.en,
   },
   fr: {
     chrome: chrome.fr, home: home.fr, howItWorks: howItWorks.fr,
     about: about.fr, contact: contact.fr, privacy: privacy.fr, terms: terms.fr,
+    cookies: cookies.fr,
   },
 };
 
