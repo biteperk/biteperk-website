@@ -46,9 +46,56 @@ function remarkBaseLinks(base) {
   };
 }
 
+/**
+ * Force `font-display: optional` on the Inter faces (@fontsource ships `swap`).
+ *
+ * `swap` guarantees a reflow whenever the webfont loses the race to first
+ * paint, and that reflow was the last of this site's layout shift: on CI the
+ * blog template measured CLS 0.02195 — deterministic, reproduced to 17
+ * significant figures in a Linux container — entirely from text re-flowing
+ * horizontally as Inter replaced the fallback. `optional` gives Inter ~100ms
+ * and otherwise keeps the fallback FOR THAT PAGE VIEW ONLY, so the swap can
+ * never happen mid-paint. Measured after: 0.000 on every URL, perf 0.98–0.99.
+ *
+ * This is only acceptable because the metrics-matched "Inter Fallback" face in
+ * global.css is already in place — the fallback occupies identical space, so a
+ * first-time visitor on a slow connection sees the same layout in slightly
+ * different letterforms, and Inter (now cached) renders from the next page on.
+ * If that @font-face is ever removed, revisit this together with it.
+ *
+ * A PostCSS pass rather than a hand-copied @font-face block: fontsource ships
+ * seven subsets with their own unicode-ranges, and a copy would silently go
+ * stale the first time the package updated. Source Serif 4 keeps `swap` — it
+ * renders one inline span (.serif-accent) and contributes no measured shift.
+ */
+const interFontDisplayOptional = {
+  postcssPlugin: "inter-font-display-optional",
+  AtRule: {
+    /** @param {import("postcss").AtRule} rule */
+    "font-face": (rule) => {
+      let isInter = false;
+      rule.walkDecls("font-family", (/** @type {import("postcss").Declaration} */ d) => {
+        if (d.value.includes("Inter Variable")) isInter = true;
+      });
+      if (!isInter) return;
+      let seen = false;
+      rule.walkDecls("font-display", (/** @type {import("postcss").Declaration} */ d) => {
+        d.value = "optional";
+        seen = true;
+      });
+      if (!seen) rule.append({ prop: "font-display", value: "optional" });
+    },
+  },
+};
+// NB: no `.postcss = true` here — that marker tells PostCSS the export is a
+// plugin FACTORY and it will try to call it. This is already a plugin object.
+
 // Static-only output — this is a marketing site, no SSR needed.
 // Firebase Hosting serves the contents of the build's out dir directly.
 export default defineConfig({
+  vite: {
+    css: { postcss: { plugins: [interFontDisplayOptional] } },
+  },
   site: SITE,
   base: BASE,
   outDir: OUT_DIR,

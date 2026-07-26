@@ -163,14 +163,20 @@ const globalOrganizationNode = {
 
 export const organizationNode = IS_GLOBAL ? globalOrganizationNode : auOrganizationNode;
 
-/** The website as an entity — lets the brand own its name in search. Per-host. */
+/**
+ * The website as an entity — lets the brand own its name in search. Per-host.
+ *
+ * `inLanguage` is a property of the SITE, not the page: biteperk.com serves
+ * English and French, so it declares both. It previously claimed "en" flat,
+ * which asserted the French trees were English.
+ */
 export const websiteNode = {
   "@type": "WebSite",
   "@id": WEBSITE_ID,
   url: abs("/"),
   name: site.name,
   description: site.description,
-  inLanguage: IS_GLOBAL ? "en" : "en-AU",
+  inLanguage: IS_GLOBAL ? ["en", "fr"] : "en-AU",
   publisher: { "@id": ORG_ID },
 };
 
