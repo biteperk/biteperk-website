@@ -307,6 +307,10 @@ export const SHARED_PAGE_PATHS: readonly string[] = [
   "/contact/",
   "/legal/privacy/",
   "/legal/terms/",
+  // Both trees emit this (AU has had it all along; every global locale gained
+  // it with the consent-banner fix), so it belongs in the cluster. It was
+  // missed when the intl cookie pages landed.
+  "/legal/cookies/",
 ];
 
 /** Is this base-less path shared across au-en + en + fr? */
