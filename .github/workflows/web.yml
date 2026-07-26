@@ -129,7 +129,7 @@ jobs:
       # the international browser suite (device widths, chrome, consent). ----
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium webkit
+        run: npx playwright install --with-deps chromium webkit firefox
 
       - name: Playwright E2E + axe (theme, menus, contact, routes, a11y, mobile devices)
         if: matrix.target == 'au'

@@ -28,6 +28,31 @@
   scroll-padding-top: calc(var(--nav-h-scrolled, 68px) + 16px);
   text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
+  /* Suppress the grey iOS/Android tap flash sitewide. It was set on exactly
+     two components before, so touch feedback was inconsistent: most controls
+     flashed a system grey, a couple didn't. The site provides its own
+     feedback via :active below. */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Touch feedback: a real, immediate press state on the things people tap.
+   Pointer-coarse only — on a mouse the :hover styles already do this job,
+   and a click is too brief for a press state to read. */
+@media (hover: none) and (pointer: coarse) {
+  a:active,
+  button:active,
+  summary:active,
+  [role="button"]:active {
+    opacity: 0.72;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    a:active,
+    button:active,
+    summary:active,
+    [role="button"]:active {
+      transition: opacity 60ms linear;
+    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
