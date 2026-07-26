@@ -56,6 +56,7 @@ Key facts:
 - International pages are **`noindex` behind `INTL_LAUNCHED`** (env flag, default off). Launch = `INTL_LAUNCHED=true npm run build:site` + deploy: flips indexability AND emits the full cross-locale hreflang cluster in one step. The flag is all-or-nothing across the five global locales — flipping it is a deliberate five-market decision.
 - OG cards: `BUILD_TARGET=global npm run og` → `public/og/intl/` — **derived from `resolveCopy` per locale** (11 cards; `/en` keeps legacy unsuffixed filenames). Pixel-review before deploy, as always.
 - `firebase.json` (biteperk-global): apex `/` → `/en/`; country shortcuts `/gb` `/uk` → `/gb-en/`, `/be` → `/be-en/`.
+- **ccTLD front doors (rev. 26 Jul 2026):** `biteperk.uk` → `/gb-en`, `biteperk.fr` → `/fr`, `biteperk.be` → `/be-en` (apex + www, path + query preserved, single-hop 301). These live in **Cloudflare Redirect Rules — deliberately NOT firebase.json** (`biteperk.com.au` is the one Firebase-hosted redirect exception). The per-locale `cctld` field in `locales.ts` is the SSOT list (feeds org `sameAs` in `schema.ts`); the exact zone rules, DNS records and edge settings are in `docs/accounts-and-ops-log.md`. Do not add uk/fr/be redirects to firebase.json.
 - CI (`web.yml`) runs an `[au, global]` matrix — all gates incl. `check-links` + `check-truthful` + the unit tests; e2e/Lighthouse/contrast run on the AU pass (Lighthouse measures `dist-site/`, the merged tree).
 
 ## Deploy

@@ -20,7 +20,11 @@ merge-dist.mjs  →  dist-site/     ← what biteperk.com actually serves
 - `biteperk.com/au-en/**` — the Australian site (products, cities, blog).
 - `biteperk.com/{en,gb-en,fr,be-en,be-fr}/**` — international market trees
   (noindex behind the `INTL_LAUNCHED` env flag until launch).
-- `biteperk.com.au/*` → 301 → `biteperk.com/au-en/*`.
+- `biteperk.com.au/*` → 301 → `biteperk.com/au-en/*` (Firebase, `dist-cctld/`).
+- `biteperk.uk/*` → 301 → `biteperk.com/gb-en/*`, `biteperk.fr/*` → `/fr/*`,
+  `biteperk.be/*` → `/be-en/*` — ccTLD front doors handled by **Cloudflare
+  Redirect Rules** (deliberately not firebase.json; see
+  `docs/accounts-and-ops-log.md`).
 
 ## Single sources of truth (edit here, never at call sites)
 

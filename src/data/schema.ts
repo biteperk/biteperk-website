@@ -22,7 +22,7 @@
  */
 import { site } from "./site";
 import { publishedCities } from "./cities";
-import { AU_HOME, AU_CCTLD, abs, currentTarget } from "./locales";
+import { AU_HOME, CCTLDS, abs, currentTarget } from "./locales";
 
 // Organization @id is anchored to the AU home (biteperk.com/au-en) and SHARED
 // across every build (au + en + fr) — that's how Google merges the properties
@@ -146,7 +146,10 @@ const globalOrganizationNode = {
   // §8). It shipped here unnoticed until check-truthful started sweeping the
   // built HTML — structured data is part of the page. International contact
   // is email-only until local numbers exist.
-  sameAs: [site.social.linkedin, AU_CCTLD, AU_HOME],
+  // Every ccTLD front door (com.au, uk, fr, be — derived from locales.ts) +
+  // the canonical AU home: each 301s into biteperk.com, and listing them here
+  // tells Google every front door belongs to the one BitePerk org.
+  sameAs: [site.social.linkedin, ...CCTLDS, AU_HOME],
   knowsAbout: KNOWS_ABOUT,
   contactPoint: [
     {
