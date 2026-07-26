@@ -71,14 +71,15 @@ function remarkBaseLinks(base) {
 const interFontDisplayOptional = {
   postcssPlugin: "inter-font-display-optional",
   AtRule: {
+    /** @param {import("postcss").AtRule} rule */
     "font-face": (rule) => {
       let isInter = false;
-      rule.walkDecls("font-family", (d) => {
+      rule.walkDecls("font-family", (/** @type {import("postcss").Declaration} */ d) => {
         if (d.value.includes("Inter Variable")) isInter = true;
       });
       if (!isInter) return;
       let seen = false;
-      rule.walkDecls("font-display", (d) => {
+      rule.walkDecls("font-display", (/** @type {import("postcss").Declaration} */ d) => {
         d.value = "optional";
         seen = true;
       });
