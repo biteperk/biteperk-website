@@ -35,7 +35,13 @@
    Keep "Inter Fallback" in --font-sans directly after the real Inter names. */
 @font-face {
   font-family: "Inter Fallback";
-  src: local("Arial");
+  /* Several locals, because the first attempt named only Arial — which does
+     NOT exist on the Ubuntu CI runners. The override silently never applied
+     there, Chrome fell through to DejaVu (far wider than Inter), and CLS
+     didn't move: /fr 0.304 → 0.299. Liberation Sans is Ubuntu's
+     metric-compatible Arial; Helvetica covers macOS/iOS. */
+  src: local("Arial"), local("Helvetica Neue"), local("Helvetica"),
+       local("Liberation Sans"), local("Nimbus Sans"), local("DejaVu Sans");
   ascent-override: 90.20%;
   descent-override: 22.48%;
   line-gap-override: 0%;
@@ -49,6 +55,12 @@
   scroll-padding-top: calc(var(--nav-h-scrolled, 68px) + 16px);
   text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
+  /* Reserve the scrollbar gutter. macOS/iOS use overlay scrollbars, so a
+     scrollbar appearing costs nothing there; Linux (and Windows) use classic
+     ones, where it reflows the whole page the moment it appears — a viewport
+     shift Lighthouse records with NO element attribution, which is exactly
+     the signature seen on CI. Harmless where gutters are already zero-width. */
+  scrollbar-gutter: stable;
   /* Suppress the grey iOS/Android tap flash sitewide. It was set on exactly
      two components before, so touch feedback was inconsistent: most controls
      flashed a system grey, a couple didn't. The site provides its own
