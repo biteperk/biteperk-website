@@ -31,10 +31,12 @@ const { localesForTarget } = await loadTS(join(ROOT_DIR, "src/data/locales.ts"))
 const ALLOWED_BASES = localesForTarget(TARGET).map((l) => l.base);
 // Root-relative paths that legitimately stay at the origin root.
 const ROOT_OK = ["/api/"];
-// Known pre-existing gaps (documented, not migration regressions). The shared
-// ConsentBanner links to /legal/cookies/, which exists in the AU tree but not
-// yet in the international tree; /en + /fr are noindex until that content lands.
-const KNOWN_GAPS = TARGET === "global" ? ["/legal/cookies/"] : [];
+// No exemptions. /legal/cookies/ was carried here for a while because the
+// shared ConsentBanner linked to a page the international tree didn't have —
+// which meant every global page shipped a consent notice whose policy link
+// 404'd. Every locale now emits the page (INTL_PAGE_PATHS), so the gate holds
+// it. Resist re-adding entries: an exemption here is a live broken link.
+const KNOWN_GAPS = [];
 
 function walk(dir) {
   const out = [];
