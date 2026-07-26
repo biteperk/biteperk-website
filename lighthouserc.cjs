@@ -39,12 +39,17 @@ module.exports = {
     },
     assert: {
       // One strict set for every URL, AU and market trees alike. The market
-      // trees were briefly pinned looser while a CI-only CLS was unexplained;
-      // it turned out to be the font fallback (see below) and is fixed, so the
-      // exception is gone. Do not re-introduce a per-tree budget to make a
-      // number pass — diagnose it instead: `docker run --rm -v $PWD/dist-site:/site:ro
-      // mcr.microsoft.com/playwright:v1.56.0-noble` with CHROME_PATH set
-      // reproduces CI's Linux + Lighthouse combination exactly.
+      // trees were briefly pinned looser while a CI-only CLS was unexplained.
+      // It was font swap, in two parts, both now fixed: the metrics-matched
+      // fallback in global.css named only fonts absent from Ubuntu (so the
+      // override never applied on CI), and `font-display: swap` guaranteed a
+      // reflow whenever Inter lost the race regardless. Inter is now
+      // `optional` (astro.config.mjs) and CLS measures 0.000 everywhere.
+      //
+      // Do not re-introduce a per-tree budget to make a number pass —
+      // diagnose it. The recipe in global.css reproduces CI's Linux +
+      // Lighthouse combination to 17 significant figures; heed its warning
+      // about `serve -s`, which silently measures the home page instead.
       assertions: {
         "categories:performance": ["error", { minScore: 0.95 }],
         // 2500ms = Google's official "good" LCP threshold. The original
