@@ -158,6 +158,19 @@ const breadcrumbJsonLd = {
     line-height: 1.75;
   }
   .prose :global(> * + *) { margin-top: 1.35em; }
+  /* Wide tables scroll in their own box (wrapper added by the
+     rehypeScrollableTables plugin in astro.config.mjs) instead of dragging the
+     whole article sideways on a phone. */
+  .prose :global(.table-scroll) {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+  }
+  .prose :global(.table-scroll:focus-visible) {
+    outline: 2px solid var(--gold);
+    outline-offset: 4px;
+  }
+  .prose :global(.table-scroll table) { min-width: max-content; }
   .prose :global(h2) {
     margin-top: 2em;
     font-size: clamp(1.45rem, 1.1rem + 1.4vw, 1.9rem);

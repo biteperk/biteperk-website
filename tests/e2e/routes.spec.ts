@@ -35,4 +35,21 @@ for (const route of routes) {
 
     expect(errors, `console/page errors on ${route}:\n${errors.join("\n")}`).toEqual([]);
   });
+
+  // The cheap net for a whole class of device bugs — a too-wide element, an
+  // unclamped dropdown, an image without max-width. One evaluate() per route,
+  // at the two widths that matter, catching what visual review misses.
+  for (const { label, width, height } of [
+    { label: "phone", width: 390, height: 844 },
+    { label: "tablet", width: 768, height: 1024 },
+  ]) {
+    test(`no horizontal overflow @${label}: ${route}`, async ({ page }) => {
+      await page.setViewportSize({ width, height });
+      await page.goto(route, { waitUntil: "networkidle" });
+      const overflow = await page.evaluate(
+        () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      );
+      expect(overflow, `${route} scrolls sideways at ${width}px`).toBeLessThanOrEqual(0);
+    });
+  }
 }

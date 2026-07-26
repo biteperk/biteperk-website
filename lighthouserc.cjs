@@ -24,6 +24,11 @@ module.exports = {
         "http://localhost/au-en/sydney/",
         "http://localhost/au-en/blog/what-missed-calls-cost-your-restaurant/",
         "http://localhost/au-en/contact/",
+        // The market trees are in the same merged build and must stay inside
+        // the perf contract — they carry hero imagery and a market band, and
+        // their visitors are the furthest from the Sydney origin.
+        "http://localhost/gb-en/",
+        "http://localhost/fr/",
       ],
       // Median of 3: single runs on shared 2-core CI runners produce
       // coin-flip TBT/perf numbers (observed 619ms TBT with 26KB of JS).

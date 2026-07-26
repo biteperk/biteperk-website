@@ -46,6 +46,38 @@ function remarkBaseLinks(base) {
   };
 }
 
+/**
+ * Wrap markdown tables so a wide table scrolls INSIDE its own box instead of
+ * making the whole page scroll sideways. A comparison table in one of the
+ * guides was 512px on a 390px phone, dragging the entire article with it —
+ * caught by the horizontal-overflow assertion in the e2e suite.
+ *
+ * tabindex + role/aria-label are what make the scroll box reachable and
+ * announced for keyboard and screen-reader users; `overflow-x:auto` alone
+ * would leave the content unreachable without a pointer.
+ */
+function rehypeScrollableTables() {
+  /** @param {import("unist").Node} tree */
+  return (tree) => {
+    visit(tree, "element", (/** @type {any} */ node, index, /** @type {any} */ parent) => {
+      if (node.tagName !== "table" || !parent || index === null || index === undefined) return;
+      const cls = parent.properties?.className;
+      if (Array.isArray(cls) && cls.includes("table-scroll")) return; // already wrapped
+      parent.children[index] = {
+        type: "element",
+        tagName: "div",
+        properties: {
+          className: ["table-scroll"],
+          tabIndex: 0,
+          role: "region",
+          "aria-label": "Table — scroll horizontally to see all columns",
+        },
+        children: [node],
+      };
+    });
+  };
+}
+
 // Static-only output — this is a marketing site, no SSR needed.
 // Firebase Hosting serves the contents of the build's out dir directly.
 export default defineConfig({
@@ -61,6 +93,7 @@ export default defineConfig({
   compressHTML: true,
   markdown: {
     remarkPlugins: BASE ? [[remarkBaseLinks, BASE]] : [],
+    rehypePlugins: [rehypeScrollableTables],
   },
   prefetch: {
     prefetchAll: true,

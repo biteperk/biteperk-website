@@ -209,6 +209,14 @@ const companyLinks = headerNav.filter((l) => l.mobile !== false);
     padding: 14px 22px;
     border-bottom: 1px solid var(--line);
   }
+  /* People tap the logo to get home — it's a navigation target, so it gets a
+     44px height like the close button beside it (it was 32px, set only by the
+     StarMark's intrinsic size). */
+  .mm-header .brand {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
   .mm-header-actions {
     display: flex;
     align-items: center;
