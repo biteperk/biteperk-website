@@ -71,6 +71,7 @@ const gbEn: MarketContent = {
       },
     },
     contact: {
+      form: { venuePlaceholder: "e.g. The Copper Larder, Shoreditch" },
       title: "Contact BitePerk — UK restaurant pilots",
       description:
         "Tell us about your UK venue and we'll set up a conversation — and a live demonstration of Vox taking a booking.",
@@ -153,6 +154,7 @@ const beEn: MarketContent = {
       },
     },
     contact: {
+      form: { venuePlaceholder: "e.g. Maison Verte, Brussels" },
       title: "Contact BitePerk — Belgium restaurant pilots",
       description:
         "Tell us about your venue in Belgium and we'll set up a conversation — and a live demonstration of Vox taking a booking.",
@@ -194,6 +196,7 @@ const beFr: MarketContent = {
       },
     },
     contact: {
+      form: { venuePlaceholder: "ex. Maison Verte, Bruxelles" },
       title: "Contacter BitePerk — pilotes en Belgique",
       description:
         "Parlez-nous de votre établissement en Belgique : nous organiserons un échange et une démonstration en direct de Vox.",
