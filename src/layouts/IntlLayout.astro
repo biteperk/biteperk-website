@@ -12,7 +12,7 @@
 import Base from "@/layouts/Base.astro";
 import { resolveCopy } from "@/data/intl";
 import {
-  localesForTarget, buildHreflang, isSharedPage, localeSwitchUrl, INTL_LAUNCHED, AU_HOME,
+  localesForTarget, buildHreflang, localeSwitchUrl, INTL_LAUNCHED, AU_HOME,
   type BuildTarget, type Locale,
 } from "@/data/locales";
 import LocalePicker from "@/components/LocalePicker.astro";
@@ -40,9 +40,11 @@ const canonicalPath = `${locale.base}/${pagePath}`;
 // Once launched, shared pages (home/about/contact/legal) join the AU site in
 // the full cross-locale cluster; /how-it-works stays global-only. Pre-launch:
 // global locales only.
-const baseLessPath = pagePath ? `/${pagePath}` : "/";
-const targets: readonly BuildTarget[] =
-  INTL_LAUNCHED && isSharedPage(baseLessPath) ? ["au", "global"] : ["global"];
+// buildHreflang drops any locale that doesn't emit the page, so "au" can be
+// offered unconditionally here — it joins on the shared pages and is filtered
+// out everywhere else. (This used to repeat the isSharedPage test itself; two
+// copies of one rule is one too many.)
+const targets: readonly BuildTarget[] = INTL_LAUNCHED ? ["au", "global"] : ["global"];
 const { alternates, xDefault } = buildHreflang(pagePath, targets);
 
 // Footer language/region alternates — derived from the locale array (no

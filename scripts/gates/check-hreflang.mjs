@@ -3,8 +3,17 @@
  * hreflang integrity gate over the GLOBAL build (dist-global/).
  *
  * For every global-locale page (all bases derived from locales.ts) asserts:
- *   - the complete cluster of hreflang codes (derived from src/data/locales.ts)
- *   - exactly one x-default
+ *   - EXACTLY the cluster of hreflang codes that locales.ts says should be
+ *     there — no missing code, and no code for a locale that doesn't emit the
+ *     page. It used to demand the complete set on every page, which was right
+ *     only while every tree was identical; with uneven market depth
+ *     (/gb-en/london/ is UK-only; be-en + be-fr "brussels" are a true pair) that
+ *     rule would have forced four 404 alternates onto every UK city page.
+ *     (Never write a glob ending in star-slash inside a block comment — it
+ *     closes the comment. It cost a CI round in global.css the same day.)
+ *     Missing AND extra are both failures — the extra half is the one that
+ *     catches an alternate pointing at a page that was never built.
+ *   - exactly one x-default, and it is a member of the page's own cluster
  *   - every href is absolute (https://biteperk.com/…) and resolves to a built
  *     page in dist-global (never a redirect target / 404)
  *   - self-referencing (the page's own canonical is one of its alternates)
@@ -33,7 +42,22 @@ if (!existsSync(DIST)) {
 // grows a relative import (a data: URL has no base to resolve one against).
 const locales = await loadTS(join(ROOT, "src/data/locales.ts"));
 const globals = locales.localesForTarget("global");
-const EXPECTED_CODES = new Set(globals.flatMap((l) => l.hreflang));
+
+/**
+ * The hreflang codes a given page path SHOULD carry — derived from the same
+ * pageExistsInLocale() the renderer uses, so the gate and the page cannot
+ * disagree about which locales are in a cluster.
+ *
+ * `baseLess` is the path with the locale segment stripped ("/" or "/london/").
+ * Pre-launch only global locales cluster (INTL_LAUNCHED off is the default and
+ * what CI builds); once it flips, AU joins on the shared pages and its hrefs
+ * live in dist/, not dist-global/ — see resolvesInDist.
+ */
+const AU = locales.locales.filter((l) => l.target === "au");
+const clusterFor = (baseLess) =>
+  [...globals, ...(locales.INTL_LAUNCHED ? AU : [])].filter((l) =>
+    locales.pageExistsInLocale(baseLess, l),
+  );
 // Reciprocity key: strip the LOCALE SEGMENT (derived, longest-first so
 // "be-en" wins over any prefix). A hardcoded (en|fr) here silently skipped
 // every page of a new locale — the check "passed" by never comparing them.
@@ -66,9 +90,20 @@ function alternatesOf(html) {
 }
 const canonicalOf = (html) => (html.match(/<link\b[^>]*rel="canonical"[^>]*href="([^"]+)"/) || [])[1] ?? null;
 
+const AU_BASE = AU[0]?.base.replace(/^\//, "") ?? "au-en";
+const AU_DIST = join(ROOT, "dist");
+
 function resolvesInDist(href) {
   if (!href.startsWith(HOST + "/")) return false;
   const path = href.slice(HOST.length).replace(/^\/+/, "").replace(/\/$/, "");
+  // AU alternates (only present once INTL_LAUNCHED) belong to the OTHER build:
+  // Astro's `base` shapes the URL, not the output dir, so /au-en/about/ lives
+  // at dist/about/index.html. Without this the launch build would fail the
+  // gate on hrefs that are perfectly correct in the merged tree.
+  if (path === AU_BASE || path.startsWith(AU_BASE + "/")) {
+    const rest = path.slice(AU_BASE.length).replace(/^\/+/, "");
+    return existsSync(rest ? join(AU_DIST, rest, "index.html") : join(AU_DIST, "index.html"));
+  }
   const file = path ? join(DIST, path, "index.html") : join(DIST, "index.html");
   return existsSync(file);
 }
@@ -83,11 +118,24 @@ for (const file of pages) {
   const alts = alternatesOf(html);
   const canonical = canonicalOf(html);
 
+  // The locale segment stripped off ("gb-en/london/index.html" → "/london/",
+  // "fr/index.html" → "/"): the key both the cluster lookup and the
+  // reciprocity check are computed from.
+  const key = rel.replace(SEG_RE, "").replace(/index\.html$/, "");
+  const baseLess = key ? `/${key}` : "/";
+  const cluster = clusterFor(baseLess);
+
   const xdef = alts.filter((a) => a.hreflang === "x-default");
   if (xdef.length !== 1) fail(`${rel}: expected exactly one x-default, found ${xdef.length}`);
+  else if (!alts.some((a) => a.hreflang !== "x-default" && a.href === xdef[0].href))
+    fail(`${rel}: x-default ${xdef[0].href} is not one of the page's own alternates`);
 
   const codes = new Set(alts.filter((a) => a.hreflang !== "x-default").map((a) => a.hreflang));
-  for (const c of EXPECTED_CODES) if (!codes.has(c)) fail(`${rel}: missing hreflang="${c}"`);
+  const expected = new Set(cluster.flatMap((l) => l.hreflang));
+  for (const c of expected) if (!codes.has(c)) fail(`${rel}: missing hreflang="${c}"`);
+  for (const c of codes)
+    if (!expected.has(c))
+      fail(`${rel}: unexpected hreflang="${c}" — no locale in this page's cluster emits "${baseLess}"`);
 
   for (const a of alts) {
     if (!a.href.startsWith(HOST + "/")) fail(`${rel}: hreflang ${a.hreflang} href not absolute on ${HOST}: ${a.href}`);
@@ -97,7 +145,6 @@ for (const file of pages) {
   if (canonical && !alts.some((a) => a.href === canonical))
     fail(`${rel}: not self-referencing (canonical ${canonical} absent from its alternates)`);
 
-  const key = rel.replace(SEG_RE, "").replace(/index\.html$/, "");
   const hrefSet = [...new Set(alts.filter((a) => a.hreflang !== "x-default").map((a) => a.href))].sort().join("|");
   const prev = setsByPath.get(key);
   if (prev && prev !== hrefSet) fail(`${rel}: hreflang set not reciprocal with its "${key}" sibling`);

@@ -14,21 +14,37 @@
  * (no AU price/phone/NAP) are enforced by scripts/gates/check-truthful.mjs.
  */
 import IntlLayout from "@/layouts/IntlLayout.astro";
-import { localesForTarget, INTL_PAGE_PATHS, currentTarget, type Locale } from "@/data/locales";
-import { resolveCopy, resolveMedia } from "@/data/intl";
+import { localesForTarget, pagesForLocale, currentTarget, type Locale } from "@/data/locales";
+import { resolveCopy, resolveMedia, type CopyBundle, type SimplePageCopy } from "@/data/intl";
 import ImageBlock from "@/components/ImageBlock.astro";
 
 export function getStaticPaths() {
   if (currentTarget() !== "global") return [];
   const out: { params: { intl: string }; props: { locale: Locale; page: string } }[] = [];
   for (const locale of localesForTarget("global")) {
-    for (const page of INTL_PAGE_PATHS) {
+    for (const page of pagesForLocale(locale)) {
       const seg = [locale.base.replace(/^\//, ""), page].filter(Boolean).join("/");
       out.push({ params: { intl: seg }, props: { locale, page } });
     }
   }
   return out;
 }
+
+/**
+ * The page registry: which template renders a given path, and where its copy
+ * lives. Adding a page kind (product, city, guide) is an entry here plus a
+ * body branch below — not another limb on a ternary chain.
+ *
+ * "simple" pages all share one prose template, so they only need a selector
+ * into the copy bundle. Home and contact have bespoke bodies.
+ */
+const SIMPLE_PAGES: Readonly<Record<string, (c: CopyBundle) => SimplePageCopy>> = {
+  "how-it-works": (c) => c.howItWorks,
+  about: (c) => c.about,
+  "legal/privacy": (c) => c.privacy,
+  "legal/terms": (c) => c.terms,
+  "legal/cookies": (c) => c.cookies,
+};
 
 const { locale, page } = Astro.props;
 // Links must come from the BASE ("/gb-en/…"), never the lang ("en-GB" → 404).
@@ -38,13 +54,16 @@ const c = resolveCopy(locale);
 const media = resolveMedia(locale);
 const { home: h, contact: ct } = c;
 
-const simple =
-  page === "how-it-works" ? c.howItWorks
-  : page === "about" ? c.about
-  : page === "legal/privacy" ? c.privacy
-  : page === "legal/terms" ? c.terms
-  : page === "legal/cookies" ? c.cookies
-  : null;
+const simple = SIMPLE_PAGES[page]?.(c) ?? null;
+
+// A path in pagesForLocale() that no branch here can render used to reach
+// `simple!.title` and die on a null dereference — an unreadable crash from a
+// data edit made in a different file. Fail with the path that caused it.
+if (page !== "" && page !== "contact" && !simple)
+  throw new Error(
+    `[...intl].astro: no renderer for page "${page}" (locale ${locale.base}). ` +
+      `Add it to SIMPLE_PAGES or give it a body branch, or drop it from INTL_EXTRA_PAGES.`,
+  );
 
 const meta =
   page === ""
