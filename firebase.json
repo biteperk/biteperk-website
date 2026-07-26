@@ -270,6 +270,12 @@
       "cleanUrls": true,
       "redirects": [
         {
+          "//": "The apex. `/:path*` does not match the empty path, so without this the homepage fell through to dist-cctld/index.html — a meta-refresh, i.e. the WEAKEST redirect signal on the single URL carrying the most accumulated authority on the migrating domain. Server-side 301 is what Google's site-move guidance asks for.",
+          "source": "/",
+          "destination": "https://biteperk.com/au-en/",
+          "type": 301
+        },
+        {
           "source": "/:path*",
           "destination": "https://biteperk.com/au-en/:path",
           "type": 301

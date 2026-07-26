@@ -92,9 +92,16 @@ writeFileSync(
 const auRobots = existsSync(join(AU, "robots.txt"))
   ? readFileSync(join(AU, "robots.txt"), "utf8")
   : "User-agent: *\nAllow: /\n";
-const robots = auRobots
-  .replace(/Sitemap:.*$/m, `Sitemap: ${ORIGIN}/sitemap-index.xml`)
-  .replace(/https:\/\/biteperk\.com\.au/g, `${ORIGIN}/au-en`);
+// The blanket .com.au -> /au-en rewrite below is right for PAGE references,
+// but robots.txt also names the root-only files (sitemap + llms.txt). Those
+// live at the site ROOT on the merged host (see ROOT_ONLY above), not under
+// /au-en, so they must be rewritten first — otherwise robots.txt advertises
+// /au-en/sitemap-index.xml and /au-en/llms.txt, which 404, and crawlers that
+// read the comment lines are pointed at nothing.
+const robots = [...ROOT_ONLY].reduce(
+  (acc, f) => acc.replaceAll(`https://biteperk.com.au/${f}`, `${ORIGIN}/${f}`),
+  auRobots.replace(/Sitemap:.*$/m, `Sitemap: ${ORIGIN}/sitemap-index.xml`),
+).replace(/https:\/\/biteperk\.com\.au/g, `${ORIGIN}/au-en`);
 writeFileSync(join(SITE, "robots.txt"), robots);
 
 // 6. Root llms.txt + humans.txt — from the AU build (primary market), with the
