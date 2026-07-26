@@ -48,7 +48,6 @@ const marketing = categories.find((c) => c.id === "marketing")!;
           These are stored with your browser's <strong>localStorage</strong> — technically not cookies, never
           sent to a server, and they hold no personal data:
         </p>
-        <div class="table-scroll" tabindex="0" role="region" aria-label="Cookie table — scroll horizontally to see all columns">
         <table class="legal-table">
           <thead><tr><th>Name</th><th>Purpose</th><th>Type</th></tr></thead>
           <tbody>
@@ -56,7 +55,6 @@ const marketing = categories.find((c) => c.id === "marketing")!;
             <tr><td><code>bp-theme</code></td><td>Remembers light or dark mode.</td><td>localStorage</td></tr>
           </tbody>
         </table>
-        </div>
       </section>
 
       <section>
@@ -76,7 +74,6 @@ const marketing = categories.find((c) => c.id === "marketing")!;
           When enabled and accepted, the <strong>LinkedIn Insight Tag</strong> sets third-party cookies to
           measure our LinkedIn advertising and let us reach venues who've visited. These may include:
         </p>
-        <div class="table-scroll" tabindex="0" role="region" aria-label="Cookie table — scroll horizontally to see all columns">
         <table class="legal-table">
           <thead><tr><th>Name</th><th>Set by</th><th>Purpose</th></tr></thead>
           <tbody>
@@ -85,7 +82,6 @@ const marketing = categories.find((c) => c.id === "marketing")!;
             <tr><td><code>UserMatchHistory</code>, <code>AnalyticsSyncHistory</code></td><td>LinkedIn</td><td>Ad audience sync.</td></tr>
           </tbody>
         </table>
-        </div>
         <p>
           If you withdraw marketing consent we stop loading the tag immediately and clear the cookies we can
           reach. Some LinkedIn cookies are set on LinkedIn's own domains and can only be cleared by LinkedIn or
@@ -180,23 +176,14 @@ const marketing = categories.find((c) => c.id === "marketing")!;
     cursor: pointer;
   }
   .legal-inline-btn:hover { text-decoration-thickness: 2px; }
-  /* WebKit rounded this table 2px past the viewport at 390px, scrolling the
-     whole page sideways. Same scroll-box treatment the markdown tables get
-     (rehypeScrollableTables in astro.config.mjs) — keyboard-reachable, so the
-     hidden columns aren't pointer-only. */
-  .table-scroll {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    max-width: 100%;
-    /* See the blog prose note: a classic horizontal scrollbar adds height to
-       this box when it appears and shifts the page. Keyboard scrolling stays
-       (tabindex=0 + role=region); the fade signals there is more to the right. */
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent 100%);
-    mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent 100%);
+  /* Constrain rather than scroll — see the blog prose note. */
+  .legal-table th,
+  .legal-table td { overflow-wrap: anywhere; }
+  @media (max-width: 560px) {
+    .legal-table { font-size: 12.5px; }
+    .legal-table th,
+    .legal-table td { padding-inline: 8px; }
   }
-  .table-scroll::-webkit-scrollbar { display: none; }
   .table-scroll:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
   .legal-table {
     width: 100%;

@@ -158,34 +158,27 @@ const breadcrumbJsonLd = {
     line-height: 1.75;
   }
   .prose :global(> * + *) { margin-top: 1.35em; }
-  /* Wide tables scroll in their own box (wrapper added by the
-     rehypeScrollableTables plugin in astro.config.mjs) instead of dragging the
-     whole article sideways on a phone. */
-  .prose :global(.table-scroll) {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    max-width: 100%;
-    /* Hide the scrollbar chrome, keep the scrolling. A classic horizontal
-       scrollbar (Linux/Windows) sits INSIDE this box and adds ~15px of height
-       when it appears, pushing everything below it down — measured as CLS
-       0.022 on CI against a 0.02 budget, invisible on macOS where scrollbars
-       overlay. Removing it removes the variable entirely.
-       Scrollability stays reachable: the wrapper is tabindex=0 with
-       role=region + aria-label, and the fade below signals there is more. */
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+  /* Wide tables FIT rather than scroll. A comparison table in one guide was
+     512px on a 390px phone, dragging the whole article sideways. The obvious
+     fix — an overflow-x scroll box — cost measurable CLS on CI (the container
+     changes layout as it resolves) and needed a scrollbar that behaves
+     differently on every platform. Constraining the table is simpler, has no
+     moving parts, and reads better on a phone than a sideways-scrolling grid. */
+  .prose :global(table) {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
   }
-  .prose :global(.table-scroll::-webkit-scrollbar) { display: none; }
-  /* Right-edge fade — the affordance that replaces the scrollbar. */
-  .prose :global(.table-scroll) {
-    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent 100%);
-    mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent 100%);
+  .prose :global(th),
+  .prose :global(td) {
+    overflow-wrap: anywhere;
+    hyphens: auto;
   }
-  .prose :global(.table-scroll:focus-visible) {
-    outline: 2px solid var(--gold);
-    outline-offset: 4px;
+  @media (max-width: 560px) {
+    .prose :global(table) { font-size: 0.8125rem; }
+    .prose :global(th),
+    .prose :global(td) { padding-inline: 6px; }
   }
-  .prose :global(.table-scroll table) { min-width: max-content; }
   .prose :global(h2) {
     margin-top: 2em;
     font-size: clamp(1.45rem, 1.1rem + 1.4vw, 1.9rem);
