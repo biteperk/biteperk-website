@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.2.0",
   "private": true,
-  "description": "Biteperk company website \u2014 biteperk.com (AU + international)",
+  "description": "Biteperk company website — biteperk.com (AU + international)",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -11,7 +11,7 @@
     "build:global": "BUILD_TARGET=global astro build && node scripts/build/prune-global.mjs && node scripts/build/llms-global.mjs",
     "build:site": "npm run build && npm run build:global && node scripts/build/merge-dist.mjs",
     "gates:au": "node scripts/gates/check-routes.mjs && node scripts/gates/check-schema.mjs && node scripts/gates/check-cities.mjs && node scripts/gates/check-assets.mjs && node scripts/gates/check-links.mjs && node scripts/gates/check-contrast.mjs",
-    "gates:global": "node --test tests/unit/*.test.mjs && BUILD_TARGET=global node scripts/gates/check-routes.mjs && BUILD_TARGET=global node scripts/gates/check-schema.mjs && BUILD_TARGET=global node scripts/gates/check-assets.mjs && BUILD_TARGET=global node scripts/gates/check-links.mjs && node scripts/gates/check-truthful.mjs && node scripts/gates/check-hreflang.mjs",
+    "gates:global": "node --test tests/unit/*.test.mjs && BUILD_TARGET=global node scripts/gates/check-routes.mjs && BUILD_TARGET=global node scripts/gates/check-schema.mjs && BUILD_TARGET=global node scripts/gates/check-cities.mjs && BUILD_TARGET=global node scripts/gates/check-assets.mjs && BUILD_TARGET=global node scripts/gates/check-links.mjs && node scripts/gates/check-truthful.mjs && node scripts/gates/check-hreflang.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "check": "astro check",

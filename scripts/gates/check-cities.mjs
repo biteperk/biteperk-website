@@ -1,18 +1,36 @@
 #!/usr/bin/env node
 /**
- * Anti-doorway + integrity gate for the city-page engine.
+ * Anti-doorway + integrity gate for the city-page engines — BOTH of them.
  *
- * For every `published: true` city in src/data/cities.ts:
- *   1. Unique hand-written copy (intro + scenarios + faqs) ≥ 600 words.
- *   2. Cross-city intro similarity below threshold (4-word shingle overlap
- *      ≤ 35%) — catches "same paragraph, city name swapped" doorway copy.
- *   3. An OG card exists at public/og/<slug>.png.
- *   4. relatedGuides slugs exist in src/content/blog/.
+ *   BUILD_TARGET=au      → src/data/cities.ts        (the AU engine)
+ *   BUILD_TARGET=global  → src/data/intl/cities.ts   (the market engine)
  *
- * Runs in CI and locally: node scripts/gates/check-cities.mjs
- * cities.ts is transpiled with esbuild (already in the Astro dependency
- * tree) and imported as a data URL — no extra dependencies, no fragile
- * hand-rolled type stripping.
+ * For every `published: true` city:
+ *   1. Unique hand-written copy (intro + scenarios + faqs + aiLocal) ≥ 600 words.
+ *   2. Pairwise similarity below threshold (4-word shingle overlap ≤ 35%) on the
+ *      two fields most tempting to template — the intro and the AI explainer,
+ *      whose topics are shared by design so the *wording* must not be.
+ *   3. An OG card exists.
+ *   4. relatedGuides resolve to real guides.
+ *   5. The page is listed in the llms.txt that ships for that build.
+ *
+ * ── Why the global pass compares PER LANGUAGE, not per market ────────────────
+ * Doorway copy leaks along the language seam, not the border. London (gb-en)
+ * and Brussels-EN (be-en) are both English and both say "Vox is opening pilots
+ * here"; London vs. Paris is already separated by being in different languages.
+ * So the comparison pools are English = gb-en + be-en and French = fr + be-fr —
+ * 6 cities each at full build-out, i.e. 15 pairs per language, 30 in total.
+ * Comparing within a market instead would have left the riskiest pair unchecked.
+ *
+ * The global side is live and enforcing before a single market city exists, on
+ * purpose: a similarity gate first exercised against 24 freshly-written pages
+ * is a gate you will be tempted to loosen rather than trust.
+ *
+ * Fault-inject before trusting: duplicate one city's intro onto another,
+ * re-run, confirm exit 1. Run after a build (the global pass reads the
+ * generated dist-global/llms.txt):
+ *   node scripts/gates/check-cities.mjs
+ *   BUILD_TARGET=global node scripts/gates/check-cities.mjs
  */
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { join, dirname } from "node:path";
@@ -20,16 +38,15 @@ import { fileURLToPath } from "node:url";
 import { loadTS } from "../build/_load-ts.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
+const IS_GLOBAL = process.env.BUILD_TARGET === "global";
 
-// The city-page engine is an AU concept; the global (biteperk.com) build has no
-// city pages, so this gate is AU-only.
-if (process.env.BUILD_TARGET === "global") {
-  console.log("check-cities: AU-only gate; skipped for the global build.");
-  process.exit(0);
-}
+let failed = 0;
+const fail = (msg) => {
+  failed++;
+  console.error(`FAIL  ${msg}`);
+};
 
-const { cities } = await loadTS(join(ROOT, "src/data/cities.ts"));
-
+// ── Similarity primitives (shared by both passes) ────────────────────────────
 const words = (s) => s.split(/\s+/).filter(Boolean);
 const shingles = (s, n = 4) => {
   const w = words(s.toLowerCase().replace(/[^a-z0-9\s]/g, ""));
@@ -44,20 +61,6 @@ const overlap = (a, b) => {
   return hit / Math.min(a.size, b.size);
 };
 
-const blogDir = join(ROOT, "src/content/blog");
-const blogSlugs = new Set(
-  readdirSync(blogDir)
-    .filter((f) => f.endsWith(".md"))
-    .map((f) => f.replace(/\.md$/, ""))
-);
-
-const published = cities.filter((c) => c.published);
-let failed = 0;
-const fail = (msg) => {
-  failed++;
-  console.error(`FAIL  ${msg}`);
-};
-
 const aiLocalText = (c) =>
   [c.aiLocal.lead, ...c.aiLocal.points.flatMap((p) => [p.title, p.body])].join(" ");
 
@@ -69,43 +72,123 @@ const cityText = (c) =>
     aiLocalText(c),
   ].join(" ");
 
-for (const c of published) {
-  const count = words(cityText(c)).length;
-  if (count < 600) fail(`${c.slug}: only ${count} words of unique copy (need ≥600)`);
-  else console.log(`PASS  ${c.slug}: ${count} words`);
-
-  if (!existsSync(join(ROOT, "public/og", `${c.slug}.png`)))
-    fail(`${c.slug}: missing OG card public/og/${c.slug}.png`);
-
-  for (const g of c.relatedGuides)
-    if (!blogSlugs.has(g)) fail(`${c.slug}: relatedGuide "${g}" not found in src/content/blog/`);
-}
-
-// llms.txt must mention every published city page (AI-crawler surface).
-const llms = readFileSync(join(ROOT, "public/llms.txt"), "utf8");
-for (const c of published) {
-  if (!llms.includes(`https://biteperk.com.au/${c.slug}/`))
-    fail(`${c.slug}: not listed in public/llms.txt`);
-}
-
-// Pairwise similarity on the two fields most tempting to template: the
-// intro and the AI-explainer (whose four topics are shared across cities,
-// so the *copy* must stay genuinely per-city).
-for (let i = 0; i < published.length; i++) {
-  for (let j = i + 1; j < published.length; j++) {
-    const a = published[i], b = published[j];
-    const introSim = overlap(shingles(a.intro.join(" ")), shingles(b.intro.join(" ")));
-    if (introSim > 0.35) fail(`${a.slug} ↔ ${b.slug}: intro similarity ${(introSim * 100).toFixed(0)}% (max 35%) — doorway risk`);
-    else console.log(`PASS  ${a.slug} ↔ ${b.slug}: intro similarity ${(introSim * 100).toFixed(0)}%`);
-
-    const aiSim = overlap(shingles(aiLocalText(a)), shingles(aiLocalText(b)));
-    if (aiSim > 0.35) fail(`${a.slug} ↔ ${b.slug}: aiLocal similarity ${(aiSim * 100).toFixed(0)}% (max 35%) — doorway risk`);
-    else console.log(`PASS  ${a.slug} ↔ ${b.slug}: aiLocal similarity ${(aiSim * 100).toFixed(0)}%`);
+/**
+ * Pairwise intro + aiLocal similarity across one pool of cities.
+ * `label` names the pool in output ("AU", "English", "French").
+ */
+function comparePool(label, pool, id) {
+  for (let i = 0; i < pool.length; i++) {
+    for (let j = i + 1; j < pool.length; j++) {
+      const a = pool[i], b = pool[j];
+      const pair = `${id(a)} ↔ ${id(b)}`;
+      for (const [field, text] of [
+        ["intro", (c) => c.intro.join(" ")],
+        ["aiLocal", aiLocalText],
+      ]) {
+        const sim = overlap(shingles(text(a)), shingles(text(b)));
+        const pct = (sim * 100).toFixed(0);
+        if (sim > 0.35) fail(`[${label}] ${pair}: ${field} similarity ${pct}% (max 35%) — doorway risk`);
+        else console.log(`PASS  [${label}] ${pair}: ${field} similarity ${pct}%`);
+      }
+    }
   }
 }
 
-if (failed) {
-  console.error(`\ncheck-cities: ${failed} failure(s).`);
+/** Shared per-city checks: word count, OG card, related guides. */
+function checkCity(c, id, ogPath, guideSlugs, guidesLabel) {
+  const count = words(cityText(c)).length;
+  if (count < 600) fail(`${id}: only ${count} words of unique copy (need ≥600)`);
+  else console.log(`PASS  ${id}: ${count} words`);
+
+  if (!existsSync(join(ROOT, ogPath))) fail(`${id}: missing OG card ${ogPath}`);
+
+  for (const g of c.relatedGuides)
+    if (!guideSlugs.has(g)) fail(`${id}: relatedGuide "${g}" not found in ${guidesLabel}`);
+}
+
+const readSlugs = (dir) =>
+  new Set(
+    existsSync(dir)
+      ? readdirSync(dir).filter((f) => f.endsWith(".md")).map((f) => f.replace(/\.md$/, ""))
+      : [],
+  );
+
+// ── AU pass ──────────────────────────────────────────────────────────────────
+if (!IS_GLOBAL) {
+  const { cities } = await loadTS(join(ROOT, "src/data/cities.ts"));
+  const published = cities.filter((c) => c.published);
+  const guides = readSlugs(join(ROOT, "src/content/blog"));
+
+  for (const c of published) checkCity(c, c.slug, `public/og/${c.slug}.png`, guides, "src/content/blog/");
+
+  const llms = readFileSync(join(ROOT, "public/llms.txt"), "utf8");
+  for (const c of published)
+    if (!llms.includes(`https://biteperk.com.au/${c.slug}/`))
+      fail(`${c.slug}: not listed in public/llms.txt`);
+
+  comparePool("AU", published, (c) => c.slug);
+
+  if (failed) {
+    console.error(`\ncheck-cities (au): ${failed} failure(s).`);
+    process.exit(1);
+  }
+  console.log(`\ncheck-cities (au): ${published.length} published cities pass all gates.`);
+  process.exit(0);
+}
+
+// ── Global pass ──────────────────────────────────────────────────────────────
+const { intlCities } = await loadTS(join(ROOT, "src/data/intl/cities.ts"));
+const { locales } = await loadTS(join(ROOT, "src/data/locales.ts"));
+const published = intlCities.filter((c) => c.published);
+const byBase = new Map(locales.map((l) => [l.base, l]));
+
+// Generated at build time, so this pass runs after `BUILD_TARGET=global npm run build`.
+const LLMS = join(ROOT, "dist-global/llms.txt");
+if (!existsSync(LLMS)) {
+  console.error(`check-cities: ${LLMS} not found — run BUILD_TARGET=global npm run build first.`);
   process.exit(1);
 }
-console.log(`\ncheck-cities: ${published.length} published cities pass all gates.`);
+const llms = readFileSync(LLMS, "utf8");
+
+for (const c of published) {
+  const id = `${c.base}/${c.slug}`;
+  const locale = byBase.get(c.base);
+
+  // A city whose base isn't a real global locale would silently emit nothing.
+  if (!locale || locale.target !== "global") {
+    fail(`${id}: base "${c.base}" is not a global locale in locales.ts`);
+    continue;
+  }
+  if (locale.copyLang !== c.copyLang)
+    fail(`${id}: copyLang "${c.copyLang}" contradicts locale ${c.base} (${locale.copyLang})`);
+
+  // Same filename convention as the intl OG cards (/en keeps legacy names,
+  // every other tree carries its base as a suffix) — scripts/brand/generate-og.mjs.
+  const suffix = c.base === "/en" ? "" : `-${c.base.slice(1)}`;
+  checkCity(
+    c,
+    id,
+    `public/og/intl/${c.slug}${suffix}.png`,
+    readSlugs(join(ROOT, `src/content/intl/${c.base.slice(1)}`)),
+    `src/content/intl/${c.base.slice(1)}/`,
+  );
+
+  if (!llms.includes(`https://biteperk.com${c.base}/${c.slug}/`))
+    fail(`${id}: not listed in dist-global/llms.txt (see scripts/build/llms-global.mjs)`);
+}
+
+// The pools that matter: language, across markets.
+for (const lang of ["en", "fr"]) {
+  const pool = published.filter((c) => c.copyLang === lang);
+  comparePool(lang === "en" ? "English" : "French", pool, (c) => `${c.base}/${c.slug}`);
+}
+
+if (failed) {
+  console.error(`\ncheck-cities (global): ${failed} failure(s).`);
+  process.exit(1);
+}
+console.log(
+  `\ncheck-cities (global): ${published.length} published market cities pass all gates ` +
+    `(${published.filter((c) => c.copyLang === "en").length} EN, ` +
+    `${published.filter((c) => c.copyLang === "fr").length} FR).`,
+);
