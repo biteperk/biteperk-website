@@ -38,6 +38,11 @@ export type ChromeCopy = {
   cookies: string;
   /** Re-open the consent modal — GDPR requires withdrawal to be as easy as consent. */
   cookieSettings: string;
+  /** Region picker menu heading. */
+  regionTitle: string;
+  /** Locale-suggestion chip: shown in the TARGET locale's language. */
+  suggest: string;
+  suggestDismiss: string;
   email: string;
   rights: string;
 };
@@ -98,6 +103,9 @@ export const chrome: Record<Lang, ChromeCopy> = {
     terms: "Terms",
     cookies: "Cookies",
     cookieSettings: "Cookie settings",
+    regionTitle: "Choose your region",
+    suggest: "There's a BitePerk site for your region.",
+    suggestDismiss: "Dismiss",
     email: "hello@biteperk.com.au",
     rights: "All rights reserved.",
   },
@@ -112,6 +120,9 @@ export const chrome: Record<Lang, ChromeCopy> = {
     terms: "Conditions",
     cookies: "Cookies",
     cookieSettings: "Paramètres des cookies",
+    regionTitle: "Choisissez votre région",
+    suggest: "Un site BitePerk existe pour votre région.",
+    suggestDismiss: "Fermer",
     email: "hello@biteperk.com.au",
     rights: "Tous droits réservés.",
   },
