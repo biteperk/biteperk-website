@@ -206,13 +206,26 @@ const current = localeFromPath(path);
   }
   .lp-item.is-current .lp-check { opacity: 1; }
 
-  /* Mobile: the picker rides inside MobileMenu's own section, where it gets
-     full width and drops the floating panel. */
-  @media (max-width: 520px) {
+  /* ── Phones: a viewport-anchored bottom sheet ────────────────────────
+     The trigger sits mid-bar in the intl chrome (brand · picker · toggle), so
+     NEITHER anchor fits a 276px menu: `right:0` overflowed the left edge and
+     `left:0` — what shipped — overflowed the RIGHT edge by ~43px on a 390px
+     screen. Anchoring to the viewport instead of the trigger is the only
+     option that can't overflow, and it gives a calmer, thumb-reachable list.
+
+     Requires no backdrop-filter on any ancestor: a filtered element becomes
+     the containing block for fixed descendants (IntlLayout drops its filter
+     at this breakpoint for exactly this reason). The AU chrome never hits
+     this rule — below 1180px its picker lives in the overlay menu instead. */
+  @media (max-width: 720px) {
     .lp-menu {
-      right: auto;
-      left: 0;
-      min-width: min(17.25rem, calc(100vw - 32px));
+      position: fixed;
+      inset: auto 16px calc(16px + env(safe-area-inset-bottom)) 16px;
+      min-width: 0;
+      max-height: min(60vh, 420px);
+      overflow-y: auto;
+      overscroll-behavior: contain;
     }
+    .lp-item { min-height: 48px; }
   }
 </style>
