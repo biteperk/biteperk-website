@@ -90,9 +90,14 @@ const current = localeFromPath(path);
       border-color var(--dur-fast) var(--ease-out);
   }
   .lp-trigger::-webkit-details-marker { display: none; }
-  .lp-trigger:hover {
-    background: var(--fill-hover);
-    border-color: var(--line-strong);
+  /* Hover-capable pointers ONLY. On iOS a :hover rule on a control makes the
+     first tap apply the hover state and only the second activate it — the
+     picker measurably needed two taps on a real iPhone before this guard. */
+  @media (hover: hover) {
+    .lp-trigger:hover {
+      background: var(--fill-hover);
+      border-color: var(--line-strong);
+    }
   }
   .lp[open] > .lp-trigger {
     background: var(--fill-hover);
@@ -170,11 +175,17 @@ const current = localeFromPath(path);
       color var(--dur-fast) var(--ease-out),
       border-color var(--dur-fast) var(--ease-out);
   }
-  .lp-item:hover,
   .lp-item:focus-visible {
     background: var(--fill-hover);
     color: var(--white);
     border-color: color-mix(in srgb, var(--gold) 18%, transparent);
+  }
+  @media (hover: hover) {
+    .lp-item:hover {
+      background: var(--fill-hover);
+      color: var(--white);
+      border-color: color-mix(in srgb, var(--gold) 18%, transparent);
+    }
   }
   .lp-item.is-current {
     color: var(--white);

@@ -88,6 +88,11 @@ const candidates = localesForTarget("global").map((l) => {
     box-shadow: 0 18px 44px -12px rgba(0, 0, 0, 0.5);
   }
   .ls[hidden] { display: none; }
+  /* Two bottom-anchored surfaces must never stack: with the region picker's
+     sheet open they overlapped and the chip sat on top of the region list
+     (caught on a real iPhone, where both are bottom sheets). The picker is the
+     deliberate action, so it wins — the offer steps aside while it's open. */
+  :global(html:has([data-locale-picker][open])) .ls { display: none; }
   @media (prefers-reduced-motion: no-preference) {
     .ls { animation: ls-in 220ms var(--ease-soft) backwards; }
   }
