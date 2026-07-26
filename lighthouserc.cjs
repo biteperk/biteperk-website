@@ -38,56 +38,28 @@ module.exports = {
       },
     },
     assert: {
-      // Per-URL, because the AU tree and the market trees are in different
-      // states. Everything shares one strict set EXCEPT the two intl CLS-
-      // driven numbers, which are pinned to their measured values rather than
-      // silently dropped — see the note below.
-      assertMatrix: [
-        {
-          matchingUrlPattern: ".*/au-en/.*",
-          assertions: {
-            "categories:performance": ["error", { minScore: 0.95 }],
-            // 2500ms = Google's official "good" LCP threshold. The original
-            // 2000 budget was authored for the minimal v1 site; the v2 design
-            // deliberately ships a cinematic full-viewport hero. Real
-            // optimisations applied first (inlined CSS, responsive preload,
-            // async decode, content-visibility on below-fold sections).
-            "largest-contentful-paint": ["error", { maxNumericValue: 2500 }],
-            "cumulative-layout-shift": ["error", { maxNumericValue: 0.02 }],
-            // 300ms sits between Google's "good" (200) and "needs
-            // improvement" (600) boundaries — strict but achievable on
-            // throttled shared CI runners; the site ships ~26KB of JS.
-            "total-blocking-time": ["error", { maxNumericValue: 300 }],
-            "resource-summary:script:size": ["error", { maxNumericValue: 61440 }],
-          },
-        },
-        {
-          // The market trees (/gb-en, /fr). Adding them to the budget at all
-          // is new — and it immediately exposed a PRE-EXISTING layout shift
-          // that only manifests on CI's Linux runners: /fr 0.30, /gb-en 0.04,
-          // against a 0.02 target. Everything else on those pages is already
-          // excellent (LCP 1.7s, TBT 0ms, SI 1.4s), and CLS alone drags the
-          // performance score to 0.84.
-          //
-          // It is not reproducible on macOS — 412x823 DPR-1.75 emulation, 4x
-          // CPU throttling and a 2.5s font delay all measure ~0 — and
-          // Lighthouse attributes no element to it. Two hypotheses were tried
-          // and disproven in CI (font-swap metrics; scrollbar gutter).
-          //
-          // So these are pinned just above the measured values: a REGRESSION
-          // still fails the build, the real numbers stay visible in every run,
-          // and nothing is hidden. TODO: diagnose on a Linux runner (or a
-          // Linux container locally) and restore the 0.02 / 0.95 targets.
-          matchingUrlPattern: ".*/(gb-en|fr)/.*",
-          assertions: {
-            "categories:performance": ["error", { minScore: 0.8 }],
-            "largest-contentful-paint": ["error", { maxNumericValue: 2500 }],
-            "cumulative-layout-shift": ["error", { maxNumericValue: 0.32 }],
-            "total-blocking-time": ["error", { maxNumericValue: 300 }],
-            "resource-summary:script:size": ["error", { maxNumericValue: 61440 }],
-          },
-        },
-      ],
+      // One strict set for every URL, AU and market trees alike. The market
+      // trees were briefly pinned looser while a CI-only CLS was unexplained;
+      // it turned out to be the font fallback (see below) and is fixed, so the
+      // exception is gone. Do not re-introduce a per-tree budget to make a
+      // number pass — diagnose it instead: `docker run --rm -v $PWD/dist-site:/site:ro
+      // mcr.microsoft.com/playwright:v1.56.0-noble` with CHROME_PATH set
+      // reproduces CI's Linux + Lighthouse combination exactly.
+      assertions: {
+        "categories:performance": ["error", { minScore: 0.95 }],
+        // 2500ms = Google's official "good" LCP threshold. The original
+        // 2000 budget was authored for the minimal v1 site; the v2 design
+        // deliberately ships a cinematic full-viewport hero. Real
+        // optimisations applied first (inlined CSS, responsive preload,
+        // async decode, content-visibility on below-fold sections).
+        "largest-contentful-paint": ["error", { maxNumericValue: 2500 }],
+        "cumulative-layout-shift": ["error", { maxNumericValue: 0.02 }],
+        // 300ms sits between Google's "good" (200) and "needs
+        // improvement" (600) boundaries — strict but achievable on
+        // throttled shared CI runners; the site ships ~26KB of JS.
+        "total-blocking-time": ["error", { maxNumericValue: 300 }],
+        "resource-summary:script:size": ["error", { maxNumericValue: 61440 }],
+      },
     },
     upload: {
       target: "temporary-public-storage",
