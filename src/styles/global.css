@@ -55,12 +55,6 @@
   scroll-padding-top: calc(var(--nav-h-scrolled, 68px) + 16px);
   text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
-  /* Reserve the scrollbar gutter. macOS/iOS use overlay scrollbars, so a
-     scrollbar appearing costs nothing there; Linux (and Windows) use classic
-     ones, where it reflows the whole page the moment it appears — a viewport
-     shift Lighthouse records with NO element attribution, which is exactly
-     the signature seen on CI. Harmless where gutters are already zero-width. */
-  scrollbar-gutter: stable;
   /* Suppress the grey iOS/Android tap flash sitewide. It was set on exactly
      two components before, so touch feedback was inconsistent: most controls
      flashed a system grey, a couple didn't. The site provides its own
