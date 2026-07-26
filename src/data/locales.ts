@@ -30,6 +30,8 @@
  * carries the locale base. The check-links gate fails the build if one escapes.
  */
 
+import { intlCityPaths } from "./intl/cities";
+
 export type BuildTarget = "au" | "global";
 
 /**
@@ -267,9 +269,9 @@ export function localeUrl(locale: Locale, pagePath = ""): string {
 export type Alternate = { readonly hreflang: string; readonly href: string };
 
 /**
- * Pages emitted under every global locale (path within the locale; "" = home).
+ * Pages EVERY global locale emits (path within the locale; "" = home).
  */
-export const INTL_PAGE_PATHS: readonly string[] = [
+const INTL_CORE_PAGES: readonly string[] = [
   "",
   "about",
   "contact",
@@ -281,6 +283,43 @@ export const INTL_PAGE_PATHS: readonly string[] = [
   // in exactly these markets (UK GDPR, CNIL, Belgian DPA).
   "legal/cookies",
 ];
+
+/**
+ * Pages emitted under SOME locales only, keyed by Locale.base.
+ *
+ * Market depth is inherently uneven, and the flat list this replaced could not
+ * express either half of that: `/gb-en/london/` is a UK page with no
+ * counterpart in any other tree, while `/be-en/brussels/` and
+ * `/be-fr/brussels/` ARE genuine alternates of each other. Everything derived
+ * from the page list — the route gate, the `[...intl]` page tree, the hreflang
+ * cluster, the e2e route list, the OG cards — now inherits that per-locale
+ * shape from here, so adding a market page stays a one-line data edit.
+ *
+ * Deliberately empty at first: the mechanism ships before the content, so the
+ * gates that police uneven trees are proven against a tree we already trust.
+ */
+const INTL_EXTRA_PAGES: Readonly<Record<string, readonly string[]>> = {
+  // "/gb-en": ["products", "products/voxtable", "london", …],
+};
+
+/**
+ * Every page path a locale emits.
+ *
+ * Global locales only. The AU tree's routes are not enumerable here — they
+ * come from `getStaticPaths` over cities.ts, products.ts and the blog
+ * collection — so this returns [] for it rather than pretending otherwise.
+ */
+export function pagesForLocale(locale: Locale): readonly string[] {
+  if (locale.target !== "global") return [];
+  return [
+    ...INTL_CORE_PAGES,
+    ...(INTL_EXTRA_PAGES[locale.base] ?? []),
+    // Derived, never listed by hand: a city that is `published` in
+    // intl/cities.ts gets its route, its hreflang cluster, its e2e coverage
+    // and its OG-card requirement from that one flag.
+    ...intlCityPaths(locale.base),
+  ];
+}
 
 /**
  * THE LAUNCH FLAG (env-driven; default OFF). While off (the safe default):
@@ -296,10 +335,13 @@ export const INTL_LAUNCHED =
     ?.INTL_LAUNCHED === "true";
 
 /**
- * Base-less page paths that exist in ALL locales (au-en + en + fr) and so form
- * the 3-way hreflang cluster. Everything else is single- or two-locale:
- * AU-only pages (products, cities, blog, /technology, /platform) emit no
- * cross-domain hreflang; /how-it-works exists only under /en + /fr.
+ * Base-less page paths the AU tree shares with the global trees — i.e. the
+ * pages on which AU joins the cross-domain cluster. AU-only pages (products,
+ * cities, blog, /technology, /platform) emit no cross-domain hreflang, and
+ * /how-it-works is global-only, so neither appears here.
+ *
+ * This is only ever consulted for the AU locale; which pages a GLOBAL locale
+ * has is pagesForLocale()'s business.
  */
 export const SHARED_PAGE_PATHS: readonly string[] = [
   "/",
@@ -320,7 +362,7 @@ export function isSharedPage(baseLessPath: string): boolean {
 
 /**
  * Does a page (base-less "/x/" form) exist in a given locale?
- *   - Every GLOBAL locale emits exactly INTL_PAGE_PATHS.
+ *   - A GLOBAL locale emits exactly pagesForLocale(it) — core + its extras.
  *   - The AU locale's full route list is much larger, but for cross-locale
  *     carrying only the SHARED set matters (products/cities/blog have no
  *     global counterpart, and how-it-works has no AU counterpart).
@@ -328,7 +370,7 @@ export function isSharedPage(baseLessPath: string): boolean {
 export function pageExistsInLocale(baseLessPath: string, locale: Locale): boolean {
   if (locale.target === "global") {
     const asIntl = baseLessPath.replace(/^\/|\/$/g, ""); // "/about/" → "about"
-    return INTL_PAGE_PATHS.includes(asIntl);
+    return pagesForLocale(locale).includes(asIntl);
   }
   return isSharedPage(baseLessPath);
 }
@@ -368,25 +410,43 @@ export function localeSwitchUrl(path: string, to: Locale): string {
 }
 
 /**
- * The COMPLETE reciprocal hreflang cluster for a page across ALL live locales
- * (au-en + en + fr) plus exactly one x-default. Every page on every host emits
- * the same cluster, so Google can map the properties as alternates.
+ * The reciprocal hreflang cluster for a page, plus exactly one x-default.
  *
  * `pagePath` is the page path WITHIN its locale ("" = the locale home,
- * "products/voxtable/" = a deeper page). For pages that only exist in some
- * locales, pass the subset via `only`.
+ * "products/voxtable/" = a deeper page). `only` narrows by build target —
+ * pre-launch the global build clusters among global locales alone.
+ *
+ * SUBSET-AWARE: a locale joins the cluster only if it actually emits the page
+ * (pageExistsInLocale). This is what makes uneven market depth safe —
+ * /be-en/brussels/ and /be-fr/brussels/ cluster as the true alternates they
+ * are, while /gb-en/london/ is a singleton pointing only at itself. Listing
+ * every locale unconditionally, as this did while every tree was identical,
+ * would have advertised four 404s per UK city page the moment one shipped.
+ *
+ * An empty cluster is always a bug (a page must at minimum exist in its own
+ * locale), so it throws at build time rather than emitting nothing.
  */
 export function buildHreflang(
   pagePath = "",
   only?: readonly BuildTarget[],
 ): { alternates: Alternate[]; xDefault: string } {
   const clean = pagePath.replace(/^\/+/, "");
-  const pool = only ? locales.filter((l) => only.includes(l.target)) : locales;
+  const baseLess = clean ? `/${clean}` : "/";
+  const pool = (only ? locales.filter((l) => only.includes(l.target)) : locales).filter((l) =>
+    pageExistsInLocale(baseLess, l),
+  );
+  if (pool.length === 0)
+    throw new Error(
+      `buildHreflang: no locale emits "${baseLess}" — an hreflang cluster cannot be empty. ` +
+        `Add the path to INTL_EXTRA_PAGES/SHARED_PAGE_PATHS, or stop calling this for it.`,
+    );
   const alternates: Alternate[] = [];
   for (const l of pool) {
     const href = `${ORIGIN}${l.base}/${clean}`;
     for (const code of l.hreflang) alternates.push({ hreflang: code, href });
   }
+  // x-default is the cluster's fallback, so it must be a member of the
+  // cluster: on a subset page the global x-default (/en) is often absent.
   const x = pool.find((l) => l.xDefault) ?? pool[0];
   return { alternates, xDefault: `${ORIGIN}${x.base}/${clean}` };
 }
@@ -397,7 +457,7 @@ export function pageRoutesForTarget(target: BuildTarget): string[] {
   const out: string[] = [];
   for (const l of localesForTarget("global")) {
     const seg = l.base.replace(/^\//, "");
-    for (const p of INTL_PAGE_PATHS) {
+    for (const p of pagesForLocale(l)) {
       const full = [seg, p].filter(Boolean).join("/");
       out.push(`${full}/index.html`);
     }

@@ -9,7 +9,7 @@ import { readdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { cities } from "../../src/data/cities";
-import { localesForTarget, INTL_PAGE_PATHS } from "../../src/data/locales";
+import { localesForTarget, pagesForLocale } from "../../src/data/locales";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const TARGET = process.env.BUILD_TARGET === "global" ? "global" : "au";
@@ -57,7 +57,7 @@ function globalRoutes(): string[] {
   const out: string[] = [];
   for (const l of localesForTarget("global")) {
     const seg0 = l.base.replace(/^\//, "");
-    for (const p of INTL_PAGE_PATHS) {
+    for (const p of pagesForLocale(l)) {
       const seg = [seg0, p].filter(Boolean).join("/");
       out.push(`/${seg}/`);
     }
