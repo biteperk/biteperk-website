@@ -20,6 +20,12 @@
  * longer gates INTL_LAUNCHED. The rule still stands for French added AFTER
  * that date: new or materially reworded FR copy needs its own native pass.
  * Flag any change here that alters meaning so the two languages stay in sync.
+ *
+ * ⚠️ PENDING (27 Jul 2026): the market differentiation pass added substantial
+ * NEW French — /fr and /be-fr home (h1, lede, proof, steps, pilot, trust,
+ * closing), both about pages, and a five-item FAQ each. That French is NOT
+ * covered by the 26 Jul sign-off and has not had a native pass. Do not use
+ * it in a marketing push until Ludovic has reviewed it.
  */
 
 import type { Lang } from "@/data/locales";
@@ -61,6 +67,25 @@ export type HomeCopy = {
   steps: { eyebrow: string; heading: string; items: Step[] };
   pilot: { eyebrow: string; heading: string; body: string; points: string[]; cta: string };
   trust: { heading: string; items: Principle[] };
+  /**
+   * Attributed proof. The quote is AUSTRALIAN and must read that way — there is
+   * no European customer yet, and implying one breaks the same honesty rule
+   * that bans the AU price and phone. Rendered with PullQuote (props-only), not
+   * Testimonial.astro, which hardcodes an English image alt and would ship it
+   * onto the French trees.
+   */
+  testimonial: { quote: string; author: string; role: string };
+  /**
+   * Per-market FAQ. Load-bearing, not decorative: it is the unique-per-market
+   * text that pulls the trees apart for check-intl-similarity, and the gate's
+   * metric is containment (hits / min), so EVERY market needs one — adding it
+   * to only some barely moves the number.
+   *
+   * Rendered by FAQ.astro (<details> accordion) on the DEFAULT surface. Never
+   * inside .intl-band: the band and the accordion items are both var(--ink-1),
+   * so the items would disappear into it.
+   */
+  faq: { heading: string; items: { q: string; a: string }[] };
   closing: { heading: string; body: string; cta: string };
 };
 
@@ -197,6 +222,37 @@ export const home: Record<Lang, HomeCopy> = {
         },
       ],
     },
+    testimonial: {
+      quote:
+        "We used to lose tables every Friday night just because nobody could reach the phone. Bella picks up every single call — and the bookings just appear on our screen. It paid for itself in the first week.",
+      author: "Natalia",
+      role: "Owner · Natalia's Bistro, Sydney, Australia",
+    },
+    faq: {
+      heading: "Questions we get asked",
+      items: [
+        {
+          q: "Is Vox actually running, or is this a prototype?",
+          a: "It runs in production in Australia, taking real bookings for paying venues. Europe is where we go next, and pilot partners shape how it lands here.",
+        },
+        {
+          q: "What does a pilot actually involve?",
+          a: "A short setup call, a call-forward from your existing line, then Vox answers real calls with success criteria we agree with you in advance. No lock-in.",
+        },
+        {
+          q: "Which booking system do you connect to?",
+          a: "In Europe, none yet — that integration is part of what a pilot defines. Tell us what you run and it goes on the list we build against.",
+        },
+        {
+          q: "What does it cost?",
+          a: "There is no European rate card. Pilot terms are agreed case by case, because what a first deployment is worth depends on what we learn together.",
+        },
+        {
+          q: "Will callers know they are talking to a machine?",
+          a: "Yes. Vox introduces itself as an assistant at the start of the call, and hands over to your team whenever a caller asks or the conversation needs a person.",
+        },
+      ],
+    },
     closing: {
       heading: "Ready to hear it?",
       body: "Tell us about your venue and we'll set up a conversation — and a live demonstration of Vox taking a booking.",
@@ -266,6 +322,37 @@ export const home: Record<Lang, HomeCopy> = {
         {
           title: "La confidentialité prise au sérieux",
           body: "Les appels sont traités pour finaliser la réservation, pas pour constituer des profils. Les déploiements européens sont conçus pour le RGPD dès l'origine.",
+        },
+      ],
+    },
+    testimonial: {
+      quote:
+        "On perdait des tables tous les vendredis soir, simplement parce que personne ne pouvait décrocher. Bella prend chaque appel — et les réservations apparaissent sur notre écran. Elle s'est rentabilisée dès la première semaine.",
+      author: "Natalia",
+      role: "Propriétaire · Natalia's Bistro, Sydney, Australie",
+    },
+    faq: {
+      heading: "Les questions qu'on nous pose",
+      items: [
+        {
+          q: "Vox fonctionne-t-il vraiment, ou s'agit-il d'un prototype ?",
+          a: "Il tourne en production en Australie et prend de vraies réservations pour des établissements clients. L'Europe est l'étape suivante, et les partenaires pilotes en façonnent l'arrivée.",
+        },
+        {
+          q: "En quoi consiste concrètement un pilote ?",
+          a: "Un court appel de configuration, un renvoi depuis votre ligne actuelle, puis Vox répond à de vrais appels selon des critères de réussite convenus à l'avance. Sans engagement.",
+        },
+        {
+          q: "À quel logiciel de réservation vous connectez-vous ?",
+          a: "En Europe, à aucun pour l'instant : cette intégration fait partie de ce qu'un pilote définit. Dites-nous ce que vous utilisez et nous l'ajoutons à notre feuille de route.",
+        },
+        {
+          q: "Quel est le tarif ?",
+          a: "Il n'existe pas de grille tarifaire européenne. Les conditions d'un pilote se conviennent au cas par cas, car la valeur d'un premier déploiement dépend de ce que nous y apprenons ensemble.",
+        },
+        {
+          q: "L'appelant saura-t-il qu'il parle à une machine ?",
+          a: "Oui. Vox se présente comme un assistant dès le début de l'appel, et passe la main à votre équipe dès qu'un appelant le demande ou que la conversation l'exige.",
         },
       ],
     },

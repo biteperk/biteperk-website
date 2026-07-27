@@ -94,6 +94,10 @@ jobs:
         if: matrix.target == 'global'
         run: node scripts/gates/check-hreflang.mjs
 
+      - name: Market trees must not be near-duplicates (global only)
+        if: matrix.target == 'global'
+        run: node scripts/gates/check-intl-similarity.mjs
+
       - name: Sanity-check sitemap
         run: |
           set -e
