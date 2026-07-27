@@ -14,8 +14,11 @@
  * (no AU price/phone/NAP) are enforced by scripts/gates/check-truthful.mjs.
  */
 import IntlLayout from "@/layouts/IntlLayout.astro";
-import { localesForTarget, pagesForLocale, currentTarget, type Locale } from "@/data/locales";
+import { localesForTarget, pagesForLocale, currentTarget, ORIGIN, type Locale } from "@/data/locales";
 import { resolveCopy, resolveMedia, type CopyBundle, type SimplePageCopy } from "@/data/intl";
+import { intlProducts, intlProductsOverview } from "@/data/intl/products";
+import { products } from "@/data/products";
+import { buildFaqPage, buildVoxApplication, voxEditionId } from "@/data/schema";
 import ImageBlock from "@/components/ImageBlock.astro";
 
 export function getStaticPaths() {
@@ -56,13 +59,26 @@ const { home: h, contact: ct } = c;
 
 const simple = SIMPLE_PAGES[page]?.(c) ?? null;
 
+// Product pages: STRUCTURE from products.ts (order, status, which is core),
+// PROSE from intl/products.ts. The overview lists every capability; a
+// /products/<slug>/ page renders one.
+const productSlug = page.startsWith("products/") ? page.slice("products/".length) : null;
+const overview = intlProductsOverview[locale.copyLang];
+const product = productSlug ? intlProducts[locale.copyLang][productSlug] : null;
+const catalogue = productSlug ? products.find((x) => x.slug === productSlug) : null;
+
 // A path in pagesForLocale() that no branch here can render used to reach
 // `simple!.title` and die on a null dereference — an unreadable crash from a
 // data edit made in a different file. Fail with the path that caused it.
-if (page !== "" && page !== "contact" && !simple)
+const RENDERABLE =
+  page === "" || page === "contact" || page === "products" || !!simple || (!!product && !!catalogue);
+if (!RENDERABLE)
   throw new Error(
     `[...intl].astro: no renderer for page "${page}" (locale ${locale.base}). ` +
-      `Add it to SIMPLE_PAGES or give it a body branch, or drop it from INTL_EXTRA_PAGES.`,
+      (productSlug
+        ? `"${productSlug}" is in PRODUCT_SLUGS but has no entry in intl/products.ts (${locale.copyLang}) ` +
+          `or no entry in products.ts.`
+        : `Add it to SIMPLE_PAGES or give it a body branch, or drop it from INTL_EXTRA_PAGES.`),
   );
 
 const meta =
@@ -70,13 +86,56 @@ const meta =
     ? { title: h.title, description: h.description }
     : page === "contact"
       ? { title: ct.title, description: ct.description }
-      : { title: simple!.title, description: simple!.description };
+      : page === "products"
+        ? { title: overview.title, description: overview.description }
+        : product
+          ? { title: product.title, description: product.description }
+          : { title: simple!.title, description: simple!.description };
 
 // OG cards are per-locale (generate-brand's sibling, scripts/brand/generate-og.mjs,
 // derives them from this same copy). /en keeps the legacy unsuffixed filenames so
 // already-shared card URLs never churn.
 const ogSuffix = locale.base === "/en" ? "" : `-${locale.base.slice(1)}`;
-const ogImage = `/og/intl/${page === "contact" ? "contact" : "home"}${ogSuffix}.png`;
+// Product cards are suffixed by LANGUAGE, not by base: the prose is identical
+// across the English trees, so five byte-identical PNGs per product would be
+// pure weight. The core pages keep the per-base convention (their copy carries
+// market overrides, so those genuinely differ).
+const ogImage =
+  page === "products" || product
+    ? `/og/intl/${page === "products" ? "products" : productSlug}-${locale.copyLang}.png`
+    : `/og/intl/${page === "contact" ? "contact" : "home"}${ogSuffix}.png`;
+
+// Page-level structured data — the market trees' first. Europe-truthful:
+// SoftwareApplication carries NO offers (no price anywhere on these pages).
+const crumbs = [
+  { name: c.chrome.nav.home, item: `${ORIGIN}${locale.base}/` },
+  { name: overview.eyebrow, item: `${ORIGIN}${p("products")}` },
+  ...(product ? [{ name: catalogue!.name, item: `${ORIGIN}${p(page)}` }] : []),
+];
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: crumbs.map((x, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: x.name,
+    item: x.item,
+  })),
+};
+const faqJsonLd = product ? buildFaqPage(product.faqs) : null;
+const appJsonLd =
+  page === "products"
+    ? buildVoxApplication({
+        description: overview.lede,
+        // LIVE capabilities only — structured data must never claim unshipped
+        // work, and two of the four are in-development/concept. No `prices`:
+        // AU tiers are an Australian fact (Europe-truthful, PLAN.md §8).
+        featureList: products
+          .filter((x) => x.status === "live")
+          .map((x) => overview.capabilities[x.slug].outcome),
+        editionIds: products.map((x) => voxEditionId(x.slug)),
+      })
+    : null;
 ---
 
 <IntlLayout locale={locale} page={page} title={meta.title} description={meta.description} ogImage={ogImage}>
@@ -242,6 +301,127 @@ const ogImage = `/og/intl/${page === "contact" ? "contact" : "home"}${ogSuffix}.
       </div>
     </section>
   )}
+
+  {(page === "products" || product) && (
+    <script is:inline type="application/ld+json" slot="jsonld" set:html={JSON.stringify(breadcrumbJsonLd)} />
+  )}
+  {faqJsonLd && (
+    <script is:inline type="application/ld+json" slot="jsonld" set:html={JSON.stringify(faqJsonLd)} />
+  )}
+  {appJsonLd && (
+    <script is:inline type="application/ld+json" slot="jsonld" set:html={JSON.stringify(appJsonLd)} />
+  )}
+
+  {page === "products" && (
+    <>
+      <section class="intl-hero">
+        <div class="wrap">
+          <p class="eyebrow">{overview.eyebrow}</p>
+          <h1>{overview.h1}</h1>
+          <p class="lede">{overview.lede}</p>
+          <div class="intl-ctas">
+            <a class="btn" href={p("contact")}>{overview.ctaLabel}</a>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap intl-prose">
+          {overview.intro.map((para) => <p>{para}</p>)}
+        </div>
+      </section>
+
+      <section class="intl-band">
+        <div class="wrap">
+          <h2>{overview.capabilitiesHeading}</h2>
+          <div class="intl-grid">
+            {/* Catalogue ORDER and STATUS come from products.ts, so the core
+                capability leads and nothing here can drift from the AU site's
+                idea of what ships. */}
+            {products.map((prod) => {
+              const cap = overview.capabilities[prod.slug];
+              const copy = intlProducts[locale.copyLang][prod.slug];
+              return (
+                <a class="intl-card intl-card-link" href={p(`products/${prod.slug}`)}>
+                  <p class="status-pill" data-status={prod.status}>{copy.statusLabel}</p>
+                  <h3>{prod.name}</h3>
+                  <p class="cap-outcome">{cap.outcome}</p>
+                  <p>{cap.body}</p>
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap intl-prose">
+          <h2>{overview.pilotHeading}</h2>
+          <p>{overview.pilotBody}</p>
+          <div class="intl-ctas">
+            <a class="btn" href={p("contact")}>{overview.ctaLabel}</a>
+          </div>
+        </div>
+      </section>
+    </>
+  )}
+
+  {product && catalogue && (
+    <>
+      <section class="intl-hero">
+        <div class="wrap">
+          <nav class="intl-crumbs" aria-label="Breadcrumb">
+            <a href={p("")}>{c.chrome.nav.home}</a>
+            <span aria-hidden="true">/</span>
+            <a href={p("products")}>{c.chrome.nav.products}</a>
+          </nav>
+          <p class="eyebrow">{product.eyebrow}</p>
+          <h1>{product.h1}</h1>
+          <p class="lede">{product.lede}</p>
+          <p class="status-pill" data-status={catalogue.status}>{product.statusLabel}</p>
+          <p class="muted status-note">{product.statusNote}</p>
+          <div class="intl-ctas">
+            <a class="btn" href={p("contact")}>{product.ctaLabel}</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="intl-band">
+        <div class="wrap">
+          <h2>{product.featuresHeading}</h2>
+          <div class="intl-grid">
+            {product.features.map((f) => (
+              <div class="intl-card">
+                <h3>{f.title}</h3>
+                <p>{f.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap intl-prose">
+          <h2>{product.faqHeading}</h2>
+          {product.faqs.map((f) => (
+            <section>
+              <h3>{f.q}</h3>
+              <p>{f.a}</p>
+            </section>
+          ))}
+        </div>
+      </section>
+
+      <section class="intl-closing">
+        <div class="wrap">
+          <h2>{product.ctaHeading}</h2>
+          <div class="intl-ctas" style="justify-content: center;">
+            <a class="btn" href={p("contact")}>{product.ctaLabel}</a>
+          </div>
+        </div>
+      </section>
+    </>
+  )}
 </IntlLayout>
 
 <style>
@@ -287,4 +467,56 @@ const ogImage = `/og/intl/${page === "contact" ? "contact" : "home"}${ogSuffix}.
   }
   .intl-form .btn { justify-self: start; }
   .form-note { font-size: var(--fs-small); margin: 0; }
+
+  /* ── Product pages ────────────────────────────────────────────── */
+  .intl-crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: baseline;
+    font-size: var(--fs-small);
+    margin-bottom: 1rem;
+    color: var(--mist);
+  }
+  .intl-crumbs a { color: var(--mist); text-decoration: none; }
+  @media (hover: hover) {
+    .intl-crumbs a:hover { color: var(--gold); }
+  }
+  .intl-crumbs a:focus-visible { outline: none; box-shadow: var(--ring-focus); border-radius: 4px; }
+
+  /* Status is honest and load-bearing here: two of the four capabilities are
+     not shipping. `--gold` (not --gold-fill) because this is text. */
+  .status-pill {
+    display: inline-block;
+    margin: 0 0 0.5rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
+    border: 1px solid currentColor;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--mist-2);
+  }
+  .status-pill[data-status="live"] { color: var(--success); }
+  .status-pill[data-status="in-development"] { color: var(--gold); }
+  .status-note { max-width: 60ch; margin: 0 0 1.5rem; }
+
+  .cap-outcome { font-weight: 600; color: var(--text); }
+
+  /* The capability grid is a grid of LINKS — the whole card is the target, so
+     it clears 44px on touch without a separate "read more". */
+  .intl-card-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+  }
+  @media (hover: hover) {
+    .intl-card-link:hover { border-color: var(--gold); transform: translateY(-2px); }
+  }
+  .intl-card-link:focus-visible { outline: none; box-shadow: var(--ring-focus); }
+  @media (prefers-reduced-motion: reduce) {
+    .intl-card-link { transition: none; }
+    .intl-card-link:hover { transform: none; }
+  }
 </style>

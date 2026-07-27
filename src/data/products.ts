@@ -18,6 +18,7 @@
 
 import { site } from "./site";
 import { u } from "./locales";
+import { PRODUCT_SLUGS } from "./product-slugs";
 
 export type ProductStatus = "live" | "in-development" | "concept";
 
@@ -403,6 +404,20 @@ export const products: ReadonlyArray<Product> = [
   voxconcierge,
   voxdrive,
 ];
+
+// The international route tree derives its /products/<slug>/ pages from
+// PRODUCT_SLUGS (locales.ts cannot import this file — see product-slugs.ts for
+// why). Assert the two agree at load, so adding a product to one and not the
+// other fails the build instead of emitting a route with no page.
+{
+  const actual = products.map((p) => p.slug).join(",");
+  const declared = PRODUCT_SLUGS.join(",");
+  if (actual !== declared)
+    throw new Error(
+      `products.ts: catalogue [${actual}] does not match PRODUCT_SLUGS [${declared}] — ` +
+        `update src/data/product-slugs.ts (order matters).`,
+    );
+}
 
 /**
  * Vox is ONE product. `coreProduct` is the always-on agent every venue gets

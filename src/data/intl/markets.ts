@@ -14,8 +14,10 @@
  *     (pilot framing, city imagery, spelling), never invent a presence.
  *   - What is live is Australia; Europe is the pilot programme.
  *
- * ⚠️ The /fr and /be-fr overrides are French — Ludovic's native review gates
- * launch, same as the FR core.
+ * The /fr and /be-fr overrides are French. Reviewed and signed off by Ludovic
+ * (26 Jul 2026), same pass as the FR core and the product copy — the launch
+ * gate this comment used to carry is DISCHARGED. New French here needs a fresh
+ * pass; the sign-off covers what existed at that date.
  */
 import type { Locale } from "@/data/locales";
 import type { CopyBundle, Override } from "./index";

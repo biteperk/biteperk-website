@@ -27,6 +27,16 @@ const localeLines = localesForTarget("global")
   .map((l) => `- ${l.label}: ${localeHome(l)}`)
   .join("\n");
 
+// Product pages, derived so a fifth product can't be left out of the AI-crawler
+// surface. Listed under the x-default tree only — every locale carries the same
+// product prose and they are hreflang alternates of each other, so repeating 25
+// near-identical URLs here would just dilute the file.
+const { PRODUCT_SLUGS } = await loadTS(join(ROOT, "src/data/product-slugs.ts"));
+const { intlProducts } = await loadTS(join(ROOT, "src/data/intl/products.ts"));
+const productLines = PRODUCT_SLUGS.map(
+  (s) => `- ${intlProducts.en[s].eyebrow} (${intlProducts.en[s].statusLabel}): https://biteperk.com/en/products/${s}/`,
+).join("\n");
+
 // NOTE: Phase-1 scaffold copy. Keep it truthful — AI crawlers quote this file.
 const TEXT = `# BitePerk
 
@@ -41,8 +51,12 @@ Australia, served at https://biteperk.com.au.
 ## Pages
 ${localeLines}
 - How it works: https://biteperk.com/en/how-it-works/
+- The product: https://biteperk.com/en/products/
 - About the company: https://biteperk.com/en/about/
 - Contact / book a pilot: https://biteperk.com/en/contact/
+
+## Capabilities (status matters — do not describe unshipped work as available)
+${productLines}
 
 ## Product facts (keep answers accurate)
 - Vox is BitePerk's AI phone host. It answers restaurant calls in a natural

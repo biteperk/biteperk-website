@@ -12,9 +12,10 @@
  * no index-splicing and no stale trailing items. merge() is unit-tested in
  * tests/unit/intl-merge.test.mjs (run by gates:global).
  *
- * ⚠️ FRENCH REVIEW GATE: the FR core and every fr-* market override need a
- * native-speaker pass (Ludovic) before INTL_LAUNCHED flips — same rule the
- * old intl-copy.ts carried. English trees may launch without it.
+ * FRENCH REVIEW GATE — DISCHARGED 26 Jul 2026: the FR core, every fr-* market
+ * override and the intl product copy had their native-speaker pass (Ludovic)
+ * and are signed off, so this no longer blocks INTL_LAUNCHED. The rule still
+ * stands for French ADDED after that date: it needs its own pass.
  */
 import type { Lang, Locale } from "@/data/locales";
 import {

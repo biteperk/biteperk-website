@@ -72,9 +72,20 @@ test("localeSwitchUrl: global→global carries every intl page; AU-only pages fa
   assert.equal(loc.localeSwitchUrl("/gb-en/how-it-works/", au), "https://biteperk.com/au-en/");
   // Cross-target shared page still carries.
   assert.equal(loc.localeSwitchUrl("/au-en/contact/", fr), "https://biteperk.com/fr/contact/");
-  // AU-only page → target home.
+  // Product pages exist on BOTH trees, so a switch carries — in both
+  // directions. The FR→AU half is the one that regressed silently when the
+  // intl product pages landed: the page existed on /au-en all along, but
+  // SHARED_PAGE_PATHS didn't list it, so the picker dropped you on the AU home.
   assert.equal(
     loc.localeSwitchUrl("/au-en/products/voxtable/", fr),
-    "https://biteperk.com/fr/",
+    "https://biteperk.com/fr/products/voxtable/",
   );
+  assert.equal(
+    loc.localeSwitchUrl("/fr/products/voxtable/", au),
+    "https://biteperk.com/au-en/products/voxtable/",
+  );
+
+  // A genuinely AU-only page still falls back to the target's home.
+  assert.equal(loc.localeSwitchUrl("/au-en/sydney/", fr), "https://biteperk.com/fr/");
+  assert.equal(loc.localeSwitchUrl("/au-en/blog/", fr), "https://biteperk.com/fr/");
 });

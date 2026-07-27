@@ -30,6 +30,7 @@
  * carries the locale base. The check-links gate fails the build if one escapes.
  */
 
+import { PRODUCT_SLUGS } from "./product-slugs";
 import { intlCityPaths } from "./intl/cities";
 
 export type BuildTarget = "au" | "global";
@@ -282,6 +283,15 @@ const INTL_CORE_PAGES: readonly string[] = [
   // notice whose policy link 404s is a compliance failure — least acceptable
   // in exactly these markets (UK GDPR, CNIL, Belgian DPA).
   "legal/cookies",
+  // The product pages are CORE, not per-market extras. A VoxTable page says
+  // the same thing in Cardiff and Antwerp, so every locale emits the same set
+  // and they declare each other as hreflang alternates — one page, several
+  // regional audiences, which is exactly what hreflang is for. Forking product
+  // prose per market to look busier would manufacture the near-duplicate
+  // problem check-cities exists to catch. Derived from PRODUCT_SLUGS so a
+  // fifth product needs no edit here.
+  "products",
+  ...PRODUCT_SLUGS.map((s) => `products/${s}`),
 ];
 
 /**
@@ -353,6 +363,18 @@ export const SHARED_PAGE_PATHS: readonly string[] = [
   // it with the consent-banner fix), so it belongs in the cluster. It was
   // missed when the intl cookie pages landed.
   "/legal/cookies/",
+  // The product pages now exist on BOTH trees at the same paths, and they are
+  // genuine regional equivalents — same product, AU pricing on /au-en versus
+  // pilot framing in Europe — which is precisely the "same page, different
+  // region" relationship hreflang expresses. Clustering them also lets the new
+  // market pages inherit signal from the AU pages that are already indexed.
+  //
+  // Not optional bookkeeping: this list is what makes the region picker carry a
+  // visitor across a switch. Without it, /fr/products/voxtable/ → Australia
+  // would land on the AU HOME while the AU product page sat right there — an
+  // asymmetry the unit test caught the moment the intl pages appeared.
+  "/products/",
+  ...PRODUCT_SLUGS.map((s) => `/products/${s}/`),
 ];
 
 /** Is this base-less path shared across au-en + en + fr? */
