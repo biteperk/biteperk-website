@@ -20,6 +20,8 @@ import { intlProducts, intlProductsOverview } from "@/data/intl/products";
 import { products } from "@/data/products";
 import { buildFaqPage, buildVoxApplication, voxEditionId } from "@/data/schema";
 import ImageBlock from "@/components/ImageBlock.astro";
+import FAQ from "@/components/FAQ.astro";
+import PullQuote from "@/components/PullQuote.astro";
 
 export function getStaticPaths() {
   if (currentTarget() !== "global") return [];
@@ -123,7 +125,14 @@ const breadcrumbJsonLd = {
     item: x.item,
   })),
 };
-const faqJsonLd = product ? buildFaqPage(product.faqs) : null;
+// Product pages carry their own FAQ; the home now carries the market FAQ.
+// Note Google restricted FAQ rich results to government/health sites in 2023,
+// so this earns no SERP snippet — it is here for answer engines and on-page UX.
+const faqJsonLd = product
+  ? buildFaqPage(product.faqs)
+  : page === ""
+    ? buildFaqPage(h.faq.items)
+    : null;
 const appJsonLd =
   page === "products"
     ? buildVoxApplication({
@@ -147,7 +156,7 @@ const appJsonLd =
   title={meta.title}
   description={meta.description}
   ogImage={ogImage}
-  preloadSlug={page === "" && hero ? { slug: hero.slug, sizes: "(min-width: 981px) 38vw, 100vw" } : undefined}
+  preloadSlug={page === "" && hero ? { slug: hero.slug, sizes: "(min-width: 981px) 38vw, 460px" } : undefined}
 >
   {page === "" && (
     <>
@@ -175,7 +184,7 @@ const appJsonLd =
                 slug={hero.slug}
                 alt={hero.alt}
                 aspect="4 / 5"
-                widths="(min-width: 981px) 38vw, 100vw"
+                widths="(min-width: 981px) 38vw, 460px"
                 priority
               />
             </div>
@@ -191,6 +200,21 @@ const appJsonLd =
           <ul class="intl-points">
             {h.proof.points.map((pt) => <li>{pt}</li>)}
           </ul>
+        </div>
+      </section>
+
+      {/* Straight after the proof band: that section asserts Vox is in
+          production, this lets a named venue say so in their own voice. The
+          quote is Australian and its role line says so — there is no European
+          customer yet. PullQuote is props-only; Testimonial.astro would drag in
+          the AU product module and a hardcoded English image alt. */}
+      <section class="intl-quote">
+        <div class="wrap">
+          <PullQuote
+            quote={h.testimonial.quote}
+            author={h.testimonial.author}
+            role={h.testimonial.role}
+          />
         </div>
       </section>
 
@@ -252,6 +276,16 @@ const appJsonLd =
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* NOT wrapped in .intl-band: the band and FAQ.astro's items are both
+          var(--ink-1), so banding this would make every item vanish into the
+          background. The item borders carry the structure instead. */}
+      <section class="intl-faq">
+        <div class="wrap">
+          <h2>{h.faq.heading}</h2>
+          <FAQ items={h.faq.items} stagger />
         </div>
       </section>
 

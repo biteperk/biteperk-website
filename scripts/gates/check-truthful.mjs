@@ -56,6 +56,44 @@ const FORBIDDEN = [
     label: "AU data-residency claim (GDPR transfer problem)",
     re: /data\s+(?:stays|is\s+stored|resides|remains)\s+in\s+australia|(?:données|hébergées?)[^.]{0,40}en\s+australie/i,
   },
+
+  // ── Unsubstantiated European claims ─────────────────────────────────────
+  // Everything above is an AU fact that must not appear in Europe. These are
+  // the mirror image: European claims that are not true anywhere.
+  //
+  // This closes a real gap. Until the market trees were differentiated, the
+  // only guard on invented local claims was a unit test covering the hero pill
+  // alone — "our London team", "works with OpenTable" or a plausible-looking
+  // +44 number passed every gate in the repo. Now that four markets carry
+  // market-flavoured prose, that blind spot is where a well-meaning edit will
+  // land. Note "Sydney" and "Australia" remain deliberately allowed: the
+  // company really is Australian and the testimonial really is from Sydney.
+  {
+    // A premises we do not have. The market pill is separately guarded in
+    // tests/unit/intl-merge.test.mjs; this covers body copy.
+    label: "invented European presence (no office or staff exists in Europe)",
+    re: /\bour\s+(?:London|Paris|Brussels|Bruxelles|UK|British|French|Belgian|European)\s+(?:team|office|staff|crew)\b|notre\s+(?:bureau|équipe)\s+(?:à|de|en)\s+(?:Londres|Paris|Bruxelles|Belgique|France)/i,
+  },
+  {
+    // No booking or POS integration ships in Europe. Naming one implies it
+    // does. When one genuinely ships, remove it from this list in the same
+    // commit that ships it — that is the point of the list.
+    label: "unshipped third-party integration named",
+    re: /\b(?:OpenTable|TheFork|LaFourchette|Zenchef|SevenRooms|Guestonline|Formitable|Resy|Toast\s+POS|Lightspeed)\b/i,
+  },
+  {
+    // No European number exists until the Twilio regulatory bundles land, so
+    // any +44/+33/+32 in the built HTML is fabricated.
+    //
+    // Match the country code then SEVEN OR MORE digits with arbitrary
+    // separators, rather than a fixed grouping. The first version of this
+    // assumed a rigid \d\d\d shape and silently missed "+44 20 7946 0958" —
+    // caught by fault-injecting it, which is the entire reason we do that
+    // before trusting a gate. Real numbers group differently per country
+    // (2-4-4 in London, 1-2-2-2-2 in Paris), so shape must not be assumed.
+    label: "fabricated European phone number",
+    re: /\+\s?(?:44|33|32)(?:[\s.\-()]*\d){7,}/,
+  },
 ];
 
 function htmlFiles(dir, acc = []) {

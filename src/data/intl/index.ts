@@ -16,6 +16,12 @@
  * override and the intl product copy had their native-speaker pass (Ludovic)
  * and are signed off, so this no longer blocks INTL_LAUNCHED. The rule still
  * stands for French ADDED after that date: it needs its own pass.
+ *
+ * ⚠️ PENDING (27 Jul 2026): the market differentiation pass added substantial
+ * NEW French — /fr and /be-fr home (h1, lede, proof, steps, pilot, trust,
+ * closing), both about pages, and a five-item FAQ each. That French is NOT
+ * covered by the 26 Jul sign-off and has not had a native pass. Do not use
+ * it in a marketing push until Ludovic has reviewed it.
  */
 import type { Lang, Locale } from "@/data/locales";
 import {
