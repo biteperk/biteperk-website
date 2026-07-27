@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { INTL_NAV } from "../../src/data/intl/nav";
 
 /**
  * Device contracts for the international chrome (IntlLayout + LocalePicker).
@@ -28,11 +29,12 @@ test.describe("intl chrome — phone", () => {
     test(`navigation is reachable without the footer: ${home}`, async ({ page }) => {
       await page.goto(home);
       // Was `display:none` with no replacement — the whole defect in one line.
-      // Count must track the <nav class="intl-links"> markup in IntlLayout.astro:
-      // products, how-it-works, about, contact. It went 3 → 4 when the product
-      // tree shipped. (Phase 2: derive this instead of restating it here.)
+      // The count is DERIVED from INTL_NAV, the same list IntlLayout renders
+      // from, so adding a nav item can no longer leave this test asserting the
+      // old number. It was hardcoded at 4 and had already been stale once (the
+      // bar went 3 → 4 when the product tree shipped).
       const links = page.locator(".intl-links a");
-      await expect(links).toHaveCount(4);
+      await expect(links).toHaveCount(INTL_NAV.length);
       for (const link of await links.all()) {
         await expect(link).toBeVisible();
         const box = await link.boundingBox();

@@ -26,6 +26,14 @@ jobs:
         target: [au, global]
     env:
       BUILD_TARGET: ${{ matrix.target }}
+      # Gate WHAT SHIPS. The international site launched 27 Jul 2026 and every
+      # production build runs `INTL_LAUNCHED=true npm run build:site`, but CI
+      # left the flag unset — so it validated the pre-launch configuration:
+      # global pages noindex, and NO cross-domain hreflang cluster. check-hreflang
+      # was therefore asserting a cluster shape that production does not emit.
+      # The flag-OFF path is now the rollback lever and is covered by the
+      # `rollback` job below, so both configurations stay tested.
+      INTL_LAUNCHED: "true"
 
     steps:
       - name: Checkout
@@ -57,46 +65,19 @@ jobs:
       - name: Resolve dist dir
         run: echo "DIST=$([ "$BUILD_TARGET" = "global" ] && echo dist-global || echo dist)" >> "$GITHUB_ENV"
 
-      - name: Imagery review gate (manifest slots must be human-reviewed)
-        run: node scripts/gates/check-images.mjs
-
-      - name: Smoke-test built routes (generated per target)
-        run: node scripts/gates/check-routes.mjs
-
-      - name: Asset references in built HTML must resolve
-        run: node scripts/gates/check-assets.mjs
-
-      - name: JSON-LD @id + NAP / cross-domain entity integrity
-        run: node scripts/gates/check-schema.mjs
-
-      # The single-domain migration's safety net — was only in the npm gate
-      # scripts, never in CI, so a base-escaping link couldn't fail a PR.
-      - name: Internal links must carry the locale base
-        run: node scripts/gates/check-links.mjs
-
-      - name: Europe-truthful sweep — no AU phone/NAP/price on global pages
-        if: matrix.target == 'global'
-        run: node scripts/gates/check-truthful.mjs
-
-      - name: Intl copy-merge contract (unit)
-        if: matrix.target == 'global'
-        run: npm run test:unit
-
-      - name: WCAG contrast gate (shared themes — run on the AU pass)
-        if: matrix.target == 'au'
-        run: node scripts/gates/check-contrast.mjs
-
-      - name: City-page anti-doorway gate (AU only)
-        if: matrix.target == 'au'
-        run: node scripts/gates/check-cities.mjs
-
-      - name: hreflang integrity (global only)
-        if: matrix.target == 'global'
-        run: node scripts/gates/check-hreflang.mjs
-
-      - name: Market trees must not be near-duplicates (global only)
-        if: matrix.target == 'global'
-        run: node scripts/gates/check-intl-similarity.mjs
+      # ONE gate list, not two. These steps used to restate the gate sequence
+      # inline, and the two lists silently drifted: `check-cities` is documented
+      # as running on BOTH targets (CLAUDE.md — the global pass pools English
+      # across gb-en + be-en, which is where templated market copy actually
+      # leaks), but CI had it behind `if: matrix.target == 'au'`. It was vacuous
+      # while intl/cities.ts was empty, so nothing showed — the gate would have
+      # come back as "covered" the day market cities shipped.
+      #
+      # `gates:au` / `gates:global` in package.json are now the single source.
+      # Add a gate there and both CI legs pick it up; there is no second list to
+      # forget. Per-gate logs still appear — each gate prints its own result.
+      - name: Gates (${{ matrix.target }})
+        run: npm run gates:${{ matrix.target }}
 
       - name: Sanity-check sitemap
         run: |
@@ -180,3 +161,41 @@ jobs:
           name: dist-${{ matrix.target }}
           path: ${{ env.DIST }}
           retention-days: 7
+
+  # The launch flag is a rollback lever as well as a launch switch, and a
+  # rollback is exactly when nobody can afford to discover the flag-off build
+  # is broken. This job keeps that path honest without doubling the matrix:
+  # one global build with the flag off, and the gates that actually change
+  # shape between the two configurations.
+  rollback:
+    name: Rollback path (INTL_LAUNCHED off)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      BUILD_TARGET: global
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Finalize global build
+        run: |
+          node scripts/build/prune-global.mjs
+          node scripts/build/llms-global.mjs
+      - name: Global pages must be noindex with the flag off
+        run: |
+          set -e
+          for loc in en gb-en fr be-en be-fr; do
+            grep -q 'noindex' "dist-global/$loc/index.html" \
+              || { echo "dist-global/$loc/index.html is INDEXABLE with INTL_LAUNCHED off"; exit 1; }
+          done
+          echo "all five global homes are noindex, as the flag-off build requires"
+      - name: Gates that change shape with the flag
+        run: |
+          node scripts/gates/check-routes.mjs
+          node scripts/gates/check-hreflang.mjs
+          node scripts/gates/check-links.mjs
+
