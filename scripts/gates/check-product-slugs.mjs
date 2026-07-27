@@ -22,11 +22,9 @@
  *
  * Run: node scripts/gates/check-product-slugs.mjs   (after a build)
  */
-import { readFileSync, existsSync } from "node:fs";
-import { join } from "node:path";
+import { readFileSync, existsSync, readdirSync } from "node:fs";
+import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { dirname } from "node:path";
-import { globSync } from "node:fs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
@@ -42,13 +40,27 @@ function functionSlugs() {
   return new Set([...m[1].matchAll(/"([^"]*)"/g)].map((x) => x[1]));
 }
 
+/**
+ * Recursive .html walk. Deliberately hand-rolled with readdirSync, like every
+ * sibling gate: `fs.globSync` is Node 22+, and CI pins Node 20 — so a gate
+ * using it passes on a dev machine and can only ever fail in CI.
+ */
+function htmlFiles(dir, base = "", out = []) {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const rel = base ? `${base}/${entry.name}` : entry.name;
+    if (entry.isDirectory()) htmlFiles(join(dir, entry.name), rel, out);
+    else if (entry.name.endsWith(".html")) out.push(rel);
+  }
+  return out;
+}
+
 /** Every `product` value the built HTML can submit, with the page that does it. */
 function submittedSlugs(dirs) {
   const found = new Map(); // slug -> first file that offers it
   for (const dir of dirs) {
     const root = join(ROOT, dir);
     if (!existsSync(root)) continue;
-    for (const file of globSync("**/*.html", { cwd: root })) {
+    for (const file of htmlFiles(root)) {
       const html = readFileSync(join(root, file), "utf8");
 
       // Hidden/text inputs: name and value in either order.
