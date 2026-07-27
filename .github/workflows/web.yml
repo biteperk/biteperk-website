@@ -65,6 +65,18 @@ jobs:
       - name: Resolve dist dir
         run: echo "DIST=$([ "$BUILD_TARGET" = "global" ] && echo dist-global || echo dist)" >> "$GITHUB_ENV"
 
+      # With INTL_LAUNCHED on, every hreflang cluster includes the AU half, so
+      # check-hreflang legitimately needs BOTH trees to verify reciprocity —
+      # and this leg only builds dist-global/. It passed before only because
+      # the flag was off and the cluster excluded AU: CI had never once
+      # validated the launched cluster shape. Building the AU tree here is what
+      # makes the global leg able to check what production actually emits.
+      - name: Build the AU tree too (hreflang reciprocity needs both halves)
+        if: matrix.target == 'global'
+        env:
+          BUILD_TARGET: au
+        run: npm run build
+
       # ONE gate list, not two. These steps used to restate the gate sequence
       # inline, and the two lists silently drifted: `check-cities` is documented
       # as running on BOTH targets (CLAUDE.md — the global pass pools English
