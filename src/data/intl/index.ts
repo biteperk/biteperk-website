@@ -22,7 +22,7 @@ import {
   chrome, home, howItWorks, about, contact, privacy, terms, cookies,
   type ChromeCopy, type HomeCopy, type SimplePageCopy, type ContactCopy,
 } from "./copy";
-import { marketContent, type MarketContent, type MarketMedia } from "./markets";
+import { marketContent, type MarketContent, type MarketMedia, type MarketHero } from "./markets";
 
 export type CopyBundle = {
   chrome: ChromeCopy;
@@ -87,5 +87,14 @@ export function resolveMedia(locale: Locale): MarketMedia | undefined {
   return marketContent[locale.base]?.media;
 }
 
-export type { MarketContent, MarketMedia };
+/**
+ * The locale's hero image + honest market pill. Every global tree has one; the
+ * signature stays optional so a new locale renders text-only (as all five did
+ * before Jul 2026) rather than throwing on a missing image.
+ */
+export function resolveHero(locale: Locale): MarketHero | undefined {
+  return marketContent[locale.base]?.hero;
+}
+
+export type { MarketContent, MarketMedia, MarketHero };
 export type { ChromeCopy, HomeCopy, SimplePageCopy, ContactCopy, Lang };

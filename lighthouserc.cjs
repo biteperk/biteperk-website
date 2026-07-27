@@ -29,6 +29,12 @@ module.exports = {
         // their visitors are the furthest from the Sydney origin.
         "http://localhost/gb-en/",
         "http://localhost/fr/",
+        // /en is the x-default and had the largest perf delta of any tree when
+        // heroes landed (0 images → a priority-loaded LCP hero), so it is the
+        // one most worth measuring. /be-en covers the second French/Flemish
+        // market and the shared Belgian hero.
+        "http://localhost/en/",
+        "http://localhost/be-en/",
       ],
       // Median of 3: single runs on shared 2-core CI runners produce
       // coin-flip TBT/perf numbers (observed 619ms TBT with 26KB of JS).

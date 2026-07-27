@@ -15,7 +15,7 @@
  */
 import IntlLayout from "@/layouts/IntlLayout.astro";
 import { localesForTarget, pagesForLocale, currentTarget, ORIGIN, type Locale } from "@/data/locales";
-import { resolveCopy, resolveMedia, type CopyBundle, type SimplePageCopy } from "@/data/intl";
+import { resolveCopy, resolveMedia, resolveHero, type CopyBundle, type SimplePageCopy } from "@/data/intl";
 import { intlProducts, intlProductsOverview } from "@/data/intl/products";
 import { products } from "@/data/products";
 import { buildFaqPage, buildVoxApplication, voxEditionId } from "@/data/schema";
@@ -55,6 +55,7 @@ const p = (seg: string) => `${locale.base}/${seg ? `${seg}/` : ""}`;
 
 const c = resolveCopy(locale);
 const media = resolveMedia(locale);
+const hero = resolveHero(locale);
 const { home: h, contact: ct } = c;
 
 const simple = SIMPLE_PAGES[page]?.(c) ?? null;
@@ -138,18 +139,47 @@ const appJsonLd =
     : null;
 ---
 
-<IntlLayout locale={locale} page={page} title={meta.title} description={meta.description} ogImage={ogImage}>
+{/* Preload only on the home, where the hero is the LCP element. `sizes` must
+    match the ImageBlock below or the browser preloads the wrong width. */}
+<IntlLayout
+  locale={locale}
+  page={page}
+  title={meta.title}
+  description={meta.description}
+  ogImage={ogImage}
+  preloadSlug={page === "" && hero ? { slug: hero.slug, sizes: "(min-width: 981px) 38vw, 100vw" } : undefined}
+>
   {page === "" && (
     <>
       <section class="intl-hero">
-        <div class="wrap">
-          <p class="eyebrow">{h.eyebrow}</p>
-          <h1>{h.h1}</h1>
-          <p class="lede">{h.lede}</p>
-          <div class="intl-ctas">
-            <a class="btn" href={p("contact")}>{h.ctaPrimary}</a>
-            <a class="btn-ghost" href={p("how-it-works")}>{h.ctaSecondary}</a>
+        <div class="wrap intl-hero-grid">
+          <div class="intl-hero-text">
+            {/* Names the MARKET, never a premises — there is no European office,
+                and claiming one breaks the same rule that bans the NAP and the
+                AU phone. /en carries no pill: it is the neutral x-default. */}
+            {hero?.pill && <span class="pill intl-pill">{hero.pill}</span>}
+            <p class="eyebrow">{h.eyebrow}</p>
+            <h1>{h.h1}</h1>
+            <p class="lede">{h.lede}</p>
+            <div class="intl-ctas">
+              <a class="btn" href={p("contact")}>{h.ctaPrimary}</a>
+              <a class="btn-ghost" href={p("how-it-works")}>{h.ctaSecondary}</a>
+            </div>
           </div>
+          {hero && (
+            <div class="intl-hero-visual">
+              {/* `priority` + the preload in IntlLayout make this the LCP
+                  element, taking that role from the headline. `aspect` is what
+                  holds CLS at 0 while it loads. */}
+              <ImageBlock
+                slug={hero.slug}
+                alt={hero.alt}
+                aspect="4 / 5"
+                widths="(min-width: 981px) 38vw, 100vw"
+                priority
+              />
+            </div>
+          )}
         </div>
       </section>
 

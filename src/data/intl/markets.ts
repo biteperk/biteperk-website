@@ -34,14 +34,53 @@ export type MarketMedia = {
   body: string;
 };
 
+/**
+ * The locale hero — one image per tree, so the five markets are visually
+ * distinct instead of sharing a look (amber bar / blue banquette / red velvet /
+ * light wood). Deliberately NOT a landmark: the AU hero (table-set-candles) is
+ * geography-neutral too, and localness comes from the pill and copy, with the
+ * cityscape band doing the geographic work. A landmark here would also push
+ * against art-direction rule 3.
+ *
+ * `pill` is the honest equivalent of AU's "Sydney, Australia" chip. It names
+ * the MARKET, never a premises — we have no European office, and inventing one
+ * breaks the same rule that bans the NAP and phone (check-truthful.mjs).
+ * Omit it (as /en does) and the hero renders without a chip.
+ */
+export type MarketHero = {
+  slug: string;
+  alt: string;
+  pill?: string;
+};
+
 export type MarketContent = {
   copy?: Override<CopyBundle>;
   /** Absent (e.g. /en) → the home renders no market band. */
   media?: MarketMedia;
+  /** Absent → the hero renders text-only, as every tree did before Jul 2026. */
+  hero?: MarketHero;
+};
+
+/**
+ * International English x-default (/en). Carries a hero but deliberately no
+ * market band and no pill: it serves the US and every unclaimed region, so it
+ * must read as neither European nor Australian. Before Jul 2026 this tree had
+ * no imagery at all — zero images on every page — while being the x-default.
+ */
+const enNeutral: MarketContent = {
+  hero: {
+    slug: "table-set-neutral",
+    alt: "Tables laid in warm light, ready for service",
+  },
 };
 
 // ── United Kingdom (/gb-en) ─────────────────────────────────────────
 const gbEn: MarketContent = {
+  hero: {
+    slug: "pub-amber-evening",
+    alt: "An amber-lit bar and dining room being set before evening service",
+    pill: "United Kingdom · Pilot programme",
+  },
   media: {
     cityscape: {
       slug: "london-skyline",
@@ -85,6 +124,11 @@ const gbEn: MarketContent = {
 
 // ── France (/fr) — France-specific touches over the neutral FR core ─
 const frFr: MarketContent = {
+  hero: {
+    slug: "bistro-red-velvet",
+    alt: "Salle de bistrot aux murs rouges, une table dressée près de la fenêtre",
+    pill: "France · Programme pilote",
+  },
   media: {
     cityscape: {
       slug: "paris-skyline",
@@ -126,10 +170,15 @@ const frFr: MarketContent = {
 
 // ── Belgium — English (/be-en) ──────────────────────────────────────
 const beEn: MarketContent = {
+  hero: {
+    slug: "brasserie-banquette",
+    alt: "A blue velvet banquette and marble tables laid for service",
+    pill: "Belgium · Pilot programme",
+  },
   media: {
     cityscape: {
-      slug: "belgium-dinant",
-      alt: "Riverside townhouses on the Meuse at Dinant, Belgium",
+      slug: "brussels-grand-place",
+      alt: "The guild houses of the Grand-Place in Brussels",
     },
     hospitality: {
       slug: "cafe-continental",
@@ -168,10 +217,15 @@ const beEn: MarketContent = {
 
 // ── Belgique — Français (/be-fr) ────────────────────────────────────
 const beFr: MarketContent = {
+  hero: {
+    slug: "brasserie-banquette",
+    alt: "Banquette en velours bleu et tables en marbre dressées pour le service",
+    pill: "Belgique · Programme pilote",
+  },
   media: {
     cityscape: {
-      slug: "belgium-dinant",
-      alt: "Maisons en bord de Meuse à Dinant, en Belgique",
+      slug: "brussels-grand-place",
+      alt: "Les maisons de guilde de la Grand-Place de Bruxelles",
     },
     hospitality: {
       slug: "cafe-continental",
@@ -208,8 +262,12 @@ const beFr: MarketContent = {
   },
 };
 
-/** Market content per locale base. /en has no entry — it stays the neutral x-default. */
+/**
+ * Market content per locale base. /en now has an entry — a hero only, no band
+ * and no pill — so the x-default is no longer the one tree with zero imagery.
+ */
 export const marketContent: Partial<Record<Locale["base"], MarketContent>> = {
+  "/en": enNeutral,
   "/gb-en": gbEn,
   "/fr": frFr,
   "/be-en": beEn,
