@@ -17,6 +17,7 @@ import IntlLayout from "@/layouts/IntlLayout.astro";
 import { localesForTarget, pagesForLocale, currentTarget, ORIGIN, type Locale } from "@/data/locales";
 import { resolveCopy, resolveMedia, resolveHero, type CopyBundle, type SimplePageCopy } from "@/data/intl";
 import { intlProducts, intlProductsOverview } from "@/data/intl/products";
+import { pageImageFor, productImageFor } from "@/data/intl/page-images";
 import { products } from "@/data/products";
 import { buildFaqPage, buildVoxApplication, voxEditionId } from "@/data/schema";
 import ImageBlock from "@/components/ImageBlock.astro";
@@ -61,6 +62,9 @@ const hero = resolveHero(locale);
 const { home: h, contact: ct } = c;
 
 const simple = SIMPLE_PAGES[page]?.(c) ?? null;
+// Supporting photo for sub-pages. undefined on the home (it has a hero) and on
+// the legal pages (deliberately text-only — see page-images.ts).
+const pageImage = pageImageFor(page);
 
 // Product pages: STRUCTURE from products.ts (order, status, which is core),
 // PROSE from intl/products.ts. The overview lists every capability; a
@@ -68,6 +72,8 @@ const simple = SIMPLE_PAGES[page]?.(c) ?? null;
 const productSlug = page.startsWith("products/") ? page.slice("products/".length) : null;
 const overview = intlProductsOverview[locale.copyLang];
 const product = productSlug ? intlProducts[locale.copyLang][productSlug] : null;
+// Product detail pages key their photo off the product, not the path.
+const productImage = productSlug ? productImageFor(productSlug) : undefined;
 const catalogue = productSlug ? products.find((x) => x.slug === productSlug) : null;
 
 // A path in pagesForLocale() that no branch here can render used to reach
@@ -342,6 +348,20 @@ const appJsonLd =
           <h3>{ct.aside.heading}</h3>
           <p>{ct.aside.body}</p>
           <p><a class="link-arrow" href="mailto:hello@biteperk.com.au">{ct.aside.emailLabel}</a></p>
+          {/* Contact takes its photo in the aside, not under the intro: the
+              page is a two-column grid, and a full-width band between the
+              form fields would cut the form in half. */}
+          {pageImage && (
+            <div class="intl-page-image">
+              <ImageBlock
+                slug={pageImage.slug}
+                alt={pageImage.alt[locale.copyLang]}
+                aspect={pageImage.aspect}
+                widths="(min-width: 981px) 360px, 100vw"
+                rounded
+              />
+            </div>
+          )}
         </aside>
       </div>
     </section>
@@ -353,6 +373,20 @@ const appJsonLd =
         <p class="eyebrow">{simple.eyebrow}</p>
         <h1>{simple.h1}</h1>
         <p class="lede">{simple.intro}</p>
+        {/* Breaks the prose run. Never `priority` — the LCP element on these
+            trees is text, so prioritising an image only steals bandwidth from
+            it. Legal pages deliberately get none (see page-images.ts). */}
+        {pageImage && (
+          <div class="intl-page-image">
+            <ImageBlock
+              slug={pageImage.slug}
+              alt={pageImage.alt[locale.copyLang]}
+              aspect={pageImage.aspect}
+              widths="(min-width: 981px) 720px, 100vw"
+              rounded
+            />
+          </div>
+        )}
         {simple.sections.map((s) => (
           <section>
             <h2>{s.heading}</h2>
@@ -386,6 +420,17 @@ const appJsonLd =
           <p class="eyebrow">{overview.eyebrow}</p>
           <h1>{overview.h1}</h1>
           <p class="lede">{overview.lede}</p>
+          {pageImage && (
+            <div class="intl-page-image">
+              <ImageBlock
+                slug={pageImage.slug}
+                alt={pageImage.alt[locale.copyLang]}
+                aspect={pageImage.aspect}
+                widths="(min-width: 981px) 1120px, 100vw"
+                rounded
+              />
+            </div>
+          )}
           <div class="intl-ctas">
             <a class="btn" href={p("contact")}>{overview.ctaLabel}</a>
           </div>
@@ -450,6 +495,17 @@ const appJsonLd =
           <div class="intl-ctas">
             <a class="btn" href={p("contact")}>{product.ctaLabel}</a>
           </div>
+          {productImage && (
+            <div class="intl-page-image">
+              <ImageBlock
+                slug={productImage.slug}
+                alt={productImage.alt[locale.copyLang]}
+                aspect={productImage.aspect}
+                widths="(min-width: 981px) 1120px, 100vw"
+                rounded
+              />
+            </div>
+          )}
         </div>
       </section>
 
