@@ -158,6 +158,14 @@ jobs:
         if: matrix.target == 'au'
         run: npm run build:site
 
+      # Belt-and-braces: `build:site` already ends with gates:merged, so this
+      # re-runs it. Kept as its own step so a merged-tree failure is legible in
+      # the CI UI rather than buried in the build step, and so the gate survives
+      # anyone later trimming it out of build:site.
+      - name: Merged tree integrity (dist-site — root-file pointers + sitemap union)
+        if: matrix.target == 'au'
+        run: npm run gates:merged
+
       - name: Lighthouse CI budgets (perf ≥95, LCP ≤2.5s, CLS ≤0.02, JS ≤60KB)
         if: matrix.target == 'au'
         run: npm run lhci
