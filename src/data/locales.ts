@@ -180,10 +180,6 @@ export const CCTLDS: readonly string[] = locales
   .map((l) => l.cctld)
   .filter((c): c is string => Boolean(c));
 
-/** The redirect-only AU country-code host (front door → AU_HOME). Derived. */
-export const AU_CCTLD =
-  locales.find((l) => l.market === "au")?.cctld ?? "https://biteperk.com.au";
-
 export const DEFAULT_TARGET: BuildTarget = "au";
 
 /** Resolve a BUILD_TARGET env value, defaulting to `au`. */
@@ -215,11 +211,6 @@ export function localesForTarget(target: BuildTarget): readonly Locale[] {
  */
 export function currentBasePath(): string {
   return currentTarget() === "au" ? AU_BASE : "";
-}
-
-/** The absolute origin (never includes a base path). */
-export function currentOrigin(): string {
-  return ORIGIN;
 }
 
 /**
@@ -260,11 +251,14 @@ export function localeHome(locale: Locale): string {
   return `${ORIGIN}${locale.base}/`;
 }
 
-/** Build the absolute URL for a page path within a specific locale. */
-export function localeUrl(locale: Locale, pagePath = ""): string {
-  const clean = pagePath.replace(/^\/+/, "");
-  return `${ORIGIN}${locale.base}/${clean}`.replace(/\/$/, "/"); // keep trailing slash on home
-}
+// Removed Jul 2026: AU_CCTLD, currentOrigin() and localeUrl() were exported
+// here and referenced nowhere in src/, scripts/, tests/ or astro.config.mjs.
+// localeUrl() also carried a no-op — `.replace(/\/$/, "/")` swapped a trailing
+// slash for a trailing slash under a comment claiming it "keeps trailing slash
+// on home", when nothing was removing it. Use localeHome() for a locale's home
+// and localeSwitchUrl() to carry a page across locales; both are live and
+// tested. Dead code in the international SSOT is worse than dead code anywhere
+// else, because everything derives from this file.
 
 // ── International page scaffold ──────────────────────────────────────────────
 export type Alternate = { readonly hreflang: string; readonly href: string };

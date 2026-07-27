@@ -96,6 +96,52 @@ const FORBIDDEN = [
   },
 ];
 
+/**
+ * Rules scanned against TAG-STRIPPED TEXT rather than raw HTML.
+ *
+ * Everything in FORBIDDEN above is deliberately matched against raw HTML: a
+ * phone number inside `href="tel:…"` is a leak, and stripping tags would hide
+ * it. These rules are the opposite case — they need prose, because they hinge
+ * on capitalisation and on neighbouring words, and markup between the brand and
+ * its context word would break the proximity window.
+ *
+ * Do NOT reuse `visibleText` from _similarity.mjs here. That helper also strips
+ * <header>, <footer>, <nav> and the consent block, which is right when
+ * measuring how similar two pages are and wrong when asking whether a page
+ * makes a false claim — a fabricated integration in the footer is still a
+ * fabricated integration.
+ */
+const textOf = (html) =>
+  html
+    .replace(/<(script|style)[\s\S]*?<\/\1>/g, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&#39;/g, "'")
+    .replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ")
+    .trim();
+
+// Words that turn a brand mention into an integration CLAIM.
+const INTEGRATION_CTX = String.raw`(?:[Ii]ntegrat\w*|[Cc]onnects?\b|[Cc]onnected\b|[Ss]yncs?\b|[Ss]yncing\b|[Ww]orks\s+with|[Cc]ompatible|[Pp]lugs?\s+into|POS\b|[Pp]oint[-\s]of[-\s]sale|[Bb]ooking\s+(?:system|platform)|[Ii]ntégr\w*|[Ss]e\s+connecte|[Cc]ompatible\s+avec|[Ll]ogiciel\s+de\s+caisse)`;
+
+// Toast and Square are real POS vendors AND ordinary English words. Three
+// things keep this from firing on honest copy:
+//   1. case-sensitivity      → "avocado toast", "60 square metres" cannot match
+//   2. the lookbehind        → "Trafalgar Square", "Leicester Square" cannot
+//      match, which matters because the GB tree is London copy
+//   3. the proximity window  → a capitalised Square must sit within ~60 chars
+//      of an integration word, without crossing a sentence boundary
+const AMBIGUOUS_BRAND = String.raw`(?<![A-Z][a-zà-ÿ]{2,}\s)\b(?:Toast|Square)\b`;
+
+const FORBIDDEN_IN_TEXT = [
+  {
+    label: "ambiguous integration brand claimed (Toast/Square)",
+    // Both orders are real phrasings: "works with Square" and "Square integration".
+    re: new RegExp(
+      `${AMBIGUOUS_BRAND}[^.!?]{0,60}${INTEGRATION_CTX}|${INTEGRATION_CTX}[^.!?]{0,60}${AMBIGUOUS_BRAND}`,
+    ),
+  },
+];
+
 function htmlFiles(dir, acc = []) {
   if (!existsSync(dir)) return acc;
   for (const e of readdirSync(dir, { withFileTypes: true })) {
@@ -116,6 +162,16 @@ for (const file of pages) {
   const html = readFileSync(file, "utf8");
   for (const { label, re } of FORBIDDEN) {
     const m = html.match(re);
+    if (m) {
+      failed++;
+      console.error(`FAIL  ${rel}: contains ${label} — "…${m[0]}…"`);
+    }
+  }
+  // Prose-only rules — see the note on textOf above for why these cannot share
+  // the raw-HTML pass, and why that pass must not be moved onto stripped text.
+  const text = textOf(html);
+  for (const { label, re } of FORBIDDEN_IN_TEXT) {
+    const m = text.match(re);
     if (m) {
       failed++;
       console.error(`FAIL  ${rel}: contains ${label} — "…${m[0]}…"`);

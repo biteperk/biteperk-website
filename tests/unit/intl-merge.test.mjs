@@ -219,3 +219,46 @@ test("bundle parity: the French trees carry no untranslated English", () => {
     );
   }
 });
+
+/* ------------------------------------------------------------------------
+ * Absolute floors the parity tests above cannot express.
+ *
+ * Shape parity compares each tree to a reference tree, so it only ever catches
+ * RELATIVE drift. If every tree loses the same thing at once, it stays silent —
+ * which is exactly the failure mode for content that is supposed to be present
+ * everywhere.
+ * ---------------------------------------------------------------------- */
+
+test("every market ships a real FAQ — at least 5 items on every tree", () => {
+  // Load-bearing for check-intl-similarity, not just for the reader. The
+  // metric is CONTAINMENT (hits / min(|a|,|b|)), so a thin tree cannot be
+  // rescued by its sibling growing — both sides have to carry their own copy.
+  // Shape parity would not catch all five trees dropping to two items.
+  for (const l of globalLocales()) {
+    const items = intl.resolveCopy(l).home.faq.items;
+    assert.ok(
+      items.length >= 5,
+      `${l.base} home.faq has ${items.length} item(s); the floor is 5`,
+    );
+  }
+});
+
+test("no two markets share a home h1", () => {
+  // Scoped to home.h1 ON PURPOSE. howItWorks/contact/legal h1s are legitimately
+  // identical across markets ("Privacy notice" on all three English trees), so
+  // a generalised "no page shares an h1" rule would fail instantly and get
+  // deleted. The home h1 is the market's actual argument — two trees sharing it
+  // means one was never written.
+  //
+  // The untranslated-English test above only compares FRENCH trees to /en, so
+  // two English trees colliding is the case nothing else covers.
+  const seen = new Map();
+  for (const l of globalLocales()) {
+    const key = intl.resolveCopy(l).home.h1.trim().replace(/\s+/g, " ").toLowerCase();
+    seen.set(key, [...(seen.get(key) ?? []), l.base]);
+  }
+  const collisions = [...seen.entries()]
+    .filter(([, bases]) => bases.length > 1)
+    .map(([h1, bases]) => `${bases.join(" + ")} share: ${JSON.stringify(h1.slice(0, 60))}`);
+  assert.deepEqual(collisions, [], `markets share a home h1:\n  ${collisions.join("\n  ")}`);
+});
