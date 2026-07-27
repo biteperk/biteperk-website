@@ -19,6 +19,7 @@ import LocalePicker from "@/components/LocalePicker.astro";
 import ThemeToggle from "@/components/ThemeToggle.astro";
 import StarMark from "@/components/StarMark.astro";
 import LocaleSuggest from "@/components/LocaleSuggest.astro";
+import { INTL_NAV } from "@/data/intl/nav";
 
 interface Props {
   /** The locale this page belongs to — everything derives from it. */
@@ -85,10 +86,9 @@ const year = new Date().getFullYear();
           <span class="brand-name">bite<span class="perk">perk</span></span>
         </a>
         <nav class="intl-links" aria-label="Site">
-          <a href={p("products")}>{c.nav.products}</a>
-          <a href={p("how-it-works")}>{c.nav.howItWorks}</a>
-          <a href={p("about")}>{c.nav.about}</a>
-          <a href={p("contact")}>{c.nav.contact}</a>
+          {INTL_NAV.map((item) => (
+            <a href={p(item.path)}>{c.nav[item.key]}</a>
+          ))}
         </nav>
         <div class="intl-actions">
           <LocalePicker title={c.regionTitle} />
@@ -111,10 +111,9 @@ const year = new Date().getFullYear();
             <p class="intl-footer-blurb">{c.footerBlurb}</p>
           </div>
           <nav class="intl-footer-links" aria-label="Footer">
-            <a href={p("products")}>{c.nav.products}</a>
-            <a href={p("how-it-works")}>{c.nav.howItWorks}</a>
-            <a href={p("about")}>{c.nav.about}</a>
-            <a href={p("contact")}>{c.nav.contact}</a>
+            {INTL_NAV.map((item) => (
+              <a href={p(item.path)}>{c.nav[item.key]}</a>
+            ))}
             <a href={p("legal/privacy")}>{c.privacy}</a>
             <a href={p("legal/terms")}>{c.terms}</a>
             <a href={p("legal/cookies")}>{c.cookies}</a>

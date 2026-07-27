@@ -340,9 +340,26 @@ export function pagesForLocale(locale: Locale): readonly string[] {
  * cross-locale hreflang cluster on shared pages. These must go live together
  * — see the runbook's launch step.
  */
-export const INTL_LAUNCHED =
+function parseLaunchFlag(raw: string | undefined): boolean {
+  // Unset is the safe default: not launched.
+  if (raw === undefined || raw === "") return false;
+  const v = raw.trim().toLowerCase();
+  if (v === "true" || v === "1" || v === "yes" || v === "on") return true;
+  if (v === "false" || v === "0" || v === "no" || v === "off") return false;
+  // Anything else is a typo, and the old `=== "true"` test swallowed it: the
+  // build silently came out noindex while the operator believed they had just
+  // launched five markets. A launch is a deliberate five-market decision, so
+  // an unreadable flag must stop the build rather than pick a side.
+  throw new Error(
+    `INTL_LAUNCHED=${JSON.stringify(raw)} is not a boolean. ` +
+      `Use true/1/yes/on or false/0/no/off, or leave it unset for the default (not launched).`,
+  );
+}
+
+export const INTL_LAUNCHED = parseLaunchFlag(
   (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env
-    ?.INTL_LAUNCHED === "true";
+    ?.INTL_LAUNCHED,
+);
 
 /**
  * Base-less page paths the AU tree shares with the global trees — i.e. the
