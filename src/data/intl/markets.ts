@@ -19,11 +19,11 @@
  * gate this comment used to carry is DISCHARGED. New French here needs a fresh
  * pass; the sign-off covers what existed at that date.
  *
- * ⚠️ PENDING (27 Jul 2026): the market differentiation pass added substantial
- * NEW French — /fr and /be-fr home (h1, lede, proof, steps, pilot, trust,
- * closing), both about pages, and a five-item FAQ each. That French is NOT
- * covered by the 26 Jul sign-off and has not had a native pass. Do not use
- * it in a marketing push until Ludovic has reviewed it.
+ * The 27 Jul 2026 market-differentiation French (both FR home pages, both
+ * about pages, two five-item FAQs) was reviewed and SIGNED OFF by Ludovic on
+ * 27 Jul 2026 — DISCHARGED, cleared for prospect-facing use. The standing rule
+ * is unchanged and applies to whatever is written next: French added after that
+ * date needs its own native pass.
  */
 import type { Locale } from "@/data/locales";
 import type { CopyBundle, Override } from "./index";
