@@ -10,6 +10,81 @@ existing records*), so "after = before + this entry" always holds.
 
 ---
 
+## 2026-07-27 — biteperk.com.au apex moved to Cloudflare; the ACME renewal risk is closed
+
+**Why:** the apex held a Firebase GTS certificate expiring **22 Oct 2026**, and
+Firebase renews ~30 days out. Renewal walks `/.well-known/acme-challenge/`,
+which the `biteperk` target's `/:path*` catch-all swallows — re-measured
+immediately before this change:
+
+```
+https://biteperk.com.au/.well-known/acme-challenge/testtoken
+  -> 301 https://biteperk.com/au-en/.well-known/acme-challenge/testtoken
+```
+
+With Firebase HSTS `includeSubDomains; preload`, a failed renewal would have
+taken the indexed AU host dark **non-bypassably** — the same failure already
+suffered on `www` (entry below). Done in a calm window rather than under
+deadline in late September.
+
+**Precondition checked first (never previously recorded):** zone SSL/TLS
+**encryption mode = Full**, automatic mode disabled. Full rather than Full
+(Strict) is the better of the two here — it does not validate the origin
+certificate, so the Firebase fallback keeps working even after that certificate
+lapses in October.
+
+### What changed — two edits, nothing else
+
+**1. Both existing redirect rules widened** from `http.host eq
+"www.biteperk.com.au"` to `http.host in {"www.biteperk.com.au"
+"biteperk.com.au"}`. Still **2 rules, not 4**. Renamed to `canonical-path
+passthrough (apex + www)` and `market catch-all to au-en (apex + www)`; order
+preserved (passthrough first). Landed **before** the proxy flip, so they were
+inert while the apex was grey-clouded — verified inert at the time by the apex
+still exhibiting its Firebase-side double-prefix bug.
+
+**2. Apex `A` flipped DNS-only -> Proxied.** Value stays `199.36.158.100`;
+name, type and TTL untouched. Record count 13 before and after.
+
+### Verified after the flip
+
+| Check | Result |
+|---|---|
+| apex + www x `/`, `/about/`, `/au-en/about/`, `?utm_source=x`, a blog path | all **single-hop 301**; apex and www now identical |
+| trailing slash | **fixed** — `/about/` -> `/au-en/about/` (Firebase dropped it) |
+| double-prefix | **fixed** — `/au-en/about/` no longer doubles |
+| `http://` scheme | single-hop straight to `https://biteperk.com/au-en/...` |
+| MX | unchanged: `10 mx.zoho.com.au` / `20 mx2` / `50 mx3` |
+| apex A | now Cloudflare edge (`104.21.15.246`, `172.67.165.86`) |
+| booking app | `vocotable` + `kitchen.vocotable` both 200 (separate DNS-only CNAMEs) |
+| AU content | `biteperk.com/au-en/**` 200, indexable, self-referential canonicals |
+| real browser | `http://biteperk.com.au/about/` renders `/au-en/about/`, no warning |
+
+**Two latent bugs fixed as a side effect** — the trailing-slash drop and the
+double-prefix both came from `firebase.json`'s `:path` substitution.
+
+**Not verified from the sandbox, flagged:** the edge certificate chain (this
+environment intercepts TLS and re-signs, so `openssl` reports a proxy cert) and
+actual Zoho mail delivery (unchanged MX resolution is the proxy for it). Confirm
+the padlock and send one test mail.
+
+**Rollback:** flip the apex `A` back to DNS-only. One toggle, instant.
+
+### Deliberately kept, not retired
+
+The Firebase `A` value and the apex custom domain both stay. If a rule ever
+misfires, Cloudflare falls back to fetching Firebase, which still serves its own
+301s — and under SSL mode Full that fallback survives the October lapse.
+Retiring the `biteperk` target, `dist-cctld/` and the `merge-dist` writer is
+optional cleanup once this has been stable.
+
+**Repo consequence:** `firebase.json`'s apex `/` -> `/au-en/` 301 (added in
+`ad98d4f`) is now belt-and-braces rather than the live path. CLAUDE.md lines ~48
+and ~66 still call `biteperk.com.au` the one Firebase-hosted redirect exception;
+that is now true only as a fallback.
+
+---
+
 ## 2026-07-26 (later) — www.biteperk.com.au rescued from a TLS dead end; biteperk.com Search Console property
 
 **Context:** verification pass over the live hosts after the ccTLD work below.
