@@ -10,6 +10,15 @@
  * The Latin-1 supplement range in `words()` is load-bearing — stripping it
  * would erase every accent and make French copy look far more similar to
  * itself than it is.
+ *
+ * That is not hypothetical. Until Jul 2026 this module was imported by
+ * check-intl-similarity only: check-cities kept its own copy, under a comment
+ * claiming the two could not drift, and it had already drifted into exactly the
+ * tokenizer warned about above — no `À-ɏ`, and punctuation DELETED rather than
+ * replaced with a space, so `l'équipe` → `lquipe` and `don't` → `dont`. Both
+ * gates now import from here. Verify that by editing something in this file
+ * (the shingle width is easiest) and confirming BOTH gates' numbers move; an
+ * accent-only change proves nothing, because the AU cities are English.
  */
 
 /** Lowercase, drop punctuation, keep accented Latin letters, split on space. */

@@ -15,6 +15,8 @@
  *   English = /en + /gb-en + /be-en      French = /fr + /be-fr
  *
  * Primitives come from _similarity.mjs so this and check-cities cannot drift.
+ * (True since Jul 2026 — check-cities kept a private copy before that, and this
+ * line asserted otherwise while they were already drifting. Keep it true.)
  * Note the metric is containment, not Jaccard: adding unique copy to only one
  * side barely helps, so a market that skips (say) its FAQ will not pass by
  * having its sibling grow.

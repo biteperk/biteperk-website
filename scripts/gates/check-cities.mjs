@@ -26,6 +26,16 @@
  * purpose: a similarity gate first exercised against 24 freshly-written pages
  * is a gate you will be tempted to loosen rather than trust.
  *
+ * ── The similarity method lives in _similarity.mjs, not here ────────────────
+ * This gate and check-intl-similarity.mjs share `words`/`shingles`/`overlap`
+ * from that module. They did NOT until Jul 2026: each kept its own copy under
+ * comments claiming they could not drift, and they had already drifted — the
+ * copy here stripped accents (`l'équipe` → `lquipe`) and deleted punctuation
+ * rather than substituting a space. That is precisely the tokenizer the shared
+ * module documents as unsafe, and this is the gate that pools FRENCH cities.
+ * It was latent only because intl/cities.ts is still empty. Do not re-inline
+ * these primitives.
+ *
  * Fault-inject before trusting: duplicate one city's intro onto another,
  * re-run, confirm exit 1. Run after a build (the global pass reads the
  * generated dist-global/llms.txt):
@@ -36,6 +46,11 @@ import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadTS } from "../build/_load-ts.mjs";
+// Deliberately NOT importing `visibleText` alongside these: it exists to pull
+// prose out of built HTML, and this gate measures SOURCE DATA (cities.ts), so
+// there is no markup to strip. Importing it would imply a substrate this gate
+// does not have.
+import { words, shingles, overlap } from "./_similarity.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const IS_GLOBAL = process.env.BUILD_TARGET === "global";
@@ -44,21 +59,6 @@ let failed = 0;
 const fail = (msg) => {
   failed++;
   console.error(`FAIL  ${msg}`);
-};
-
-// ── Similarity primitives (shared by both passes) ────────────────────────────
-const words = (s) => s.split(/\s+/).filter(Boolean);
-const shingles = (s, n = 4) => {
-  const w = words(s.toLowerCase().replace(/[^a-z0-9\s]/g, ""));
-  const set = new Set();
-  for (let i = 0; i <= w.length - n; i++) set.add(w.slice(i, i + n).join(" "));
-  return set;
-};
-const overlap = (a, b) => {
-  if (a.size === 0 || b.size === 0) return 0;
-  let hit = 0;
-  for (const s of a) if (b.has(s)) hit++;
-  return hit / Math.min(a.size, b.size);
 };
 
 const aiLocalText = (c) =>
