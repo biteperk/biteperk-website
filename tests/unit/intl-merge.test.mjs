@@ -41,12 +41,43 @@ test("merge: undefined override returns base unchanged", () => {
 test("resolveCopy: every global locale resolves a complete bundle in its language", () => {
   for (const l of loc.localesForTarget("global")) {
     const c = intl.resolveCopy(l);
-    for (const k of ["chrome", "home", "howItWorks", "about", "contact", "privacy", "terms"]) {
+    // `cookies` was absent from this list while legal/cookies was already a
+    // core page — the bundle key it depends on was untested.
+    for (const k of ["chrome", "home", "howItWorks", "about", "contact", "privacy", "terms", "cookies"]) {
       assert.ok(c[k], `${l.base} missing bundle key ${k}`);
     }
     assert.ok(c.home.h1.length > 0, `${l.base} home.h1 empty`);
     assert.ok(c.home.pilot.points.length >= 3, `${l.base} pilot points suspiciously short`);
   }
+});
+
+test("resolveHero: every global locale has a hero, and no pill claims a premises", () => {
+  // Before Jul 2026 the intl heroes were text-only and /en had no imagery at
+  // all — on the x-default. A locale added without a hero would silently
+  // reintroduce that, so require one rather than letting it default away.
+  for (const l of loc.localesForTarget("global")) {
+    const h = intl.resolveHero(l);
+    assert.ok(h, `${l.base} has no hero image`);
+    assert.ok(h.slug && h.alt, `${l.base} hero missing slug or alt`);
+    // Alt text is per-language: the French trees must not ship English alts.
+    if (l.copyLang === "fr") {
+      assert.match(h.alt, /[àâçéèêëîïôùûü]/i, `${l.base} hero alt is not French: "${h.alt}"`);
+    }
+    // The pill names a MARKET, never an office. "Sydney, Australia" is legal on
+    // the AU tree because that address is real; nothing equivalent is true in
+    // Europe, and check-truthful only sweeps the AU phone/NAP/price strings —
+    // it would not catch an invented European city here.
+    if (h.pill) {
+      assert.doesNotMatch(
+        h.pill,
+        /\b(London|Paris|Brussels|Bruxelles|Manchester|Lyon|Antwerp|Anvers)\b/i,
+        `${l.base} pill names a city, which reads as a local office: "${h.pill}"`,
+      );
+    }
+  }
+  // /en is the neutral x-default: it must carry no market pill.
+  const en = loc.locales.find((l) => l.base === "/en");
+  assert.equal(intl.resolveHero(en).pill, undefined, "/en must stay market-neutral");
 });
 
 test("resolveCopy: market overrides land (gb-en pilot is UK, be-fr stays French)", () => {

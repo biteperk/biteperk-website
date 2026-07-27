@@ -154,3 +154,28 @@ cafe-continental
   Photographer: Unsplash contributor
   Original:     https://images.unsplash.com/photo-1554118811-1e0d58224f24
   Brief:        Relaxed continental café interior — one guest, back turned
+
+brussels-grand-place
+  Photographer: Stephanie LeBlanc
+  Original:     https://unsplash.com/@sleblanc01
+  Brief:        Brussels Grand-Place guild houses against a dramatic sky — the Belgian establishing shot. Replaces belgium-dinant, a town 90 min away that stood in while every Belgian string said Brussels.
+
+pub-amber-evening
+  Photographer: Robert
+  Original:     https://unsplash.com/@robert_lens
+  Brief:        Amber-lit bar before service — bentwood chairs up, patterned tile, no people (UK hero)
+
+brasserie-banquette
+  Photographer: Klara Kulikova
+  Original:     https://unsplash.com/@kkalerry
+  Brief:        Blue velvet banquette and marble tables laid for service, no people (Belgium hero)
+
+bistro-red-velvet
+  Photographer: Darrell Jonathan
+  Original:     https://unsplash.com/@d29h45
+  Brief:        Dim bistro dining room — red walls, wall sconces, table set by the window (France hero)
+
+table-set-neutral
+  Photographer: Alessio Dandi
+  Original:     https://unsplash.com/@alessiodandi
+  Brief:        Laid tables in warm light, dried flowers, no people — deliberately reads as neither European nor Australian, for the /en x-default tree

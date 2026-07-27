@@ -29,9 +29,12 @@ interface Props {
   description: string;
   ogImage: string;
   noindex?: boolean;
+  /** Responsive LCP preload, forwarded to Base. Home only — that is the one
+      page whose hero image is the LCP element. */
+  preloadSlug?: { slug: string; sizes: string };
 }
 
-const { locale, page, title, description, ogImage, noindex = !INTL_LAUNCHED } = Astro.props;
+const { locale, page, title, description, ogImage, noindex = !INTL_LAUNCHED, preloadSlug } = Astro.props;
 const c = resolveCopy(locale).chrome;
 
 const pagePath = page ? `${page}/` : "";
@@ -65,6 +68,7 @@ const year = new Date().getFullYear();
   noindex={noindex}
   alternates={alternates}
   xDefaultHref={xDefault}
+  preloadSlug={preloadSlug}
   hideNav={true}
   hideFooter={true}
 >
@@ -197,6 +201,25 @@ const year = new Date().getFullYear();
   /* ── Shared section building blocks ── */
   .intl section { padding-block: var(--space-9); }
   .intl .intl-hero { padding-block: calc(var(--space-10) * 1.2) var(--space-9); }
+
+  /* Hero: text beside a constrained 4:5 image, mirroring the AU hero. Not
+     full-bleed — at this rendered size the existing 1920 tier is retina-sharp,
+     so no new image width is needed. */
+  .intl .intl-hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: var(--space-8);
+    align-items: center;
+  }
+  .intl .intl-hero-visual { max-width: 460px; width: 100%; justify-self: end; }
+  .intl .intl-pill { margin-bottom: var(--space-4); }
+  /* Single column below the 2-up breakpoint. The image follows the text so the
+     headline and CTA stay first on a phone; it keeps `priority` because it is
+     still the LCP element once it scrolls in. */
+  @media (max-width: 980px) {
+    .intl .intl-hero-grid { grid-template-columns: 1fr; gap: var(--space-7); }
+    .intl .intl-hero-visual { max-width: 100%; justify-self: stretch; }
+  }
   /* Short viewports — phone landscape, split-screen tablets, small laptops.
      At 844×390 the hero measured 681px tall: the headline ran past the fold
      and the CTAs sat ~200px below it, so a visitor turning their phone

@@ -250,6 +250,57 @@ const catalogue = [
     url: "https://images.unsplash.com/photo-1554118811-1e0d58224f24",
     brief: "Relaxed continental café interior — one guest, back turned",
   },
+
+  // ── Market heroes + Brussels (regional parity, Jul 2026) ──────────────
+  // One hero per global tree so the five markets are visually distinct rather
+  // than sharing a look: amber bar (UK) / blue banquette (BE) / red velvet (FR)
+  // / light wood (the neutral x-default). Note the AU hero (table-set-candles)
+  // is itself geography-neutral — localness comes from the pill and copy, not
+  // from the hero photo — so these follow the same rule.
+  // Every one was reviewed at full size against docs/art-direction.md: no
+  // readable signage/menus/logos, no identifiable faces, no venue presented as
+  // a customer. Three earlier candidates were rejected on exactly those rules
+  // (readable snack branding, people in frame, a church, and Venice).
+  {
+    slug: "brussels-grand-place",
+    id: "photo-1548092304-e0205cb0031b",
+    photographer: "Stephanie LeBlanc",
+    url: "https://unsplash.com/@sleblanc01",
+    brief:
+      "Brussels Grand-Place guild houses against a dramatic sky — the Belgian " +
+      "establishing shot. Replaces belgium-dinant, a town 90 min away that stood " +
+      "in while every Belgian string said Brussels.",
+  },
+  {
+    slug: "pub-amber-evening",
+    id: "photo-1763142045723-230b56924c6a",
+    photographer: "Robert",
+    url: "https://unsplash.com/@robert_lens",
+    brief: "Amber-lit bar before service — bentwood chairs up, patterned tile, no people (UK hero)",
+  },
+  {
+    slug: "brasserie-banquette",
+    id: "photo-1583354608715-177553a4035e",
+    photographer: "Klara Kulikova",
+    url: "https://unsplash.com/@kkalerry",
+    brief: "Blue velvet banquette and marble tables laid for service, no people (Belgium hero)",
+  },
+  {
+    slug: "bistro-red-velvet",
+    id: "photo-1686836715835-65af22ea5cd4",
+    photographer: "Darrell Jonathan",
+    url: "https://unsplash.com/@d29h45",
+    brief: "Dim bistro dining room — red walls, wall sconces, table set by the window (France hero)",
+  },
+  {
+    slug: "table-set-neutral",
+    id: "photo-1602232037779-30b01ac3c457",
+    photographer: "Alessio Dandi",
+    url: "https://unsplash.com/@alessiodandi",
+    brief:
+      "Laid tables in warm light, dried flowers, no people — deliberately reads " +
+      "as neither European nor Australian, for the /en x-default tree",
+  },
 ];
 
 const FETCH_W = 2000;
