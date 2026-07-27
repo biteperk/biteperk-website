@@ -28,8 +28,11 @@ test.describe("intl chrome — phone", () => {
     test(`navigation is reachable without the footer: ${home}`, async ({ page }) => {
       await page.goto(home);
       // Was `display:none` with no replacement — the whole defect in one line.
+      // Count must track the <nav class="intl-links"> markup in IntlLayout.astro:
+      // products, how-it-works, about, contact. It went 3 → 4 when the product
+      // tree shipped. (Phase 2: derive this instead of restating it here.)
       const links = page.locator(".intl-links a");
-      await expect(links).toHaveCount(3);
+      await expect(links).toHaveCount(4);
       for (const link of await links.all()) {
         await expect(link).toBeVisible();
         const box = await link.boundingBox();

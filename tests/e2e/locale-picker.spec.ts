@@ -58,8 +58,18 @@ test.describe("locale picker (desktop)", () => {
       "https://biteperk.com/be-en/contact/",
     );
 
-    // A product page is AU-only → alternates point at locale homes.
+    // Product pages are SHARED as of the intl product tree — every locale emits
+    // /products/<slug>/, so the picker carries the visitor to the equivalent
+    // product page rather than dumping them on a home page. (This assertion used
+    // to expect the fallback, back when products were AU-only.)
     await page.goto(p("/products/voxtable/"));
+    await expect(
+      page.locator("[data-locale-picker-item]").filter({ hasText: "United Kingdom" }),
+    ).toHaveAttribute("href", "https://biteperk.com/gb-en/products/voxtable/");
+
+    // A genuinely AU-only page still falls back to the locale home — cities are
+    // an Australian concept and exist in no global tree.
+    await page.goto(p("/sydney/"));
     await expect(
       page.locator("[data-locale-picker-item]").filter({ hasText: "United Kingdom" }),
     ).toHaveAttribute("href", "https://biteperk.com/gb-en/");
