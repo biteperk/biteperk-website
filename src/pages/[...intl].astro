@@ -148,15 +148,12 @@ const appJsonLd =
     : null;
 ---
 
-{/* Preload only on the home, where the hero is the LCP element. `sizes` must
-    match the ImageBlock below or the browser preloads the wrong width. */}
 <IntlLayout
   locale={locale}
   page={page}
   title={meta.title}
   description={meta.description}
   ogImage={ogImage}
-  preloadSlug={page === "" && hero ? { slug: hero.slug, sizes: "(min-width: 981px) 38vw, 460px" } : undefined}
 >
   {page === "" && (
     <>
@@ -180,12 +177,18 @@ const appJsonLd =
               {/* `priority` + the preload in IntlLayout make this the LCP
                   element, taking that role from the headline. `aspect` is what
                   holds CLS at 0 while it loads. */}
+              {/* Deliberately NOT `priority`, and deliberately not preloaded.
+                  Measured: the LCP element on these pages is TEXT — the .lede
+                  on /gb-en and /be-en, the h1 on /fr — because the market copy
+                  is long. Text LCP waits on the webfont, so preloading the
+                  hero only stole throttled bandwidth from the thing actually
+                  being measured and pushed LCP to ~2.7-3.1s. Same conclusion
+                  AU reached from the other direction (Hero.astro:158-161). */}
               <ImageBlock
                 slug={hero.slug}
                 alt={hero.alt}
                 aspect="4 / 5"
                 widths="(min-width: 981px) 38vw, 460px"
-                priority
               />
             </div>
           )}
