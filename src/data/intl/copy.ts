@@ -15,9 +15,11 @@
  *     venues) is stated as proof. What is the European build (multilingual,
  *     local numbers) is framed as the pilot programme — never as shipping today.
  *
- * French: written in professional register (vouvoiement) and intended for a
- * native-speaker review pass (Ludovic) before any marketing push. Flag any
- * change here that alters meaning so the two languages stay in sync.
+ * French: professional register (vouvoiement). The FR core in this file was
+ * reviewed and SIGNED OFF by Ludovic (native speaker) on 26 Jul 2026 — it no
+ * longer gates INTL_LAUNCHED. The rule still stands for French added AFTER
+ * that date: new or materially reworded FR copy needs its own native pass.
+ * Flag any change here that alters meaning so the two languages stay in sync.
  */
 
 import type { Lang } from "@/data/locales";
@@ -28,7 +30,7 @@ type Principle = { title: string; body: string };
 
 export type ChromeCopy = {
   tagline: string;
-  nav: { howItWorks: string; about: string; contact: string };
+  nav: { home: string; products: string; howItWorks: string; about: string; contact: string };
   cta: string;
   auSite: string;
   footerBlurb: string;
@@ -94,7 +96,7 @@ export type ContactCopy = {
 export const chrome: Record<Lang, ChromeCopy> = {
   en: {
     tagline: "Voice & AI for hospitality",
-    nav: { howItWorks: "How it works", about: "About", contact: "Contact" },
+    nav: { home: "Home", products: "Product", howItWorks: "How it works", about: "About", contact: "Contact" },
     cta: "Book a pilot",
     auSite: "Australia site",
     footerBlurb:
@@ -111,7 +113,7 @@ export const chrome: Record<Lang, ChromeCopy> = {
   },
   fr: {
     tagline: "La voix et l'IA pour l'hôtellerie-restauration",
-    nav: { howItWorks: "Comment ça marche", about: "À propos", contact: "Contact" },
+    nav: { home: "Accueil", products: "Le produit", howItWorks: "Comment ça marche", about: "À propos", contact: "Contact" },
     cta: "Réserver un pilote",
     auSite: "Site Australie",
     footerBlurb:

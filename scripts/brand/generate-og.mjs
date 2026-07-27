@@ -300,6 +300,30 @@ async function buildGlobalCards() {
       },
     );
   }
+
+  // Product cards are keyed by LANGUAGE, not by locale base: the product prose
+  // is identical across the English trees (see intl/products.ts on why), so a
+  // per-base set would be five byte-identical PNGs per product. The page picks
+  // the same names — keep the two rules together if either changes.
+  const { intlProducts, intlProductsOverview } = await loadTS(
+    join(ROOT, "src/data/intl/products.ts"),
+  );
+  const { PRODUCT_SLUGS } = await loadTS(join(ROOT, "src/data/product-slugs.ts"));
+  for (const lang of ["en", "fr"]) {
+    const ov = intlProductsOverview[lang];
+    cards.push({ file: `products-${lang}.png`, eyebrow: ov.eyebrow, headline: ov.h1 });
+    for (const slug of PRODUCT_SLUGS) {
+      const prod = intlProducts[lang][slug];
+      cards.push({
+        file: `${slug}-${lang}.png`,
+        // The status pill IS the eyebrow: two of the four are not shipping, and
+        // a social card that hides that is the dishonest version of this page.
+        eyebrow: prod.statusLabel,
+        headline: prod.h1,
+        showBella: false,
+      });
+    }
+  }
   return cards;
 }
 const globalCards = TARGET === "global" ? await buildGlobalCards() : [];
