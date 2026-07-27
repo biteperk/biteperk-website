@@ -12,21 +12,39 @@
  * Written to a dotfile so both hosting targets' `ignore: ["**\/.*"]` keeps it
  * out of the deploy.
  *
- * Usage: node scripts/build/stamp-build.mjs <dist-dir> <target>
+ * The target is DERIVED from BUILD_TARGET, exactly as astro.config.mjs and every
+ * gate derives it — never passed as an argument. It was passed once, and the
+ * stamp could then contradict the build it was stamping: CI runs a plain
+ * `npm run build` with BUILD_TARGET=global (job env), so astro wrote
+ * dist-global/ while the hardcoded args said `dist au`. That crashed in CI only
+ * because dist/ happened not to exist; with a stale dist/ present it would have
+ * stamped the wrong directory with false provenance — silently defeating the
+ * mismatch control this whole file exists to provide.
+ *
+ * Usage: node scripts/build/stamp-build.mjs   (BUILD_TARGET selects the output)
  */
 import { writeFileSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
-const [dir, target] = process.argv.slice(2);
-if (!dir || !target) {
-  console.error("stamp-build: usage: stamp-build.mjs <dist-dir> <target>");
+
+if (process.argv.length > 2) {
+  console.error(
+    `stamp-build: takes no arguments (got ${process.argv.slice(2).join(" ")}). ` +
+      `The target is derived from BUILD_TARGET so it cannot disagree with the build.`,
+  );
   process.exit(1);
 }
+
+const target = process.env.BUILD_TARGET === "global" ? "global" : "au";
+const dir = target === "global" ? "dist-global" : "dist";
 const out = join(ROOT, dir);
 if (!existsSync(out)) {
-  console.error(`stamp-build: ${dir} does not exist — run the build first.`);
+  console.error(
+    `stamp-build: ${dir}/ does not exist (BUILD_TARGET=${process.env.BUILD_TARGET ?? "<unset>"} → target=${target}). ` +
+      `Run the build for this target first.`,
+  );
   process.exit(1);
 }
 
