@@ -176,6 +176,10 @@ const year = new Date().getFullYear();
     font-size: var(--fs-small);
     font-weight: 600;
   }
+  /* Never wrap a nav label. Without this, flex-shrink squeezed each link to
+     three lines in the band where the bar is too narrow for the full row —
+     visible on every tree, worst in French ("Comment ça marche"). */
+  .intl-links a { white-space: nowrap; }
   .intl-links a:hover { color: var(--gold); }
   .intl-actions { display: flex; align-items: center; gap: var(--space-4); }
   .intl-lang {
@@ -317,6 +321,34 @@ const year = new Date().getFullYear();
 
      Three links don't justify a hamburger + overlay + focus trap, so the row
      just wraps: brand + controls on top, links as 44px pills underneath. */
+  /* The links drop to their own row BEFORE they can be squeezed. Measured on
+     the live French tree: brand (91) + links (398) + actions (309) + gaps and
+     padding needs ~910px, but the phone treatment below only started at 720px
+     — so 721–909px rendered every label over three lines. English needs ~833px,
+     so this band was broken on all five trees, just at different widths.
+     Sticky bar and the header CTA are kept here: this is tablet/small-laptop,
+     not phone. The phone-only changes stay in the 720px block underneath. */
+  @media (max-width: 940px) {
+    .intl-nav-row { flex-wrap: wrap; }
+    .intl-links {
+      order: 3;
+      flex-basis: 100%; /* forces the links onto their own row */
+      flex-wrap: wrap;
+      margin-inline-start: 0;
+      gap: var(--space-2);
+    }
+    .intl-links a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding-inline: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--r-pill);
+      background: var(--fill-subtle);
+    }
+    .intl-actions { margin-inline-start: auto; }
+  }
+
   @media (max-width: 720px) {
     .intl-nav {
       /* Not sticky on phones: a two-row sticky bar costs ~105px — 12% of an
@@ -331,35 +363,16 @@ const year = new Date().getFullYear();
       background: var(--ink-0);
     }
     .intl-nav-row {
-      flex-wrap: wrap;
+      /* flex-wrap + the links row come from the 940px block above. */
       gap: var(--space-3);
       padding-block: 10px;
       min-height: 0;
     }
-    .intl-actions { margin-inline-start: auto; }
     /* The header CTA is redundant here: the bar doesn't stick, so it scrolls
        away immediately, and every page repeats "book a pilot" in the hero
        directly below plus the pilot band and closing section. Dropping it is
        what buys the room for brand + picker + theme toggle on one line. */
     .intl-cta-btn { display: none; }
-    .intl-links {
-      display: flex;
-      flex-wrap: wrap;
-      order: 3;
-      flex-basis: 100%; /* forces the links onto their own row */
-      margin-inline-start: 0;
-      gap: var(--space-2);
-    }
-    .intl-links a {
-      display: inline-flex;
-      align-items: center;
-      min-height: 44px;
-      padding-inline: 14px;
-      border: 1px solid var(--line);
-      border-radius: var(--r-pill);
-      background: var(--fill-subtle);
-      white-space: nowrap;
-    }
     .intl-footer-grid { grid-template-columns: 1fr; }
   }
 </style>
