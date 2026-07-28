@@ -35,10 +35,10 @@ bar-brass-evening
   Original:     https://unsplash.com/photos/dmkmrNptMpw
   Brief:        Premium bar at service — Edison bulbs, backlit spirits, brass and copper
 
-linen-dining-evening
-  Photographer: Jason Leung
-  Original:     https://unsplash.com/photos/Untitled-o0AbCeVUnB4
-  Brief:        White-linen dining room at evening service, sconce-lit, glasses set
+cafe-terrace-flowers
+  Photographer: Ilinca Roman
+  Original:     https://unsplash.com/photos/outdoor-cafe-tables-with-flowers-in-vases-mPLfhqUdjPc
+  Brief:        Pavement café at morning — flowers in jars down a line of tables
 
 bar-brass-evening
   Photographer: Adam Jaime

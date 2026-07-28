@@ -85,22 +85,20 @@ const catalogue = [
     brief: "Premium bar at service — Edison bulbs, backlit spirits, brass and copper",
   },
   {
-    // The /gb-en hero, third iteration — this page is the UK's front door and
-    // kept reading wrong. v1 (`pub-amber-evening`) showed a venue closed for
-    // the night; v2 (`dining-room-pendants`) was open but read teal and
-    // canteen-ish. This is a white-linen dining room at evening service —
-    // sconces lit, glasses set — which is what "premium" means in the UK
-    // market's own visual language, with no face, signage or landmark.
-    //
-    // Also the CHEAPEST hero on the site: smooth dark tones encode to 70KB at
-    // the 1280 tier against 86-141KB siblings, so the upgrade costs LCP
-    // nothing. 4000×6000 source; the 4:5 slot crops the 2:3 frame ~17% via
-    // object-fit without losing anything that matters.
-    slug: "linen-dining-evening",
-    id: "photo-1578474846511-04ba529f0b88",
-    photographer: "Jason Leung",
-    url: "https://unsplash.com/photos/Untitled-o0AbCeVUnB4",
-    brief: "White-linen dining room at evening service, sconce-lit, glasses set",
+    // The /gb-en hero, FOURTH iteration — the page is the UK's front door and
+    // Sam has now art-directed it twice. v1 (`pub-amber-evening`): venue shut
+    // for the night. v2 (`dining-room-pendants`): open but teal/canteen-ish.
+    // v3 (`linen-dining-evening`): premium but dark — read "night and shady".
+    // v4 is the opposite brief, from Sam directly: blossoms and freshness. A
+    // soft-morning pavement café, lilies on the front table, flowers down the
+    // line, no face, no legible signage, no landmark. Still a restaurant
+    // waiting for service, which is what the headline needs it to be.
+    slug: "cafe-terrace-flowers",
+    id: "photo-1758196310222-c34989f00a0e",
+    params: "blur=15",
+    photographer: "Ilinca Roman",
+    url: "https://unsplash.com/photos/outdoor-cafe-tables-with-flowers-in-vases-mPLfhqUdjPc",
+    brief: "Pavement café at morning — flowers in jars down a line of tables",
   },
   {
     // The /gb-en market band's hospitality slot. Replaced `bar-moody`, which
@@ -366,7 +364,14 @@ async function fetchOne(entry) {
   // the right default. Kept in the catalogue rather than done by hand so a
   // clean checkout reproduces the same frame.
   const rect = entry.rect ? `rect=${entry.rect}&` : "";
-  const url = `https://images.unsplash.com/${entry.id}?${rect}w=${FETCH_W}&q=${FETCH_Q}&fm=jpg&fit=max&auto=format`;
+  // `params` (optional): extra imgix params baked into the fetch, e.g.
+  // "blur=15". Exists for film-grain photos: grain is worst-case noise for
+  // AVIF (cafe-terrace-flowers encoded at 629KB/1280 raw against 77-141KB
+  // sibling heroes; blur=15 → 120KB with the soft look intact). In the
+  // catalogue rather than hand-edited into the raw so a clean checkout
+  // reproduces the exact same asset.
+  const extra = entry.params ? `${entry.params}&` : "";
+  const url = `https://images.unsplash.com/${entry.id}?${rect}${extra}w=${FETCH_W}&q=${FETCH_Q}&fm=jpg&fit=max&auto=format`;
   try {
     const res = await fetch(url, {
       headers: {
