@@ -38,7 +38,11 @@ const hasAbn = site.abn !== "TODO";
       <div class="foot-cols reveal-stagger" style="--stagger-step: 40ms">
         {footerColumns.map((col) => (
           <div class="foot-col">
-            <h4>{col.heading}</h4>
+            {/* h2, not h4: these are the top-level groupings inside the
+                contentinfo landmark, and the preceding page heading is an h2,
+                so h4 skipped a level. .foot-col h2 keeps the 11.5px uppercase
+                treatment — level and scale are separate concerns. */}
+            <h2>{col.heading}</h2>
             {col.links.map((link) => (
               <a
                 href={link.href}
@@ -112,7 +116,7 @@ const hasAbn = site.abn !== "TODO";
     grid-template-columns: repeat(4, 1fr);
     gap: 28px;
   }
-  .foot-col h4 {
+  .foot-col h2 {
     font-size: 11.5px;
     letter-spacing: 2px;
     text-transform: uppercase;

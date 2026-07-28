@@ -129,8 +129,15 @@ const gbEn: MarketContent = {
       alt: "Aerial view of London — Tower Bridge and the Thames winding toward the City",
     },
     hospitality: {
-      slug: "bar-moody",
-      alt: "A moody bar counter set and quiet before evening service",
+      // Was `bar-moody`: a US craft-beer bar with legible DOLLAR prices on its
+      // chalkboard, on the tree that serves the UK. Signage is worse than a
+      // stray vehicle in shot — it is readable, and it prices the venue in the
+      // wrong currency. This frame is expensive to encode (Edison bulbs and
+      // backlit bottles are worst-case for AVIF) and was rejected for the hero
+      // for that reason; it is fine here because the band is below the fold and
+      // lazy, so it never competes with the text LCP.
+      slug: "bar-brass-evening",
+      alt: "A bar mid-service, glassware and spirits lit under filament bulbs",
     },
     eyebrow: "For UK venues",
     heading: "Built for the pace of UK hospitality.",

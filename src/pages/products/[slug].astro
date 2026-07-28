@@ -76,6 +76,13 @@ const isConcept = product.status === "concept";
   {/* ── Features (every product) ────────────────────────────────── */}
   <section class="p-section">
     <div class="wrap">
+      {/* This section is visually headed by the cards themselves, which left
+          its h3s sitting straight under the page h1 — a skipped level on every
+          product page. The cards ARE subordinate items, so the fix is to give
+          the section the heading it was missing rather than promote them to
+          h2; screen-reader users get the section name, the design is
+          unchanged. */}
+      <h2 class="sr-only">What {product.name} does</h2>
       <div class="p-feats reveal">
         {product.features.map((f, i) => (
           <article class="p-feat">

@@ -64,6 +64,27 @@ const catalogue = [
     brief: "Open notebook with pen, paper texture",
   },
   {
+    // The /gb-en market band's hospitality slot. Replaced `bar-moody`, which
+    // is a US craft-beer bar whose chalkboard shows legible DOLLAR prices —
+    // on the tree that serves the United Kingdom. Same class of problem as a
+    // foreign vehicle in shot, but worse: it is signage, and it is legible.
+    //
+    // `rect` drops the street window at lower-left, which contained a yellow
+    // taxi. Kept in the catalogue so a clean checkout reproduces the frame.
+    //
+    // This frame is expensive to encode (Edison bulbs + backlit bottles are
+    // worst-case for AVIF), which is why it is here and not in the hero slot:
+    // the band renders at 50vw against the hero's 4:5 portrait, so the browser
+    // picks a smaller variant, and the band sits below the fold where it does
+    // not compete with the text LCP.
+    slug: "bar-brass-evening",
+    id: "photo-1543007630-9710e4a00a20",
+    rect: "1587,307,4556,5696",
+    photographer: "Adam Jaime",
+    url: "https://unsplash.com/photos/dmkmrNptMpw",
+    brief: "Premium bar at service — Edison bulbs, backlit spirits, brass and copper",
+  },
+  {
     // The /gb-en hero. Replaced `pub-amber-evening`, which showed chairs
     // STACKED ON TABLES under a heavy red cast, shot through glass with the
     // reflections still in frame — a venue shut for the night, sitting directly
