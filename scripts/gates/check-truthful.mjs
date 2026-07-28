@@ -9,7 +9,10 @@
  *
  *   - the published AU phone number (+61 2 5504 1140, any common formatting)
  *   - the print-only demo line ((02) 7501 1140)
- *   - the Haymarket NAP (street or suburb)
+ *   - the AU NAP (street or suburb) — BOTH addresses: current Surry Hills
+ *     (a leak guard) and pre-Jul-2026 Haymarket (a stale-data guard).
+ *     NB the character classes include U+00A0: built HTML joins address
+ *     parts with &nbsp;, and a plain \s does not match it in all cases
  *   - the "$80" AU price (EU pricing is a pilot outcome, never quoted)
  *
  * Domain mentions (biteperk.com.au) are deliberately NOT forbidden: the org
@@ -45,7 +48,7 @@ const { localesForTarget } = await loadTS(join(ROOT, "src/data/locales.ts"));
 const FORBIDDEN = [
   { label: "AU phone +61 2 5504 1140", re: /\+?61[\s ]?2[\s ]?5504[\s ]?1140|61255041140|0?2[\s ]5504[\s ]1140/ },
   { label: "print-only demo line (02) 7501 1140", re: /7501[\s ]?1140/ },
-  { label: "Haymarket NAP", re: /Haymarket|477[\s ]?Pitt/i },
+  { label: "AU NAP (current or former)", re: /Haymarket|477[\s ]?Pitt|Surry[\s ]?Hills|457[\s ]?-[\s ]?459|Elizabeth[\s ]+Street/i },
   { label: "AU price $80", re: /\$[\s ]?80\b|80[\s ]?AUD/ },
   // PLAN.md §8 has forbidden this on EU pages since the intl build existed,
   // but nothing enforced it. "Data stays in Australia" is a trust line in the

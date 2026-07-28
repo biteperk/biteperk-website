@@ -49,7 +49,7 @@ const KNOWS_ABOUT = [
 
 /**
  * The company. Typed as both Organization and LocalBusiness so Google can
- * treat Biteperk as a real, physically-located business (Haymarket) AND as
+ * treat Biteperk as a real, physically-located business (Surry Hills) AND as
  * the brand/publisher behind the site. Full NAP + geo + hours + priceRange
  * are what let it anchor local results and a knowledge panel.
  *
@@ -89,7 +89,7 @@ const auOrganizationNode = {
   },
   hasMap: site.address.mapsUrl,
   // Country-wide service + the cities we actively target with landing pages.
-  // The NAP above stays the single real Haymarket address — cities are
+  // The NAP above stays the single real Surry Hills address — cities are
   // served markets, never fake premises.
   areaServed: [
     { "@type": "Country", name: "Australia" },

@@ -10,7 +10,7 @@
  * Content rules (PLAN.md §8 — Europe-truthful, non-negotiable):
  *   - NO AU pricing ("$80/month" is an Australian fact; EU pricing is a pilot
  *     outcome). The CTA is "book a pilot", never a price.
- *   - NO AU phone number and NO Haymarket NAP on these pages.
+ *   - NO AU phone number and NO AU NAP on these pages (see site.ts).
  *   - What is LIVE (VoxTable answering real calls for paying Australian
  *     venues) is stated as proof. What is the European build (multilingual,
  *     local numbers) is framed as the pilot programme — never as shipping today.

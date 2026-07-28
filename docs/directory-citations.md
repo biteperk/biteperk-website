@@ -13,10 +13,10 @@ Goal: build **NAP citations** (Name, Address, Phone) across trusted directories.
 ```
 Business name:   Biteperk
 Legal name:      Biteperk Pty Ltd            (use only where a legal/registered name is asked)
-Address line 1:  Level 1, 477 Pitt Street
-Suburb:          Haymarket
+Address line 1:  Level 1/457-459 Elizabeth Street
+Suburb:          Surry Hills
 State:           NSW
-Postcode:        2000
+Postcode:        2010
 Country:         Australia
 Phone:           +61 2 5504 1140              (E.164 if required: +61255041140)
 Email:           hello@biteperk.com.au

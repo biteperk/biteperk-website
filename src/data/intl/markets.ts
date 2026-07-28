@@ -9,7 +9,7 @@
  *
  * Content rules (PLAN.md §8 — Europe-truthful, enforced by
  * scripts/gates/check-truthful.mjs on every built global page):
- *   - NO AU pricing, NO AU phone numbers, NO Haymarket NAP.
+ *   - NO AU pricing, NO AU phone numbers, NO AU NAP (Surry Hills — see site.ts).
  *   - NO fake local offices — market pages localise the *conversation*
  *     (pilot framing, city imagery, spelling), never invent a presence.
  *   - What is live is Australia; Europe is the pilot programme.
