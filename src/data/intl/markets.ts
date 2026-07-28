@@ -115,8 +115,12 @@ const enNeutral: MarketContent = {
 // ── United Kingdom (/gb-en) ─────────────────────────────────────────
 const gbEn: MarketContent = {
   hero: {
-    slug: "pub-amber-evening",
-    alt: "An amber-lit bar and dining room being set before evening service",
+    // Was `pub-amber-evening`: chairs stacked on tables under a heavy red cast,
+    // shot through glass with the reflections still in frame. A venue shut for
+    // the night, sitting beside a headline that promises the phone gets
+    // answered DURING service — the picture argued against the copy.
+    slug: "dining-room-pendants",
+    alt: "A dining room open for service, pendant lights over set tables",
     pill: "United Kingdom · Pilot programme",
   },
   media: {

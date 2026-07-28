@@ -30,6 +30,11 @@ reservation-book
   Original:     https://unsplash.com/photos/y02jEX_B0O0
   Brief:        Open notebook with pen, paper texture
 
+dining-room-pendants
+  Photographer: Kelsey Knight
+  Original:     https://unsplash.com/photos/udj2tD3WKsY
+  Brief:        Design-led dining room open for service — pendant lights, warm wood, marble
+
 restaurant-pass
   Photographer: Jay Wennington
   Original:     https://unsplash.com/photos/N_Y88TWmGwA
@@ -159,11 +164,6 @@ brussels-grand-place
   Photographer: Stephanie LeBlanc
   Original:     https://unsplash.com/@sleblanc01
   Brief:        Brussels Grand-Place guild houses against a dramatic sky — the Belgian establishing shot. Replaces belgium-dinant, a town 90 min away that stood in while every Belgian string said Brussels.
-
-pub-amber-evening
-  Photographer: Robert
-  Original:     https://unsplash.com/@robert_lens
-  Brief:        Amber-lit bar before service — bentwood chairs up, patterned tile, no people (UK hero)
 
 brasserie-banquette
   Photographer: Klara Kulikova
