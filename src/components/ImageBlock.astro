@@ -24,6 +24,10 @@ interface Props {
   alt: string;
   aspect: string;
   priority?: boolean;
+  /** Fetch at LOW priority. For images in the initial viewport on pages whose
+      LCP is text — see the fetchpriority note below. Mutually exclusive with
+      `priority`. */
+  deprioritize?: boolean;
   widths?: string;
   rounded?: boolean;
   scrim?: boolean;
@@ -35,6 +39,7 @@ const {
   alt,
   aspect,
   priority = false,
+  deprioritize = false,
   widths = "(min-width: 1024px) 50vw, 100vw",
   rounded = true,
   scrim = false,
@@ -45,7 +50,14 @@ const map = placeholders as Record<string, string>;
 const lqip = map[slug];
 const base = u(`/images/${slug}`);
 const loading = priority ? "eager" : "lazy";
-const fetchpriority = priority ? "high" : "auto";
+// `deprioritize` exists for exactly one shape of image: in the initial
+// viewport, but on a page whose LCP element is TEXT. `loading="lazy"` does
+// NOT defer an in-viewport image — the browser fetches it immediately at
+// normal priority, racing the webfont the text paint waits on. Measured on
+// the intl homes when the hero moved up into the mobile viewport: /be-en
+// (141KB hero) went 2103 → 2931ms LCP, /en (86KB) 2030 → 2478, ordered
+// exactly by image weight. fetchpriority="low" lets the font win the race.
+const fetchpriority = priority ? "high" : deprioritize ? "low" : "auto";
 // Always async: sync decode blocks the main thread at exactly the moment
 // the LCP paint is due (measured +ve on throttled-mobile Lighthouse).
 const decoding = "async";

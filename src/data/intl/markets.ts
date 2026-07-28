@@ -115,12 +115,13 @@ const enNeutral: MarketContent = {
 // ── United Kingdom (/gb-en) ─────────────────────────────────────────
 const gbEn: MarketContent = {
   hero: {
-    // Was `pub-amber-evening`: chairs stacked on tables under a heavy red cast,
-    // shot through glass with the reflections still in frame. A venue shut for
-    // the night, sitting beside a headline that promises the phone gets
-    // answered DURING service — the picture argued against the copy.
-    slug: "dining-room-pendants",
-    alt: "A dining room open for service, pendant lights over set tables",
+    // Third iteration of this hero. v1 (`pub-amber-evening`) showed a venue
+    // shut for the night beside a headline about answering DURING service;
+    // v2 (`dining-room-pendants`) was open but read teal and canteen-ish.
+    // This one is what "premium" means in this market's own visual language:
+    // white linen, sconces lit, glasses set, evening service about to start.
+    slug: "linen-dining-evening",
+    alt: "A white-linen dining room ready for evening service, lamps lit",
     pill: "United Kingdom · Pilot programme",
   },
   media: {
