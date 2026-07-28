@@ -30,24 +30,16 @@ if (TARGET === "global") {
   const blogSlugs = readdirSync(join(ROOT, "src/content/blog"))
     .filter((f) => f.endsWith(".md"))
     .map((f) => f.replace(/\.md$/, ""));
+  // Static pages come from locales.ts (AU_STATIC_PAGES) so this gate and
+  // tests/helpers/routes.ts cannot disagree about what the AU tree contains.
+  // They each carried their own hand-written copy, in different shapes, until
+  // Jul 2026 — under a comment claiming they could not drift.
+  const { AU_STATIC_PAGES } = await loadTS("src/data/locales.ts");
   DIST = "dist";
   expected = [
-    "index.html",
-    "products/index.html",
-    "products/voxtable/index.html",
-    "products/voxorder/index.html",
-    "products/voxconcierge/index.html",
-    "products/voxdrive/index.html",
-    "contact/index.html",
-    "about/index.html",
-    "technology/index.html",
-    "platform/index.html",
-    "blog/index.html",
+    ...AU_STATIC_PAGES.map((p) => (p ? `${p}/index.html` : "index.html")),
     ...blogSlugs.map((s) => `blog/${s}/index.html`),
     ...cities.filter((c) => c.published).map((c) => `${c.slug}/index.html`),
-    "legal/privacy/index.html",
-    "legal/terms/index.html",
-    "legal/cookies/index.html",
     ...INFRA,
   ];
 }

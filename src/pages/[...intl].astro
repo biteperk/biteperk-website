@@ -15,7 +15,10 @@
  */
 import IntlLayout from "@/layouts/IntlLayout.astro";
 import { localesForTarget, pagesForLocale, currentTarget, ORIGIN, type Locale } from "@/data/locales";
-import { resolveCopy, resolveMedia, resolveHero, type CopyBundle, type SimplePageCopy } from "@/data/intl";
+import {
+  resolveCopy, resolveMedia, resolveHero, resolveSupport,
+  type CopyBundle, type SimplePageCopy,
+} from "@/data/intl";
 import { intlProducts, intlProductsOverview } from "@/data/intl/products";
 import { pageImageFor, productImageFor } from "@/data/intl/page-images";
 import { products } from "@/data/products";
@@ -58,6 +61,9 @@ const p = (seg: string) => `${locale.base}/${seg ? `${seg}/` : ""}`;
 
 const c = resolveCopy(locale);
 const media = resolveMedia(locale);
+// Mutually exclusive with `media` in practice: a tree gets the two-up band OR
+// this single photo, never both. See MarketSupport in markets.ts.
+const support = resolveSupport(locale);
 const hero = resolveHero(locale);
 const { home: h, contact: ct } = c;
 
@@ -257,6 +263,21 @@ const appJsonLd =
               </div>
             ))}
           </div>
+          {/* Only trees with no market band carry this — /en alone today. It
+              breaks the longest prose run without inventing the "here is your
+              city" band that the x-default must not claim. Never priority:
+              the LCP element on these trees is text. */}
+          {support && (
+            <div class="intl-support-image">
+              <ImageBlock
+                slug={support.slug}
+                alt={support.alt}
+                aspect="16 / 9"
+                widths="(min-width: 981px) 1120px, 100vw"
+                rounded
+              />
+            </div>
+          )}
         </div>
       </section>
 
@@ -345,7 +366,12 @@ const appJsonLd =
           </form>
         </div>
         <aside class="intl-card contact-aside">
-          <h3>{ct.aside.heading}</h3>
+          {/* h2, not h3: this is the only heading on the page besides the h1,
+              so an h3 skipped a level on all five contact pages — a real
+              screen-reader defect that shipped because axe rates heading-order
+              `moderate` and the AU suite gates only serious/critical. Sized
+              back down to card scale in IntlLayout. */}
+          <h2>{ct.aside.heading}</h2>
           <p>{ct.aside.body}</p>
           <p><a class="link-arrow" href="mailto:hello@biteperk.com.au">{ct.aside.emailLabel}</a></p>
           {/* Contact takes its photo in the aside, not under the intro: the

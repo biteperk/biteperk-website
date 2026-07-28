@@ -36,10 +36,18 @@ export default defineConfig({
     timeout: 30_000,
   },
   projects: [
-    { name: "intl-desktop", use: { ...devices["Desktop Chrome"] } },
+    // `testIgnore` on these three is load-bearing, not tidiness. Without it
+    // EVERY spec in tests/intl/ runs once per project, so the a11y spec — the
+    // most expensive one, since each test is a full axe scan — would run 3×
+    // for no added coverage. axe results do not vary by device emulation; the
+    // theme is what varies, and the spec loops that itself.
+    { name: "intl-desktop", testIgnore: /a11y\.spec\.ts/, use: { ...devices["Desktop Chrome"] } },
     // Real device emulation — touch, DPR and mobile UA, not just a narrow
     // viewport. Touch-vs-hover branches only behave correctly under this.
-    { name: "intl-mobile", use: { ...devices["Pixel 7"] } },
-    { name: "intl-mobile-safari", use: { ...devices["iPhone 14"] } },
+    { name: "intl-mobile", testIgnore: /a11y\.spec\.ts/, use: { ...devices["Pixel 7"] } },
+    { name: "intl-mobile-safari", testIgnore: /a11y\.spec\.ts/, use: { ...devices["iPhone 14"] } },
+    // Mirrors the `a11y` project in playwright.config.ts: one browser, both
+    // themes, driven by the spec.
+    { name: "intl-a11y", testMatch: /a11y\.spec\.ts/, use: { ...devices["Desktop Chrome"] } },
   ],
 });
