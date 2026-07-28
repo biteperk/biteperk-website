@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
 """BitePerk visit-pack builder — business cards, follow-up sheet, demo card, stickers.
 
-Matches the visual language of the existing print pack (dark #12161f,
-gold #f5c418, Times-Bold headlines, Helvetica body, base-14 fonts).
+v2 — professional refresh (Jul 2026):
+  * Uses the REAL brand logo (../biteperk-logo.jpeg): gold star + green fork,
+    'bite' green / 'perk' gold. Transparent versions are derived at build time.
+  * Brand fonts vendored in ../fonts: Gloock (display), Instrument Sans (text),
+    Geist Mono (labels) — same system as the VoxTable flyer. Falls back to
+    base-14 fonts if the folder is missing.
+  * Palette drawn from the logo: gold #f8b406, deep green #0f4f35, charcoal.
 
 Outputs (into this folder):
   BitePerk_BusinessCard_90x54_PRINT.pdf        — 90x54mm + 3mm bleed, front/back, for a print shop
@@ -19,16 +24,21 @@ Numbers (deliberate — do not "fix"):
 """
 import os
 import qrcode
+from PIL import Image
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
 from reportlab.lib.colors import HexColor
 from reportlab.pdfgen import canvas as pdfcanvas
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 
 OUT = os.path.dirname(os.path.abspath(__file__))
+MKT = os.path.normpath(os.path.join(OUT, ".."))
 
 CHAR = HexColor("#12161f")   # pack background
 ELEV = HexColor("#1a1f2b")   # elevated card
-GOLD = HexColor("#f5c418")   # brand gold (print-vivid)
+GOLD = HexColor("#f8b406")   # brand gold (sampled from the logo)
+GREEN = HexColor("#0f4f35")  # brand deep green (sampled from the logo)
 WHITE = HexColor("#f7f8fa")
 MIST = HexColor("#9aa1ad")
 MIST2 = HexColor("#c8ced9")
@@ -39,80 +49,102 @@ DEMO = "(02) 7501 1140"      # Bella demo line — print-only
 OFFICE = "(02) 5504 1140"    # office / Sam
 EMAIL = "sam@biteperk.com.au"
 WEB = "biteperk.com.au"
-ADDR = "Level 1, 477 Pitt Street, Haymarket NSW 2000"
+ADDR = "Level 1/457-459 Elizabeth Street, Surry Hills NSW 2010"
 
-SERIF = "Times-Bold"
-SANS = "Helvetica"
-SANSB = "Helvetica-Bold"
-SANSO = "Helvetica-Oblique"
+# ---- fonts (vendored in ../fonts, OFL) -------------------------------------
+FONTDIR = os.path.join(MKT, "fonts")
+try:
+    pdfmetrics.registerFont(TTFont("Gloock", os.path.join(FONTDIR, "Gloock-Regular.ttf")))
+    pdfmetrics.registerFont(TTFont("Sans", os.path.join(FONTDIR, "InstrumentSans-Regular.ttf")))
+    pdfmetrics.registerFont(TTFont("SansB", os.path.join(FONTDIR, "InstrumentSans-Bold.ttf")))
+    pdfmetrics.registerFont(TTFont("SansI", os.path.join(FONTDIR, "InstrumentSans-Italic.ttf")))
+    pdfmetrics.registerFont(TTFont("Mono", os.path.join(FONTDIR, "GeistMono-Regular.ttf")))
+    pdfmetrics.registerFont(TTFont("MonoB", os.path.join(FONTDIR, "GeistMono-Bold.ttf")))
+    SERIF, SANS, SANSB, SANSI, MONO, MONOB = "Gloock", "Sans", "SansB", "SansI", "Mono", "MonoB"
+except Exception:  # clean-checkout fallback
+    SERIF, SANS, SANSB, SANSI, MONO, MONOB = ("Times-Bold", "Helvetica", "Helvetica-Bold",
+                                              "Helvetica-Oblique", "Helvetica", "Helvetica-Bold")
 
 CW, CH = 90 * mm, 54 * mm    # business card trim
 BLEED = 3 * mm
 
-# ---- QR (dark modules on gold) --------------------------------------------
-_q = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_M, border=2, box_size=10)
-_q.add_data("https://biteperk.com.au?utm_source=business-card")
-_q.make(fit=True)
-_q.make_image(fill_color="#12161f", back_color="#f5c418").save("/tmp/bp_qr_card.png")
-
-_q2 = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_M, border=2, box_size=10)
-_q2.add_data("https://biteperk.com.au?utm_source=followup-sheet")
-_q2.make(fit=True)
-_q2.make_image(fill_color="#12161f", back_color="#f5c418").save("/tmp/bp_qr_follow.png")
-
-_q3 = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_M, border=2, box_size=10)
-_q3.add_data("https://biteperk.com.au?utm_source=venue-sticker")
-_q3.make(fit=True)
-_q3.make_image(fill_color="#f5c418", back_color="#12161f").save("/tmp/bp_qr_sticker.png")
+# ---- logo assets (derived from ../biteperk-logo.jpeg at build time) --------
+# The source JPEG sits on black; we lift the black matte to get transparent
+# marks. Star/fork colours are swapped for use on gold surfaces.
+_GOLD_RGB, _GREEN_RGB = (248, 180, 6), (15, 79, 53)
 
 
-# ---- vector logo (from public/favicon.svg + brand lockup) ------------------
-GREEN = HexColor("#1a4d1a")
+def _prep_logo():
+    src = Image.open(os.path.join(MKT, "biteperk-logo.jpeg")).convert("RGB")
+    px = src.load()
+    out = Image.new("RGBA", src.size)
+    po = out.load()
+    lo, hi = 20.0, 90.0
+    for yy in range(src.height):
+        for xx in range(src.width):
+            r, g, b = px[xx, yy]
+            l = max(r, g, b)
+            a = 0.0 if l <= lo else (1.0 if l >= hi else (l - lo) / (hi - lo))
+            if a > 0.02:
+                po[xx, yy] = (min(255, int(r / a)), min(255, int(g / a)), min(255, int(b / a)), int(a * 255))
+            else:
+                po[xx, yy] = (0, 0, 0, 0)
+    # trim + crops (star occupies the left ~third of the artwork)
+    bbox = out.getbbox()
+    lockup = out.crop(bbox)
+    lockup.save("/tmp/bp_logo_lockup.png")
+    star = out.crop((max(0, bbox[0] - 4), max(0, bbox[1] - 4), 340, min(out.height, bbox[3] + 5)))
+    star = star.crop(star.getbbox())
+    star.save("/tmp/bp_logo_star.png")
+    # gold-surface variant: swap gold <-> green
+    sw = star.copy()
+    sp = sw.load()
+    for yy in range(sw.height):
+        for xx in range(sw.width):
+            r, g, b, a = sp[xx, yy]
+            if a == 0:
+                continue
+            dg = (r - _GOLD_RGB[0]) ** 2 + (g - _GOLD_RGB[1]) ** 2 + (b - _GOLD_RGB[2]) ** 2
+            dn = (r - _GREEN_RGB[0]) ** 2 + (g - _GREEN_RGB[1]) ** 2 + (b - _GREEN_RGB[2]) ** 2
+            sp[xx, yy] = (_GREEN_RGB + (a,)) if dg < dn else (_GOLD_RGB + (a,))
+    sw.save("/tmp/bp_logo_star_ongold.png")
+    return lockup.width / lockup.height, star.width / star.height
 
-# favicon star polygon, 64x64 viewBox, y-down
-_STAR = [(32, 4), (39, 24), (60, 24), (43, 37), (49, 58), (32, 46), (15, 58), (21, 37), (4, 24), (25, 24)]
+
+LOCKUP_AR, STAR_AR = _prep_logo()
 
 
-def draw_mark(c, x, y, size, star_fill=GOLD, fork_fill=GREEN, outline=None):
-    """Star-and-fork brand mark. (x, y) = lower-left, size = height/width."""
-    s = size / 64.0
+def draw_lockup(c, x, y, h):
+    """Full biteperk logo (star + wordmark), lower-left at (x,y), height h.
+    For dark surfaces. Returns drawn width."""
+    w = h * LOCKUP_AR
+    c.drawImage("/tmp/bp_logo_lockup.png", x, y, w, h, mask="auto")
+    return w
+
+
+def draw_star(c, x, y, h, on_gold=False):
+    """Star-and-fork mark, lower-left at (x,y), height h. Returns width."""
+    w = h * STAR_AR
+    img = "/tmp/bp_logo_star_ongold.png" if on_gold else "/tmp/bp_logo_star.png"
+    c.drawImage(img, x, y, w, h, mask="auto")
+    return w
+
+
+def draw_tick(c, x, y, s, color):
+    """Vector checkmark (Instrument Sans has no U+2713). (x,y)=baseline-left."""
     c.saveState()
-    c.translate(x, y)
-    p = c.beginPath()
-    pts = [(px * s, (64 - py) * s) for px, py in _STAR]
-    p.moveTo(*pts[0])
-    for pt in pts[1:]:
-        p.lineTo(*pt)
-    p.close()
-    c.setFillColor(star_fill)
-    if outline:
-        c.setStrokeColor(outline)
-        c.setLineWidth(max(0.4, 1.5 * s))
-        c.drawPath(p, stroke=1, fill=1)
-    else:
-        c.drawPath(p, stroke=0, fill=1)
-    c.setFillColor(fork_fill)
-    for tx in (26.8, 30.6, 34.4):  # tines (y-down 17..33)
-        c.roundRect(tx * s, (64 - 33) * s, 3 * s, 16 * s, 1.5 * s, stroke=0, fill=1)
-    c.roundRect(30 * s, (64 - 52) * s, 4.2 * s, 22 * s, 2.1 * s, stroke=0, fill=1)  # handle
+    c.setStrokeColor(color)
+    c.setLineWidth(0.28 * s)
+    c.setLineCap(1)
+    c.line(x, y + 0.32 * s, x + 0.3 * s, y + 0.04 * s)
+    c.line(x + 0.3 * s, y + 0.04 * s, x + 0.82 * s, y + 0.72 * s)
     c.restoreState()
 
 
-def draw_wordmark(c, x, baseline, size, bite_color, perk_color):
-    """Lowercase 'biteperk' lockup: 'bite' upright + 'perk' oblique.
-
-    This is the COMPANY wordmark and never changes with the product family —
-    the products renamed Voco -> Perk -> Vox, biteperk did not. A bulk rename
-    turned this into 'bitevox' once; it reads correct in pdftotext (the
-    product name is right) and is only visible by rendering the page.
-    """
-    c.setFont(SANSB, size)
-    c.setFillColor(bite_color)
-    c.drawString(x, baseline, "bite")
-    c.setFillColor(perk_color)
-    c.setFont("Helvetica-BoldOblique", size)
-    c.drawString(x + c.stringWidth("bite", SANSB, size), baseline, "perk")
-    return x + c.stringWidth("bite", SANSB, size) + c.stringWidth("perk", "Helvetica-BoldOblique", size)
+def fit(c, text, font, size, max_w):
+    while c.stringWidth(text, font, size) > max_w and size > 5:
+        size -= 0.25
+    return size
 
 
 def wrap(c, text, font, size, max_w):
@@ -129,66 +161,89 @@ def wrap(c, text, font, size, max_w):
     return lines
 
 
+# ---- QR codes --------------------------------------------------------------
+def _qr(data, fill, back, path):
+    q = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_M, border=2, box_size=10)
+    q.add_data(data)
+    q.make(fit=True)
+    q.make_image(fill_color=fill, back_color=back).save(path)
+
+
+_qr("https://biteperk.com.au?utm_source=business-card", "#0f4f35", "#f8b406", "/tmp/bp_qr_card.png")
+_qr("https://biteperk.com.au?utm_source=followup-sheet", "#0f4f35", "#f8b406", "/tmp/bp_qr_follow.png")
+_qr("https://biteperk.com.au?utm_source=venue-sticker", "#f8b406", "#12161f", "/tmp/bp_qr_sticker.png")
+
+
 # ---- business card faces ---------------------------------------------------
 def card_front(c, b):
     """Origin at trim lower-left; b = bleed drawn beyond trim."""
     c.setFillColor(CHAR)
     c.rect(-b, -b, CW + 2 * b, CH + 2 * b, stroke=0, fill=1)
 
-    draw_mark(c, 8 * mm, CH - 15 * mm, 10.5 * mm)
-    draw_wordmark(c, 21 * mm, CH - 11.8 * mm, 13, WHITE, GOLD)
+    # real logo lockup, top-left
+    draw_lockup(c, 8 * mm, CH - 14.5 * mm, 7.6 * mm)
     c.setFillColor(MIST)
-    c.setFont(SANS, 6.2)
-    c.drawRightString(CW - 8 * mm, CH - 11.8 * mm, "AI tools for hospitality")
+    c.setFont(MONO, 5.4)
+    c.drawRightString(CW - 8 * mm, CH - 9.6 * mm, "AI TOOLS FOR")
+    c.drawRightString(CW - 8 * mm, CH - 12.4 * mm, "HOSPITALITY")
 
+    # rule with a green->gold brand tick
     c.setStrokeColor(LINE)
     c.setLineWidth(0.5)
-    c.line(8 * mm, CH - 17.5 * mm, CW - 8 * mm, CH - 17.5 * mm)
+    c.line(8 * mm, CH - 18.5 * mm, CW - 8 * mm, CH - 18.5 * mm)
+    c.setFillColor(GOLD)
+    c.rect(8 * mm, CH - 18.8 * mm, 10 * mm, 0.6 * mm, stroke=0, fill=1)
+    c.setFillColor(HexColor("#2f7a55"))
+    c.rect(18 * mm, CH - 18.8 * mm, 4 * mm, 0.6 * mm, stroke=0, fill=1)
 
     c.setFillColor(WHITE)
-    c.setFont(SERIF, 14.5)
-    c.drawString(8 * mm, CH - 25.5 * mm, "Sam Kalaliya")
+    c.setFont(SERIF, 14)
+    c.drawString(8 * mm, CH - 27.5 * mm, "Sam Kalaliya")
     c.setFillColor(GOLD)
-    c.setFont(SANS, 7.2)
-    c.drawString(8 * mm, CH - 30 * mm, "Founder")
+    c.setFont(MONO, 6.4)
+    c.drawString(8 * mm, CH - 31.8 * mm, "F O U N D E R")
 
     c.setFillColor(MIST2)
     c.setFont(SANS, 7.4)
-    c.drawString(8 * mm, 15.5 * mm, f"{OFFICE}   ·   {EMAIL}")
-    c.drawString(8 * mm, 11 * mm, WEB)
+    c.drawString(8 * mm, 14.5 * mm, f"{OFFICE}   ·   {EMAIL}")
+    c.setFillColor(GOLD)
+    c.setFont(SANSB, 7.4)
+    c.drawString(8 * mm, 10.2 * mm, WEB)
     c.setFillColor(MIST)
     c.setFont(SANS, 5.4)
-    c.drawString(8 * mm, 6.5 * mm, ADDR)
-
-    c.setFillColor(GOLD)
-    c.rect(8 * mm, 20.5 * mm, 14 * mm, 0.8 * mm, stroke=0, fill=1)
+    c.drawString(8 * mm, 6 * mm, ADDR)
 
 
 def card_back(c, b):
     c.setFillColor(GOLD)
     c.rect(-b, -b, CW + 2 * b, CH + 2 * b, stroke=0, fill=1)
 
-    # knockout mark — solid dark star, gold fork, so it reads on the gold side
-    draw_mark(c, CW - 8 * mm - 11 * mm, CH - 19 * mm, 11 * mm,
-              star_fill=CHAR, fork_fill=GOLD)
+    # green star mark (gold-surface variant), top-right
+    draw_star(c, CW - 8 * mm - 12.5 * mm, CH - 20 * mm, 12.5 * mm, on_gold=True)
 
-    c.setFillColor(CHAR)
-    c.setFont(SERIF, 13.5)
+    c.setFillColor(GREEN)
+    c.setFont(SERIF, 13)
     c.drawString(8 * mm, CH - 14 * mm, "Never miss")
     c.drawString(8 * mm, CH - 20.5 * mm, "another booking.")
 
+    c.setFillColor(HexColor("#3d3411"))
     c.setFont(SANS, 7.0)
     c.drawString(8 * mm, CH - 27.5 * mm, "Hear Bella, our AI host — call the demo line:")
-    c.setFont(SERIF, 15)
+    c.setFillColor(GREEN)
+    s = fit(c, DEMO, SERIF, 15, 58 * mm)
+    c.setFont(SERIF, s)
     c.drawString(8 * mm, CH - 35.5 * mm, DEMO)
-    c.setFont(SANS, 6.0)
+    c.setFillColor(HexColor("#3d3411"))
+    c.setFont(SANSI, 6.0)
     c.drawString(8 * mm, CH - 40.5 * mm, "She answers in under a second, 24/7. Try to trip her up.")
 
     qs = 16 * mm
     c.drawImage("/tmp/bp_qr_card.png", CW - 8 * mm - qs, 6.5 * mm, qs, qs)
 
-    c.setFont(SANSB, 7.0)
+    c.setFillColor(GREEN)
+    c.setFont(SANSB, 7.4)
     c.drawString(8 * mm, 10.5 * mm, "VoxTable")
+    c.setFillColor(HexColor("#3d3411"))
     c.setFont(SANS, 6.0)
     c.drawString(8 * mm, 6.5 * mm, f"by BitePerk · {WEB}")
 
@@ -287,31 +342,34 @@ def draw_door(c, cx, cy, guide):
     c.setLineWidth(2.2 * mm)
     c.circle(0, 0, 41.5 * mm, stroke=1, fill=0)
 
-    # star mark, fully inside the ring
-    draw_mark(c, -8.5 * mm, 19.5 * mm, 17 * mm)
+    # real star mark, fully inside the ring
+    sw = 17 * mm * STAR_AR
+    draw_star(c, -sw / 2, 18.5 * mm, 17 * mm)
 
     c.setFillColor(GOLD)
-    c.setFont(SANSB, 9)
-    c.drawCentredString(0, 13 * mm, "O U R   P H O N E   I S")
+    c.setFont(MONOB, 8.5)
+    c.drawCentredString(0, 12.5 * mm, "O U R  P H O N E  I S")
     c.setFillColor(WHITE)
-    c.setFont(SERIF, 20)
-    c.drawCentredString(0, 4 * mm, "answered 24/7")
+    s = fit(c, "answered 24/7", SERIF, 19, 70 * mm)
+    c.setFont(SERIF, s)
+    c.drawCentredString(0, 3.5 * mm, "answered 24/7")
     c.setFillColor(MIST2)
-    c.setFont(SANS, 8)
-    c.drawCentredString(0, -2 * mm, "by Bella — your AI host")
+    c.setFont(SANSI, 8)
+    c.drawCentredString(0, -2.5 * mm, "by Bella — your AI host")
 
-    qs = 16 * mm
+    qs = 15.5 * mm
     c.drawImage("/tmp/bp_qr_sticker.png", -qs / 2, -21.5 * mm, qs, qs)
 
     c.setFillColor(WHITE)
-    c.setFont(SANSB, 10)
+    c.setFont(SANSB, 9.5)
     c.drawCentredString(0, -27.5 * mm, "VoxTable")
-    w = c.stringWidth("by ", SANS, 7) + c.stringWidth("bite", SANSB, 7) + c.stringWidth("perk", "Helvetica-BoldOblique", 7)
-    x0 = -w / 2
+    lw = 4.6 * mm * LOCKUP_AR
+    byw = c.stringWidth("by ", SANS, 6.5)
+    x0 = -(byw + lw) / 2
     c.setFillColor(MIST)
-    c.setFont(SANS, 7)
-    c.drawString(x0, -32.5 * mm, "by ")
-    draw_wordmark(c, x0 + c.stringWidth("by ", SANS, 7), -32.5 * mm, 7, WHITE, GOLD)
+    c.setFont(SANS, 6.5)
+    c.drawString(x0, -33.4 * mm, "by ")
+    draw_lockup(c, x0 + byw, -34.6 * mm, 4.6 * mm)
 
     # cut path
     c.setStrokeColor(guide)
@@ -330,22 +388,25 @@ def draw_counter(c, x, y, guide):
     c.saveState()
     c.translate(x, y)
 
-    draw_mark(c, 4.5 * mm, 5.5 * mm, 14 * mm)
+    sw = 14 * mm * STAR_AR
+    draw_star(c, 4.5 * mm, 5.5 * mm, 14 * mm)
 
-    tx = 20 * mm
+    tx = 5.5 * mm + sw
     c.setFillColor(WHITE)
     c.setFont(SANSB, 8)
-    c.drawString(tx, 16.2 * mm, "Calls answered 24/7")
+    c.drawString(tx, 16.5 * mm, "Calls answered 24/7")
     c.setFillColor(GOLD)
     c.setFont(SANSB, 8)
-    c.drawString(tx, 11.2 * mm, "Powered by VoxTable")
+    c.drawString(tx, 11.5 * mm, "Powered by VoxTable")
     c.setFillColor(MIST)
-    c.setFont(SANS, 5.2)
+    c.setFont(SANS, 5.4)
     c.drawString(tx, 6.4 * mm, "by ")
-    xw = draw_wordmark(c, tx + c.stringWidth("by ", SANS, 5.2), 6.4 * mm, 5.2, WHITE, GOLD)
+    lw = 3.6 * mm * LOCKUP_AR
+    bx = tx + c.stringWidth("by ", SANS, 5.4)
+    draw_lockup(c, bx, 5.6 * mm, 3.6 * mm)
     c.setFillColor(MIST)
-    c.setFont(SANS, 5.2)
-    c.drawString(xw + 1.6 * mm, 6.4 * mm, "· biteperk.com.au")
+    c.setFont(SANS, 5.4)
+    c.drawString(bx + lw + 1.6 * mm, 6.4 * mm, "· biteperk.com.au")
 
     qs = 15 * mm
     c.drawImage("/tmp/bp_qr_sticker.png", CNT_W - qs - 3.5 * mm, (CNT_H - qs) / 2, qs, qs)
@@ -353,7 +414,6 @@ def draw_counter(c, x, y, guide):
     c.setStrokeColor(guide)
     c.setLineWidth(0.35)
     c.setDash(2.2, 2.2)
-    c.roundRect(0, 0, CNT_W, CNT_H, 3 * mm, stroke=0, fill=0)
     c.roundRect(0, 0, CNT_W, CNT_H, 3 * mm, stroke=1, fill=0)
     c.setDash()
     c.restoreState()
@@ -441,18 +501,17 @@ def build_demo_card():
     c.setFillColor(CHAR)
     c.rect(0, 0, W, H, stroke=0, fill=1)
 
-    # header — logo lockup
-    y = H - 20 * mm
-    draw_mark(c, M, y - 3.5 * mm, 11 * mm)
-    draw_wordmark(c, M + 14 * mm, y, 15, WHITE, GOLD)
+    # header — real logo lockup
+    y = H - 22 * mm
+    draw_lockup(c, M, y - 2 * mm, 9 * mm)
     c.setFillColor(MIST)
-    c.setFont(SANS, 8)
-    c.drawRightString(W - M, y, "VoxTable live demo")
+    c.setFont(MONO, 7.5)
+    c.drawRightString(W - M, y + 1 * mm, "VOXTABLE LIVE DEMO")
 
     # Bella portrait
     try:
-        from PIL import Image, ImageDraw
-        _p = Image.open(os.path.join(OUT, "..", "bella.png")).convert("RGB")
+        from PIL import ImageDraw
+        _p = Image.open(os.path.join(MKT, "bella.png")).convert("RGB")
         _sq = _p.crop((70, 150, 1010, 1090))
         _mask = Image.new("L", (_sq.width * 3, _sq.height * 3), 0)
         ImageDraw.Draw(_mask).ellipse((0, 0, _mask.width - 1, _mask.height - 1), fill=255)
@@ -461,17 +520,18 @@ def build_demo_card():
         _rgba.putalpha(_mask)
         _rgba.save("/tmp/bp_bella_circle.png")
         pr = 17 * mm
-        pcx, pcy = W / 2, H - 48 * mm
+        pcx, pcy = W / 2, H - 50 * mm
         c.drawImage("/tmp/bp_bella_circle.png", pcx - pr, pcy - pr, 2 * pr, 2 * pr, mask="auto")
         c.setStrokeColor(GOLD)
         c.setLineWidth(1.2)
         c.circle(pcx, pcy, pr, stroke=1, fill=0)
         y = pcy - pr - 14 * mm
     except Exception:
-        y = H - 52 * mm
+        y = H - 54 * mm
 
     c.setFillColor(WHITE)
-    c.setFont(SERIF, 29)
+    s = fit(c, "Talk to Bella. Right now.", SERIF, 27, W - 2 * M)
+    c.setFont(SERIF, s)
     c.drawCentredString(W / 2, y, "Talk to Bella. Right now.")
     y -= 10 * mm
     c.setFillColor(MIST2)
@@ -483,11 +543,13 @@ def build_demo_card():
     bh = 33 * mm
     c.setFillColor(GOLD)
     c.roundRect(M + 10 * mm, y - bh, W - 2 * M - 20 * mm, bh, 4 * mm, stroke=0, fill=1)
-    c.setFillColor(CHAR)
-    c.setFont(SERIF, 33)
-    c.drawCentredString(W / 2, y - 16 * mm, DEMO)
-    c.setFont(SANSB, 9)
-    c.drawCentredString(W / 2, y - 26 * mm, "Answers in under a second  ·  available 24/7")
+    c.setFillColor(GREEN)
+    s = fit(c, DEMO, SERIF, 30, W - 2 * M - 40 * mm)
+    c.setFont(SERIF, s)
+    c.drawCentredString(W / 2, y - 17 * mm, DEMO)
+    c.setFillColor(HexColor("#3d3411"))
+    c.setFont(MONOB, 8)
+    c.drawCentredString(W / 2, y - 26 * mm, "ANSWERS IN UNDER A SECOND  ·  AVAILABLE 24/7")
     y -= bh + 15 * mm
 
     c.setFillColor(WHITE)
@@ -511,7 +573,7 @@ def build_demo_card():
         c.setFont(SANSB, 12)
         c.drawString(M + 6.5 * mm, y + 5.2 * mm, "→")
         c.setFillColor(MIST2)
-        c.setFont(SANS, 11.5)
+        c.setFont(SANSI, 11.5)
         c.drawString(M + 15 * mm, y + 5.2 * mm, t)
 
     y -= 14 * mm
@@ -539,16 +601,17 @@ def build_demo_card():
 
     ly -= 8 * mm
     c.setFillColor(MIST)
-    c.setFont(SANS, 8)
-    c.drawCentredString(W / 2, ly, "Australian data residency  ·  Privacy Act compliant  ·  Sydney-based support")
+    c.setFont(MONO, 7)
+    c.drawCentredString(W / 2, ly, "AUSTRALIAN DATA RESIDENCY  ·  PRIVACY ACT COMPLIANT  ·  SYDNEY-BASED SUPPORT")
 
     # footer band
     bh2 = 26 * mm
     c.setFillColor(GOLD)
     c.roundRect(M, 17 * mm, W - 2 * M, bh2, 3.5 * mm, stroke=0, fill=1)
-    c.setFillColor(CHAR)
+    c.setFillColor(GREEN)
     c.setFont(SANSB, 12)
     c.drawCentredString(W / 2, 17 * mm + bh2 - 10 * mm, "Want Bella answering YOUR phone?")
+    c.setFillColor(HexColor("#3d3411"))
     c.setFont(SANS, 9.5)
     c.drawCentredString(W / 2, 17 * mm + bh2 - 17.5 * mm,
                         f"Sam  ·  {EMAIL}  ·  {OFFICE}  ·  {WEB}")
@@ -568,16 +631,15 @@ def build_followup():
     c.setFillColor(CHAR)
     c.rect(0, 0, W, H, stroke=0, fill=1)
 
-    y = H - 20 * mm
-    draw_mark(c, M, y - 3 * mm, 10 * mm)
-    draw_wordmark(c, M + 13 * mm, y, 13.5, WHITE, GOLD)
+    y = H - 21 * mm
+    draw_lockup(c, M, y - 2 * mm, 8.5 * mm)
     c.setFillColor(MIST)
-    c.setFont(SANS, 7)
-    c.drawRightString(W - M, y, "VoxTable · getting your venue live")
+    c.setFont(MONO, 6.5)
+    c.drawRightString(W - M, y + 1 * mm, "VOXTABLE · GETTING YOUR VENUE LIVE")
 
     y -= 16 * mm
     c.setFillColor(WHITE)
-    c.setFont(SERIF, 25)
+    c.setFont(SERIF, 23)
     c.drawString(M, y, "You're in. Here's what")
     c.setFillColor(GOLD)
     c.drawString(M, y - 11.5 * mm, "happens next.")
@@ -606,7 +668,7 @@ def build_followup():
         c.roundRect(M, by - box_h, W - 2 * M, box_h, 3 * mm, stroke=1, fill=1)
         c.setFillColor(GOLD)
         c.circle(M + 9.5 * mm, by - box_h / 2, 4.2 * mm, stroke=0, fill=1)
-        c.setFillColor(CHAR)
+        c.setFillColor(GREEN)
         c.setFont(SANSB, 11)
         c.drawCentredString(M + 9.5 * mm, by - box_h / 2 - 1.4 * mm, str(i + 1))
         tx = M + 18 * mm
@@ -623,7 +685,7 @@ def build_followup():
 
     # what we need from you
     c.setFillColor(WHITE)
-    c.setFont(SERIF, 13.5)
+    c.setFont(SERIF, 12.5)
     c.drawString(M, y, "What we need from you (5 minutes, tops)")
     y -= 9.5 * mm
     needs = [
@@ -632,11 +694,8 @@ def build_followup():
         "Booking rules — biggest group size, sittings, anything Bella must never promise",
         "How you take bookings today (paper diary or system — both work)",
     ]
-    c.setFont(SANS, 9)
     for n in needs:
-        c.setFillColor(GOLD)
-        c.setFont(SANSB, 9)
-        c.drawString(M + 2 * mm, y, "✓")
+        draw_tick(c, M + 2 * mm, y, 9, GOLD)
         c.setFillColor(MIST2)
         c.setFont(SANS, 9)
         c.drawString(M + 8 * mm, y, n)
@@ -653,18 +712,20 @@ def build_followup():
     band_h = 34 * mm
     c.setFillColor(GOLD)
     c.rect(0, 0, W, band_h, stroke=0, fill=1)
-    c.setFillColor(CHAR)
-    c.setFont(SERIF, 13)
+    c.setFillColor(GREEN)
+    c.setFont(SERIF, 12.5)
     c.drawString(M, band_h - 11 * mm, "Questions before the setup call?")
+    c.setFillColor(HexColor("#3d3411"))
     c.setFont(SANS, 9)
     c.drawString(M, band_h - 17.5 * mm, f"Sam · {EMAIL} · {OFFICE}")
     c.drawString(M, band_h - 23 * mm, f"Show a mate: Bella's demo line is {DEMO} — she'll pick up right now.")
     c.setFont(SANS, 6.4)
     c.drawString(M, band_h - 28.5 * mm, f"BitePerk · {ADDR} · {WEB}")
     qs = 22 * mm
-    c.drawImage("/tmp/bp_qr_follow.png", W - M - qs, (band_h - qs) / 2, qs, qs)
-    c.setFont(SANS, 5.2)
-    c.drawCentredString(W - M - qs / 2, (band_h - qs) / 2 - 3.2 * mm, "biteperk.com.au")
+    c.drawImage("/tmp/bp_qr_follow.png", W - M - qs, (band_h - qs) / 2 + 1.5 * mm, qs, qs)
+    c.setFillColor(HexColor("#3d3411"))
+    c.setFont(MONO, 5)
+    c.drawCentredString(W - M - qs / 2, (band_h - qs) / 2 - 2 * mm, "BITEPERK.COM.AU")
 
     c.showPage()
     c.save()

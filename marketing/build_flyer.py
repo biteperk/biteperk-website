@@ -5,6 +5,7 @@ Outputs:
   voxtable-flyer-a5.pdf            — trim size (screen / home printing)
   voxtable-flyer-a5-print.pdf      — 3mm bleed + crop marks (commercial print)
 """
+import os
 import qrcode
 from reportlab.lib.pagesizes import A5
 from reportlab.lib.units import mm
@@ -14,8 +15,11 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from PIL import Image, ImageDraw
 
-FONTS = "/sessions/dreamy-kind-fermi/mnt/.claude/skills/canvas-design/canvas-fonts"
-OUTDIR = "/sessions/dreamy-kind-fermi/mnt/outputs"
+# Paths are repo-relative so this runs from a clean checkout.
+# Fonts are vendored in marketing/fonts/ (OFL-licensed; licenses alongside).
+HERE = os.path.dirname(os.path.abspath(__file__))
+FONTS = os.environ.get("FLYER_FONTS", os.path.join(HERE, "fonts"))
+OUTDIR = os.environ.get("FLYER_OUT", HERE)
 
 pdfmetrics.registerFont(TTFont("Gloock", f"{FONTS}/Gloock-Regular.ttf"))
 pdfmetrics.registerFont(TTFont("Sans", f"{FONTS}/InstrumentSans-Regular.ttf"))
@@ -42,7 +46,7 @@ qr.add_data("https://vocotable.biteperk.com.au/?utm_source=flyer&utm_medium=prin
 qr.make(fit=True)
 qr.make_image(fill_color="#111317", back_color="#f5c418").save("/tmp/qr_gold.png")
 
-_p = Image.open("/sessions/dreamy-kind-fermi/mnt/biteperk-website/marketing/bella.png").convert("RGB")
+_p = Image.open(os.path.join(HERE, "bella.png")).convert("RGB")
 _sq = _p.crop((70, 150, 1010, 1090))
 _mask = Image.new("L", (_sq.width * 3, _sq.height * 3), 0)
 ImageDraw.Draw(_mask).ellipse((0, 0, _mask.width - 1, _mask.height - 1), fill=255)
@@ -90,7 +94,8 @@ def draw_front(bleed):
     y = H - 15 * mm
     c.setFont("Mono", 6.4)
     c.setFillColor(MIST)
-    c.drawString(M, y, "BITEVOX  ·  FOR SYDNEY RESTAURANTS")
+    # NB: the company wordmark is BITEPERK — never a product token (see CLAUDE.md).
+    c.drawString(M, y, "BITEPERK  ·  FOR SYDNEY RESTAURANTS")
     c.setFillColor(GREEN)
     c.circle(W - M - 1.2 * mm, y + 1.0 * mm, 1.0 * mm, stroke=0, fill=1)
     c.setFillColor(MIST)
@@ -324,7 +329,8 @@ def draw_back(bleed):
     c.drawString(M, fy - 17.8 * mm, "vocotable.biteperk.com.au")
     c.setFillColor(MIST)
     c.setFont("Mono", 5.8)
-    c.drawString(M, fy - 22.5 * mm, "BITEVOX  ·  LEVEL 1, 477 PITT ST, HAYMARKET NSW 2000  ·  MADE IN SYDNEY")
+    # NB: the company wordmark is BITEPERK — never a product token (see CLAUDE.md).
+    c.drawString(M, fy - 22.5 * mm, "BITEPERK  ·  LEVEL 1/457-459 ELIZABETH ST, SURRY HILLS NSW 2010  ·  MADE IN SYDNEY")
 
 
 def crop_marks(pad, bleed):
