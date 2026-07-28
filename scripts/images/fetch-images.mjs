@@ -64,6 +64,26 @@ const catalogue = [
     brief: "Open notebook with pen, paper texture",
   },
   {
+    // The /gb-en hero. Replaced `pub-amber-evening`, which showed chairs
+    // STACKED ON TABLES under a heavy red cast, shot through glass with the
+    // reflections still in frame — a venue shut for the night, sitting directly
+    // beside a headline promising the phone gets answered during service.
+    //
+    // Chosen over a (prettier) wide bar interior on cost: that frame was full
+    // of Edison bulbs and backlit bottles, which is worst-case for AVIF, and
+    // encoded at 343KB/1280 against ~87KB for every sibling hero. The intl
+    // homes already sit at 2.1-2.7s against a 2500ms LCP budget, and the hero
+    // is fetched at 1280 on the mobile config Lighthouse measures, so +256KB
+    // of throttled bandwidth would compete with the webfont that the TEXT LCP
+    // on these pages waits for. This frame is 113KB and warms to the brand
+    // gold.
+    slug: "dining-room-pendants",
+    id: "photo-1590846406792-0adc7f938f1d",
+    photographer: "Kelsey Knight",
+    url: "https://unsplash.com/photos/udj2tD3WKsY",
+    brief: "Design-led dining room open for service — pendant lights, warm wood, marble",
+  },
+  {
     slug: "restaurant-pass",
     id: "photo-1414235077428-338989a2e8c0",
     photographer: "Jay Wennington",
@@ -272,13 +292,6 @@ const catalogue = [
       "in while every Belgian string said Brussels.",
   },
   {
-    slug: "pub-amber-evening",
-    id: "photo-1763142045723-230b56924c6a",
-    photographer: "Robert",
-    url: "https://unsplash.com/@robert_lens",
-    brief: "Amber-lit bar before service — bentwood chairs up, patterned tile, no people (UK hero)",
-  },
-  {
     slug: "brasserie-banquette",
     id: "photo-1583354608715-177553a4035e",
     photographer: "Klara Kulikova",
@@ -312,7 +325,15 @@ async function fetchOne(entry) {
     console.log(`· ${entry.slug} (cached)`);
     return { ...entry, status: "cached" };
   }
-  const url = `https://images.unsplash.com/${entry.id}?w=${FETCH_W}&q=${FETCH_Q}&fm=jpg&fit=max&auto=format`;
+  // `rect` (optional) pins an exact crop of the ORIGINAL image, as
+  // "x,y,w,h" in the original's own pixel coordinates. Use it when the
+  // publishable frame is a subset of the photo — e.g. cropping a street
+  // window out of a bar interior so a foreign vehicle doesn't contradict the
+  // market the page serves. Without it the whole photo is fetched, which is
+  // the right default. Kept in the catalogue rather than done by hand so a
+  // clean checkout reproduces the same frame.
+  const rect = entry.rect ? `rect=${entry.rect}&` : "";
+  const url = `https://images.unsplash.com/${entry.id}?${rect}w=${FETCH_W}&q=${FETCH_Q}&fm=jpg&fit=max&auto=format`;
   try {
     const res = await fetch(url, {
       headers: {
