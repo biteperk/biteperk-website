@@ -115,13 +115,15 @@ const enNeutral: MarketContent = {
 // ── United Kingdom (/gb-en) ─────────────────────────────────────────
 const gbEn: MarketContent = {
   hero: {
-    // Third iteration of this hero. v1 (`pub-amber-evening`) showed a venue
-    // shut for the night beside a headline about answering DURING service;
-    // v2 (`dining-room-pendants`) was open but read teal and canteen-ish.
-    // This one is what "premium" means in this market's own visual language:
-    // white linen, sconces lit, glasses set, evening service about to start.
-    slug: "linen-dining-evening",
-    alt: "A white-linen dining room ready for evening service, lamps lit",
+    // FOURTH iteration, art-directed by Sam: v3 (white-linen evening room)
+    // was premium but read "night and shady" — the brief flipped to blossoms
+    // and freshness. A soft-morning pavement café, lilies in jars down a line
+    // of tables. Still a restaurant waiting for service, which is what the
+    // headline needs it to be; no face, no legible signage, no landmark.
+    // The source is film-grain and encodes via a pinned CDN blur — see the
+    // catalogue entry (fetch-images.mjs) before touching the asset.
+    slug: "cafe-terrace-flowers",
+    alt: "A pavement café at morning, fresh lilies in jars on the front tables",
     pill: "United Kingdom · Pilot programme",
   },
   media: {
