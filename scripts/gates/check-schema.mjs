@@ -2,7 +2,7 @@
 /**
  * JSON-LD integrity gate. Per BUILD_TARGET:
  *   au     → dist/:        the AU anchors (#organization, #website, #vox,
- *            per-city #service) + byte-exact Haymarket NAP.
+ *            per-city #service) + byte-exact Surry Hills NAP.
  *   global → dist-global/: the SHARED org @id (AU-anchored, merges the two
  *            properties into one entity), the per-host #website, and the
  *            ABSENCE of LocalBusiness / NAP / geo / areaServed (those are AU's).
@@ -90,11 +90,11 @@ if (TARGET === "global") {
   // NAP must stay byte-identical to site.ts (local-pack anchor).
   const org = graphOf("index.html").find((n) => n["@id"] === `${AU}/#organization`);
   const nap = org?.address;
-  if (nap?.streetAddress !== "Level 1, 477 Pitt Street" || nap?.addressLocality !== "Haymarket") {
+  if (nap?.streetAddress !== "Level 1/457-459 Elizabeth Street" || nap?.addressLocality !== "Surry Hills") {
     console.error(`FAIL  Organization NAP drifted: ${JSON.stringify(nap)}`);
     failed++;
   } else {
-    console.log("PASS  Organization NAP intact (Level 1, 477 Pitt Street, Haymarket)");
+    console.log("PASS  Organization NAP intact (Level 1/457-459 Elizabeth Street, Surry Hills)");
   }
 }
 

@@ -5,7 +5,7 @@
 ## Key facts
 
 - Company: Biteperk Pty Ltd, a Sydney-based voice/AI software company for hospitality.
-- Location: Level 1, 477 Pitt Street, Haymarket NSW 2000, Australia (serves all of Australia).
+- Location: Level 1/457-459 Elizabeth Street, Surry Hills NSW 2010, Australia (serves all of Australia).
 - Contact: phone +61 2 5504 1140; email hello@biteperk.com.au; hours Mon–Fri 9am–5pm AEST.
 - Product: Vox — one AI phone host (the voice is "Bella"). Its capabilities are bookings and takeaway/pickup (live), concierge (in development), and drive-thru (concept). Bookings ship as "VoxTable" (serving paying customers); takeaway/pickup ships as "VoxOrder".
 - VoxTable pricing (AUD, flat monthly, no per-call or per-cover fees): Solo $80/month (up to 300 covers, 1 venue), Pro $150/month (unlimited covers — "Our pick"), Group $250/month (up to 3 venues), Enterprise custom (4+ venues). Free week trial; month-to-month, no lock-in.
@@ -34,8 +34,8 @@ Vox is a single AI phone host. Each capability below is a job the same agent doe
 - [AI phone answering for Perth restaurants](https://biteperk.com.au/perth/): Perth landing page — time-zone-proof 24/7 answering for WA venues, suburbs served, and FAQs.
 - [AI phone answering for Adelaide restaurants](https://biteperk.com.au/adelaide/): Adelaide landing page — small rooms, festival-season surges, wine-country weekends, suburbs served, and FAQs.
 - [AI phone answering for Gold Coast restaurants](https://biteperk.com.au/gold-coast/): Gold Coast landing page — tourist callers, holiday-peak volume, suburbs served, and FAQs.
-- Note: Biteperk's only physical office is in Haymarket, Sydney. All other cities are served remotely (setup is a phone-forward; support is Australian business hours).
-- [About Biteperk](https://biteperk.com.au/about/): The Sydney team behind Vox — why the company exists, its three operating principles (human in the loop, Australian data residency, honest pricing), and the Haymarket office details.
+- Note: Biteperk's only physical office is in Surry Hills, Sydney. All other cities are served remotely (setup is a phone-forward; support is Australian business hours).
+- [About Biteperk](https://biteperk.com.au/about/): The Sydney team behind Vox — why the company exists, its three operating principles (human in the loop, Australian data residency, honest pricing), and the Surry Hills office details.
 - [How AI phone answering works](https://biteperk.com.au/technology/): Plain-English explainer of the technology behind Bella — Australian-English speech recognition, understanding intent, checking the live diary, confidence gating with a human in the loop, sub-second pickup, and onshore data.
 - [The Vox dashboard](https://biteperk.com.au/platform/): The operations hub every venue gets — live call feed (transcripts, recordings, sentiment, handled-without-transfer outcomes), booking log, analytics with PDF/CSV export, live tables, kitchen display, menu management with photo import, and role-based team logins across venues.
 - [Contact](https://biteperk.com.au/contact/): Phone, email, address, hours, and a contact form for venues.

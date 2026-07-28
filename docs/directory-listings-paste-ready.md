@@ -16,10 +16,10 @@ Generated 2026-07-16. Source of truth: `docs/directory-citations.md`. **Rule #1:
 |---|---|
 | Business name | `Biteperk` |
 | Legal name (only if asked) | `Biteperk Pty Ltd` |
-| Address line 1 | `Level 1, 477 Pitt Street` |
-| Suburb | `Haymarket` |
+| Address line 1 | `Level 1/457-459 Elizabeth Street` |
+| Suburb | `Surry Hills` |
 | State | `NSW` |
-| Postcode | `2000` |
+| Postcode | `2010` |
 | Country | `Australia` |
 | Phone (display) | `(02) 5504 1140` |
 | Phone (E.164 if required) | `+61255041140` |
@@ -55,7 +55,7 @@ Voice AI that answers every restaurant call, 24/7.
 The big one; feeds many other sites. Free listing.
 - Business name: `Biteperk`
 - Category: `Software company` (add `Telephone answering service` if a 2nd is allowed)
-- Address: `Level 1, 477 Pitt Street, Haymarket NSW 2000`
+- Address: `Level 1/457-459 Elizabeth Street, Surry Hills NSW 2010`
 - Phone: `(02) 5504 1140`
 - Website: `https://biteperk.com.au`
 - Email: `hello@biteperk.com.au`
@@ -111,7 +111,7 @@ Free. Puts you on Apple Maps + Siri.
 - Name / NAP: master block
 - Phone: `(02) 5504 1140`
 - Category: closest is `Software Company` / `Business Services`
-- Point of interest vs service-area: choose **service area** (Sydney/Australia) unless you want the Haymarket address pinned.
+- Point of interest vs service-area: choose **service area** (Sydney/Australia) unless you want the Surry Hills address pinned.
 - Description: **Short** (Apple fields are tight)
 
 ---

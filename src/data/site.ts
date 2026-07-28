@@ -19,7 +19,7 @@ export type SiteData = {
   readonly voxtableUrl: string;
   readonly abn: string;
   readonly address: {
-    /** Street line incl. unit/level, e.g. "Level 1, 477 Pitt Street". */
+    /** Street line incl. unit/level, e.g. "Level 1/457-459 Elizabeth Street". */
     readonly street: string;
     /** Suburb — what Google and Australia Post call the locality. */
     readonly locality: string;
@@ -60,18 +60,25 @@ export const site: SiteData = {
   // .github/workflows/web.yml too).
   voxtableUrl: "https://vocotable.biteperk.com.au",
   abn: "TODO",
+  // Moved from Level 1, 477 Pitt St Haymarket → Surry Hills (28 Jul 2026,
+  // confirmed by Sam; the rebuilt print collateral carried the new address
+  // first). Format matches the print pieces byte-for-byte — "Level 1/457-459",
+  // plain hyphen, "Street" spelled out. GBP and directory citations must use
+  // this exact string when they are created (docs/directory-citations.md).
   address: {
-    street: "Level 1, 477 Pitt Street",
-    locality: "Haymarket",
+    street: "Level 1/457-459 Elizabeth Street",
+    locality: "Surry Hills",
     city: "Sydney",
     region: "NSW",
-    postalCode: "2000",
+    postalCode: "2010",
     country: "Australia",
     countryCode: "AU",
     locale: "en-AU",
-    geo: { lat: -33.8806, lng: 151.2043 },
+    // Block-level for 457-459 Elizabeth St; refine to the GBP pin once the
+    // profile is verified.
+    geo: { lat: -33.8886, lng: 151.2099 },
     mapsUrl:
-      "https://www.google.com/maps/search/?api=1&query=Level%201%2C%20477%20Pitt%20Street%2C%20Haymarket%20NSW%202000",
+      "https://www.google.com/maps/search/?api=1&query=Level%201%2F457-459%20Elizabeth%20Street%2C%20Surry%20Hills%20NSW%202010",
   },
   hours: {
     display: "Mon–Fri, 9am–5pm AEST",
