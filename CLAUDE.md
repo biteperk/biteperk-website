@@ -96,6 +96,7 @@ that keep them fixed:
   If you re-add a filter there, the picker breaks on phones.
 - **LocalePicker is a viewport-anchored bottom sheet ≤720px.** Neither `left:0`
   nor `right:0` can work — the trigger sits mid-bar and the menu is 276px wide.
+- **The hero must fit a 900px-tall laptop fold** (rev. 28 Jul 2026). Top padding is `clamp(40px, 8vh, 104px)` — it was a fixed 154px, which with the uncapped 84px h1 wrapping UK/FR headlines to five lines put the primary CTA at y=939 on a 1440×900 screen, entirely below the fold. The hero h1 is capped at `min(var(--fs-h1), 68px)` in a 24ch column (mirrors the AU hero's 76px cap). Measured after: CTA at 712 (gb-en), 781 (fr, the longest headline) on 900h; fully visible at 1366×768. If a future headline pushes the CTA below ~850 at 1440×900, shorten the headline rather than shrinking the type again.
 - **Short viewports** (`max-height: 620px` — phone landscape) compress the hero;
   it was 681px tall on a 844×390 screen with the CTA 200px below the fold.
 - **Cookie policy exists in every locale** (`legal/cookies` is a core page in `pagesForLocale`)
@@ -168,7 +169,7 @@ The Cloud Function needs the `ZOHO_SMTP_PASS` secret (`firebase functions:secret
 This repo is heavily tuned for local + AI-agent discoverability. When touching this surface, keep in mind:
 
 - `public/llms.txt` is curated for AI crawlers (ChatGPT/Claude/Gemini/Perplexity). Update it when product copy or privacy facts change so AI answers stay accurate; every published city must be listed (`check-cities.mjs` enforces this).
-- `public/robots.txt` explicitly welcomes AI crawlers. Don't restrict them.
+- `public/robots.txt` explicitly welcomes AI crawlers. Don't restrict them. **The repo is the single source of truth for AI-crawler policy, and there is an edge-layer setting that can silently override it.** Cloudflare's *Managed robots.txt* ("Instruct AI bots to not scrape content") replaces the served file wholesale — it injects `Content-Signal: ai-train=no` plus `Disallow: /` for Amazonbot, Applebot-Extended, Bytespider and others, and strips the security headers and `Cache-Control` along with it. That is the exact opposite of this file, which names GPTBot, ClaudeBot and OAI-SearchBot as welcome. It was found enabled and disabled again when `www` moved behind Cloudflare (28 Jul 2026); it had been dormant only because the record was grey-clouded. No CI gate can catch this — the gates read `dist/`, not the live edge — so **if the AI-crawler stance ever needs to change, change this file, never the Cloudflare toggle.** Verify after any DNS/proxy change: `curl -s https://biteperk.com/robots.txt` must byte-match `dist-site/robots.txt` (which is `public/robots.txt` with `.com.au` → `.com` rewritten by `merge-dist.mjs`), and must not contain `ai-train`.
 - LocalBusiness schema in `schema.ts` drives Google local pack eligibility — keep NAP byte-identical to what's published on the site, footer, GBP, and external directories.
 - Blog frontmatter `seoTitle` is the lever for fixing long `<title>` tags in SERPs without touching the H1.
 

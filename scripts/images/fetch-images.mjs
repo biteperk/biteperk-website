@@ -85,24 +85,43 @@ const catalogue = [
     brief: "Premium bar at service — Edison bulbs, backlit spirits, brass and copper",
   },
   {
-    // The /gb-en hero. Replaced `pub-amber-evening`, which showed chairs
-    // STACKED ON TABLES under a heavy red cast, shot through glass with the
-    // reflections still in frame — a venue shut for the night, sitting directly
-    // beside a headline promising the phone gets answered during service.
+    // The /gb-en hero, third iteration — this page is the UK's front door and
+    // kept reading wrong. v1 (`pub-amber-evening`) showed a venue closed for
+    // the night; v2 (`dining-room-pendants`) was open but read teal and
+    // canteen-ish. This is a white-linen dining room at evening service —
+    // sconces lit, glasses set — which is what "premium" means in the UK
+    // market's own visual language, with no face, signage or landmark.
     //
-    // Chosen over a (prettier) wide bar interior on cost: that frame was full
-    // of Edison bulbs and backlit bottles, which is worst-case for AVIF, and
-    // encoded at 343KB/1280 against ~87KB for every sibling hero. The intl
-    // homes already sit at 2.1-2.7s against a 2500ms LCP budget, and the hero
-    // is fetched at 1280 on the mobile config Lighthouse measures, so +256KB
-    // of throttled bandwidth would compete with the webfont that the TEXT LCP
-    // on these pages waits for. This frame is 113KB and warms to the brand
-    // gold.
-    slug: "dining-room-pendants",
-    id: "photo-1590846406792-0adc7f938f1d",
-    photographer: "Kelsey Knight",
-    url: "https://unsplash.com/photos/udj2tD3WKsY",
-    brief: "Design-led dining room open for service — pendant lights, warm wood, marble",
+    // Also the CHEAPEST hero on the site: smooth dark tones encode to 70KB at
+    // the 1280 tier against 86-141KB siblings, so the upgrade costs LCP
+    // nothing. 4000×6000 source; the 4:5 slot crops the 2:3 frame ~17% via
+    // object-fit without losing anything that matters.
+    slug: "linen-dining-evening",
+    id: "photo-1578474846511-04ba529f0b88",
+    photographer: "Jason Leung",
+    url: "https://unsplash.com/photos/Untitled-o0AbCeVUnB4",
+    brief: "White-linen dining room at evening service, sconce-lit, glasses set",
+  },
+  {
+    // The /gb-en market band's hospitality slot. Replaced `bar-moody`, which
+    // is a US craft-beer bar whose chalkboard shows legible DOLLAR prices —
+    // on the tree that serves the United Kingdom. Same class of problem as a
+    // foreign vehicle in shot, but worse: it is signage, and it is legible.
+    //
+    // `rect` drops the street window at lower-left, which contained a yellow
+    // taxi. Kept in the catalogue so a clean checkout reproduces the frame.
+    //
+    // This frame is expensive to encode (Edison bulbs + backlit bottles are
+    // worst-case for AVIF), which is why it is here and not in the hero slot:
+    // the band renders at 50vw against the hero's 4:5 portrait, so the browser
+    // picks a smaller variant, and the band sits below the fold where it does
+    // not compete with the text LCP.
+    slug: "bar-brass-evening",
+    id: "photo-1543007630-9710e4a00a20",
+    rect: "1587,307,4556,5696",
+    photographer: "Adam Jaime",
+    url: "https://unsplash.com/photos/dmkmrNptMpw",
+    brief: "Premium bar at service — Edison bulbs, backlit spirits, brass and copper",
   },
   {
     slug: "restaurant-pass",

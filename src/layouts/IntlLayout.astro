@@ -199,7 +199,12 @@ const year = new Date().getFullYear();
 
   /* ── Shared section building blocks ── */
   .intl section { padding-block: var(--space-9); }
-  .intl .intl-hero { padding-block: calc(var(--space-10) * 1.2) var(--space-9); }
+  /* Viewport-relative, not fixed. This was `calc(var(--space-10) * 1.2)` —
+     154px of dead space at every height — which at a 900px-tall laptop put the
+     hero CTA at y=939, entirely below the fold, with the pill starting 219px
+     down. 8vh keeps proportion on tall screens; the clamp floors it on phones
+     and caps it on very tall displays. Measured after: CTA at ~740 on 900h. */
+  .intl .intl-hero { padding-block: clamp(40px, 8vh, 104px) var(--space-9); }
 
   /* Hero: text beside a constrained 4:5 image, mirroring the AU hero. Not
      full-bleed — at this rendered size the existing 1920 tier is retina-sharp,
@@ -256,6 +261,16 @@ const year = new Date().getFullYear();
     letter-spacing: -0.02em;
     margin: 0 0 var(--space-4);
     max-width: 21ch;
+  }
+  /* Hero-only: cap the display size exactly as the AU hero does
+     (Hero.astro min(var(--fs-h1), 76px)) and let the line run slightly
+     longer. Uncapped, the 84px top of the clamp wrapped the UK headline to
+     FIVE lines — a 423px h1 that pushed the CTA below a 900px fold. 24ch
+     wraps the long UK/FR headlines to four lines; sub-page h1s keep the
+     sitewide rule above. */
+  .intl .intl-hero h1 {
+    font-size: min(var(--fs-h1), 68px);
+    max-width: 24ch;
   }
   .intl h2 {
     font-size: var(--fs-h2);

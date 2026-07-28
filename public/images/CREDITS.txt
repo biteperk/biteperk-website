@@ -35,10 +35,15 @@ bar-brass-evening
   Original:     https://unsplash.com/photos/dmkmrNptMpw
   Brief:        Premium bar at service — Edison bulbs, backlit spirits, brass and copper
 
-dining-room-pendants
-  Photographer: Kelsey Knight
-  Original:     https://unsplash.com/photos/udj2tD3WKsY
-  Brief:        Design-led dining room open for service — pendant lights, warm wood, marble
+linen-dining-evening
+  Photographer: Jason Leung
+  Original:     https://unsplash.com/photos/Untitled-o0AbCeVUnB4
+  Brief:        White-linen dining room at evening service, sconce-lit, glasses set
+
+bar-brass-evening
+  Photographer: Adam Jaime
+  Original:     https://unsplash.com/photos/dmkmrNptMpw
+  Brief:        Premium bar at service — Edison bulbs, backlit spirits, brass and copper
 
 restaurant-pass
   Photographer: Jay Wennington
