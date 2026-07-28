@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { p } from "../helpers/routes";
+import { locales } from "../../src/data/locales";
 
 /**
  * Region/language picker (LocalePicker.astro + scripts/locale-picker.ts).
@@ -27,7 +28,8 @@ test.describe("locale picker (desktop)", () => {
 
     await trigger.click();
     const items = picker.locator("[data-locale-picker-item]");
-    await expect(items).toHaveCount(6);
+    // Derived: the picker lists every locale, AU included.
+    await expect(items).toHaveCount(locales.length);
     await expect(items.filter({ hasText: "Australia — English" })).toHaveAttribute(
       "aria-current",
       "true",
@@ -98,7 +100,8 @@ test.describe("locale picker (mobile overlay)", () => {
     await page.goto(p());
     await page.locator("[data-mobile-menu-trigger]").click();
     const regions = page.locator(".mm-region");
-    await expect(regions).toHaveCount(6);
+    // Derived — see above.
+    await expect(regions).toHaveCount(locales.length);
     await expect(regions.filter({ hasText: "Australia — English" })).toHaveAttribute(
       "aria-current",
       "true",

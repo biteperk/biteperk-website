@@ -28,7 +28,10 @@ import {
   chrome, home, howItWorks, about, contact, privacy, terms, cookies,
   type ChromeCopy, type HomeCopy, type SimplePageCopy, type ContactCopy,
 } from "./copy";
-import { marketContent, type MarketContent, type MarketMedia, type MarketHero } from "./markets";
+import {
+  marketContent,
+  type MarketContent, type MarketMedia, type MarketHero, type MarketSupport,
+} from "./markets";
 
 export type CopyBundle = {
   chrome: ChromeCopy;
@@ -102,5 +105,14 @@ export function resolveHero(locale: Locale): MarketHero | undefined {
   return marketContent[locale.base]?.hero;
 }
 
-export type { MarketContent, MarketMedia, MarketHero };
+/**
+ * The locale's single supporting photo, if it has one. Only trees WITHOUT a
+ * market band need it — today that is /en alone. See MarketSupport in
+ * markets.ts for why a band would be the wrong fix there.
+ */
+export function resolveSupport(locale: Locale): MarketSupport | undefined {
+  return marketContent[locale.base]?.support;
+}
+
+export type { MarketContent, MarketMedia, MarketHero, MarketSupport };
 export type { ChromeCopy, HomeCopy, SimplePageCopy, ContactCopy, Lang };

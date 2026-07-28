@@ -266,6 +266,34 @@ export type Alternate = { readonly hreflang: string; readonly href: string };
 /**
  * Pages EVERY global locale emits (path within the locale; "" = home).
  */
+/**
+ * The AU tree's STATIC pages, base-less and without the dynamic ones.
+ *
+ * Cities and blog guides are excluded on purpose — both are derived from their
+ * own sources (`cities.ts`, the blog collection) by every consumer, and that
+ * half never drifted. This is the half that did: `tests/helpers/routes.ts` and
+ * `scripts/gates/check-routes.mjs` each carried their own hand-written copy of
+ * this list, in different shapes (`/au-en/products/` vs `products/index.html`),
+ * under a comment in the former claiming the two "cannot drift". They could,
+ * and nothing would have caught it — the gate would simply stop expecting a
+ * page while the e2e suite stopped visiting it.
+ *
+ * Products derive from PRODUCT_SLUGS, same as INTL_CORE_PAGES below.
+ */
+export const AU_STATIC_PAGES: readonly string[] = [
+  "",
+  "products",
+  ...PRODUCT_SLUGS.map((s) => `products/${s}`),
+  "contact",
+  "about",
+  "technology",
+  "platform",
+  "blog",
+  "legal/privacy",
+  "legal/terms",
+  "legal/cookies",
+];
+
 const INTL_CORE_PAGES: readonly string[] = [
   "",
   "about",

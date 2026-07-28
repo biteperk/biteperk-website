@@ -1,5 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 import { INTL_NAV } from "../../src/data/intl/nav";
+import { localesForTarget, locales } from "../../src/data/locales";
 
 /**
  * Device contracts for the international chrome (IntlLayout + LocalePicker).
@@ -13,8 +14,13 @@ import { INTL_NAV } from "../../src/data/intl/nav";
 const PHONE = { width: 390, height: 844 };
 const TABLET = { width: 768, height: 1024 };
 
-/** Every rendered locale home, so a market can't silently regress alone. */
-const LOCALE_HOMES = ["/en/", "/gb-en/", "/fr/", "/be-en/", "/be-fr/"];
+/**
+ * Every rendered locale home, so a market can't silently regress alone —
+ * DERIVED, because a hardcoded list stops covering the sixth market the moment
+ * it ships, which is the exact failure this constant exists to prevent. Same
+ * reasoning that moved the nav count onto INTL_NAV.length below.
+ */
+const LOCALE_HOMES = localesForTarget("global").map((l) => `${l.base}/`);
 
 async function horizontalOverflow(page: Page) {
   return page.evaluate(
@@ -55,7 +61,8 @@ test.describe("intl chrome — phone", () => {
     expect(box.x + box.width).toBeLessThanOrEqual(PHONE.width);
     expect(box.y).toBeGreaterThanOrEqual(0);
     expect(box.y + box.height).toBeLessThanOrEqual(PHONE.height);
-    await expect(page.locator("[data-locale-picker-item]")).toHaveCount(6);
+    // Derived: the picker offers every locale, AU included.
+    await expect(page.locator("[data-locale-picker-item]")).toHaveCount(locales.length);
   });
 
   test("footer links are real touch targets", async ({ page }) => {

@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { p } from "../helpers/routes";
+import { locales } from "../../src/data/locales";
 
 /**
  * AU site on REAL emulated devices (Pixel 7 / iPhone 14 projects).
@@ -19,7 +20,8 @@ test("overlay menu opens by tap and carries the primary actions", async ({ page 
   await expect(panel.locator('a[data-cta="book-demo"]')).toBeVisible();
   await expect(panel.locator('a[data-cta="call-menu"]')).toBeVisible();
   // Region switching must be reachable on a phone (the nav cluster is hidden).
-  await expect(panel.locator(".mm-region")).toHaveCount(6);
+  // Derived: the mobile region list mirrors the locale array.
+  await expect(panel.locator(".mm-region")).toHaveCount(locales.length);
 });
 
 test("every overlay target is thumb-sized", async ({ page }) => {

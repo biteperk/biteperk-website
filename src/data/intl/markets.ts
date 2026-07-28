@@ -59,12 +59,34 @@ export type MarketHero = {
   pill?: string;
 };
 
+/**
+ * A single supporting photo on the locale home, rendered after the steps.
+ *
+ * This exists for /en and, as things stand, only /en. The four market trees get
+ * their second and third images from the `media` band; /en deliberately has no
+ * band (it is the x-default and must not look European), which left it with ONE
+ * image against their three — 617 words per image versus ~260, i.e. 2.4× more
+ * text per picture on the tree served to everyone outside the four named
+ * markets.
+ *
+ * A single image is the right fix and a band is the wrong one: the band's job
+ * is to say "here is your city", which is precisely the claim /en cannot make.
+ * So this is one geography-neutral photo that breaks the longest prose run and
+ * nothing more — the home stays at 8 sections.
+ */
+export type MarketSupport = {
+  slug: string;
+  alt: string;
+};
+
 export type MarketContent = {
   copy?: Override<CopyBundle>;
   /** Absent (e.g. /en) → the home renders no market band. */
   media?: MarketMedia;
   /** Absent → the hero renders text-only, as every tree did before Jul 2026. */
   hero?: MarketHero;
+  /** Absent → no supporting image. Only trees WITHOUT a `media` band need one. */
+  support?: MarketSupport;
 };
 
 /**
@@ -77,6 +99,16 @@ const enNeutral: MarketContent = {
   hero: {
     slug: "table-set-neutral",
     alt: "Tables laid in warm light, ready for service",
+  },
+  // The one tree with no market band, so the one tree that needs this. Slug is
+  // already graded into public/images (no new photography) and geography-
+  // neutral, because /en serves every unclaimed region — a London or Paris
+  // landmark here would be worse than no picture. Never `priority` and never
+  // preloaded: the LCP element on these trees is TEXT, so prioritising an image
+  // only steals throttled bandwidth from the thing being measured.
+  support: {
+    slug: "busy-service-night",
+    alt: "A dining room mid-service, every table occupied",
   },
 };
 

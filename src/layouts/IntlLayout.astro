@@ -265,6 +265,15 @@ const year = new Date().getFullYear();
     max-width: 26ch;
   }
   .intl h3 { font-size: var(--fs-h3); margin: 0 0 var(--space-2); }
+  /* The contact aside's heading is semantically an h2 (see the comment at its
+     markup — an h3 there skipped a level from the page h1) but must still read
+     as a card heading, not a section one. Level and scale are separate
+     concerns; this keeps the fix invisible. */
+  .intl .contact-aside h2 {
+    font-size: var(--fs-h3);
+    margin: 0 0 var(--space-2);
+    max-width: none;
+  }
   .intl .lede {
     font-size: var(--fs-lede);
     line-height: var(--lh-lede);
@@ -311,6 +320,10 @@ const year = new Date().getFullYear();
   /* Sub-page supporting photo — sits under the intro, breaking the prose run
      on pages that were text-only on every tree until now. */
   .intl .intl-page-image { margin-block: var(--space-6) var(--space-7); }
+  /* The /en supporting photo — sits inside the steps section, after the grid,
+     so it closes that block rather than reading as a section of its own. */
+  .intl .intl-support-image { margin-block-start: var(--space-7); }
+
 
   .intl .intl-closing { text-align: center; }
   .intl .intl-closing h2 { margin-inline: auto; }
