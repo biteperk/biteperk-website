@@ -257,13 +257,6 @@ const catalogue = [
     brief: "Aerial London — Tower Bridge and the Thames toward the City",
   },
   {
-    slug: "bar-moody",
-    id: "photo-1514933651103-005eec06c04b",
-    photographer: "Unsplash contributor",
-    url: "https://images.unsplash.com/photo-1514933651103-005eec06c04b",
-    brief: "Moody bar counter before service — no people, location-neutral",
-  },
-  {
     slug: "paris-skyline",
     id: "photo-1502602898657-3e91760cbb34",
     photographer: "Chris Karidis",
