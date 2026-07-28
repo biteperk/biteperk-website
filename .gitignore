@@ -141,3 +141,9 @@ playwright-report/
 deliverables/
 dist-site/
 dist-cctld/
+
+# Local business documents — never repo content. Present on Sam's machine
+# (company registration, client files); a stray `git add` must not be able to
+# publish them. Same lesson as the vocotable repo's secret-leak incident.
+asic/
+clients/
