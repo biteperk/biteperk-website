@@ -140,11 +140,6 @@ london-skyline
   Original:     https://unsplash.com/photos/Oja2ty_9ZLM
   Brief:        Aerial London — Tower Bridge and the Thames toward the City
 
-bar-moody
-  Photographer: Unsplash contributor
-  Original:     https://images.unsplash.com/photo-1514933651103-005eec06c04b
-  Brief:        Moody bar counter before service — no people, location-neutral
-
 paris-skyline
   Photographer: Chris Karidis
   Original:     https://unsplash.com/photos/nnzkZNYWHaU
