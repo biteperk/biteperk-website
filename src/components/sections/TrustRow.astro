@@ -44,7 +44,11 @@ const cards = [
               <span class="dot" aria-hidden="true"></span>
               {c.eyebrow}
             </span>
-            <h3 class="trust-card-h">{c.headline}</h3>
+            {/* h2, not h3: this section carries no heading of its own, so the
+                card headlines are its top level and an h3 skipped a level
+                straight from the page h1. Styling hangs off .trust-card-h, so
+                the level and the visual scale stay independent. */}
+            <h2 class="trust-card-h">{c.headline}</h2>
           </div>
         </article>
       ))}

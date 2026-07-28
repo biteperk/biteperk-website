@@ -30,6 +30,11 @@ reservation-book
   Original:     https://unsplash.com/photos/y02jEX_B0O0
   Brief:        Open notebook with pen, paper texture
 
+bar-brass-evening
+  Photographer: Adam Jaime
+  Original:     https://unsplash.com/photos/dmkmrNptMpw
+  Brief:        Premium bar at service — Edison bulbs, backlit spirits, brass and copper
+
 dining-room-pendants
   Photographer: Kelsey Knight
   Original:     https://unsplash.com/photos/udj2tD3WKsY
