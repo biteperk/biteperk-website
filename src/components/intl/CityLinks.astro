@@ -1,0 +1,55 @@
+---
+/**
+ * Pill-styled city link list — the market home strip and the city pages'
+ * cross-links render the same list. It is its own component so this CSS
+ * ships only on pages that show one. That exclusion hangs entirely on the
+ * `is:inline` style below: Astro collects processed component CSS by import
+ * graph (dynamic imports included), not by what renders, so a normal scoped
+ * <style> here gets inlined on every page [...intl].astro emits. `is:inline`
+ * opts out of that pipeline — the tag renders in place, per page, only when
+ * this component does. Removing it silently leaks the CSS back everywhere.
+ */
+interface Props {
+  items: readonly { href: string; name: string }[];
+}
+const { items } = Astro.props;
+---
+
+<ul class="intl-city-links">
+  {items.map((x) => (
+    <li><a href={x.href}>{x.name} →</a></li>
+  ))}
+</ul>
+
+<style is:inline>
+  .intl-city-links {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-6) 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  /* 44px targets: these are navigation, same rule as the intl footer links. */
+  .intl-city-links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 20px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-pill);
+    background: var(--ink-1);
+    color: var(--text);
+    font-weight: 600;
+    font-size: var(--fs-small);
+    text-decoration: none;
+    transition: border-color var(--dur-fast) var(--ease);
+  }
+  @media (hover: hover) {
+    .intl-city-links a:hover { border-color: var(--gold); }
+  }
+  .intl-city-links a:focus-visible { outline: none; box-shadow: var(--ring-focus); }
+  @media (prefers-reduced-motion: reduce) {
+    .intl-city-links a { transition: none; }
+  }
+</style>
