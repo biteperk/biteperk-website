@@ -40,6 +40,27 @@ const email = site.email.href.replace("mailto:", "");
 
 const IS_GLOBAL = currentTarget() === "global";
 
+/**
+ * Company registration identifiers.
+ *
+ * `taxID` carries the ABN — the number Australians actually recognise and the
+ * one the ATO requires on tax invoices. Both numbers are ALSO emitted as
+ * labelled PropertyValues, because a bare 11-digit string tells a consumer
+ * nothing about whether it's an ABN, an ACN or a phone number.
+ *
+ * Emitted on BOTH builds, unlike `telephone`: an ABN is a fact about the legal
+ * entity, true in Paris as much as in Sydney. `legalName` is already global for
+ * exactly the same reason. The published phone line is an AU market fact; this
+ * is not.
+ */
+const LEGAL_IDENTIFIERS = {
+  taxID: site.abn,
+  identifier: [
+    { "@type": "PropertyValue" as const, propertyID: "ABN", value: site.abnPlain },
+    { "@type": "PropertyValue" as const, propertyID: "ACN", value: site.acnPlain },
+  ],
+};
+
 const KNOWS_ABOUT = [
   "Restaurant phone answering",
   "AI receptionist for restaurants",
@@ -60,6 +81,7 @@ const auOrganizationNode = {
   "@id": ORG_ID,
   name: site.name,
   legalName: "Biteperk Pty Ltd",
+  ...LEGAL_IDENTIFIERS,
   url: AU_HOME,
   logo: {
     "@type": "ImageObject",
@@ -73,7 +95,10 @@ const auOrganizationNode = {
   telephone,
   priceRange: "$$",
   currenciesAccepted: "AUD",
-  sameAs: [site.social.linkedin],
+  // The ABN Lookup record is the government's own page for this entity —
+  // exactly what sameAs is for: an authoritative URL that unambiguously
+  // identifies the item. It anchors the brand to a verifiable legal person.
+  sameAs: [site.social.linkedin, site.abnLookupUrl],
   address: {
     "@type": "PostalAddress",
     streetAddress: site.address.street,
@@ -132,6 +157,7 @@ const globalOrganizationNode = {
   "@id": ORG_ID,
   name: site.name,
   legalName: "Biteperk Pty Ltd",
+  ...LEGAL_IDENTIFIERS,
   url: AU_HOME,
   logo: {
     "@type": "ImageObject",

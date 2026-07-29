@@ -3,7 +3,7 @@
 Generated 2026-07-16. Source of truth: `docs/directory-citations.md`. **Rule #1: paste these values character-for-character, every time.** Inconsistent NAP hurts more than no citation.
 
 > ⚠️ **Two blockers before you submit:**
-> 1. **ABN** — several AU directories require it. Still `TODO` in `site.ts`. Get it before Yellow Pages / White Pages / True Local, or you'll have to come back and complete them.
+> 1. **ABN** — ✅ **36 700 831 303**. Registered 29 Jul 2026 and live in `site.ts`. Yellow Pages / White Pages / True Local are unblocked.
 > 2. **GBP not yet verified** — fine for these directories (independent of Google), but for consistency don't publish a *different* phone anywhere. Use the number below only.
 >
 > **Don't create duplicates.** For each directory, first *search* for an existing/auto-generated "Biteperk" listing and **claim** it rather than adding a new one.
@@ -29,7 +29,7 @@ Generated 2026-07-16. Source of truth: `docs/directory-citations.md`. **Rule #1:
 | Primary category | `Software company` |
 | Other categories | `Telephone answering service` · `Business-to-business service` |
 | Service area | `Australia (based in Sydney)` |
-| ABN | ⚠️ `TODO` |
+| ABN | 36 700 831 303 |
 | LinkedIn | `https://www.linkedin.com/company/biteperk` |
 
 **Short description (≤160 chars)** — for tight fields:
@@ -61,7 +61,7 @@ The big one; feeds many other sites. Free listing.
 - Email: `hello@biteperk.com.au`
 - Hours: `Mon–Fri 9:00am–5:00pm`
 - Description: **Medium** (above)
-- ⚠️ May ask for **ABN** — have it ready.
+- May ask for **ABN** — 36 700 831 303.
 
 ### 2. True Local — truelocal.com.au
 Major AU consumer directory. Free.
@@ -89,7 +89,7 @@ Free; feeds Apple Maps + others.
 High-trust classic citation. Free.
 - Name / NAP: master block
 - Category: `Software company`
-- ⚠️ Often asks for **ABN** to verify a business listing.
+- Often asks for **ABN** to verify a business listing — 36 700 831 303.
 
 ### 6. Start Local — startlocal.com.au
 Free AU directory.
@@ -117,11 +117,11 @@ Free. Puts you on Apple Maps + Siri.
 ---
 
 ## Tracker (mirror of directory-citations.md — tick as you submit)
-- [ ] Yellow Pages AU  *(needs ABN)*
+- [ ] Yellow Pages AU
 - [ ] True Local
 - [ ] Hotfrog AU
 - [ ] Yelp Australia
-- [ ] White Pages AU  *(needs ABN)*
+- [ ] White Pages AU
 - [ ] Start Local
 - [ ] Bing Places  *(import from GBP once verified, or enter manually)*
 - [ ] Apple Business Connect
