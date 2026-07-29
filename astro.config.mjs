@@ -3,6 +3,7 @@ import { defineConfig } from "astro/config";
 import sitemap, { ChangeFreqEnum } from "@astrojs/sitemap";
 import { visit } from "unist-util-visit";
 import { localesForTarget } from "./src/data/locales";
+import { intlCities } from "./src/data/intl/cities";
 
 // Single-domain international architecture (Option B, rev.3) — see
 // deliverables/2026-07-23-intl-site-architecture/PLAN.md.
@@ -139,6 +140,16 @@ export default defineConfig({
         if (
           TARGET === "global" &&
           localesForTarget("global").some((l) => item.url === `${SITE}${l.base}/`)
+        ) {
+          item.priority = 0.9;
+          return item;
+        }
+        // Market city pages — derived from intl/cities.ts (same priority as
+        // the AU cities below; without this branch they fell to the 0.7
+        // fallback while /au-en/sydney/ sat at 0.9).
+        if (
+          TARGET === "global" &&
+          intlCities.some((c) => c.published && item.url === `${SITE}${c.base}/${c.slug}/`)
         ) {
           item.priority = 0.9;
           return item;

@@ -40,11 +40,6 @@ cafe-terrace-flowers
   Original:     https://unsplash.com/photos/outdoor-cafe-tables-with-flowers-in-vases-mPLfhqUdjPc
   Brief:        Pavement café at morning — flowers in jars down a line of tables
 
-bar-brass-evening
-  Photographer: Adam Jaime
-  Original:     https://unsplash.com/photos/dmkmrNptMpw
-  Brief:        Premium bar at service — Edison bulbs, backlit spirits, brass and copper
-
 restaurant-pass
   Photographer: Jay Wennington
   Original:     https://unsplash.com/photos/N_Y88TWmGwA
@@ -184,3 +179,38 @@ table-set-neutral
   Photographer: Alessio Dandi
   Original:     https://unsplash.com/@alessiodandi
   Brief:        Laid tables in warm light, dried flowers, no people — deliberately reads as neither European nor Australian, for the /en x-default tree
+
+manchester-skyline
+  Photographer: Mylo Kaye
+  Original:     https://unsplash.com/photos/a-view-of-a-city-from-the-top-of-a-building-6055627ba5df
+  Brief:        Manchester skyline at golden hour — Deansgate Square towers over the city
+
+birmingham-skyline
+  Photographer: Daniel Sturley
+  Original:     https://unsplash.com/photos/city-skyline-across-a-wide-blue-river-and-green-hills-7ffed05d456a
+  Brief:        Birmingham skyline across the water — daylight, no signage
+
+edinburgh-old-town
+  Photographer: Adam Wilson
+  Original:     https://unsplash.com/photos/bedcbb027afc
+  Brief:        Edinburgh from Calton Hill — clock tower and Scott Monument in golden haze
+
+glasgow-clyde
+  Photographer: Adam Marikar
+  Original:     https://unsplash.com/photos/86de15d3817b
+  Brief:        Glasgow along the Clyde — bright day, bridges and the city beyond
+
+leeds-dock
+  Photographer: Gary Butterfield
+  Original:     https://unsplash.com/photos/39944f130dd0
+  Brief:        Leeds Dock — narrowboats and still water between brick and glass
+
+bristol-balloons
+  Photographer: Orion Grant
+  Original:     https://unsplash.com/photos/hot-air-balloons-over-clifton-suspension-bridge-at-sunset-kO3YtKi45G0
+  Brief:        Hot-air balloons over the Clifton Suspension Bridge and the Avon Gorge
+
+liverpool-pier-head
+  Photographer: David White
+  Original:     https://unsplash.com/photos/3690e2489514
+  Brief:        The Three Graces on Liverpool's Pier Head under a blue sky

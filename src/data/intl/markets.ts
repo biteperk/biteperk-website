@@ -79,6 +79,20 @@ export type MarketSupport = {
   alt: string;
 };
 
+/**
+ * The city-links strip on the locale home — the intl analogue of the AU
+ * CityStrip. Copy only; the links themselves derive from
+ * intlCitiesForBase(locale.base), and the home renders the section only when
+ * that list is non-empty AND this copy exists. Lives here, NOT in CopyBundle:
+ * the bundle-parity unit test asserts all five trees resolve one shape, and a
+ * strip only some markets have belongs in the market layer with media/hero.
+ */
+export type MarketCities = {
+  eyebrow: string;
+  heading: string;
+  body: string;
+};
+
 export type MarketContent = {
   copy?: Override<CopyBundle>;
   /** Absent (e.g. /en) → the home renders no market band. */
@@ -87,6 +101,8 @@ export type MarketContent = {
   hero?: MarketHero;
   /** Absent → no supporting image. Only trees WITHOUT a `media` band need one. */
   support?: MarketSupport;
+  /** Absent → no city strip on the home. See MarketCities above. */
+  cities?: MarketCities;
 };
 
 /**
@@ -145,6 +161,13 @@ const gbEn: MarketContent = {
     eyebrow: "For UK venues",
     heading: "Built for the pace of UK hospitality.",
     body: "From district pubs to West End dining rooms, the phone keeps ringing through service. Vox answers it — every time — so your team can stay on the floor.",
+  },
+  cities: {
+    // Honest framing: these are the cities we're having pilot CONVERSATIONS
+    // in, not cities we operate from. The links derive from intl/cities.ts.
+    eyebrow: "Where we're starting",
+    heading: "Pilot conversations, city by city.",
+    body: "Vox works the same anywhere a phone rings, but hospitality doesn't sound the same in every city. These pages talk about yours specifically.",
   },
   copy: {
     home: {
