@@ -277,7 +277,7 @@ function card({ eyebrow, headline, accent = "#f5c418", showBella = true }) {
 async function buildGlobalCards() {
   const { loadTS } = await import("../build/_load-ts.mjs");
   const { localesForTarget, locales } = await loadTS(join(ROOT, "src/data/locales.ts"));
-  const { resolveCopy } = await loadTS(join(ROOT, "src/data/intl/index.ts"));
+  const { resolveCopy, resolveHero } = await loadTS(join(ROOT, "src/data/intl/index.ts"));
 
   const en = locales.find((l) => l.base === "/en");
   const cards = [
@@ -323,6 +323,22 @@ async function buildGlobalCards() {
         showBella: false,
       });
     }
+  }
+
+  // Market city cards, derived from intl/cities.ts — check-cities.mjs requires
+  // public/og/intl/<slug><suffix>.png on disk for every published city, same
+  // suffix rule as the core pages above. The eyebrow is the market hero pill
+  // ("United Kingdom · Pilot programme"): honest geography, never a premises.
+  const { intlCities } = await loadTS(join(ROOT, "src/data/intl/cities.ts"));
+  for (const city of intlCities.filter((c) => c.published)) {
+    const cityLocale = locales.find((l) => l.base === city.base);
+    const suffix = city.base === "/en" ? "" : `-${city.base.slice(1)}`;
+    cards.push({
+      file: `${city.slug}${suffix}.png`,
+      eyebrow: (cityLocale && resolveHero(cityLocale)?.pill) || city.name,
+      headline: city.heroHeadline,
+      showBella: false,
+    });
   }
   return cards;
 }

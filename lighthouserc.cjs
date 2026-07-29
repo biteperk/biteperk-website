@@ -28,6 +28,9 @@ module.exports = {
         // the perf contract — they carry hero imagery and a market band, and
         // their visitors are the furthest from the Sydney origin.
         "http://localhost/gb-en/",
+        // The city-page template (Jul 2026): text hero + two lazy images +
+        // the district chips. London stands in for all eight UK cities.
+        "http://localhost/gb-en/london/",
         "http://localhost/fr/",
         // /en is the x-default and had the largest perf delta of any tree when
         // heroes landed (0 images → a priority-loaded LCP hero), so it is the
