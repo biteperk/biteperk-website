@@ -78,6 +78,32 @@ if (TARGET === "global") {
   }
   // Per-host WebSite node (one spot-check on the x-default home).
   expect("en/index.html", `${GLOBAL}/#website`);
+
+  // Market city pages (derived from intl/cities.ts): each published city must
+  // declare its #service, link it to the AU-anchored org via provider, and —
+  // the structured-data half of the no-fake-presence rule — carry NONE of
+  // offers / areaServed / geo / address on that node. The AU city Service has
+  // all four; copying it here is the exact failure this guards against.
+  const { intlCities } = await import("../build/_load-ts.mjs").then((m) =>
+    m.loadTS(join(ROOT, "src/data/intl/cities.ts")),
+  );
+  for (const c of intlCities.filter((x) => x.published)) {
+    const page = `${c.base.replace(/^\//, "")}/${c.slug}/index.html`;
+    const serviceId = `${GLOBAL}${c.base}/${c.slug}/#service`;
+    expect(page, serviceId);
+    expect(page, `${AU}/#organization`); // Service.provider entity link
+
+    const svc = graphOf(page).find((n) => n["@id"] === serviceId);
+    const leaks = ["offers", "areaServed", "geo", "address", "telephone"].filter(
+      (k) => svc && k in svc,
+    );
+    if (leaks.length) {
+      console.error(`FAIL  ${page}: city Service carries AU-only signals: ${leaks.join(", ")}`);
+      failed++;
+    } else {
+      console.log(`PASS  ${page}: city Service is presence-free (no offers/areaServed/geo/address)`);
+    }
+  }
 } else {
   // Anchors that must never drift (v1 baseline: docs/v1-baseline/schema/).
   expect("index.html", `${AU}/#organization`);

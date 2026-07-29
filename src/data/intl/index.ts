@@ -25,12 +25,12 @@
  */
 import type { Lang, Locale } from "@/data/locales";
 import {
-  chrome, home, howItWorks, about, contact, privacy, terms, cookies,
-  type ChromeCopy, type HomeCopy, type SimplePageCopy, type ContactCopy,
+  chrome, home, howItWorks, about, contact, privacy, terms, cookies, cityPage,
+  type ChromeCopy, type HomeCopy, type SimplePageCopy, type ContactCopy, type CityPageCopy,
 } from "./copy";
 import {
   marketContent,
-  type MarketContent, type MarketMedia, type MarketHero, type MarketSupport,
+  type MarketContent, type MarketMedia, type MarketHero, type MarketSupport, type MarketCities,
 } from "./markets";
 
 export type CopyBundle = {
@@ -42,6 +42,8 @@ export type CopyBundle = {
   privacy: SimplePageCopy;
   terms: SimplePageCopy;
   cookies: SimplePageCopy;
+  /** City-page section labels — furniture around the per-city copy, see copy.ts. */
+  cityPage: CityPageCopy;
 };
 
 /**
@@ -60,12 +62,12 @@ const cores: Record<Lang, CopyBundle> = {
   en: {
     chrome: chrome.en, home: home.en, howItWorks: howItWorks.en,
     about: about.en, contact: contact.en, privacy: privacy.en, terms: terms.en,
-    cookies: cookies.en,
+    cookies: cookies.en, cityPage: cityPage.en,
   },
   fr: {
     chrome: chrome.fr, home: home.fr, howItWorks: howItWorks.fr,
     about: about.fr, contact: contact.fr, privacy: privacy.fr, terms: terms.fr,
-    cookies: cookies.fr,
+    cookies: cookies.fr, cityPage: cityPage.fr,
   },
 };
 
@@ -114,5 +116,15 @@ export function resolveSupport(locale: Locale): MarketSupport | undefined {
   return marketContent[locale.base]?.support;
 }
 
-export type { MarketContent, MarketMedia, MarketHero, MarketSupport };
-export type { ChromeCopy, HomeCopy, SimplePageCopy, ContactCopy, Lang };
+/**
+ * The locale home's city-links strip copy, if the market has one. Only
+ * meaningful alongside a non-empty intlCitiesForBase(locale.base) — the home
+ * renders the strip when BOTH exist, so a market can stage the copy before
+ * its first city publishes without an empty section appearing.
+ */
+export function resolveCityStrip(locale: Locale): MarketCities | undefined {
+  return marketContent[locale.base]?.cities;
+}
+
+export type { MarketContent, MarketMedia, MarketHero, MarketSupport, MarketCities };
+export type { ChromeCopy, HomeCopy, SimplePageCopy, ContactCopy, CityPageCopy, Lang };

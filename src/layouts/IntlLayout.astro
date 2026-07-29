@@ -20,6 +20,7 @@ import ThemeToggle from "@/components/ThemeToggle.astro";
 import StarMark from "@/components/StarMark.astro";
 import LocaleSuggest from "@/components/LocaleSuggest.astro";
 import { INTL_NAV } from "@/data/intl/nav";
+import { intlCitiesForBase } from "@/data/intl/cities";
 
 interface Props {
   /** The locale this page belongs to — everything derives from it. */
@@ -56,6 +57,9 @@ const { alternates, xDefault } = buildHreflang(pagePath, targets);
 // and page-carrying via localeSwitchUrl, so /gb-en/about/ → /fr/about/.
 const alternateLocales = localesForTarget("global").filter((l) => l.base !== locale.base);
 const p = (seg: string) => `${locale.base}/${seg ? `${seg}/` : ""}`;
+// This locale's published city pages — empty on trees without cities, so the
+// footer stays identical there (no locale branching, no dead links).
+const footerCities = intlCitiesForBase(locale.base);
 const year = new Date().getFullYear();
 ---
 
@@ -117,6 +121,11 @@ const year = new Date().getFullYear();
             <a href={p("legal/privacy")}>{c.privacy}</a>
             <a href={p("legal/terms")}>{c.terms}</a>
             <a href={p("legal/cookies")}>{c.cookies}</a>
+            {/* City pages, derived per locale — renders nothing on trees
+                without published cities, so no dead links on /fr etc. */}
+            {footerCities.map((x) => (
+              <a href={p(x.slug)}>{x.name}</a>
+            ))}
             {/* Withdrawal must be as easy as consent (GDPR art. 7(3)) — this
                 re-opens the consent modal from any page, mirroring the AU
                 footer's control. Styled to match the links around it. */}

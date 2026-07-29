@@ -75,7 +75,10 @@ const FORBIDDEN = [
     // A premises we do not have. The market pill is separately guarded in
     // tests/unit/intl-merge.test.mjs; this covers body copy.
     label: "invented European presence (no office or staff exists in Europe)",
-    re: /\bour\s+(?:London|Paris|Brussels|Bruxelles|UK|British|French|Belgian|European)\s+(?:team|office|staff|crew)\b|notre\s+(?:bureau|équipe)\s+(?:à|de|en)\s+(?:Londres|Paris|Bruxelles|Belgique|France)/i,
+    // The city alternation must cover every city with a market page — "our
+    // Manchester team" is the same lie as "our London team". Extend it when
+    // intl/cities.ts gains a market's cities.
+    re: /\bour\s+(?:London|Manchester|Birmingham|Edinburgh|Glasgow|Leeds|Bristol|Liverpool|Paris|Brussels|Bruxelles|UK|British|French|Belgian|European)\s+(?:team|office|staff|crew)\b|notre\s+(?:bureau|équipe)\s+(?:à|de|en)\s+(?:Londres|Paris|Bruxelles|Belgique|France)/i,
   },
   {
     // No booking or POS integration ships in Europe. Naming one implies it
