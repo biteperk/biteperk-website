@@ -64,7 +64,24 @@ const hasAbn = site.abn !== "TODO";
     <div class="foot-bottom">
       <div>
         © {year} Biteperk Pty Ltd
-        {hasAbn && <span> · ABN {site.abn}</span>}
+        {hasAbn && (
+          <span>
+            {" · "}
+            {/* Linked, not plain text. Anyone can claim an ABN; the trust
+                comes from being able to check it in one click on the
+                government register. rel="nofollow" — it's a verification
+                link, not an endorsement we're passing rank to. */}
+            <a
+              class="foot-abn"
+              href={site.abnLookupUrl}
+              rel="nofollow noopener"
+              target="_blank"
+              title={`Verify ABN ${site.abn} on the Australian Business Register`}
+            >
+              ABN {site.abn}
+            </a>
+          </span>
+        )}
         · All rights reserved.
       </div>
       <div class="foot-tag">
@@ -168,6 +185,25 @@ const hasAbn = site.abn !== "TODO";
     align-items: center;
     flex-wrap: wrap;
     gap: 12px;
+  }
+  /* Inherits the bottom bar's colour so it reads as part of the legal line,
+     not a call to action — the underline on hover is the only affordance it
+     needs. Dotted underline at rest hints it's checkable without shouting. */
+  .foot-abn {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--mist-2);
+    transition:
+      color var(--dur-fast) var(--ease-out),
+      text-decoration-color var(--dur-fast) var(--ease-out);
+  }
+  .foot-abn:hover,
+  .foot-abn:focus-visible {
+    color: var(--white);
+    text-decoration-style: solid;
+    text-decoration-color: currentColor;
   }
   .foot-tag {
     display: inline-flex;

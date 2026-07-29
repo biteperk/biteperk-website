@@ -34,7 +34,7 @@ rhythm that turns it into rankings and leads.
 - Refresh llms.txt facts if pricing/products/privacy changed.
 
 ## Launch blockers (one-time, still open)
-- [ ] Fill `abn: "TODO"` in `src/data/site.ts` (footer + trust signal).
+- [x] Fill `abn` in `src/data/site.ts` — 36 700 831 303, footer links to ABN Lookup.
 - [ ] Verify Google Business Profile (Surry Hills address).
 - [ ] Analytics decision: Plausible self-proxied under `/js/` (keeps CSP
       `script-src 'self'`) — needs a Plausible account before wiring.

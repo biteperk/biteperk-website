@@ -25,7 +25,7 @@ Hours:           Mon–Fri 9:00am–5:00pm (AEST)
 Primary category: Software company
 Other categories: Telephone answering service · Business-to-business service
 Service area:    Australia (based in Sydney)
-ABN:             ⚠️ TODO — needed by some AU directories. Get it from site.ts / add when available.
+ABN:             36 700 831 303
 LinkedIn:        https://www.linkedin.com/company/biteperk
 ```
 
@@ -106,6 +106,6 @@ LinkedIn:        https://www.linkedin.com/company/biteperk
 - [ ] Restaurant & Catering Australia (supplier)
 
 ## Notes / gotchas
-- **ABN**: several AU directories ask for it. Get it sorted so listings are complete (and it's a trust signal — your site footer is ready to show it too).
+- **ABN**: 36 700 831 303. Live in `site.ts` and shown in the footer, linked to the ABN Lookup record so anyone can verify it.
 - **One account, one business**: don't create duplicate listings on the same directory — duplicates split your citation signal. If a stale/auto-generated listing already exists, *claim* it rather than make a new one.
 - **I can't create these accounts for you** (account creation/identity is yours to do), but I can pre-write any listing's description/fields, and verify NAP consistency across them once they're live — just point me at the URLs.

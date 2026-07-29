@@ -17,7 +17,20 @@ export type SiteData = {
   readonly phone: { readonly display: string; readonly href: string };
   readonly email: { readonly display: string; readonly href: string };
   readonly voxtableUrl: string;
+  /** ABN in the ATO's spaced display format — "36 700 831 303". */
   readonly abn: string;
+  /** ABN digits only, for URLs and structured data. */
+  readonly abnPlain: string;
+  /** ACN in ASIC's spaced display format — "700 831 303". */
+  readonly acn: string;
+  /** ACN digits only, for structured data. */
+  readonly acnPlain: string;
+  /**
+   * Public ABN Lookup record. Australians verify businesses here, so the
+   * footer links the ABN straight to it — a claimed number proves nothing,
+   * a one-click check does.
+   */
+  readonly abnLookupUrl: string;
   readonly address: {
     /** Street line incl. unit/level, e.g. "Level 1/457-459 Elizabeth Street". */
     readonly street: string;
@@ -59,7 +72,19 @@ export const site: SiteData = {
   // migrated to a `voxtable.` subdomain (then update the lychee exclude in
   // .github/workflows/web.yml too).
   voxtableUrl: "https://vocotable.biteperk.com.au",
-  abn: "TODO",
+  // Registered with ASIC 29 Jul 2026 (application 2607-PG-3124). The ABN
+  // embeds the ACN — "36" + "700831303" — which is how every Australian
+  // company's two identifiers relate. Both verified against their official
+  // check-digit algorithms. Source of truth: asic/01-register/COMPANY_FACTS.md.
+  //
+  // Showing the ABN alone satisfies s1344 / ASIC RG 13 where the ACN would
+  // otherwise be required, so the footer stays clean and shows one number.
+  // The ACN is kept here for contracts, invoices and legal pages.
+  abn: "36 700 831 303",
+  abnPlain: "36700831303",
+  acn: "700 831 303",
+  acnPlain: "700831303",
+  abnLookupUrl: "https://abr.business.gov.au/ABN/View?abn=36700831303",
   // Moved from Level 1, 477 Pitt St Haymarket → Surry Hills (28 Jul 2026,
   // confirmed by Sam; the rebuilt print collateral carried the new address
   // first). Format matches the print pieces byte-for-byte — "Level 1/457-459",
