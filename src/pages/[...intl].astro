@@ -33,7 +33,7 @@ import PullQuote from "@/components/PullQuote.astro";
 // would be inlined on EVERY page this file emits — Astro collects component
 // CSS by import graph, dynamic imports included, not by what renders.)
 import CityBody from "@/components/intl/CityBody.astro";
-import CityLinks from "@/components/intl/CityLinks.astro";
+import CityCards from "@/components/intl/CityCards.astro";
 
 export function getStaticPaths() {
   if (currentTarget() !== "global") return [];
@@ -297,14 +297,42 @@ const appJsonLd =
             <p class="eyebrow">{media.eyebrow}</p>
             <h2>{media.heading}</h2>
             <p class="lede">{media.body}</p>
-            <div class="intl-market-grid">
-              {/* No `priority`: the hero headline stays the LCP element. */}
-              {/* widths must match .intl-market-grid's 2-up breakpoint (721px),
-                  not the 1024px default — tablets were fetching ~2x the bytes
-                  they actually render. */}
-              <ImageBlock slug={media.cityscape.slug} alt={media.cityscape.alt} aspect="16 / 10" widths="(min-width: 721px) 50vw, 100vw" rounded />
-              <ImageBlock slug={media.hospitality.slug} alt={media.hospitality.alt} aspect="16 / 10" widths="(min-width: 721px) 50vw, 100vw" rounded />
-            </div>
+            {cityStrip && homeCities.length > 0 ? (
+              /* Trees with a city-card grid drop the band's cityscape — the
+                 gb-en band showed london-skyline and the London card in the
+                 very next section shows the same photo. One hospitality shot
+                 full-width instead; the cards do the geographic work. */
+              <div class="intl-market-grid intl-market-grid-single">
+                <ImageBlock slug={media.hospitality.slug} alt={media.hospitality.alt} aspect="16 / 9" widths="(min-width: 981px) 1120px, 100vw" rounded />
+              </div>
+            ) : (
+              <div class="intl-market-grid">
+                {/* No `priority`: the hero headline stays the LCP element. */}
+                {/* widths must match .intl-market-grid's 2-up breakpoint (721px),
+                    not the 1024px default — tablets were fetching ~2x the bytes
+                    they actually render. */}
+                <ImageBlock slug={media.cityscape.slug} alt={media.cityscape.alt} aspect="16 / 10" widths="(min-width: 721px) 50vw, 100vw" rounded />
+                <ImageBlock slug={media.hospitality.slug} alt={media.hospitality.alt} aspect="16 / 10" widths="(min-width: 721px) 50vw, 100vw" rounded />
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {cityStrip && homeCities.length > 0 && (
+        <section class="intl-cities">
+          <div class="wrap">
+            <p class="eyebrow">{cityStrip.eyebrow}</p>
+            <h2>{cityStrip.heading}</h2>
+            <p class="lede">{cityStrip.body}</p>
+            <CityCards
+              items={homeCities.map((x) => ({
+                href: p(x.slug),
+                name: x.name,
+                imageSlug: x.cityscapeImage,
+                imageAlt: x.cityscapeImageAlt,
+              }))}
+            />
           </div>
         </section>
       )}
@@ -338,17 +366,6 @@ const appJsonLd =
           )}
         </div>
       </section>
-
-      {cityStrip && homeCities.length > 0 && (
-        <section class="intl-cities">
-          <div class="wrap">
-            <p class="eyebrow">{cityStrip.eyebrow}</p>
-            <h2>{cityStrip.heading}</h2>
-            <p class="lede">{cityStrip.body}</p>
-            <CityLinks items={homeCities.map((x) => ({ href: p(x.slug), name: x.name }))} />
-          </div>
-        </section>
-      )}
 
       <section class="intl-band">
         <div class="wrap">
@@ -671,6 +688,9 @@ const appJsonLd =
   @media (max-width: 720px) {
     .intl-market-grid { grid-template-columns: 1fr; }
   }
+  /* Trees whose home carries the city-card grid render the band with ONE
+     hospitality image (the cityscape moved into the cards) — full width. */
+  .intl-market-grid-single { grid-template-columns: 1fr; }
 
   .intl-form { margin-top: var(--space-6); display: grid; gap: var(--space-5); max-width: 560px; }
   .intl-form .hp { position: absolute; left: -9999px; height: 0; overflow: hidden; }
@@ -747,7 +767,7 @@ const appJsonLd =
   }
 
   /* City-page styles (.intl-city-*) live in components/intl/CityBody.astro
-     and CityLinks.astro as `is:inline` styles — rendered with the component,
+     and CityCards.astro as `is:inline` styles — rendered with the component,
      so only city pages (and the market home strip) carry them. Restating
      them here would inline them on every page of every tree. */
 </style>
