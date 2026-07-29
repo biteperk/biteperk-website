@@ -1,0 +1,226 @@
+---
+/**
+ * Cities dropdown for the intl nav bar — a native-<details> clone of the
+ * LocalePicker pattern (progressive enhancement: works with no JS; the
+ * script src/scripts/city-nav.ts only adds keyboard polish and close-on-
+ * outside-click). Renders NOTHING on trees without published cities, so
+ * the four city-less markets keep today's exact nav.
+ *
+ * Own attribute namespace (data-city-nav*) — chrome.spec's locale-picker
+ * locators are strict-mode, so sharing data-locale-picker* would break the
+ * click and count assertions.
+ *
+ * The menu title is a <p>, never a heading: the a11y sweep counts every
+ * heading in DOM order and the nav renders before the page h1.
+ *
+ * `is:inline` style, same invariant as CityBody/CityCards: this component
+ * is in IntlLayout's import graph, so a scoped <style> would inline these
+ * rules on all ~100 global pages including trees that never render the
+ * trigger. Selectors are UNSCOPED — keep the intl-citynav* namespace.
+ *
+ * ≤720px the menu is a viewport-anchored bottom sheet (byte-cloned from
+ * .lp-menu) — which requires that no ancestor carries backdrop-filter at
+ * that width. IntlLayout's 720px block drops .intl-nav's filter for
+ * exactly this reason; that rule is a dependency of this component.
+ */
+import { intlCitiesForBase } from "@/data/intl/cities";
+import type { Locale } from "@/data/locales";
+
+interface Props {
+  locale: Locale;
+  /** Page path within the locale ("" home, "london", …) — marks aria-current. */
+  page: string;
+  /** Trigger label (c.chrome.cities). */
+  label: string;
+  /** Menu title (c.chrome.citiesTitle). */
+  title: string;
+}
+const { locale, page, label, title } = Astro.props;
+const cities = intlCitiesForBase(locale.base);
+---
+
+{cities.length > 0 && (
+  <details class="intl-citynav" data-city-nav>
+    <summary class="intl-citynav-trigger" data-city-nav-trigger>
+      {/* Map pin, geography without premises — same 17px icon idiom as the
+          picker's globe. Hidden ≤720px to fit the 390px actions row. */}
+      <svg
+        class="intl-citynav-pin"
+        viewBox="0 0 24 24"
+        width="17"
+        height="17"
+        aria-hidden="true"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M12 21c4.5-4.5 7-7.8 7-11a7 7 0 1 0-14 0c0 3.2 2.5 6.5 7 11Z"></path>
+        <circle cx="12" cy="10" r="2.6"></circle>
+      </svg>
+      <span class="intl-citynav-label">{label}</span>
+      <svg
+        class="intl-citynav-caret"
+        viewBox="0 0 24 24"
+        width="12"
+        height="12"
+        aria-hidden="true"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M6 9l6 6 6-6"></path>
+      </svg>
+    </summary>
+
+    <div class="intl-citynav-menu" data-city-nav-menu>
+      <p class="intl-citynav-title">{title}</p>
+      <ul class="intl-citynav-list" role="list">
+        {cities.map((x) => (
+          <li>
+            <a
+              class:list={["intl-citynav-item", { "is-current": x.slug === page }]}
+              href={`${locale.base}/${x.slug}/`}
+              aria-current={x.slug === page ? "true" : undefined}
+              data-city-nav-item
+            >
+              {x.name}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </details>
+)}
+
+<style is:inline>
+  /* UNSCOPED (is:inline skips the scoping pass) — keep the intl-citynav*
+     namespace on every selector here. Values mirror LocalePicker's .lp-*
+     rules so the two controls read as one family in the bar. */
+  .intl-citynav { position: relative; line-height: 1; }
+
+  .intl-citynav-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 44px;
+    padding: 0 10px 0 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-pill);
+    background: var(--fill-subtle);
+    color: var(--text);
+    font-size: var(--fs-small);
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+    white-space: nowrap;
+    transition:
+      background var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out);
+  }
+  .intl-citynav-trigger::-webkit-details-marker { display: none; }
+  /* hover: hover guard is load-bearing — without it iOS needs two taps
+     (documented on .lp-trigger). */
+  @media (hover: hover) {
+    .intl-citynav-trigger:hover { background: var(--fill-hover); border-color: var(--line-strong); }
+  }
+  .intl-citynav-trigger:focus-visible { outline: none; box-shadow: var(--ring-focus); }
+  .intl-citynav[open] > .intl-citynav-trigger { background: var(--fill-hover); border-color: var(--line-strong); }
+  .intl-citynav-pin { color: var(--gold); flex: none; }
+  .intl-citynav-caret { transition: transform var(--dur-fast) var(--ease-out); }
+  .intl-citynav[open] .intl-citynav-caret { transform: rotate(180deg); }
+
+  .intl-citynav-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 60; /* > --z-nav (50) */
+    min-width: 19rem;
+    padding: 6px;
+    background: color-mix(in srgb, var(--ink-1) 96%, transparent);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    box-shadow:
+      0 18px 44px -12px rgba(0, 0, 0, 0.5),
+      0 2px 8px -2px rgba(0, 0, 0, 0.28);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .intl-citynav[open] .intl-citynav-menu { animation: intl-citynav-in 180ms var(--ease-soft) backwards; }
+  }
+  @keyframes intl-citynav-in {
+    from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .intl-citynav-title {
+    margin: 6px 10px 4px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--mist-2);
+  }
+  .intl-citynav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+  .intl-citynav-item {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 12px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    color: var(--mist-2);
+    font-size: var(--fs-small);
+    font-weight: 500;
+    text-decoration: none;
+  }
+  @media (hover: hover) {
+    .intl-citynav-item:hover {
+      background: var(--fill-hover);
+      color: var(--text);
+      border-color: color-mix(in srgb, var(--gold) 18%, transparent);
+    }
+  }
+  .intl-citynav-item:focus-visible {
+    outline: none;
+    background: var(--fill-hover);
+    color: var(--text);
+    box-shadow: var(--ring-focus);
+  }
+  .intl-citynav-item.is-current { color: var(--text); font-weight: 600; }
+  .intl-citynav-item.is-current::after {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    margin-inline-start: auto;
+  }
+
+  /* ≤720px: viewport-anchored bottom sheet, byte-cloned from .lp-menu.
+     Depends on .intl-nav dropping its backdrop-filter at this width. */
+  @media (max-width: 720px) {
+    .intl-citynav-pin { display: none; }
+    .intl-citynav-menu {
+      position: fixed;
+      inset: auto 16px calc(16px + env(safe-area-inset-bottom)) 16px;
+      min-width: 0;
+      max-height: min(60vh, 420px);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+    .intl-citynav-item { min-height: 48px; }
+  }
+</style>

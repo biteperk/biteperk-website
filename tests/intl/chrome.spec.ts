@@ -1,6 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import { INTL_NAV } from "../../src/data/intl/nav";
 import { localesForTarget, locales } from "../../src/data/locales";
+import { intlCitiesForBase } from "../../src/data/intl/cities";
 
 /**
  * Device contracts for the international chrome (IntlLayout + LocalePicker).
@@ -119,5 +120,31 @@ test.describe("intl chrome — tablet keeps the desktop layout", () => {
     expect(Math.max(...tops) - Math.min(...tops), "links share one row").toBeLessThan(2);
     await expect(page.locator(".intl-cta-btn")).toBeVisible();
     expect(await horizontalOverflow(page)).toBe(0);
+  });
+});
+
+test.describe("intl chrome — Cities nav dropdown", () => {
+  test.use({ viewport: PHONE });
+
+  test("opens fully inside a phone viewport with every city listed", async ({ page }) => {
+    await page.goto("/gb-en/");
+    await page.locator("[data-city-nav-trigger]").click();
+    const menu = page.locator("[data-city-nav-menu]");
+    await expect(menu).toBeVisible();
+    const box = (await menu.boundingBox())!;
+    expect(box.x).toBeGreaterThanOrEqual(0);
+    expect(box.x + box.width).toBeLessThanOrEqual(PHONE.width);
+    expect(box.y).toBeGreaterThanOrEqual(0);
+    expect(box.y + box.height).toBeLessThanOrEqual(PHONE.height);
+    // Derived, same rule as INTL_NAV.length above: publishing a ninth city
+    // must not require a test edit.
+    await expect(page.locator("[data-city-nav-item]")).toHaveCount(
+      intlCitiesForBase("/gb-en").length,
+    );
+  });
+
+  test("absent on trees without published cities", async ({ page }) => {
+    await page.goto("/fr/");
+    await expect(page.locator("[data-city-nav]")).toHaveCount(0);
   });
 });
