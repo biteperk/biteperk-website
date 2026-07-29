@@ -26,7 +26,7 @@ import ImageBlock from "@/components/ImageBlock.astro";
 import FAQ from "@/components/FAQ.astro";
 import PullQuote from "@/components/PullQuote.astro";
 import Illustration from "@/components/Illustration.astro";
-import CityLinks from "@/components/intl/CityLinks.astro";
+import CityCards from "@/components/intl/CityCards.astro";
 
 interface Props {
   locale: Locale;
@@ -50,22 +50,41 @@ const cityIcon = (i: "pin" | "calendar-tick" | "phone-wave" | "shield") =>
 const otherCities = intlCitiesForBase(locale.base).filter((x) => x.slug !== city.slug);
 ---
 
-{/* ── City hero — TEXT-ONLY on purpose: the LCP element on the intl
-    trees is text, and the market pill does the honest geographic work
-    (names the market and the pilot programme, never a premises). ── */}
+{/* ── City hero — the city's own establishing shot beside the headline,
+    the same two-column shape as the locale homes (grid classes come from
+    IntlLayout's global block at zero CSS cost here). The TEXT stays the
+    LCP element: the image is `deprioritize` (fetchpriority=low) and never
+    preloaded — preloading measured LCP at ~2.7-3.1s on these trees. The
+    image carries NO overlay copy: an on-image line like "answering across
+    London 24/7" would claim live UK service (check-truthful's territory);
+    the market pill does the honest geographic work. 4/3, not the home's
+    4/5 — all eight cityscapes are landscape sources and a portrait crop
+    would decapitate the skylines. ── */}
 <section class="intl-hero">
-  <div class="wrap">
-    <nav class="intl-crumbs" aria-label="Breadcrumb">
-      <a href={p("")}>{c.chrome.nav.home}</a>
-      <span aria-hidden="true">/</span>
-      <span aria-current="page">{city.name}</span>
-    </nav>
-    {hero?.pill && <span class="pill intl-pill">{hero.pill}</span>}
-    <h1>{city.heroHeadline}</h1>
-    <p class="lede">{city.intro[0]}</p>
-    <div class="intl-ctas">
-      <a class="btn" href={p("contact")}>{c.chrome.cta}</a>
-      <a class="btn-ghost" href={p("how-it-works")}>{h.ctaSecondary}</a>
+  <div class="wrap intl-hero-grid">
+    <div class="intl-hero-text">
+      <nav class="intl-crumbs" aria-label="Breadcrumb">
+        <a href={p("")}>{c.chrome.nav.home}</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">{city.name}</span>
+      </nav>
+      {hero?.pill && <span class="pill intl-pill">{hero.pill}</span>}
+      <h1>{city.heroHeadline}</h1>
+      <p class="lede">{city.intro[0]}</p>
+      <div class="intl-ctas">
+        <a class="btn" href={p("contact")}>{c.chrome.cta}</a>
+        <a class="btn-ghost" href={p("how-it-works")}>{h.ctaSecondary}</a>
+      </div>
+    </div>
+    <div class="intl-hero-visual">
+      <ImageBlock
+        slug={city.cityscapeImage}
+        alt={city.cityscapeImageAlt}
+        aspect="4 / 3"
+        widths="(min-width: 981px) 38vw, 460px"
+        deprioritize
+        rounded
+      />
     </div>
   </div>
 </section>
@@ -127,20 +146,11 @@ const otherCities = intlCitiesForBase(locale.base).filter((x) => x.slug !== city
   </div>
 </section>
 
-{/* ── Cityscape + districts. No on-image overlay tag: the AU band's
-    "Answering for venues across {city}, 24/7" would claim live UK
-    service, and the scrim/axe interaction is a known trap besides. ── */}
+{/* ── Districts. The cityscape moved into the hero (it was here); the
+    chips carry this section now. Genuine neighbourhoods only, minus the
+    banned street names (see cities.ts header). ── */}
 <section>
   <div class="wrap">
-    <div class="intl-city-scape">
-      <ImageBlock
-        slug={city.cityscapeImage}
-        alt={city.cityscapeImageAlt}
-        aspect="16 / 9"
-        widths="(min-width: 981px) 1120px, 100vw"
-        rounded
-      />
-    </div>
     <p class="eyebrow">{cl(c.cityPage.districtsEyebrow)}</p>
     <h2>{cl(c.cityPage.districtsHeading)}</h2>
     <ul class="intl-city-chips">
@@ -172,13 +182,21 @@ const otherCities = intlCitiesForBase(locale.base).filter((x) => x.slug !== city
   </div>
 </section>
 
-{/* ── Cross-links to the market's other city pages. ── */}
+{/* ── Cross-links to the market's other city pages — same card grid as
+    the locale home, so the cluster reads as one product surface. ── */}
 {otherCities.length > 0 && (
   <section class="intl-band">
     <div class="wrap">
       <p class="eyebrow">{cl(c.cityPage.othersEyebrow)}</p>
       <h2>{cl(c.cityPage.othersHeading)}</h2>
-      <CityLinks items={otherCities.map((x) => ({ href: p(x.slug), name: x.name }))} />
+      <CityCards
+        items={otherCities.map((x) => ({
+          href: p(x.slug),
+          name: x.name,
+          imageSlug: x.cityscapeImage,
+          imageAlt: x.cityscapeImageAlt,
+        }))}
+      />
     </div>
   </section>
 )}
@@ -226,11 +244,9 @@ const otherCities = intlCitiesForBase(locale.base).filter((x) => x.slug !== city
   .intl-city-body { color: var(--mist-2); max-width: 60ch; }
   .intl-city-body + .intl-city-body { margin-top: var(--space-4); }
 
-  .intl-city-scape { margin-block-end: var(--space-7); }
-
   /* District chips: same pill language as the AU .city-chips, rebuilt on the
      shared tokens (no new pairs — text is --mist-2 on --ink-1, both in the
-     contrast manifest). The cross-link pills live in CityLinks.astro. */
+     contrast manifest). The cross-link cards live in CityCards.astro. */
   .intl-city-chips {
     list-style: none;
     padding: 0;
