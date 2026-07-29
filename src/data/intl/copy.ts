@@ -48,6 +48,15 @@ export type ChromeCopy = {
   cookieSettings: string;
   /** Region picker menu heading. */
   regionTitle: string;
+  /** Cities nav trigger label + footer Cities column title. Renders only on
+      trees with published cities (gb-en today). */
+  cities: string;
+  /** Cities dropdown menu heading — a <p>, never a heading element. */
+  citiesTitle: string;
+  /** Footer column titles. NOT "Site"/"Sites" — the header nav landmark is
+      already aria-label="Site" and duplicate landmark names trip axe. */
+  footerExplore: string;
+  footerRegions: string;
   /** Locale-suggestion chip: shown in the TARGET locale's language. */
   suggest: string;
   suggestDismiss: string;
@@ -160,6 +169,10 @@ export const chrome: Record<Lang, ChromeCopy> = {
     cookies: "Cookies",
     cookieSettings: "Cookie settings",
     regionTitle: "Choose your region",
+    cities: "Cities",
+    citiesTitle: "Choose a city",
+    footerExplore: "Explore",
+    footerRegions: "Regions & languages",
     suggest: "There's a BitePerk site for your region.",
     suggestDismiss: "Dismiss",
     email: "hello@biteperk.com.au",
@@ -177,6 +190,13 @@ export const chrome: Record<Lang, ChromeCopy> = {
     cookies: "Cookies",
     cookieSettings: "Paramètres des cookies",
     regionTitle: "Choisissez votre région",
+    // DRAFT French (29 Jul 2026) — needs Ludovic's pass. footerExplore and
+    // footerRegions render on /fr and /be-fr immediately; cities/citiesTitle
+    // stay dormant until a French city publishes.
+    cities: "Villes",
+    citiesTitle: "Choisissez une ville",
+    footerExplore: "Explorer",
+    footerRegions: "Régions et langues",
     suggest: "Un site BitePerk existe pour votre région.",
     suggestDismiss: "Fermer",
     email: "hello@biteperk.com.au",

@@ -19,6 +19,7 @@ import LocalePicker from "@/components/LocalePicker.astro";
 import ThemeToggle from "@/components/ThemeToggle.astro";
 import StarMark from "@/components/StarMark.astro";
 import LocaleSuggest from "@/components/LocaleSuggest.astro";
+import CityNav from "@/components/intl/CityNav.astro";
 import { INTL_NAV } from "@/data/intl/nav";
 import { intlCitiesForBase } from "@/data/intl/cities";
 
@@ -58,8 +59,9 @@ const { alternates, xDefault } = buildHreflang(pagePath, targets);
 const alternateLocales = localesForTarget("global").filter((l) => l.base !== locale.base);
 const p = (seg: string) => `${locale.base}/${seg ? `${seg}/` : ""}`;
 // This locale's published city pages — empty on trees without cities, so the
-// footer stays identical there (no locale branching, no dead links).
+// footer and nav stay identical there (no locale branching, no dead links).
 const footerCities = intlCitiesForBase(locale.base);
+const hasCities = footerCities.length > 0;
 const year = new Date().getFullYear();
 ---
 
@@ -83,7 +85,7 @@ const year = new Date().getFullYear();
   <slot name="jsonld" slot="jsonld" />
 
   <div class="intl">
-    <header class="intl-nav">
+    <header class="intl-nav" data-has-cities={hasCities}>
       <div class="wrap intl-nav-row">
         <a class="brand" href={p("")} aria-label="BitePerk home">
           <StarMark size={30} />
@@ -95,6 +97,16 @@ const year = new Date().getFullYear();
           ))}
         </nav>
         <div class="intl-actions">
+          {/* Gated HERE, not only inside the component: an is:inline style
+              renders wherever its component is INVOKED, conditionals around
+              the sibling markup notwithstanding — invoking CityNav on /fr
+              shipped 27 dead selectors there (caught by the build grep).
+              Deliberately NOT inside .intl-links: chrome.spec counts
+              `.intl-links a` against INTL_NAV.length, and this menu's 8
+              anchors would break it. */}
+          {hasCities && (
+            <CityNav locale={locale} page={page} label={c.cities} title={c.citiesTitle} />
+          )}
           <LocalePicker title={c.regionTitle} />
           <ThemeToggle />
           <a class="btn intl-cta-btn" href={p("contact")}>{c.cta}</a>
@@ -114,36 +126,54 @@ const year = new Date().getFullYear();
             </span>
             <p class="intl-footer-blurb">{c.footerBlurb}</p>
           </div>
-          <nav class="intl-footer-links" aria-label="Footer">
-            {INTL_NAV.map((item) => (
-              <a href={p(item.path)}>{c.nav[item.key]}</a>
-            ))}
-            <a href={p("legal/privacy")}>{c.privacy}</a>
-            <a href={p("legal/terms")}>{c.terms}</a>
-            <a href={p("legal/cookies")}>{c.cookies}</a>
-            {/* City pages, derived per locale — renders nothing on trees
-                without published cities, so no dead links on /fr etc. */}
-            {footerCities.map((x) => (
-              <a href={p(x.slug)}>{x.name}</a>
-            ))}
-            {/* Withdrawal must be as easy as consent (GDPR art. 7(3)) — this
-                re-opens the consent modal from any page, mirroring the AU
-                footer's control. Styled to match the links around it. */}
-            <button type="button" class="intl-footer-btn" data-cookie-settings>
-              {c.cookieSettings}
-            </button>
-            <a href={AU_HOME + "/"}>{c.auSite} ↗</a>
-            {alternateLocales.map((l) => (
-              <a
-                href={new URL(localeSwitchUrl(canonicalPath, l)).pathname}
-                rel="alternate"
-                hreflang={l.hreflang[0]}
-                lang={l.lang}
-              >
-                {l.label}
-              </a>
-            ))}
-          </nav>
+          {/* Labeled columns, each its own <nav> with a distinct accessible
+              name ("Explore", never "Site" — the header nav landmark already
+              carries that name and duplicate landmark names trip axe).
+              Column titles are <p> + aria-labelledby, NEVER headings: the
+              a11y sweep counts every heading in DOM order. Every column
+              keeps class intl-footer-links so chrome.spec's 44px-target and
+              cookie-href locators keep their teeth. */}
+          <div class="intl-footer-cols">
+            <nav class="intl-footer-links" aria-labelledby="ifc-explore">
+              <p class="intl-footer-col-title" id="ifc-explore">{c.footerExplore}</p>
+              {INTL_NAV.map((item) => (
+                <a href={p(item.path)}>{c.nav[item.key]}</a>
+              ))}
+              <a href={p("legal/privacy")}>{c.privacy}</a>
+              <a href={p("legal/terms")}>{c.terms}</a>
+              <a href={p("legal/cookies")}>{c.cookies}</a>
+              {/* Withdrawal must be as easy as consent (GDPR art. 7(3)) — this
+                  re-opens the consent modal from any page, mirroring the AU
+                  footer's control. Styled to match the links around it. */}
+              <button type="button" class="intl-footer-btn" data-cookie-settings>
+                {c.cookieSettings}
+              </button>
+            </nav>
+            {/* Derived per locale — the whole column vanishes on trees
+                without published cities, so /fr keeps a two-column footer. */}
+            {hasCities && (
+              <nav class="intl-footer-links" aria-labelledby="ifc-cities">
+                <p class="intl-footer-col-title" id="ifc-cities">{c.cities}</p>
+                {footerCities.map((x) => (
+                  <a href={p(x.slug)}>{x.name}</a>
+                ))}
+              </nav>
+            )}
+            <nav class="intl-footer-links" aria-labelledby="ifc-regions">
+              <p class="intl-footer-col-title" id="ifc-regions">{c.footerRegions}</p>
+              <a href={AU_HOME + "/"}>{c.auSite} ↗</a>
+              {alternateLocales.map((l) => (
+                <a
+                  href={new URL(localeSwitchUrl(canonicalPath, l)).pathname}
+                  rel="alternate"
+                  hreflang={l.hreflang[0]}
+                  lang={l.lang}
+                >
+                  {l.label}
+                </a>
+              ))}
+            </nav>
+          </div>
         </div>
         <p class="intl-footer-legal">
           © {year} BitePerk Pty Ltd · <a href={`mailto:${c.email}`}>{c.email}</a> · {c.rights}
@@ -362,7 +392,24 @@ const year = new Date().getFullYear();
   .intl-footer-grid { display: grid; gap: var(--space-7); grid-template-columns: minmax(240px, 1.2fr) 1fr; }
   .intl-footer-brand { display: inline-flex; align-items: center; gap: 8px; }
   .intl-footer-blurb { color: var(--mist); max-width: 44ch; margin-top: var(--space-3); font-size: var(--fs-small); }
-  .intl-footer-links { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); align-content: start; }
+  /* Column layout inside the labeled columns. auto-fit handles the 2-vs-3
+     column trees with no locale branching (the Cities column simply isn't
+     rendered where there are no cities). */
+  .intl-footer-cols {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--space-6);
+    align-items: start;
+  }
+  .intl-footer-col-title {
+    margin: 0 0 var(--space-2);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--mist-2);
+  }
+  .intl-footer-links { display: flex; flex-direction: column; align-items: flex-start; gap: 0; }
   /* 44px targets: these are navigation, not links inside a sentence, so the
      WCAG 2.5.8 inline-text exception does NOT apply — and on phones the footer
      is a primary way to move around the site. */
@@ -407,6 +454,33 @@ const year = new Date().getFullYear();
      so this band was broken on all five trees, just at different widths.
      Sticky bar and the header CTA are kept here: this is tablet/small-laptop,
      not phone. The phone-only changes stay in the 720px block underneath. */
+  /* City-bearing trees carry the Cities trigger (~105px) in the actions
+     row, which pushes the measured single-row need from ~833px (EN) to
+     ~950px — past the 940px band below. Wrap EARLIER on those trees only:
+     this block restates the 940px ruleset at 1080px, scoped to
+     [data-has-cities], so /fr and the other city-less trees keep today's
+     exact bands. Keep the two blocks' rules in lockstep. */
+  @media (max-width: 1080px) {
+    .intl-nav[data-has-cities] .intl-nav-row { flex-wrap: wrap; }
+    .intl-nav[data-has-cities] .intl-links {
+      order: 3;
+      flex-basis: 100%;
+      flex-wrap: wrap;
+      margin-inline-start: 0;
+      gap: var(--space-2);
+    }
+    .intl-nav[data-has-cities] .intl-links a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding-inline: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--r-pill);
+      background: var(--fill-subtle);
+    }
+    .intl-nav[data-has-cities] .intl-actions { margin-inline-start: auto; }
+  }
+
   @media (max-width: 940px) {
     .intl-nav-row { flex-wrap: wrap; }
     .intl-links {

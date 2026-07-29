@@ -1,0 +1,180 @@
+---
+/**
+ * Premium city cards for the intl trees — the photographic version of the
+ * link pills this replaced. Mirrors the AU CityStrip card language (scrim,
+ * --on-image label, circular gold arrow, lift on hover) rebuilt on shared
+ * tokens with none of the AU helper classes (.reveal/.pressable/cv-auto):
+ * their scripts and CSS are AU furniture and the intl pages don't load or
+ * want them — everything here is plain CSS.
+ *
+ * The `is:inline` style below is load-bearing, same as CityBody.astro:
+ * Astro collects processed component CSS by import graph, not by what
+ * renders, so a normal scoped <style> here would inline these rules on
+ * every page [...intl].astro emits — including the four city-less market
+ * trees. `is:inline` renders the tag in place, only where this renders.
+ * Keep every selector namespaced intl-city-card* (the rules are UNSCOPED).
+ *
+ * No headings inside the cards (spans only — the heading sweep counts every
+ * heading in DOM order) and no overlay COPY beyond the city's name: an
+ * on-image claim like "answering across London 24/7" would assert live UK
+ * service, which is exactly what check-truthful exists to prevent.
+ */
+import ImageBlock from "@/components/ImageBlock.astro";
+
+interface Props {
+  items: readonly {
+    href: string;
+    name: string;
+    imageSlug: string;
+    imageAlt: string;
+  }[];
+}
+const { items } = Astro.props;
+---
+
+<ul class="intl-city-cards">
+  {items.map((x) => (
+    <li>
+      <a class="intl-city-card" href={x.href}>
+        {/* Lazy by default (every instance sits below the fold); aspect
+            reserves the box so CLS stays 0; LQIP paints behind the load. */}
+        <ImageBlock
+          slug={x.imageSlug}
+          alt={x.imageAlt}
+          aspect="16 / 10"
+          widths="(min-width: 981px) 25vw, (min-width: 561px) 45vw, 90vw"
+          rounded={false}
+          class="intl-city-card-photo"
+        />
+        <span class="intl-city-card-scrim" aria-hidden="true"></span>
+        <span class="intl-city-card-label">
+          <span class="intl-city-card-name">{x.name}</span>
+          <span class="intl-city-card-arrow" aria-hidden="true">→</span>
+        </span>
+      </a>
+    </li>
+  ))}
+</ul>
+
+<style is:inline>
+  /* UNSCOPED (is:inline skips the scoping pass) — keep the intl-city-card*
+     namespace on every selector here. */
+  .intl-city-cards {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-6) 0 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+  @media (max-width: 980px) {
+    .intl-city-cards { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  }
+  @media (max-width: 560px) {
+    .intl-city-cards { gap: 10px; }
+  }
+
+  .intl-city-card {
+    position: relative;
+    display: block;
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: var(--ink-1);
+    box-shadow: var(--shadow-card);
+    isolation: isolate;
+    -webkit-tap-highlight-color: transparent;
+    text-decoration: none;
+    transition:
+      transform var(--dur-base) var(--ease-out),
+      border-color var(--dur-base) var(--ease-out),
+      box-shadow var(--dur-base) var(--ease-out);
+  }
+  .intl-city-card:hover,
+  .intl-city-card:focus-visible {
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--gold) 35%, var(--line));
+    box-shadow: var(--shadow-card-hover);
+  }
+  .intl-city-card:focus-visible { outline: none; box-shadow: var(--ring-focus); }
+
+  .intl-city-card .intl-city-card-photo { border-radius: 0; }
+  .intl-city-card .image-block img {
+    transition: transform var(--dur-slow) var(--ease-soft);
+  }
+  @media (hover: hover) {
+    .intl-city-card:hover .image-block img { transform: scale(1.05); }
+  }
+
+  /* Theme-invariant dark scrim: the name over it is --on-image (near-white
+     in both themes), so the scrim must stay dark in both. Same stops as the
+     AU CityStrip's. */
+  .intl-city-card-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      rgba(10, 11, 13, 0.05) 35%,
+      rgba(10, 11, 13, 0.62) 78%,
+      rgba(10, 11, 13, 0.85) 100%
+    );
+  }
+  .intl-city-card-label {
+    position: absolute;
+    left: 18px;
+    right: 16px;
+    bottom: 14px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .intl-city-card-name {
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -0.015em;
+    color: var(--on-image);
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+    white-space: nowrap;
+  }
+  .intl-city-card-arrow {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(10, 11, 13, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--line);
+    color: var(--gold-fill);
+    font-size: 15px;
+    transition:
+      transform var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out);
+  }
+  .intl-city-card:hover .intl-city-card-arrow {
+    transform: translateX(3px);
+    border-color: color-mix(in srgb, var(--gold) 45%, var(--line));
+  }
+  @media (max-width: 560px) {
+    .intl-city-card-name { font-size: 15px; }
+    .intl-city-card-label { left: 12px; right: 10px; bottom: 10px; }
+    .intl-city-card-arrow { width: 28px; height: 28px; font-size: 13px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .intl-city-card,
+    .intl-city-card .image-block img,
+    .intl-city-card-arrow { transition: none; }
+    .intl-city-card:hover,
+    .intl-city-card:focus-visible { transform: none; }
+    .intl-city-card:hover .image-block img { transform: none; }
+    .intl-city-card:hover .intl-city-card-arrow { transform: none; }
+  }
+</style>
