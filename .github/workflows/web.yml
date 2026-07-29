@@ -142,6 +142,7 @@ jobs:
 
       - name: Upload Playwright report
         if: failure()
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report-${{ matrix.target }}
@@ -199,12 +200,17 @@ jobs:
           echo "on, and a real regression will fail this attempt too."
           npm run lhci
 
+      # Debug-only download; nothing deploys from it. Upload failure must not
+      # fail a green build — the artifact quota being hit turned both legs red
+      # on 29 Jul 2026 after every gate had passed. Short retention on purpose:
+      # ~160MB per push at 7 days is what filled the quota (~4.9GB stored).
       - name: Upload build artefact
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
           name: dist-${{ matrix.target }}
           path: ${{ env.DIST }}
-          retention-days: 7
+          retention-days: 2
 
   # The launch flag is a rollback lever as well as a launch switch, and a
   # rollback is exactly when nobody can afford to discover the flag-off build
