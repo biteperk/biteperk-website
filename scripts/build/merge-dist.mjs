@@ -107,12 +107,35 @@ writeFileSync(join(SITE, "robots.txt"), robots);
 // 6. Root llms.txt + humans.txt — from the AU build (primary market), with the
 //    friendly .com.au address rewritten to the canonical /au-en home. (Source
 //    public/*.txt stay on .com.au, so the AU-only check-cities gate is unaffected.)
+//
+//    The root llms.txt then gains the GLOBAL build's sections: the single
+//    domain serves ONE /llms.txt, and until 29 Jul 2026 this loop shipped the
+//    AU file verbatim — dist-global/llms.txt (locale homes, market cities) was
+//    written, gated by check-cities, and served by nothing. Same family as the
+//    other "gate validates a file that doesn't ship" bugs in CLAUDE.md; found
+//    live, when the deployed /llms.txt had zero of the gated city lines.
 for (const f of ["llms.txt", "humans.txt"]) {
   if (existsSync(join(AU, f))) {
-    const txt = readFileSync(join(AU, f), "utf8").replace(
+    let txt = readFileSync(join(AU, f), "utf8").replace(
       /https:\/\/biteperk\.com\.au/g,
       `${ORIGIN}/au-en`,
     );
+    if (f === "llms.txt") {
+      const intlLines = locales
+        .localesForTarget("global")
+        .map((l) => `- ${l.label}: ${ORIGIN}${l.base}/`)
+        .join("\n");
+      const citySection = readFileSync(join(GLOBAL, "llms.txt"), "utf8")
+        .split(/^## /m)
+        .find((s) => s.startsWith("Market city pages"));
+      const cityBlock = citySection ? `## ${citySection.trim()}` : "";
+      txt =
+        txt.trimEnd() +
+        `\n\n## International sites (same company, biteperk.com locale trees)\n` +
+        intlLines +
+        (cityBlock ? `\n\n${cityBlock}` : "") +
+        "\n";
+    }
     writeFileSync(join(SITE, f), txt);
   }
 }
