@@ -27,7 +27,13 @@ import { buildFaqPage, buildVoxApplication, voxEditionId, ORG_ID } from "@/data/
 import ImageBlock from "@/components/ImageBlock.astro";
 import FAQ from "@/components/FAQ.astro";
 import PullQuote from "@/components/PullQuote.astro";
-import Illustration from "@/components/Illustration.astro";
+// The city components carry their CSS as `is:inline` styles, so importing
+// them here adds nothing to non-city pages: the CSS renders with the
+// component, not into this page's bundle. (A normal scoped <style> in them
+// would be inlined on EVERY page this file emits — Astro collects component
+// CSS by import graph, dynamic imports included, not by what renders.)
+import CityBody from "@/components/intl/CityBody.astro";
+import CityLinks from "@/components/intl/CityLinks.astro";
 
 export function getStaticPaths() {
   if (currentTarget() !== "global") return [];
@@ -89,15 +95,6 @@ const catalogue = productSlug ? products.find((x) => x.slug === productSlug) : n
 // route exists because pagesForLocale() appended the slug, so a lookup miss
 // here falls through to the RENDERABLE throw with the path named.
 const city = intlCitiesForBase(locale.base).find((x) => x.slug === page) ?? null;
-// "{city}" in the shared labels → this city's name.
-const cl = (s: string) => s.replaceAll("{city}", city?.name ?? "");
-// Illustration.astro has no "pin"; "pin-au" is its geography-neutral pin+check
-// (the -au suffix is historical, the drawing carries no Australia motif).
-const cityIcon = (i: "pin" | "calendar-tick" | "phone-wave" | "shield") =>
-  i === "pin" ? ("pin-au" as const) : i;
-const otherCities = city
-  ? intlCitiesForBase(locale.base).filter((x) => x.slug !== city.slug)
-  : [];
 // Home city strip: rendered only when the market has BOTH the strip copy and
 // at least one published city — so /en, /fr, /be-* stay untouched by derivation.
 const cityStrip = page === "" ? resolveCityStrip(locale) : undefined;
@@ -348,11 +345,7 @@ const appJsonLd =
             <p class="eyebrow">{cityStrip.eyebrow}</p>
             <h2>{cityStrip.heading}</h2>
             <p class="lede">{cityStrip.body}</p>
-            <ul class="intl-city-links">
-              {homeCities.map((x) => (
-                <li><a href={p(x.slug)}>{x.name} →</a></li>
-              ))}
-            </ul>
+            <CityLinks items={homeCities.map((x) => ({ href: p(x.slug), name: x.name }))} />
           </div>
         </section>
       )}
@@ -654,156 +647,7 @@ const appJsonLd =
     </>
   )}
 
-  {city && (
-    <>
-      {/* ── City hero — TEXT-ONLY on purpose: the LCP element on the intl
-          trees is text, and the market pill does the honest geographic work
-          (names the market and the pilot programme, never a premises). ── */}
-      <section class="intl-hero">
-        <div class="wrap">
-          <nav class="intl-crumbs" aria-label="Breadcrumb">
-            <a href={p("")}>{c.chrome.nav.home}</a>
-            <span aria-hidden="true">/</span>
-            <span aria-current="page">{city.name}</span>
-          </nav>
-          {hero?.pill && <span class="pill intl-pill">{hero.pill}</span>}
-          <h1>{city.heroHeadline}</h1>
-          <p class="lede">{city.intro[0]}</p>
-          <div class="intl-ctas">
-            <a class="btn" href={p("contact")}>{c.chrome.cta}</a>
-            <a class="btn-ghost" href={p("how-it-works")}>{h.ctaSecondary}</a>
-          </div>
-        </div>
-      </section>
-
-      {/* ── The local story: the rest of the hand-written intro, beside the
-          market's shared hospitality shot. Lazy, never priority. ── */}
-      <section class="intl-band">
-        <div class="wrap">
-          <div class="intl-city-split">
-            <div>
-              <p class="eyebrow">{cl(c.cityPage.storyEyebrow)}</p>
-              <h2>{cl(c.cityPage.storyHeading)}</h2>
-              {city.intro.slice(1).map((para) => <p class="intl-city-body">{para}</p>)}
-            </div>
-            <div class="intl-city-split-photo">
-              <ImageBlock
-                slug={city.storyImage}
-                alt={city.storyImageAlt}
-                aspect="4 / 3"
-                widths="(min-width: 981px) 46vw, 100vw"
-                rounded
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Scenarios — per-city, hand-written. ── */}
-      <section>
-        <div class="wrap">
-          <p class="eyebrow">{cl(c.cityPage.scenariosEyebrow)}</p>
-          <h2>{cl(c.cityPage.scenariosHeading)}</h2>
-          <div class="intl-grid">
-            {city.scenarios.map((s) => (
-              <div class="intl-card">
-                <h3>{s.title}</h3>
-                <p>{s.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── The AI, tuned for this city. ── */}
-      <section class="intl-band">
-        <div class="wrap">
-          <p class="eyebrow">{cl(c.cityPage.aiEyebrow)}</p>
-          <h2>{cl(c.cityPage.aiHeading)}</h2>
-          <p class="lede">{city.aiLocal.lead}</p>
-          <div class="intl-grid">
-            {city.aiLocal.points.map((pt) => (
-              <div class="intl-card">
-                <Illustration name={cityIcon(pt.icon)} size={40} trace />
-                <h3>{pt.title}</h3>
-                <p>{pt.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Cityscape + districts. No on-image overlay tag: the AU band's
-          "Answering for venues across {city}, 24/7" would claim live UK
-          service, and the scrim/axe interaction is a known trap besides. ── */}
-      <section>
-        <div class="wrap">
-          <div class="intl-city-scape">
-            <ImageBlock
-              slug={city.cityscapeImage}
-              alt={city.cityscapeImageAlt}
-              aspect="16 / 9"
-              widths="(min-width: 981px) 1120px, 100vw"
-              rounded
-            />
-          </div>
-          <p class="eyebrow">{cl(c.cityPage.districtsEyebrow)}</p>
-          <h2>{cl(c.cityPage.districtsHeading)}</h2>
-          <ul class="intl-city-chips">
-            {city.districts.map((d) => <li>{d}</li>)}
-          </ul>
-          <p class="muted intl-city-note">{c.cityPage.districtsNote}</p>
-        </div>
-      </section>
-
-      {/* ── Proof, honestly Australian: the role line says Sydney. Evidence
-          that Vox is real, never a claim it is live here. ── */}
-      <section class="intl-quote">
-        <div class="wrap">
-          <PullQuote
-            quote={h.testimonial.quote}
-            author={h.testimonial.author}
-            role={h.testimonial.role}
-          />
-        </div>
-      </section>
-
-      {/* ── Per-city FAQ (also the FAQPage JSON-LD above). Default surface,
-          never .intl-band — the accordion items are var(--ink-1). ── */}
-      <section class="intl-faq">
-        <div class="wrap">
-          <p class="eyebrow intl-faq-eyebrow">{cl(c.cityPage.faqEyebrow)}</p>
-          <h2>{cl(c.cityPage.faqHeading)}</h2>
-          <FAQ items={[...city.faqs]} stagger />
-        </div>
-      </section>
-
-      {/* ── Cross-links to the market's other city pages. ── */}
-      {otherCities.length > 0 && (
-        <section class="intl-band">
-          <div class="wrap">
-            <p class="eyebrow">{cl(c.cityPage.othersEyebrow)}</p>
-            <h2>{cl(c.cityPage.othersHeading)}</h2>
-            <ul class="intl-city-links">
-              {otherCities.map((x) => (
-                <li><a href={p(x.slug)}>{x.name} →</a></li>
-              ))}
-            </ul>
-          </div>
-        </section>
-      )}
-
-      <section class="intl-closing">
-        <div class="wrap">
-          <h2>{cl(c.cityPage.closingHeading)}</h2>
-          <p>{c.cityPage.closingBody}</p>
-          <div class="intl-ctas" style="justify-content: center;">
-            <a class="btn" href={p("contact")}>{c.chrome.cta}</a>
-          </div>
-        </div>
-      </section>
-    </>
-  )}
+  {city && <CityBody locale={locale} city={city} />}
 </IntlLayout>
 
 <style>
@@ -902,75 +746,8 @@ const appJsonLd =
     .intl-card-link:hover { transform: none; }
   }
 
-  /* ── City pages + home city strip ─────────────────────────────── */
-  .intl-city-split {
-    display: grid;
-    gap: var(--space-8);
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    align-items: center;
-  }
-  @media (max-width: 860px) {
-    .intl-city-split { grid-template-columns: 1fr; gap: var(--space-6); }
-  }
-  .intl-city-body { color: var(--mist-2); max-width: 60ch; }
-  .intl-city-body + .intl-city-body { margin-top: var(--space-4); }
-
-  .intl-city-scape { margin-block-end: var(--space-7); }
-
-  /* District chips + city cross-links: same pill language as the AU
-     .city-chips / .city-links, rebuilt on the shared tokens (no new pairs —
-     text is --mist-2 / --text on --ink-1, both in the contrast manifest). */
-  .intl-city-chips {
-    list-style: none;
-    padding: 0;
-    margin: var(--space-5) 0 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  .intl-city-chips li {
-    padding: 9px 16px;
-    border-radius: var(--r-pill);
-    border: 1px solid var(--line);
-    background: var(--ink-1);
-    color: var(--mist-2);
-    font-size: var(--fs-small);
-    font-weight: 500;
-  }
-  .intl-city-note { margin-top: var(--space-5); font-size: var(--fs-small); max-width: 60ch; }
-
-  .intl-city-links {
-    list-style: none;
-    padding: 0;
-    margin: var(--space-6) 0 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-  /* 44px targets: these are navigation, same rule as the intl footer links. */
-  .intl-city-links a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    padding: 0 20px;
-    border: 1px solid var(--line);
-    border-radius: var(--r-pill);
-    background: var(--ink-1);
-    color: var(--text);
-    font-weight: 600;
-    font-size: var(--fs-small);
-    text-decoration: none;
-    transition: border-color var(--dur-fast) var(--ease);
-  }
-  @media (hover: hover) {
-    .intl-city-links a:hover { border-color: var(--gold); }
-  }
-  .intl-city-links a:focus-visible { outline: none; box-shadow: var(--ring-focus); }
-  @media (prefers-reduced-motion: reduce) {
-    .intl-city-links a { transition: none; }
-  }
-
-  /* The city FAQ centres its h2 (shared .intl-faq rule); centre the eyebrow
-     with it so the pair reads as one heading block. */
-  .intl-faq-eyebrow { text-align: center; }
+  /* City-page styles (.intl-city-*) live in components/intl/CityBody.astro
+     and CityLinks.astro as `is:inline` styles — rendered with the component,
+     so only city pages (and the market home strip) carry them. Restating
+     them here would inline them on every page of every tree. */
 </style>
