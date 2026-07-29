@@ -150,6 +150,15 @@ if (!existsSync(LLMS)) {
 }
 const llms = readFileSync(LLMS, "utf8");
 
+// The file that actually SHIPS is dist-site/llms.txt — merge-dist rebuilds the
+// root llms.txt from the AU file + the global sections, and until 29 Jul 2026
+// it dropped the global sections entirely: dist-global/llms.txt passed this
+// gate while the deployed /llms.txt carried none of the city lines. Check the
+// merged artifact whenever it exists (gates run before merge in build:site,
+// so absence is fine — check-merged runs after; CI's gate step sees both).
+const LLMS_MERGED = join(ROOT, "dist-site/llms.txt");
+const llmsMerged = existsSync(LLMS_MERGED) ? readFileSync(LLMS_MERGED, "utf8") : null;
+
 for (const c of published) {
   const id = `${c.base}/${c.slug}`;
   const locale = byBase.get(c.base);
@@ -175,6 +184,8 @@ for (const c of published) {
 
   if (!llms.includes(`https://biteperk.com${c.base}/${c.slug}/`))
     fail(`${id}: not listed in dist-global/llms.txt (see scripts/build/llms-global.mjs)`);
+  if (llmsMerged && !llmsMerged.includes(`https://biteperk.com${c.base}/${c.slug}/`))
+    fail(`${id}: not listed in dist-site/llms.txt — merge-dist dropped the global sections`);
 }
 
 // The pools that matter: language, across markets.
