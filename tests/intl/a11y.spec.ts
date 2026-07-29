@@ -1,6 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { localesForTarget, pagesForLocale } from "../../src/data/locales";
+import { intlCityPaths } from "../../src/data/intl/cities";
 import { routes } from "../helpers/routes";
 
 /**
@@ -63,7 +64,18 @@ const templateRoutes = pagesForLocale(
   .filter((p) => !DUPLICATE_TEMPLATES.has(p))
   .map((p) => `${TEMPLATE_LOCALE}/${p}/`);
 
-const AXE_ROUTES = [...homes, ...templateRoutes, "/gb-en/contact/"];
+/**
+ * City pages are a gb-en-only template today, so deriving templates from
+ * /be-fr alone would ship the city page kind with no axe scan in either
+ * theme. Take the FIRST published city per non-template locale — the other
+ * cities share the template, and the heading/overflow sweeps cover them all.
+ */
+const cityTemplateRoutes = localesForTarget("global")
+  .filter((l) => l.base !== TEMPLATE_LOCALE)
+  .map((l) => intlCityPaths(l.base)[0] && `${l.base}/${intlCityPaths(l.base)[0]}/`)
+  .filter((r): r is string => Boolean(r));
+
+const AXE_ROUTES = [...homes, ...templateRoutes, ...cityTemplateRoutes, "/gb-en/contact/"];
 
 /**
  * Rules that gate regardless of impact. axe scores these below serious, but

@@ -118,6 +118,35 @@ export type ContactCopy = {
   aside: { heading: string; body: string; emailLabel: string };
 };
 
+/**
+ * Section labels for the market CITY pages (rendered by the city branch in
+ * [...intl].astro). These are the structural strings around the per-city
+ * hand-written copy in intl/cities.ts — shared per language so a future
+ * be-en or fr city inherits correct labels, not English ones. "{city}" is
+ * replaced with the city name at render.
+ *
+ * Everything persuasive stays in the per-city fields (the anti-doorway gate
+ * compares those); these labels are furniture and MAY repeat across cities.
+ */
+export type CityPageCopy = {
+  storyEyebrow: string;
+  storyHeading: string;
+  scenariosEyebrow: string;
+  scenariosHeading: string;
+  aiEyebrow: string;
+  aiHeading: string;
+  districtsEyebrow: string;
+  districtsHeading: string;
+  /** The honest "pilot isn't drawn by postcode" note under the district chips. */
+  districtsNote: string;
+  faqEyebrow: string;
+  faqHeading: string;
+  othersEyebrow: string;
+  othersHeading: string;
+  closingHeading: string;
+  closingBody: string;
+};
+
 export const chrome: Record<Lang, ChromeCopy> = {
   en: {
     tagline: "Voice & AI for hospitality",
@@ -785,5 +814,49 @@ export const cookies: Record<Lang, SimplePageCopy> = {
         ],
       },
     ],
+  },
+};
+
+export const cityPage: Record<Lang, CityPageCopy> = {
+  en: {
+    storyEyebrow: "The missed-call problem, {city}-style",
+    storyHeading: "A ringing phone during service is a booking walking out.",
+    scenariosEyebrow: "During a {city} service",
+    scenariosHeading: "Where the phone loses you money — and what answering it changes.",
+    aiEyebrow: "The AI under the hood",
+    aiHeading: "Tuned for {city}. A person the moment it matters.",
+    districtsEyebrow: "Across {city}",
+    districtsHeading: "The neighbourhoods venues call from.",
+    districtsNote:
+      "Not on the list? The pilot programme isn't drawn by postcode — a venue anywhere in the UK works exactly the same way.",
+    faqEyebrow: "{city} questions",
+    faqHeading: "Answered plainly.",
+    othersEyebrow: "Elsewhere in the UK",
+    othersHeading: "Also in pilot conversations with venues in",
+    closingHeading: "Put Vox on a {city} line",
+    closingBody:
+      "Tell us how a busy service sounds at your venue and we'll show you Vox handling a call like it — live, before you commit to anything.",
+  },
+  // DRAFT French — no fr/be-fr city is published, so nothing renders this yet.
+  // RULE (see markets.ts header): French written after 27 Jul 2026 needs its
+  // own native-speaker pass before any French city page flips published:true.
+  fr: {
+    storyEyebrow: "Les appels manqués, version {city}",
+    storyHeading: "Un téléphone qui sonne en plein service, c'est une réservation qui s'en va.",
+    scenariosEyebrow: "En plein service à {city}",
+    scenariosHeading: "Là où le téléphone vous coûte — et ce que change une ligne décrochée.",
+    aiEyebrow: "L'IA sous le capot",
+    aiHeading: "Réglée pour {city}. Une personne dès que c'est nécessaire.",
+    districtsEyebrow: "Dans tout {city}",
+    districtsHeading: "Les quartiers d'où appellent les établissements.",
+    districtsNote:
+      "Votre quartier n'y figure pas ? Le programme pilote ne s'arrête pas à un code postal — un établissement situé ailleurs fonctionne exactement de la même manière.",
+    faqEyebrow: "Questions à {city}",
+    faqHeading: "Des réponses claires.",
+    othersEyebrow: "Ailleurs",
+    othersHeading: "Également en discussions pilotes avec des établissements à",
+    closingHeading: "Mettez Vox sur une ligne à {city}",
+    closingBody:
+      "Décrivez-nous un service chargé dans votre établissement et nous vous montrerons Vox au téléphone sur un appel semblable — en direct, avant tout engagement.",
   },
 };

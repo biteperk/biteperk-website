@@ -101,27 +101,6 @@ const catalogue = [
     brief: "Pavement café at morning — flowers in jars down a line of tables",
   },
   {
-    // The /gb-en market band's hospitality slot. Replaced `bar-moody`, which
-    // is a US craft-beer bar whose chalkboard shows legible DOLLAR prices —
-    // on the tree that serves the United Kingdom. Same class of problem as a
-    // foreign vehicle in shot, but worse: it is signage, and it is legible.
-    //
-    // `rect` drops the street window at lower-left, which contained a yellow
-    // taxi. Kept in the catalogue so a clean checkout reproduces the frame.
-    //
-    // This frame is expensive to encode (Edison bulbs + backlit bottles are
-    // worst-case for AVIF), which is why it is here and not in the hero slot:
-    // the band renders at 50vw against the hero's 4:5 portrait, so the browser
-    // picks a smaller variant, and the band sits below the fold where it does
-    // not compete with the text LCP.
-    slug: "bar-brass-evening",
-    id: "photo-1543007630-9710e4a00a20",
-    rect: "1587,307,4556,5696",
-    photographer: "Adam Jaime",
-    url: "https://unsplash.com/photos/dmkmrNptMpw",
-    brief: "Premium bar at service — Edison bulbs, backlit spirits, brass and copper",
-  },
-  {
     slug: "restaurant-pass",
     id: "photo-1414235077428-338989a2e8c0",
     photographer: "Jay Wennington",
@@ -344,6 +323,64 @@ const catalogue = [
     brief:
       "Laid tables in warm light, dried flowers, no people — deliberately reads " +
       "as neither European nor Australian, for the /en x-default tree",
+  },
+
+  // ── UK city pages (Jul 2026) — one establishing shot per city ─────────
+  // The cityscapeImage slot in src/data/intl/cities.ts (london-skyline above
+  // already covers London). Every one reviewed at full size against
+  // docs/art-direction.md: daylight, no readable signage, no identifiable
+  // faces, no venue presented as a customer. Rejected on those rules during
+  // selection: a Gas Street Basin night shot (legible "The Canal House"
+  // fascia), two Bullring frames (rooftop lettering), and a graffiti-heavy
+  // Glasgow bridge.
+  {
+    slug: "manchester-skyline",
+    id: "photo-1724135869739-6055627ba5df",
+    photographer: "Mylo Kaye",
+    url: "https://unsplash.com/photos/a-view-of-a-city-from-the-top-of-a-building-6055627ba5df",
+    brief: "Manchester skyline at golden hour — Deansgate Square towers over the city",
+  },
+  {
+    slug: "birmingham-skyline",
+    id: "photo-1772635129954-7ffed05d456a",
+    photographer: "Daniel Sturley",
+    url: "https://unsplash.com/photos/city-skyline-across-a-wide-blue-river-and-green-hills-7ffed05d456a",
+    brief: "Birmingham skyline across the water — daylight, no signage",
+  },
+  {
+    slug: "edinburgh-old-town",
+    id: "photo-1506377585622-bedcbb027afc",
+    photographer: "Adam Wilson",
+    url: "https://unsplash.com/photos/bedcbb027afc",
+    brief: "Edinburgh from Calton Hill — clock tower and Scott Monument in golden haze",
+  },
+  {
+    slug: "glasgow-clyde",
+    id: "photo-1571494146906-86de15d3817b",
+    photographer: "Adam Marikar",
+    url: "https://unsplash.com/photos/86de15d3817b",
+    brief: "Glasgow along the Clyde — bright day, bridges and the city beyond",
+  },
+  {
+    slug: "leeds-dock",
+    id: "photo-1550087196-39944f130dd0",
+    photographer: "Gary Butterfield",
+    url: "https://unsplash.com/photos/39944f130dd0",
+    brief: "Leeds Dock — narrowboats and still water between brick and glass",
+  },
+  {
+    slug: "bristol-balloons",
+    id: "photo-1754656858350-ed461fc3722e",
+    photographer: "Orion Grant",
+    url: "https://unsplash.com/photos/hot-air-balloons-over-clifton-suspension-bridge-at-sunset-kO3YtKi45G0",
+    brief: "Hot-air balloons over the Clifton Suspension Bridge and the Avon Gorge",
+  },
+  {
+    slug: "liverpool-pier-head",
+    id: "photo-1675022623143-3690e2489514",
+    photographer: "David White",
+    url: "https://unsplash.com/photos/3690e2489514",
+    brief: "The Three Graces on Liverpool's Pier Head under a blue sky",
   },
 ];
 

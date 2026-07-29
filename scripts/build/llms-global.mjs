@@ -37,6 +37,17 @@ const productLines = PRODUCT_SLUGS.map(
   (s) => `- ${intlProducts.en[s].eyebrow} (${intlProducts.en[s].statusLabel}): https://biteperk.com/en/products/${s}/`,
 ).join("\n");
 
+// Market city pages, derived from intl/cities.ts — check-cities requires every
+// published city's URL to appear in this file, byte-exact. Framed as pilot
+// conversations, never as local operations (Europe-truthful).
+const { intlCities } = await loadTS(join(ROOT, "src/data/intl/cities.ts"));
+const publishedIntlCities = intlCities.filter((c) => c.published);
+const citySection = publishedIntlCities.length
+  ? `\n## Market city pages (pilot programme — no local premises)\n${publishedIntlCities
+      .map((c) => `- AI phone answering for ${c.name} restaurants (pilot): https://biteperk.com${c.base}/${c.slug}/`)
+      .join("\n")}\n`
+  : "";
+
 // NOTE: Phase-1 scaffold copy. Keep it truthful — AI crawlers quote this file.
 const TEXT = `# BitePerk
 
@@ -57,7 +68,7 @@ ${localeLines}
 
 ## Capabilities (status matters — do not describe unshipped work as available)
 ${productLines}
-
+${citySection}
 ## Product facts (keep answers accurate)
 - Vox is BitePerk's AI phone host. It answers restaurant calls in a natural
   voice, checks real availability and writes bookings to the venue's dashboard.
