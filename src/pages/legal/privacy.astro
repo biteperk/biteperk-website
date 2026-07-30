@@ -25,64 +25,125 @@ const description =
       <section>
         <h2>Who we are</h2>
         <p>
-          Biteperk Pty Ltd ("Biteperk", "we", "us") is an Australian company based in {site.address.city}.
-          We build voice and AI tools for hospitality. This policy explains how we handle information when
-          you visit {site.url} or use one of our products.
+          Biteperk Pty Ltd (ACN {site.acn} · ABN {site.abn}) ("Biteperk", "we", "us") is an Australian company
+          of {site.address.street}, {site.address.locality} {site.address.region} {site.address.postalCode}.
+          We build AI voice tools for hospitality venues.
+        </p>
+        <p>
+          This policy covers three groups of people: visitors to this website, the venues that use our
+          products, and — because our products answer the phone — the people who call those venues. We handle
+          personal information in line with the Australian Privacy Principles in the Privacy Act 1988 (Cth).
         </p>
       </section>
 
       <section>
         <h2>What we collect</h2>
         <p>
-          When you contact us through the website, we collect the name, email, venue and message you provide,
-          plus — if you arrived from a campaign link — the campaign details attached to that enquiry.
+          <strong>If you visit this website:</strong> when you contact us we collect the name, email, venue
+          and message you provide, plus — if you arrived from a campaign link — the campaign details attached
+          to that enquiry. For the website itself we use privacy-first, cookieless analytics and, only if you
+          opt in, a LinkedIn marketing tag. Nothing non-essential runs until you choose <strong>Accept</strong>;
+          you can change or withdraw your choice any time from <strong>Cookie settings</strong> in the footer.
+          Full details are in our <a href={u("/legal/cookies/")}>Cookie Policy</a>.
         </p>
         <p>
-          For the website itself we use privacy-first, cookieless analytics and, only if you opt in, a LinkedIn
-          marketing tag. Nothing non-essential runs until you choose <strong>Accept</strong>; you can change or
-          withdraw your choice any time from <strong>Cookie settings</strong> in the footer. Full details are in
-          our <a href={u("/legal/cookies/")}>Cookie Policy</a>.
+          <strong>If your venue uses our products:</strong> we collect your business contact details, billing
+          details, and the setup information the service needs — menus, opening hours, booking rules and the
+          answers you want given to common questions.
         </p>
         <p>
-          When you use VoxTable, our product collects the audio and metadata necessary to take the booking —
-          phone number, requested time, party size, and the conversation itself. We keep audio only as long as
-          needed to confirm the booking and resolve any disputes, then delete it.
-        </p>
-      </section>
-
-      <section>
-        <h2>Where data lives</h2>
-        <p>
-          Customer data is stored in Australia. We use cloud providers (such as Google Cloud and Firebase)
-          with data residency configured to Australian regions. We do not transfer call recordings outside
-          Australia.
+          <strong>If you call a venue that uses our products:</strong> the call is answered by the venue's AI
+          assistant. Every call opens with a short announcement that you are speaking with an AI assistant and
+          that the call is recorded and transcribed — before recording begins — and you can ask for a person
+          or call back instead. To take your booking or order we collect the conversation (audio and
+          transcript), your phone number, and the booking or order details you give: name, party size, time,
+          items, special requests.
         </p>
       </section>
 
       <section>
         <h2>How we use it</h2>
         <p>
-          We use the information you give us to reply to you, to operate the products you've chosen, and to
-          improve them. We do not sell information. We do not share it with advertisers. We never use customer
-          conversations to train models outside Biteperk.
+          We use information for one purpose: operating the service it was given to. Enquiries are used to
+          reply to you; venue details are used to run and bill the products; caller information is used to
+          take the booking or order and deliver it to the venue. We do not sell personal information. We do
+          not share it with advertisers. We never use conversations or caller details to train AI models —
+          ours or anyone else's.
+        </p>
+      </section>
+
+      <section>
+        <h2>Where information lives</h2>
+        <p>
+          Booking, order and call-summary records — and website enquiries — are stored with our cloud
+          provider in Sydney, Australia. Phone calls are answered in our telephony provider's Australian
+          region.
+        </p>
+        <p>
+          Live calls are processed in real time by our voice AI platform in the United States, under written
+          data-protection terms. We remain accountable under Australian privacy law for how our overseas
+          providers handle that information — we choose independently security-certified platforms, and we do
+          not treat overseas processing as someone else's problem. The country involved is the United States.
+        </p>
+      </section>
+
+      <section>
+        <h2>How long we keep it</h2>
+        <p>
+          Call recordings and transcripts are automatically and permanently deleted after 30 days (venues may
+          select up to 90). Booking and order records are kept while the venue remains a client, because they
+          are the venue's business records. Website enquiries are kept only as long as needed to deal with
+          them. Any caller can ask for their details, or a specific recording, to be deleted sooner.
+        </p>
+      </section>
+
+      <section>
+        <h2>Automated decisions</h2>
+        <p>
+          Our products are automated: an AI assistant answers the call, offers available booking times based
+          on rules the venue sets, and records the booking or order. Callers are always told they are speaking
+          with an AI and can ask for a person instead, and every booking and order is delivered to venue staff,
+          who can review and correct it. We do not use automation to profile callers, and the assistant creates
+          no voiceprints and performs no biometric identification.
         </p>
       </section>
 
       <section>
         <h2>Your rights</h2>
         <p>
-          Under the Australian Privacy Act, you can ask to access, correct, or delete your information. Email
+          You can ask what information we hold about you, and ask for it to be accessed, corrected or deleted —
+          whether you are a client, a website visitor, or someone who called a venue we serve. Email
           <a href={site.email.href}>{site.email.display}</a> and we'll respond within 30 days — usually much
           sooner.
         </p>
       </section>
 
       <section>
+        <h2>Complaints</h2>
+        <p>
+          If you think we've mishandled your information, tell us first at
+          <a href={site.email.href}>{site.email.display}</a> — we'll acknowledge your complaint within 5
+          business days and respond properly within 20. If you're not satisfied with our response, you can
+          complain to the Office of the Australian Information Commissioner at
+          <a href="https://www.oaic.gov.au" rel="noopener">oaic.gov.au</a>.
+        </p>
+      </section>
+
+      <section>
         <h2>Security</h2>
         <p>
-          We use industry-standard practices: encrypted transit, encrypted storage, least-privilege access,
-          and continuous monitoring. No system is perfect; if you spot a problem, please email us before
-          posting it publicly so we can fix it quickly.
+          We use industry-standard practices: encrypted transit, encrypted storage, least-privilege access
+          with multi-factor authentication, and independently certified platforms. Short retention is part of
+          security too — recordings that no longer exist can't be stolen. No system is perfect; if you spot a
+          problem, please email us before posting it publicly so we can fix it quickly.
+        </p>
+      </section>
+
+      <section>
+        <h2>Links to other sites</h2>
+        <p>
+          This site may link to sites we don't run. Their privacy practices are their own — check their
+          policies before giving them information.
         </p>
       </section>
 
@@ -99,6 +160,8 @@ const description =
         <p>
           Privacy questions: <a href={site.email.href}>{site.email.display}</a> or call
           <a href={site.phone.href}>{site.phone.display}</a> ({site.hours.display}).
+          Biteperk Pty Ltd · ABN {site.abn} · {site.address.street}, {site.address.locality}
+          {site.address.region} {site.address.postalCode}.
         </p>
       </section>
     </div>

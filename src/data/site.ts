@@ -112,5 +112,5 @@ export const site: SiteData = {
     closes: "17:00",
   },
   social: { linkedin: "https://www.linkedin.com/company/biteperk" },
-  legalLastUpdated: "2026-07-19",
+  legalLastUpdated: "2026-07-30",
 };
