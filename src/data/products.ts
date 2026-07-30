@@ -262,7 +262,7 @@ const voxtable: Product = {
     },
     {
       q: "What happens to call recordings and data?",
-      a: "Audio is processed in Australia, stored only as long as needed to confirm the booking, and never used to train models outside Biteperk. We are Privacy Act compliant.",
+      a: "Your booking records stay in Australia (Sydney), and call recordings auto-delete after 30 days — never used to train AI models, ours or anyone else's. We are Privacy Act compliant.",
     },
     {
       q: "Can I cancel if it doesn't work for my venue?",

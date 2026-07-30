@@ -48,7 +48,7 @@ If you're weighing one up, five questions cut through the marketing:
 1. **Does it book into your real diary, or just take a message?** Message-taking is barely better than voicemail. You want a confirmed table.
 2. **Does it handle the amendment?** Ask what happens when a caller changes the time and party size mid-sentence. A weak agent dead-ends; a good one rolls with it.
 3. **Does it sound local?** A model trained on Australian English says Prahran like "P'ran" and gets Northcote and Brunswick right. Ask for a demo and call it yourself — if it sounds like an offshore script, your guests will hear it too.
-4. **Where does the data live?** The answer should be "Australia," processed onshore and never used to train outside models.
+4. **Where does the data live?** The answer should be specific: booking records stored in Australia, recordings deleted automatically on a set schedule, and never used to train AI models.
 5. **How does it price?** Watch for per-call or per-cover fees that punish you for a busy Friday.
 
 ## What it costs

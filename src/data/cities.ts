@@ -27,7 +27,7 @@ export interface CityScenario {
 
 /** "The AI under the hood, tuned for {City}" — hand-written per city.
  *  Four fixed topics (speech recognition + local suburbs, live availability,
- *  confidence gating → human, onshore processing) with per-city wording. */
+ *  confidence gating → human, records kept in Australia) with per-city wording. */
 export interface CityAiPoint {
   readonly icon: "pin-au" | "calendar-tick" | "phone-wave" | "shield";
   readonly title: string;
@@ -111,7 +111,7 @@ export const cities: readonly City[] = [
       },
       {
         title: "Local team, local data",
-        body: "Your call audio is processed onshore and your booking data stays in Australia. When you want a human, you get the Sydney team who built the product — in your time zone, on your public holidays.",
+        body: "Your booking records stay in Australia, and call recordings self-delete after 30 days. When you want a human, you get the Sydney team who built the product — in your time zone, on your public holidays.",
       },
       {
         title: "Vivid Sydney to New Year's Eve",
@@ -137,7 +137,7 @@ export const cities: readonly City[] = [
       },
       {
         q: "Where is my call and booking data stored?",
-        a: "In Australia. Audio is processed onshore, kept only as long as needed to confirm the booking, and never used to train outside models. Biteperk is Privacy Act compliant and your bookings always stay yours.",
+        a: "Your booking records stay in Australia (Sydney), and call recordings auto-delete after 30 days — never used to train AI models. Biteperk is Privacy Act compliant and your bookings always stay yours.",
       },
       {
         q: "What does it cost?",
@@ -168,8 +168,8 @@ export const cities: readonly City[] = [
         },
         {
           icon: "shield",
-          title: "Processed onshore, kept in Australia",
-          body: "Call audio is handled in Australia, kept only as long as it takes to confirm the booking, and never used to train outside models. The team you reach when you want a person is the one that built the model.",
+          title: "Records kept in Australia",
+          body: "Your booking records stay in Australia, call recordings auto-delete after 30 days, and nothing is used to train AI models. The team you reach when you want a person is the one that built the product.",
         },
       ],
     },
@@ -201,7 +201,7 @@ export const cities: readonly City[] = [
     intro: [
       "Melbourne runs on tight rooms and tighter margins. A forty-seat laneway diner doesn't have a host standing by the phone — the person nearest it is also running the pass, polishing glasses and seating walk-ins. When the room is loud and the espresso machine is screaming, the phone loses. Every one of those unanswered calls is a table that quietly books the place two doors down.",
       "Melbourne's dining culture also books differently: more no-shows to chase, more \"can we push to 8:15?\" calls, more groups reorganising themselves on a Thursday night. Bella handles the churn — answering instantly, checking your real availability, confirming, amending and rebooking — so your floor staff never have to choose between the guest in front of them and the one on the line.",
-      "You keep your existing number; forwarding takes minutes with any carrier. Bella speaks natural Australian English tuned for Melbourne's suburbs — she won't mangle Prahran or Fitzroy — and every booking lands in your dashboard with the call recorded onshore under Australian privacy law.",
+      "You keep your existing number; forwarding takes minutes with any carrier. Bella speaks natural Australian English tuned for Melbourne's suburbs — she won't mangle Prahran or Fitzroy — and every booking lands in your dashboard, with your records kept in Australia under Australian privacy law.",
     ],
     suburbs: [
       "Melbourne CBD", "Fitzroy", "Carlton", "Collingwood", "Richmond",
@@ -249,7 +249,7 @@ export const cities: readonly City[] = [
       },
       {
         q: "Where does our data live?",
-        a: "In Australia. Calls are processed onshore, retained only as long as needed, never used to train external models, and handled under the Privacy Act. Your bookings are yours.",
+        a: "Your booking records stay in Australia, recordings auto-delete after 30 days, nothing is used to train AI models, and everything is handled under the Privacy Act. Your bookings are yours.",
       },
       {
         q: "We already take bookings through a widget — why add phone answering?",
@@ -280,8 +280,8 @@ export const cities: readonly City[] = [
         },
         {
           icon: "shield",
-          title: "Your data stays onshore",
-          body: "Call audio is processed in Australia and kept only long enough to lock the booking. It is never used to train outside models, and low-confidence moments become a flagged callback, not a guess.",
+          title: "Your records stay in Australia",
+          body: "Your booking records stay in Australia and call recordings self-delete after 30 days. Nothing is used to train AI models, and low-confidence moments become a flagged callback, not a guess.",
         },
       ],
     },
@@ -313,7 +313,7 @@ export const cities: readonly City[] = [
     intro: [
       "Brisbane dining is outdoor dining — river decks at Howard Smith Wharves, beer gardens in West End, footpath tables in Teneriffe. That makes the phone busier, not quieter: every change in the sky produces a wave of \"is the deck still on?\", \"can we move inside?\" and \"are you open if it storms?\" calls, all landing while your team is resetting tables in the heat.",
       "Queensland's early rhythm changes the maths too. Brisbane books earlier, eats earlier and calls earlier — the booking rush hits at knock-off time, right through the pre-service hour when nobody can spare a hand for the phone. Bella answers every one of those calls instantly, checks your real availability, and books or amends the table without anyone leaving the floor.",
-      "Setup is remote: keep your existing number, forward it in minutes, and every confirmed booking lands in your dashboard. Calls are processed onshore with Australian data residency, and our Sydney-based team supports you in your own time zone — no international queue, no ticket black hole. From a Valley rooftop to a James Street bistro to a Woolloongabba pub kitchen, the venues that grow in Brisbane are the ones that never let a booking ring out.",
+      "Setup is remote: keep your existing number, forward it in minutes, and every confirmed booking lands in your dashboard. Your booking records stay in Australia, and our Sydney-based team supports you in your own time zone — no international queue, no ticket black hole. From a Valley rooftop to a James Street bistro to a Woolloongabba pub kitchen, the venues that grow in Brisbane are the ones that never let a booking ring out.",
     ],
     suburbs: [
       "Brisbane CBD", "Fortitude Valley", "West End", "South Brisbane",
@@ -362,7 +362,7 @@ export const cities: readonly City[] = [
       },
       {
         q: "Where is our call data processed?",
-        a: "Onshore in Australia, retained only as long as needed to complete the booking, never used to train outside models, and handled in line with the Privacy Act.",
+        a: "Your booking records stay in Australia (Sydney). Recordings auto-delete after 30 days, are never used to train AI models, and everything is handled in line with the Privacy Act.",
       },
       {
         q: "Can Bella tell callers about our outdoor areas and wet-weather policy?",
@@ -388,8 +388,8 @@ export const cities: readonly City[] = [
         },
         {
           icon: "shield",
-          title: "Processed and kept in Australia",
-          body: "Your call audio is handled onshore, held only as long as it takes to confirm the booking, and never fed to outside training models. Your bookings stay yours.",
+          title: "Records that stay in Australia",
+          body: "Your booking records stay in Australia, recordings self-delete after 30 days, and nothing is ever fed to AI training. Your bookings stay yours.",
         },
         {
           icon: "phone-wave",
@@ -426,7 +426,7 @@ export const cities: readonly City[] = [
     intro: [
       "Perth runs two to three hours behind the east coast, and hospitality feels it everywhere: suppliers, platforms and support desks are closing just as your service begins. The phone doesn't care. Beach-suburb bistros in Cottesloe and wine bars in Mount Lawley get their booking calls at Perth time — through the afternoon prep window and deep into a Friday night when there is nobody spare to answer.",
       "Bella never checks a clock. She answers every call instantly, around the clock, in a natural Australian voice — checks your live availability, books the table, takes the message — and because she's software, the time-zone gap that makes every other service feel far away simply doesn't exist. A Melbourne visitor calling at 9pm AWST gets answered exactly like a local calling at noon.",
-      "West Australians are famously loyal to venues that treat them well, and famously unforgiving of ones that don't pick up. Keep your existing number, forward it in minutes, and every confirmed booking lands in your dashboard with data processed onshore in Australia under the Privacy Act. Whether you're pouring natural wine in Northbridge or plating dhufish in Claremont, the phone should be an asset — not the job nobody on the roster wants.",
+      "West Australians are famously loyal to venues that treat them well, and famously unforgiving of ones that don't pick up. Keep your existing number, forward it in minutes, and every confirmed booking lands in your dashboard, with your records kept in Australia under the Privacy Act. Whether you're pouring natural wine in Northbridge or plating dhufish in Claremont, the phone should be an asset — not the job nobody on the roster wants.",
     ],
     suburbs: [
       "Perth CBD", "Northbridge", "Fremantle", "Cottesloe", "Subiaco",
@@ -475,7 +475,7 @@ export const cities: readonly City[] = [
       },
       {
         q: "Where is our data kept?",
-        a: "Onshore in Australia with Privacy Act compliance. Audio is retained only as long as needed to confirm the booking and is never used to train external models.",
+        a: "Your booking records stay in Australia, with Privacy Act compliance. Recordings auto-delete after 30 days and are never used to train AI models.",
       },
       {
         q: "Our venue also does functions — can Bella handle those enquiries?",
@@ -506,8 +506,8 @@ export const cities: readonly City[] = [
         },
         {
           icon: "shield",
-          title: "Onshore, and yours",
-          body: "Audio is processed in Australia and kept only as long as needed to confirm the booking — never used to train models outside the country. Privacy Act compliant, start to finish.",
+          title: "In Australia, and yours",
+          body: "Your booking records stay in Australia and recordings auto-delete after 30 days — never used to train AI models. Privacy Act compliant, start to finish.",
         },
       ],
     },
@@ -587,7 +587,7 @@ export const cities: readonly City[] = [
       },
       {
         q: "Where does our data live?",
-        a: "In Australia, processed onshore, Privacy Act compliant, retained only as long as needed and never used to train outside models.",
+        a: "Your booking records stay in Australia (Sydney), Privacy Act compliant; recordings auto-delete after 30 days and are never used to train AI models.",
       },
       {
         q: "What does VoxTable cost for a small Adelaide venue?",
@@ -619,7 +619,7 @@ export const cities: readonly City[] = [
         {
           icon: "shield",
           title: "Kept in Australia",
-          body: "Call audio is processed onshore, retained only as long as it takes to confirm the booking, and never used to train outside models. The people you reach for a hand are an Australian team.",
+          body: "Your booking records stay in Australia, recordings auto-delete after 30 days, and nothing trains AI models. The people you reach for a hand are an Australian team.",
         },
       ],
     },
@@ -651,7 +651,7 @@ export const cities: readonly City[] = [
     intro: [
       "The Gold Coast feeds a permanent holiday crowd, and holiday-makers behave nothing like locals: they book same-day, they call from the beach at 3pm for tonight, they ask for directions, parking, kids' menus and whether thongs are fine — and if the phone rings out they simply call the next place on the strip. On the Coast, an unanswered phone isn't a missed booking, it's a donation to your competitor.",
       "Volume swings are wild — school holidays, schoolies, the 500, a wet week that empties the beach and fills every indoor table at once. Staffing a phone for peak means overpaying for the shoulder; staffing for the shoulder means drowning at peak. Bella is elastic: she answers every concurrent call instantly in a natural Australian voice, checks live availability, and books the table for one flat monthly fee.",
-      "Tourists also call at tourist hours — before your doors open, after the kitchen closes, from other time zones entirely. Bella works 24/7 on your existing number (forwarding takes minutes), every booking lands in your dashboard, and all call data is processed onshore in Australia under the Privacy Act. From a Burleigh headland bistro to a Broadbeach steakhouse, the maths is the same: the strip rewards whoever picks up first.",
+      "Tourists also call at tourist hours — before your doors open, after the kitchen closes, from other time zones entirely. Bella works 24/7 on your existing number (forwarding takes minutes), every booking lands in your dashboard, and your records are kept in Australia under the Privacy Act. From a Burleigh headland bistro to a Broadbeach steakhouse, the maths is the same: the strip rewards whoever picks up first.",
     ],
     suburbs: [
       "Surfers Paradise", "Broadbeach", "Burleigh Heads", "Palm Beach",
@@ -700,7 +700,7 @@ export const cities: readonly City[] = [
       },
       {
         q: "Where is our call and booking data stored?",
-        a: "Onshore in Australia, Privacy Act compliant, retained only as long as needed to complete the booking, and never used to train external models.",
+        a: "Your booking records stay in Australia, Privacy Act compliant; recordings auto-delete after 30 days and are never used to train AI models.",
       },
       {
         q: "We're a café that turns tables fast — is phone booking even worth it?",
@@ -732,7 +732,7 @@ export const cities: readonly City[] = [
         {
           icon: "shield",
           title: "Australian data, always",
-          body: "Audio is processed onshore, kept only as long as needed to confirm the booking, and never used to train outside models — however far away the caller happens to be.",
+          body: "Your booking records stay in Australia and recordings auto-delete after 30 days — never used to train AI models, however far away the caller happens to be.",
         },
       ],
     },
