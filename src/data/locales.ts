@@ -289,6 +289,7 @@ export const AU_STATIC_PAGES: readonly string[] = [
   "technology",
   "platform",
   "blog",
+  "legal",
   "legal/privacy",
   "legal/terms",
   "legal/cookies",

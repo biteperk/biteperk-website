@@ -1,0 +1,127 @@
+---
+import Base from "@/layouts/Base.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import { site } from "@/data/site";
+import { u } from "@/data/locales";
+
+const title = "Legal — Biteperk";
+const description =
+  "Biteperk's legal documents: privacy policy, terms of service, and cookie policy.";
+
+const docs = [
+  {
+    label: "Privacy policy",
+    href: u("/legal/privacy/"),
+    blurb:
+      "How we collect, use, store and delete personal information — for website visitors, the venues that use our products, and the people who call them.",
+  },
+  {
+    label: "Terms of service",
+    href: u("/legal/terms/"),
+    blurb: "The terms that govern your use of this website and Biteperk products.",
+  },
+  {
+    label: "Cookie policy",
+    href: u("/legal/cookies/"),
+    blurb: "What we store in your browser, and how to change or withdraw your consent.",
+  },
+];
+---
+
+<Base title={title} description={description} path="/legal/">
+  <article class="legal">
+    <div class="wrap">
+      <Breadcrumbs items={[
+        { label: "Home", href: u("/") },
+        { label: "Legal" },
+      ]} />
+      <header class="legal-head">
+        <h1>Legal</h1>
+        <p class="legal-updated">Last updated <time datetime={site.legalLastUpdated}>{site.legalLastUpdated}</time></p>
+      </header>
+
+      <p class="legal-intro">
+        The plain-English documents that govern Biteperk's website and products. Questions about any of
+        them? Email <a href={site.email.href}>{site.email.display}</a>.
+      </p>
+
+      <ul class="legal-index">
+        {docs.map((d) => (
+          <li>
+            <a href={d.href}>{d.label}</a>
+            <p>{d.blurb}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .legal {
+    padding: clamp(120px, 14vw, 180px) 0 var(--space-section);
+    background: var(--ink-0);
+  }
+  .legal .wrap { max-width: 720px; }
+  .legal-head { margin-top: 32px; }
+  .legal h1 {
+    font-size: clamp(40px, 5vw, 64px);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    color: var(--white);
+  }
+  .legal-updated {
+    margin-top: 14px;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--mist);
+    font-weight: 600;
+  }
+  .legal-intro {
+    margin-top: 40px;
+    color: var(--text);
+    line-height: 1.7;
+    max-width: 70ch;
+  }
+  .legal-intro a {
+    color: var(--gold);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .legal-index {
+    list-style: none;
+    padding: 0;
+    margin: 40px 0 0;
+    display: grid;
+    gap: 16px;
+  }
+  .legal-index li {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 24px;
+    background: var(--ink-1);
+    transition: border-color var(--dur-fast) var(--ease-out);
+  }
+  .legal-index li:hover { border-color: var(--gold); }
+  .legal-index a {
+    font-size: clamp(20px, 2vw, 24px);
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.01em;
+    text-decoration: none;
+  }
+  .legal-index a:hover { color: var(--gold); }
+  .legal-index a:focus-visible {
+    outline: none;
+    box-shadow: var(--ring-focus);
+    border-radius: 4px;
+  }
+  .legal-index p {
+    margin: 8px 0 0;
+    color: var(--text);
+    line-height: 1.7;
+    max-width: 70ch;
+  }
+</style>
