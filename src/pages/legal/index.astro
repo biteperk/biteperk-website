@@ -98,6 +98,7 @@ const docs = [
     gap: 16px;
   }
   .legal-index li {
+    position: relative;
     border: 1px solid var(--line);
     border-radius: 14px;
     padding: 24px;
@@ -113,11 +114,22 @@ const docs = [
     text-decoration: none;
   }
   .legal-index a:hover { color: var(--gold); }
+  /* Stretch the title link to cover the whole card, so clicking anywhere
+     on the card — description and padding included — opens the page, while
+     keeping a single link with "Privacy policy" as its accessible name. */
+  .legal-index a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
+  }
   .legal-index a:focus-visible {
     outline: none;
+    /* Ring the whole card, not just the text — the link fills the card. */
     box-shadow: var(--ring-focus);
-    border-radius: 4px;
+    border-radius: 14px;
   }
+  .legal-index li:focus-within { border-color: var(--gold); }
   .legal-index p {
     margin: 8px 0 0;
     color: var(--text);
