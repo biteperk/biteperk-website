@@ -29,7 +29,7 @@ A few things matter more here than they might elsewhere:
 
 - **A local voice.** Diners can tell instantly when a call has been routed offshore. A good agent is trained on Australian English and gets the suburb and street names right — "Surry Hills," "Gymea," "Woolloomooloo" — without stumbling.
 - **After-hours coverage.** A lot of booking calls happen *outside* service — late at night when someone's planning the weekend, or mid-morning before you've opened. A human can't cover those hours; software can.
-- **Onshore data.** Call audio and guest details staying in Australia isn't just nice-to-have; it's what keeps you comfortably on the right side of the Privacy Act.
+- **Records in Australia.** Your booking records and guest details staying in Australia — with call recordings that auto-delete on a set schedule — isn't just nice-to-have; it's what keeps you comfortably on the right side of the Privacy Act.
 
 We wrote more about the local angle in [why an Australian voice matters on your restaurant's phone](/blog/why-an-australian-voice-matters/), and there's a Sydney-specific overview on our [AI for Sydney restaurants](/sydney/) page.
 

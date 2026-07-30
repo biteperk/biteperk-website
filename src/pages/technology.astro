@@ -6,7 +6,7 @@
  * work" search demand. Plain-English but technically substantive; every
  * claim maps to one already published elsewhere on the site (Australian-
  * English ASR + suburb tuning, live availability, confidence gating →
- * human callback, onshore processing, no external training, sub-second
+ * human callback, records kept in Australia, no AI training, sub-second
  * pickup). No invented benchmarks.
  */
 import Base from "@/layouts/Base.astro";
@@ -70,8 +70,8 @@ const techFaqs = [
     a: "Generic, overseas-trained speech models mangle Australian place names — Woolloongabba, Prahran, Subiaco — and callers hear the difference instantly. Bella's recogniser is tuned for Australian English and local suburb names, so guests get a warm, local-sounding answer instead of an offshore-call-centre feel.",
   },
   {
-    q: "Where is the call audio processed and stored?",
-    a: "In Australia. Audio is processed onshore, kept only as long as needed to confirm the booking, and never used to train outside models. Biteperk is Privacy Act compliant and your bookings always stay yours.",
+    q: "Where is my call and booking data kept?",
+    a: "Your booking records stay in Australia (Sydney), and call recordings auto-delete after 30 days — never used to train AI models. Biteperk is Privacy Act compliant and your bookings always stay yours.",
   },
 ];
 
@@ -213,10 +213,10 @@ const faqJsonLd = {
           </p>
         </article>
         <article class="reveal">
-          <h2 class="tech-h3">Processed onshore, and kept in Australia</h2>
+          <h2 class="tech-h3">Your records, kept in Australia</h2>
           <p>
-            Call audio is processed in Australia, retained only as long as it takes to confirm the
-            booking, and never used to train outside models. Biteperk is Privacy Act compliant, and
+            Your booking records are stored in Australia, call recordings auto-delete after 30
+            days, and nothing is used to train AI models. Biteperk is Privacy Act compliant, and
             the bookings — and the recordings — stay yours.
           </p>
         </article>

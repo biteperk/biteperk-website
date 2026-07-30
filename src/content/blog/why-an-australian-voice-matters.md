@@ -24,9 +24,9 @@ A genuinely local agent is trained on Australian English and tuned for local pro
 
 ## "Australian voice" is also about where your data lives
 
-Local isn't only how it sounds — it's where the call goes. When your guest's voice and details are processed and stored **onshore in Australia**, you keep things simple under the Privacy Act and you can answer the question every careful guest eventually asks: *where does my information go?*
+Local isn't only how it sounds — it's where the booking ends up. When your guests' booking records are kept **in Australia**, you keep things simple under the Privacy Act and you can answer the question every careful guest eventually asks: *where does my information go?*
 
-The honest answer should be short: it stays here, it's kept only as long as needed to confirm the booking, and it isn't shipped off to train someone else's models. That's the standard we hold [VoxTable](/products/voxtable/) to.
+The honest answer should be short: your booking records stay here, call recordings auto-delete after 30 days, and nothing is shipped off to train AI models. That's the standard we hold [VoxTable](/products/voxtable/) to.
 
 ## It's a quiet competitive edge
 
