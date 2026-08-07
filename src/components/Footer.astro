@@ -5,11 +5,11 @@
  * the "Made in Sydney." signature.
  */
 import StarMark from "@/components/StarMark.astro";
-import { site } from "@/data/site";
+import SocialLinks from "@/components/SocialLinks.astro";
+import { site, entities } from "@/data/site";
 import { footerColumns } from "@/data/nav";
 
 const year = new Date().getFullYear();
-const hasAbn = site.abn !== "TODO";
 ---
 
 <footer class="cv-auto">
@@ -34,6 +34,12 @@ const hasAbn = site.abn !== "TODO";
           <a href={site.phone.href}>{site.phone.display}</a>
           <a href={site.email.href}>{site.email.display}</a>
         </address>
+        {/* Sits in the brand cell rather than as a sixth footer column: these
+            are identity, the same kind of thing as the address and the phone
+            number, not a section of the site you can navigate to. */}
+        <div class="foot-social">
+          <SocialLinks label="Follow BitePerk" />
+        </div>
       </div>
       <div class="foot-cols reveal-stagger" style="--stagger-step: 40ms">
         {footerColumns.map((col) => (
@@ -63,25 +69,25 @@ const hasAbn = site.abn !== "TODO";
     </div>
     <div class="foot-bottom">
       <div>
-        © {year} Biteperk Pty Ltd
-        {hasAbn && (
-          <span>
-            {" · "}
-            {/* Linked, not plain text. Anyone can claim an ABN; the trust
-                comes from being able to check it in one click on the
-                government register. rel="nofollow" — it's a verification
-                link, not an endorsement we're passing rank to. */}
-            <a
-              class="foot-abn"
-              href={site.abnLookupUrl}
-              rel="nofollow noopener"
-              target="_blank"
-              title={`Verify ABN ${site.abn} on the Australian Business Register`}
-            >
-              ABN {site.abn}
-            </a>
-          </span>
-        )}
+        © {year} {entities.au.legalName}
+        {" · "}
+        {/* Linked, not plain text. Anyone can claim an ABN; the trust comes
+            from being able to check it in one click on the government
+            register. rel="nofollow" — it's a verification link, not an
+            endorsement we're passing rank to.
+
+            The `hasAbn` guard that used to wrap this compared site.abn against
+            the literal "TODO"; the ABN has been real since 29 Jul 2026, so the
+            condition was always true and the branch was dead. */}
+        <a
+          class="foot-abn"
+          href={site.abnLookupUrl}
+          rel="nofollow noopener"
+          target="_blank"
+          title={`Verify ABN ${site.abn} on the Australian Business Register`}
+        >
+          ABN {site.abn}
+        </a>
         · All rights reserved.
       </div>
       <div class="foot-tag">
@@ -127,6 +133,12 @@ const hasAbn = site.abn !== "TODO";
   .foot-address a:hover,
   .foot-address a:focus-visible {
     color: var(--white);
+  }
+  /* Negative inline start offset cancels the icon's own 12px tap padding so
+     the first glyph optically aligns with the address text above it. */
+  .foot-social {
+    margin-top: 8px;
+    margin-inline-start: -12px;
   }
   .foot-cols {
     display: grid;
