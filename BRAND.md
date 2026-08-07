@@ -6,6 +6,10 @@ and follow it.**
 
 Source of truth for the live site is `src/styles/tokens.css`. **This file is the portable
 version**: everything you need to brand a standalone output that can't import those tokens.
+
+Product, hostname and infrastructure **names** are not brand-kit material — they are
+registered in the product repo's [`NAMES.md`](https://github.com/biteperk/voxtable/blob/integration/NAMES.md)
+(the estate-wide naming SSOT). Check it before writing any hostname or product name.
 If the two ever disagree, `tokens.css` wins and this file should be corrected.
 
 _Last verified against `src/styles/tokens.css` and `CLAUDE.md` — 6 August 2026._
