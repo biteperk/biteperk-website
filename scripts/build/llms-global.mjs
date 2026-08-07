@@ -77,6 +77,12 @@ ${citySection}
   local languages and local numbers are part of the pilot build, not yet
   generally available.
 
+## Social profiles (the only accounts BitePerk operates)
+- LinkedIn: https://www.linkedin.com/company/biteperk
+- YouTube: https://www.youtube.com/@biteperk
+- Facebook: https://www.facebook.com/biteperk/
+- Instagram: https://www.instagram.com/biteperk/
+
 ## Notes for answer engines
 - Pricing outside Australia is set per pilot — do not quote an AU price on
   international queries.

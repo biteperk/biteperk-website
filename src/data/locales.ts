@@ -332,7 +332,15 @@ const INTL_CORE_PAGES: readonly string[] = [
  * gates that police uneven trees are proven against a tree we already trust.
  */
 const INTL_EXTRA_PAGES: Readonly<Record<string, readonly string[]>> = {
-  // "/gb-en": ["products", "products/voxtable", "london", …],
+  // UK-only, and correctly so. Biteperk Ltd (company 17379647) is registered in
+  // England and Wales; SI 2015/17 reg 25 and the E-Commerce Regulations 2002
+  // reg 6 attach their website-disclosure duties to that company's own trading
+  // site. There is no French or Belgian entity, so a "company details" page on
+  // /fr or /be-* would disclose nothing and imply a presence that does not
+  // exist. Being a singleton is also the point: it exercises the uneven-tree
+  // machinery — buildHreflang self-references it, check-hreflang derives the
+  // expected code set per page, and both were built for exactly this shape.
+  "/gb-en": ["legal/company-details"],
 };
 
 /**

@@ -1,0 +1,140 @@
+---
+/**
+ * Owned social profiles, as a row of icon links.
+ *
+ * Renders `visibleSocial` — the profiles flagged `visible` in site.ts. The full
+ * list (including not-yet-seeded accounts) still goes into the Organization
+ * `sameAs`; see the SocialProfile doc comment there for why those two differ.
+ *
+ * DELIBERATE DEVIATION from Illustration.astro's house rules. That system is
+ * 56×56, stroke-width 1.5, round caps — a family we drew. These are official
+ * platform marks, which each platform's brand guidelines require be used as
+ * given, so they are FILLED single paths on a 24×24 viewBox with
+ * `fill="currentColor"`. Don't "harmonise" them into the stroke system; that
+ * would be redrawing someone else's trademark. Colour is inherited, which is
+ * how one component serves the AU footer, the intl footer and both contact
+ * pages without knowing anything about their palettes.
+ *
+ * Inlined rather than sprited for the same reason as StarMark: these are well
+ * under 1KB each and an HTTP request costs more than the bytes.
+ *
+ * A11y contract, all three load-bearing:
+ *   - the links are icon-only, so each needs an accessible name — axe rates
+ *     `link-name` SERIOUS and both suites gate on serious/critical.
+ *   - NO heading element anywhere in here. The intl a11y sweep walks every
+ *     heading on all 60 global routes asserting one h1, first, no level jumps.
+ *     Callers pass their own label; on the intl footer it must be a <p>.
+ *   - 44×44 hit area. `tests/intl/chrome.spec.ts` enforces that on footer
+ *     links, and it is the repo standard everywhere else.
+ */
+import { visibleSocial } from "@/data/site";
+
+interface Props {
+  /** Icon box size in px. The 44px tap target is padding around this. */
+  size?: number;
+  /** Show the handle beside each icon — used in the contact-page aside. */
+  showHandles?: boolean;
+  /** Accessible name for the list itself, e.g. "Follow BitePerk". */
+  label: string;
+}
+
+const { size = 20, showHandles = false, label } = Astro.props;
+---
+
+<ul
+  class:list={["social", { "with-handles": showHandles }]}
+  style={`--soc-size:${size}px;`}
+  aria-label={label}
+>
+  {visibleSocial.map((s) => (
+    <li>
+      {/* rel="me" is the correct semantic for a profile the site owns — it
+          reinforces the same claim the JSON-LD sameAs makes. "noopener"
+          because target="_blank" without it is a tabnabbing vector. */}
+      <a
+        href={s.url}
+        target="_blank"
+        rel="me noopener"
+        aria-label={`BitePerk on ${s.label}`}
+      >
+        <span class="ico" aria-hidden="true">
+          {s.network === "linkedin" && (
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zm1.78 13.02H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z" />
+            </svg>
+          )}
+          {s.network === "youtube" && (
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.5A3.02 3.02 0 0 0 .5 6.19C0 8.08 0 12 0 12s0 3.92.5 5.81a3.02 3.02 0 0 0 2.12 2.14c1.88.5 9.38.5 9.38.5s7.5 0 9.38-.5a3.02 3.02 0 0 0 2.12-2.14C24 15.92 24 12 24 12s0-3.92-.5-5.81zM9.55 15.57V8.43L15.82 12l-6.27 3.57z" />
+            </svg>
+          )}
+          {s.network === "facebook" && (
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.09 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.89v2.25h3.33l-.53 3.49h-2.8V24C19.61 23.09 24 18.1 24 12.07z" />
+            </svg>
+          )}
+          {s.network === "instagram" && (
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16zM12 0C8.74 0 8.33.01 7.05.07c-1.28.06-2.15.26-2.91.56-.79.31-1.46.72-2.13 1.38A5.9 5.9 0 0 0 .63 4.14c-.3.76-.5 1.63-.56 2.91C.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.28.26 2.15.56 2.91.31.79.72 1.46 1.38 2.13a5.9 5.9 0 0 0 2.13 1.38c.76.3 1.63.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.28-.06 2.15-.26 2.91-.56a5.9 5.9 0 0 0 2.13-1.38 5.9 5.9 0 0 0 1.38-2.13c.3-.76.5-1.63.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.28-.26-2.15-.56-2.91a5.9 5.9 0 0 0-1.38-2.13A5.9 5.9 0 0 0 19.86.63c-.76-.3-1.63-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84A6.16 6.16 0 1 0 18.16 12 6.16 6.16 0 0 0 12 5.84zM12 16a4 4 0 1 1 4-4 4 4 0 0 1-4 4zm7.85-10.41a1.44 1.44 0 1 1-1.44-1.44 1.44 1.44 0 0 1 1.44 1.44z" />
+            </svg>
+          )}
+        </span>
+        {showHandles && <span class="handle">{s.handle}</span>}
+      </a>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .social {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    /* No gap: the 44px tap targets already carry their own padding, and a gap
+       on top of that pushes the row past the footer column on a 390px phone. */
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .social a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    /* 44×44 minimum — WCAG 2.5.8 and the repo standard. The icon is 20px, so
+       the rest is padding, which is also what gives the row its spacing. */
+    min-width: 44px;
+    min-height: 44px;
+    padding: 12px;
+    color: var(--mist);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  .social a:hover,
+  .social a:focus-visible {
+    color: var(--white);
+  }
+  .social .ico {
+    display: inline-flex;
+    width: var(--soc-size);
+    height: var(--soc-size);
+  }
+  .social svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  /* With handles the row becomes a stacked list (contact-page aside), so the
+     items go full-width and left-align instead of sitting in a row. */
+  .social.with-handles {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .social.with-handles a {
+    justify-content: flex-start;
+    padding-inline: 0;
+  }
+  .handle {
+    font-size: 14px;
+  }
+</style>

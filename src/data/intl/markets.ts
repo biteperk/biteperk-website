@@ -284,7 +284,10 @@ const gbEn: MarketContent = {
         {
           heading: "The unglamorous part",
           body: [
-            "No number here. No diary integration. No British staff. What exists is software that provably works in another timezone and a short list of venues helping us make it work in this one. We would rather be dull about that now than impressive and wrong.",
+            // Still literally true after the UK incorporation — a registered
+            // office is not staff — but beside a "Registered in England and
+            // Wales" footer it read as a contradiction. Says both facts now.
+            "No number here. No diary integration. No British staff — Biteperk Ltd is registered in London, but the people who answer you are in Sydney. What exists is software that provably works in another timezone and a short list of venues helping us make it work in this one. We would rather be dull about that now than impressive and wrong.",
           ],
         },
       ],
@@ -296,6 +299,101 @@ const gbEn: MarketContent = {
         "Tell us about your UK venue and we'll set up a conversation — and a live demonstration of Vox taking a booking.",
       intro:
         "Tell us about your venue and where in the UK you operate. We'll come back within a working day with a conversation — and a live demonstration of Vox taking a booking.",
+    },
+
+    // ── UK legal overrides ────────────────────────────────────────────────
+    // Biteperk Ltd (company 17379647, registered in England and Wales) is the
+    // contracting party and data controller for UK customers. That decision is
+    // what these two overrides encode, and it is why they exist only here:
+    // /be-en shares the EN core and correctly keeps Biteperk Pty Ltd, because
+    // there is no Belgian entity.
+    //
+    // ⚠️ COUNSEL REVIEW REQUIRED BEFORE DEPLOY. Naming a UK controller and a UK
+    // contracting party changes what these documents mean; the wording below is
+    // drafted to be accurate and complete, not to substitute for that review.
+    //
+    // `sections` is restated IN FULL rather than patched. merge() replaces
+    // arrays wholesale (tests/unit/intl-merge.test.mjs) — supplying a partial
+    // list would silently drop the sections it omits.
+    privacy: {
+      intro:
+        "This notice covers biteperk.com for visitors in the United Kingdom. Biteperk Ltd is the controller of the personal data described here. It explains what we collect, why, the legal basis for it, and the rights you have under the UK GDPR.",
+      sections: [
+        {
+          heading: "Who controls your data",
+          body: [
+            "Biteperk Ltd, a company registered in England and Wales (company number 17379647), registered office 124 City Road, London, England, EC1V 2NX, is the data controller for enquiries made through this site from the United Kingdom.",
+            "Biteperk Ltd is a subsidiary of Biteperk Pty Ltd (Sydney, Australia), which operates this website and builds the Vox product. You can reach us about anything on this page at sales@biteperk.com.",
+          ],
+        },
+        {
+          heading: "What we collect on this site",
+          body: [
+            "The contact form asks for your name, work email, venue name and message. We use these to respond to your enquiry and, if you ask about a pilot, to organise it. Nothing else on this site collects personal data: there is no advertising tracking, and no analytics cookies run without consent.",
+          ],
+        },
+        {
+          heading: "Our lawful basis",
+          body: [
+            "We rely on legitimate interests (Article 6(1)(f) UK GDPR) to answer a business enquiry you have chosen to send us — responding to it is what you asked for, and the data involved is limited to the enquiry itself. Where we place non-essential cookies we rely on your consent instead, which you can withdraw at any time through Cookie settings.",
+          ],
+        },
+        {
+          heading: "Where it goes, and transfers out of the UK",
+          body: [
+            "Form submissions are stored with our infrastructure provider, Google Cloud (Firestore), in an Australian region, and a notification email is sent to our team. That is a transfer of your data out of the United Kingdom.",
+            "The United Kingdom has no adequacy regulations for Australia, so the transfer needs a safeguard under Article 46 UK GDPR. We are putting an International Data Transfer Agreement (or the UK Addendum to the EU standard contractual clauses) in place together with the transfer risk assessment that must accompany it. Until that is complete we keep the transfer limited to the enquiry itself. If you would rather not have your details leave the UK, email us instead of using the form and tell us so.",
+          ],
+        },
+        {
+          heading: "How long we keep it",
+          body: [
+            "Enquiries are kept for as long as needed to handle the conversation and any pilot that follows, then deleted. You can ask us to delete your enquiry at any time.",
+          ],
+        },
+        {
+          heading: "Your rights",
+          body: [
+            "Under the UK GDPR you have the right to ask us for a copy of your personal data, to have it corrected or erased, to have its use restricted, to object to our use of it where we rely on legitimate interests, and to receive it in a portable form. Write to sales@biteperk.com and we will act on it within one month.",
+            "You also have the right to complain to the Information Commissioner's Office, the UK supervisory authority, at ico.org.uk or on 0303 123 1113. We would rather you came to us first, but you do not have to.",
+          ],
+        },
+      ],
+    },
+    terms: {
+      intro:
+        "These short terms cover the use of biteperk.com in the United Kingdom. Service agreements for pilots and deployments are separate documents, agreed per engagement.",
+      sections: [
+        {
+          heading: "Who you are dealing with",
+          body: [
+            "For customers in the United Kingdom, the contracting party is Biteperk Ltd, a company registered in England and Wales (company number 17379647), registered office 124 City Road, London, England, EC1V 2NX. Full registered particulars are on our company details page.",
+            "This website is operated by its parent, Biteperk Pty Ltd (Sydney, Australia). Content is provided for general information about our products and pilot programmes; it isn't an offer capable of acceptance, and product availability differs by market — what's live in Australia is labelled as such.",
+          ],
+        },
+        {
+          heading: "Intellectual property",
+          body: [
+            "BitePerk, Vox, VoxTable and the associated logos and content on this site belong to Biteperk Pty Ltd. Don't reproduce them without permission.",
+          ],
+        },
+        {
+          heading: "Liability",
+          body: [
+            "The site is provided as-is. To the extent permitted by law, BitePerk accepts no liability for decisions made on the basis of this site's content. Nothing in these terms limits liability that cannot lawfully be limited. Full commercial terms live in the pilot and service agreements.",
+          ],
+        },
+        {
+          heading: "Governing law",
+          body: [
+            "These terms and any dispute arising from them are governed by the laws of England and Wales, and the courts of England and Wales have exclusive jurisdiction.",
+          ],
+        },
+        {
+          heading: "Contact",
+          body: ["Questions about these terms: sales@biteperk.com."],
+        },
+      ],
     },
   },
 };

@@ -156,6 +156,29 @@ function leavesOf(value, path = "", out = new Map()) {
 
 const globalLocales = () => loc.localesForTarget("global");
 
+/**
+ * Paths where ONE tree is allowed to carry MORE than the reference tree.
+ *
+ * The rule this test enforces is "a market must not silently render less".
+ * Equality was the right way to express that while every tree had the same
+ * obligations. /gb-en no longer does: Biteperk Ltd (company 17379647) is
+ * registered in England and Wales and is the contracting party and data
+ * controller for UK customers, so its privacy notice has to carry controller
+ * identity, lawful basis, a UK-transfer safeguard and the ICO complaint route,
+ * and its terms have to name the contracting entity and governing law. None of
+ * that is true on /fr or /be-*, where there is no local entity — putting it
+ * there to satisfy a shape check would be inventing a presence.
+ *
+ * So EXTRA entries are tolerated here, and MISSING ones still fail. That keeps
+ * the test's actual purpose (catching a shortened list) intact. This mirrors
+ * how the repo already handled uneven trees elsewhere: `pagesForLocale` and
+ * `buildHreflang` were made subset-aware rather than the content being
+ * flattened to fit the gate.
+ */
+const MAY_EXCEED_REFERENCE = [/^privacy\.sections/, /^terms\.sections/];
+const mayExceed = (locale, path) =>
+  locale.base === "/gb-en" && MAY_EXCEED_REFERENCE.some((re) => re.test(path));
+
 test("bundle parity: all five trees resolve the same SHAPE, only different words", () => {
   const [first, ...rest] = globalLocales();
   const reference = shapeOf(intl.resolveCopy(first));
@@ -163,8 +186,10 @@ test("bundle parity: all five trees resolve the same SHAPE, only different words
     const mine = shapeOf(intl.resolveCopy(l));
     const refSet = new Set(reference);
     const mineSet = new Set(mine);
-    const missing = reference.filter((x) => !mineSet.has(x));
-    const extra = mine.filter((x) => !refSet.has(x));
+    // `missing` stays strict even on an exceeding path: /gb-en may add sections,
+    // but it may never drop one the other trees have.
+    const missing = reference.filter((x) => !mineSet.has(x) && !mayExceed(l, x));
+    const extra = mine.filter((x) => !refSet.has(x) && !mayExceed(l, x));
     assert.deepEqual(
       { missing, extra },
       { missing: [], extra: [] },
@@ -172,6 +197,29 @@ test("bundle parity: all five trees resolve the same SHAPE, only different words
         `structure, not just the words. Arrays replace wholesale, so a shortened ` +
         `list here means that market renders fewer items than every other tree.`,
     );
+  }
+});
+
+test("bundle parity: /gb-en legal pages never shrink below the shared trees", () => {
+  // MAY_EXCEED_REFERENCE necessarily blinds the shape check to the whole
+  // privacy.sections / terms.sections subtree on /gb-en, which would otherwise
+  // let those two pages be shortened unnoticed — the exact failure the parity
+  // test exists to catch. This restores the floor from the other direction:
+  // the UK tree may add sections, never drop below what every other tree ships.
+  const ref = globalLocales().find((l) => l.base === "/en");
+  const gb = globalLocales().find((l) => l.base === "/gb-en");
+  const refCopy = intl.resolveCopy(ref);
+  const gbCopy = intl.resolveCopy(gb);
+  for (const page of ["privacy", "terms"]) {
+    assert.ok(
+      gbCopy[page].sections.length >= refCopy[page].sections.length,
+      `/gb-en ${page} has ${gbCopy[page].sections.length} section(s), fewer than ` +
+        `/en's ${refCopy[page].sections.length}. The UK tree carries a statutory ` +
+        `disclosure the others do not; it must never render less than they do.`,
+    );
+    for (const s of gbCopy[page].sections) {
+      assert.ok(s.heading.trim() && s.body.length > 0, `/gb-en ${page} has an empty section`);
+    }
   }
 });
 

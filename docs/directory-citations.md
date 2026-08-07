@@ -27,6 +27,9 @@ Other categories: Telephone answering service · Business-to-business service
 Service area:    Australia (based in Sydney)
 ABN:             36 700 831 303
 LinkedIn:        https://www.linkedin.com/company/biteperk
+YouTube:         https://www.youtube.com/@biteperk
+Facebook:        https://www.facebook.com/biteperk/
+Instagram:       https://www.instagram.com/biteperk/
 ```
 
 **Short description (≤160 chars):**

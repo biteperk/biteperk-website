@@ -31,6 +31,9 @@ Generated 2026-07-16. Source of truth: `docs/directory-citations.md`. **Rule #1:
 | Service area | `Australia (based in Sydney)` |
 | ABN | 36 700 831 303 |
 | LinkedIn | `https://www.linkedin.com/company/biteperk` |
+| YouTube | `https://www.youtube.com/@biteperk` |
+| Facebook | `https://www.facebook.com/biteperk/` |
+| Instagram | `https://www.instagram.com/biteperk/` |
 
 **Short description (≤160 chars)** — for tight fields:
 ```

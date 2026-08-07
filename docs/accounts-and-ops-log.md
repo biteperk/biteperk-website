@@ -291,3 +291,85 @@ added to each:
 `locales.ts` gained `cctld?` per locale (SSOT for the front doors);
 `schema.ts` derives the org `sameAs` ccTLD list from it; CLAUDE.md + README
 note that uk/fr/be redirects live in Cloudflare, not firebase.json.
+
+---
+
+## 7 Aug 2026 — Biteperk Ltd (UK) incorporated; social profiles published
+
+### Company
+
+Verified directly against Companies House, not the handover email:
+
+| | |
+|---|---|
+| Legal name | BITEPERK LTD |
+| Company number | **17379647** |
+| Status | Active, private limited company |
+| Incorporated | 4 August 2026 |
+| Registered office | 124 City Road, London, England, EC1V 2NX |
+| SIC | 62012, 62020, 63110 |
+| Record | https://find-and-update.company-information.service.gov.uk/company/17379647 |
+
+**It is a registered office, not a premises.** No UK staff, no UK phone line, no
+VAT registration. The Europe-truthful rules are unchanged by it — see CLAUDE.md.
+
+**Do not republish aggregator data.** Endole and similar sites show "Micro ·
+turnover under £1M · under 10 employees" for this company. That is an
+*inference*: it has filed no accounts (first due 4 May 2028). Companies House is
+the only source we cite.
+
+### Site changes (branch `feat/social-profiles`)
+
+Scoped to `/gb-en` and nothing else: footer statutory disclosure on every page,
+a new `legal/company-details` page, the `#uk` JSON-LD node, and market-scoped
+privacy/terms naming Biteperk Ltd as controller and contracting party. New gate
+`check-uk-disclosure.mjs` in `gates:global`; `check-schema` now asserts the UK
+node is present on `/gb-en` and **absent** on the other four trees.
+
+### ⚠️ Open obligations — owner: Sam (+ counsel)
+
+These follow from naming Biteperk Ltd as UK controller and contracting party.
+The site changes above should NOT deploy until at least 1 and 2 are resolved.
+
+1. **Counsel review** of `/gb-en` privacy, terms and company-details copy.
+   The wording is drafted to be accurate and complete; it is not a substitute
+   for review. Interacts with the "full GDPR-aligned notice being finalised with
+   counsel" already promised in `src/data/intl/copy.ts`.
+2. **ICO registration + data protection fee.** Statutory, not optional. Tier 1
+   (micro): £52, or £47 by direct debit — qualifying at ≤£632k turnover or ≤10
+   staff. Publish the registration number in the `/gb-en` privacy notice once
+   issued.
+3. **IDTA / UK Addendum + Transfer Risk Assessment** for UK→AU (Firestore) and
+   UK→US (voice platform). The UK has no adequacy regulations for Australia and
+   a TRA is mandatory. The privacy copy currently says these are being put in
+   place — keep that honest, and correct it the day they are.
+   Watch item: the ICO has said it will update the IDTA and Addendum during 2026.
+4. **Article 28 processor agreement** with each UK venue. For call data the
+   venue is controller and BitePerk is processor. This is the obligation that
+   actually bites once a UK pilot signs.
+5. **Provision/monitor the published email.** `sales@biteperk.com` is published
+   as the reg 6(1)(c) contact. An unread address there is a compliance failure.
+   Swap `ukEmail` in `src/data/site.ts` if a dedicated UK mailbox is created.
+6. **Registered-office mail forwarding must be live.** ECCTA requires an
+   "appropriate address" since 4 Mar 2024 — delivered documents must reach
+   someone acting for the company. 124 City Road is a formation-agent address.
+7. **Registered email address at Companies House** (ECCTA, since 4 Mar 2024) —
+   confirm it is one that is actually read.
+8. **Filing deadlines:** confirmation statement due **17 Aug 2027**; first
+   accounts to 31 Aug 2027, due **4 May 2028**.
+9. **PECR reg 22 for UK outbound.** The corporate-subscriber exemption covers
+   limited companies and LLPs but **not** sole traders or partnerships.
+
+### Social profiles
+
+Four accounts confirmed live and published to the org `sameAs` on both builds;
+three render in the footer. Instagram is in `sameAs` but `visible: false` — it
+had 0 posts and 0 followers on 7 Aug 2026. Flip the flag in `src/data/site.ts`
+once seeded.
+
+| LinkedIn | https://www.linkedin.com/company/biteperk |
+| YouTube | https://www.youtube.com/@biteperk |
+| Facebook | https://www.facebook.com/biteperk/ |
+| Instagram | https://www.instagram.com/biteperk/ |
+
+Post-deploy: re-scrape LinkedIn Post Inspector and Facebook Sharing Debugger.

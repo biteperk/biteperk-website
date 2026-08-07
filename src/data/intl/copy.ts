@@ -57,6 +57,8 @@ export type ChromeCopy = {
       already aria-label="Site" and duplicate landmark names trip axe. */
   footerExplore: string;
   footerRegions: string;
+  /** Label for the social-profile row. Renders as a <p>, never a heading. */
+  footerFollow: string;
   /** Locale-suggestion chip: shown in the TARGET locale's language. */
   suggest: string;
   suggestDismiss: string;
@@ -173,6 +175,7 @@ export const chrome: Record<Lang, ChromeCopy> = {
     citiesTitle: "Choose a city",
     footerExplore: "Explore",
     footerRegions: "Regions & languages",
+    footerFollow: "Follow us",
     suggest: "There's a BitePerk site for your region.",
     suggestDismiss: "Dismiss",
     email: "hello@biteperk.com.au",
@@ -197,6 +200,7 @@ export const chrome: Record<Lang, ChromeCopy> = {
     citiesTitle: "Choisissez une ville",
     footerExplore: "Explorer",
     footerRegions: "Régions et langues",
+    footerFollow: "Suivez-nous",
     suggest: "Un site BitePerk existe pour votre région.",
     suggestDismiss: "Fermer",
     email: "hello@biteperk.com.au",
