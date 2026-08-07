@@ -18,6 +18,7 @@ import {
 import LocalePicker from "@/components/LocalePicker.astro";
 import ThemeToggle from "@/components/ThemeToggle.astro";
 import StarMark from "@/components/StarMark.astro";
+import SocialLinks from "@/components/SocialLinks.astro";
 import LocaleSuggest from "@/components/LocaleSuggest.astro";
 import CityNav from "@/components/intl/CityNav.astro";
 import { INTL_NAV } from "@/data/intl/nav";
@@ -125,6 +126,17 @@ const year = new Date().getFullYear();
               <span class="brand-name">bite<span class="perk">perk</span></span>
             </span>
             <p class="intl-footer-blurb">{c.footerBlurb}</p>
+            {/* Its own class, NOT intl-footer-links: that class is a test
+                locator (chrome.spec walks it asserting a 44px height on every
+                link and picks the cookie href off the first match). The icons
+                are 44px anyway, but coupling a decorative row to a nav
+                assertion would make both harder to change. Title is a <p> for
+                the same reason as the columns below — the a11y sweep counts
+                every heading on all 60 global routes. */}
+            <nav class="intl-social" aria-labelledby="ifc-follow">
+              <p class="intl-footer-col-title" id="ifc-follow">{c.footerFollow}</p>
+              <SocialLinks label={c.footerFollow} />
+            </nav>
           </div>
           {/* Labeled columns, each its own <nav> with a distinct accessible
               name ("Explore", never "Site" — the header nav landmark already
@@ -392,6 +404,10 @@ const year = new Date().getFullYear();
   .intl-footer-grid { display: grid; gap: var(--space-7); grid-template-columns: minmax(240px, 1.2fr) 1fr; }
   .intl-footer-brand { display: inline-flex; align-items: center; gap: 8px; }
   .intl-footer-blurb { color: var(--mist); max-width: 44ch; margin-top: var(--space-3); font-size: var(--fs-small); }
+  /* Negative inline start cancels the icon's own 12px tap padding so the first
+     glyph optically aligns with the blurb and the wordmark above it. */
+  .intl-social { margin-top: var(--space-4); margin-inline-start: -12px; }
+  .intl-social .intl-footer-col-title { margin-inline-start: 12px; }
   /* Column layout inside the labeled columns. auto-fit handles the 2-vs-3
      column trees with no locale branching (the Cities column simply isn't
      rendered where there are no cities). */

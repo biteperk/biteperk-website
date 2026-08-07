@@ -48,6 +48,26 @@ const expect = (page, id) => {
   if (!has) failed++;
 };
 
+// Owned social profiles, from the SSOT. EVERY profile must be in the org's
+// sameAs on both targets — including ones deliberately not rendered in the
+// footer (`visible: false`). sameAs is the entity-consolidation signal and is
+// independent of what the page shows; the two got wired to the same array once
+// and a profile silently vanished from search when its icon was pulled.
+const { site } = await import("../build/_load-ts.mjs").then((m) =>
+  m.loadTS(join(ROOT, "src/data/site.ts")),
+);
+const expectSameAs = (page, orgId) => {
+  const org = graphOf(page).find((n) => n["@id"] === orgId);
+  const sameAs = [].concat(org?.sameAs ?? []);
+  const missing = site.social.map((s) => s.url).filter((u) => !sameAs.includes(u));
+  if (missing.length) {
+    console.error(`FAIL  ${page}: org sameAs is missing ${missing.join(", ")}`);
+    failed++;
+  } else {
+    console.log(`PASS  ${page}: org sameAs carries all ${site.social.length} social profile(s)`);
+  }
+};
+
 if (TARGET === "global") {
   // Every global locale home (derived from locales.ts — hardcoding en/fr here
   // would leave new locales unchecked): shared AU-anchored org @id (entity
@@ -75,6 +95,7 @@ if (TARGET === "global") {
     } else {
       console.log(`PASS  ${page}: org carries no NAP / geo / areaServed`);
     }
+    expectSameAs(page, `${AU}/#organization`);
   }
   // Per-host WebSite node (one spot-check on the x-default home).
   expect("en/index.html", `${GLOBAL}/#website`);
@@ -122,6 +143,7 @@ if (TARGET === "global") {
   } else {
     console.log("PASS  Organization NAP intact (Level 1/457-459 Elizabeth Street, Surry Hills)");
   }
+  expectSameAs("index.html", `${AU}/#organization`);
 }
 
 if (failed) {

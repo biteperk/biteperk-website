@@ -26,6 +26,7 @@ import { products } from "@/data/products";
 import { buildFaqPage, buildVoxApplication, voxEditionId, ORG_ID } from "@/data/schema";
 import ImageBlock from "@/components/ImageBlock.astro";
 import FAQ from "@/components/FAQ.astro";
+import SocialLinks from "@/components/SocialLinks.astro";
 import PullQuote from "@/components/PullQuote.astro";
 // The city components carry their CSS as `is:inline` styles, so importing
 // them here adds nothing to non-city pages: the CSS renders with the
@@ -460,6 +461,7 @@ const appJsonLd =
           <h2>{ct.aside.heading}</h2>
           <p>{ct.aside.body}</p>
           <p><a class="link-arrow" href="mailto:hello@biteperk.com.au">{ct.aside.emailLabel}</a></p>
+          <SocialLinks label={c.chrome.footerFollow} />
           {/* Contact takes its photo in the aside, not under the intro: the
               page is a two-column grid, and a full-width band between the
               form fields would cut the form in half. */}

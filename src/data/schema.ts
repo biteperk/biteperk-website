@@ -98,7 +98,11 @@ const auOrganizationNode = {
   // The ABN Lookup record is the government's own page for this entity —
   // exactly what sameAs is for: an authoritative URL that unambiguously
   // identifies the item. It anchors the brand to a verifiable legal person.
-  sameAs: [site.social.linkedin, site.abnLookupUrl],
+  //
+  // EVERY owned profile goes in, including ones not yet rendered in the footer
+  // (`visible: false`). sameAs is the entity-consolidation signal, not a
+  // recommendation to the reader — see the SocialProfile doc in site.ts.
+  sameAs: [...site.social.map((s) => s.url), site.abnLookupUrl],
   address: {
     "@type": "PostalAddress",
     streetAddress: site.address.street,
@@ -175,7 +179,7 @@ const globalOrganizationNode = {
   // Every ccTLD front door (com.au, uk, fr, be — derived from locales.ts) +
   // the canonical AU home: each 301s into biteperk.com, and listing them here
   // tells Google every front door belongs to the one BitePerk org.
-  sameAs: [site.social.linkedin, ...CCTLDS, AU_HOME],
+  sameAs: [...site.social.map((s) => s.url), ...CCTLDS, AU_HOME],
   knowsAbout: KNOWS_ABOUT,
   contactPoint: [
     {

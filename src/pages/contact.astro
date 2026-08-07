@@ -3,6 +3,7 @@ import Base from "@/layouts/Base.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import ImageBlock from "@/components/ImageBlock.astro";
+import SocialLinks from "@/components/SocialLinks.astro";
 import { site } from "@/data/site";
 import { products, voxProof } from "@/data/products";
 import { u } from "@/data/locales";
@@ -112,6 +113,10 @@ const description =
               {site.address.locality} {site.address.region} {site.address.postalCode}
             </a>
             <div class="contact-side-h">Local team. Local data. Local hours.</div>
+          </div>
+          <div class="contact-side-block">
+            <div class="contact-side-l">Follow along</div>
+            <SocialLinks label="Follow BitePerk" showHandles size={18} />
           </div>
         </aside>
 

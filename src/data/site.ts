@@ -55,9 +55,29 @@ export type SiteData = {
     readonly opens: string;
     readonly closes: string;
   };
-  readonly social: { readonly linkedin: string };
+  readonly social: readonly SocialProfile[];
   /** ISO date string for "last updated" rendering on legal pages. */
   readonly legalLastUpdated: string;
+};
+
+/**
+ * One owned social profile.
+ *
+ * `visible` controls RENDERING only — every profile lands in the Organization
+ * `sameAs` regardless. That split is deliberate: `sameAs` is how search engines
+ * consolidate the brand entity across the web and costs nothing to state, while
+ * a footer icon pointing at an empty profile is worse than no icon at all. So a
+ * freshly-created account goes in the data the day it exists and gets its icon
+ * the day it has content — a one-word edit, no schema churn.
+ */
+export type SocialProfile = {
+  readonly network: "linkedin" | "youtube" | "facebook" | "instagram";
+  /** Platform name, used to build the link's accessible name. */
+  readonly label: string;
+  readonly url: string;
+  /** Shown beside the icons on the contact page. */
+  readonly handle: string;
+  readonly visible: boolean;
 };
 
 export const site: SiteData = {
@@ -111,6 +131,48 @@ export const site: SiteData = {
     opens: "09:00",
     closes: "17:00",
   },
-  social: { linkedin: "https://www.linkedin.com/company/biteperk" },
+  // Array order is render order. Confirmed live 7 Aug 2026; the four accounts
+  // were registered by the sales team and handed over by email.
+  //
+  // Instagram is `visible: false` because the account exists but is empty
+  // (0 posts, 0 followers as at 7 Aug 2026). It is still in `sameAs` — see the
+  // SocialProfile doc comment. Flip the flag the day it has content.
+  social: [
+    {
+      network: "linkedin",
+      label: "LinkedIn",
+      url: "https://www.linkedin.com/company/biteperk",
+      handle: "/company/biteperk",
+      visible: true,
+    },
+    {
+      network: "youtube",
+      label: "YouTube",
+      url: "https://www.youtube.com/@biteperk",
+      handle: "@biteperk",
+      visible: true,
+    },
+    {
+      network: "facebook",
+      label: "Facebook",
+      url: "https://www.facebook.com/biteperk/",
+      handle: "/biteperk",
+      visible: true,
+    },
+    {
+      network: "instagram",
+      label: "Instagram",
+      url: "https://www.instagram.com/biteperk/",
+      handle: "@biteperk",
+      visible: false,
+    },
+  ],
   legalLastUpdated: "2026-07-30",
 };
+
+/**
+ * Profiles that get an icon in the footer and on the contact page.
+ *
+ * Never use this for `sameAs` — that takes the full `site.social` list.
+ */
+export const visibleSocial: readonly SocialProfile[] = site.social.filter((s) => s.visible);

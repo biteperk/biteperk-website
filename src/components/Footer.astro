@@ -5,6 +5,7 @@
  * the "Made in Sydney." signature.
  */
 import StarMark from "@/components/StarMark.astro";
+import SocialLinks from "@/components/SocialLinks.astro";
 import { site } from "@/data/site";
 import { footerColumns } from "@/data/nav";
 
@@ -34,6 +35,12 @@ const hasAbn = site.abn !== "TODO";
           <a href={site.phone.href}>{site.phone.display}</a>
           <a href={site.email.href}>{site.email.display}</a>
         </address>
+        {/* Sits in the brand cell rather than as a sixth footer column: these
+            are identity, the same kind of thing as the address and the phone
+            number, not a section of the site you can navigate to. */}
+        <div class="foot-social">
+          <SocialLinks label="Follow BitePerk" />
+        </div>
       </div>
       <div class="foot-cols reveal-stagger" style="--stagger-step: 40ms">
         {footerColumns.map((col) => (
@@ -127,6 +134,12 @@ const hasAbn = site.abn !== "TODO";
   .foot-address a:hover,
   .foot-address a:focus-visible {
     color: var(--white);
+  }
+  /* Negative inline start offset cancels the icon's own 12px tap padding so
+     the first glyph optically aligns with the address text above it. */
+  .foot-social {
+    margin-top: 8px;
+    margin-inline-start: -12px;
   }
   .foot-cols {
     display: grid;
