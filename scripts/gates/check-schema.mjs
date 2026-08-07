@@ -96,6 +96,51 @@ if (TARGET === "global") {
       console.log(`PASS  ${page}: org carries no NAP / geo / areaServed`);
     }
     expectSameAs(page, `${AU}/#organization`);
+
+    // Biteperk Ltd, the UK subsidiary — asserted on /gb-en and asserted ABSENT
+    // everywhere else. Both halves matter:
+    //
+    //   present on /gb-en, as its OWN node — the check just above (no address on
+    //   the AU-anchored org) guards the shared entity and must keep its teeth,
+    //   so the UK address lives on a separate @id linked by parentOrganization.
+    //
+    //   absent elsewhere — a London postal address on /fr or /be-* would be true
+    //   and still wrong. The Europe-truthful rule is that a market page carries
+    //   no presence signal for a country there is no presence in, and structured
+    //   data is part of the page.
+    const uk = graphOf(page).find((n) => n["@id"] === `${GLOBAL}/#uk`);
+    if (l.market !== "gb") {
+      if (uk) {
+        console.error(`FAIL  ${page}: carries the UK entity node outside the UK tree`);
+        failed++;
+      } else {
+        console.log(`PASS  ${page}: no UK entity node (correct — not the UK tree)`);
+      }
+    } else if (!uk) {
+      console.error(`FAIL  ${page}: missing UK subsidiary node ${GLOBAL}/#uk`);
+      failed++;
+    } else {
+      const a = uk.address ?? {};
+      const wrong =
+        a.streetAddress !== "124 City Road" ||
+        a.addressLocality !== "London" ||
+        a.postalCode !== "EC1V 2NX" ||
+        a.addressCountry !== "GB";
+      if (wrong) {
+        console.error(`FAIL  ${page}: UK registered office drifted: ${JSON.stringify(a)}`);
+        failed++;
+      } else {
+        console.log(`PASS  ${page}: UK registered office intact (124 City Road, London EC1V 2NX)`);
+      }
+      if ("telephone" in uk) {
+        console.error(`FAIL  ${page}: UK node carries a telephone (no UK line exists)`);
+        failed++;
+      }
+      if (uk.parentOrganization?.["@id"] !== `${AU}/#organization`) {
+        console.error(`FAIL  ${page}: UK node is not linked to the parent org`);
+        failed++;
+      }
+    }
   }
   // Per-host WebSite node (one spot-check on the x-default home).
   expect("en/index.html", `${GLOBAL}/#website`);

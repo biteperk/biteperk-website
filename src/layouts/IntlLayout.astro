@@ -22,6 +22,8 @@ import SocialLinks from "@/components/SocialLinks.astro";
 import LocaleSuggest from "@/components/LocaleSuggest.astro";
 import CityNav from "@/components/intl/CityNav.astro";
 import { INTL_NAV } from "@/data/intl/nav";
+import { entities, ukEmail } from "@/data/site";
+import { ukEntityGraph } from "@/data/schema";
 import { intlCitiesForBase } from "@/data/intl/cities";
 
 interface Props {
@@ -64,6 +66,9 @@ const p = (seg: string) => `${locale.base}/${seg ? `${seg}/` : ""}`;
 const footerCities = intlCitiesForBase(locale.base);
 const hasCities = footerCities.length > 0;
 const year = new Date().getFullYear();
+// Only /gb-en carries market "gb". Biteperk Ltd is a UK company; its statutory
+// website disclosure belongs on the UK tree, not on /fr or /be-*.
+const isUk = locale.market === "gb";
 ---
 
 <Base
@@ -84,6 +89,19 @@ const year = new Date().getFullYear();
       this the intl pages could only ever carry the sitewide graph — which is
       why they had no BreadcrumbList/FAQPage until the product pages landed. */}
   <slot name="jsonld" slot="jsonld" />
+
+  {/* Biteperk Ltd, on the UK tree only. Structured data mirrors the visible
+      footer disclosure exactly — a London postal address on /fr or /be-* would
+      be true and still wrong, because a market page must never carry a presence
+      signal for a country there is no presence in. */}
+  {isUk && (
+    <script
+      is:inline
+      type="application/ld+json"
+      slot="jsonld"
+      set:html={JSON.stringify(ukEntityGraph)}
+    />
+  )}
 
   <div class="intl">
     <header class="intl-nav" data-has-cities={hasCities}>
@@ -187,9 +205,27 @@ const year = new Date().getFullYear();
             </nav>
           </div>
         </div>
-        <p class="intl-footer-legal">
-          © {year} BitePerk Pty Ltd · <a href={`mailto:${c.email}`}>{c.email}</a> · {c.rights}
-        </p>
+        {/* The UK tree carries a statutory disclosure the other four don't.
+            SI 2015/17 reg 25 (Companies Act 2006 s.82) requires a company to
+            disclose its registered name, the part of the UK it is registered
+            in, its registered number and its registered office ON ITS WEBSITE
+            — and the footer is the only surface guaranteed to appear on every
+            page, which is why it lives here and not only on the legal pages.
+            `market === "gb"` because only /gb-en carries that value. */}
+        {isUk ? (
+          <p class="intl-footer-legal">
+            {`© ${year} ${entities.uk.legalName} · Registered in ${entities.uk.placeOfRegistration}, ${entities.uk.registerLabel.toLowerCase()} ${entities.uk.registerNumber} · Registered office: ${entities.uk.office.street}, ${entities.uk.office.locality} ${entities.uk.office.postalCode} · `}
+            <a href={p("legal/company-details")}>Company details</a>
+            {" · "}
+            <a href={ukEmail.href}>{ukEmail.display}</a>
+            {` · ${c.rights}`}
+          </p>
+        ) : (
+          <p class="intl-footer-legal">
+            © {year} {entities.au.legalName} · <a href={`mailto:${c.email}`}>{c.email}</a> ·{" "}
+            {c.rights}
+          </p>
+        )}
       </div>
     </footer>
 

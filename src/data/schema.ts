@@ -20,14 +20,19 @@
  * hours, areaServed); the global build emits Organization only — the local
  * entity is Australia's. Nothing here changes the AU build's output.
  */
-import { site } from "./site";
+import { site, entities } from "./site";
 import { publishedCities } from "./cities";
-import { AU_HOME, CCTLDS, abs, currentTarget } from "./locales";
+import { AU_HOME, CCTLDS, ORIGIN, abs, currentTarget } from "./locales";
 
 // Organization @id is anchored to the AU home (biteperk.com/au-en) and SHARED
 // across every build (au + en + fr) — that's how Google merges the properties
 // into one company entity.
 export const ORG_ID = `${AU_HOME}/#organization`;
+/**
+ * Stable @id for the UK subsidiary (Biteperk Ltd). Host-anchored, NOT merged
+ * into ORG_ID — see ukOrganizationNode for why that separation is load-bearing.
+ */
+export const UK_ORG_ID = `${ORIGIN}/#uk`;
 // The WebSite node for the property this build emits.
 export const WEBSITE_ID = `${abs("/")}#website`;
 /** Stable @id for the one Vox product (shared identity, AU-anchored). */
@@ -80,7 +85,7 @@ const auOrganizationNode = {
   "@type": ["Organization", "LocalBusiness"],
   "@id": ORG_ID,
   name: site.name,
-  legalName: "Biteperk Pty Ltd",
+  legalName: entities.au.legalName,
   ...LEGAL_IDENTIFIERS,
   url: AU_HOME,
   logo: {
@@ -160,7 +165,7 @@ const globalOrganizationNode = {
   "@type": "Organization",
   "@id": ORG_ID,
   name: site.name,
-  legalName: "Biteperk Pty Ltd",
+  legalName: entities.au.legalName,
   ...LEGAL_IDENTIFIERS,
   url: AU_HOME,
   logo: {
@@ -180,6 +185,11 @@ const globalOrganizationNode = {
   // the canonical AU home: each 301s into biteperk.com, and listing them here
   // tells Google every front door belongs to the one BitePerk org.
   sameAs: [...site.social.map((s) => s.url), ...CCTLDS, AU_HOME],
+  // NO subOrganization. The UK node is emitted on /gb-en only (see
+  // ukEntityGraph), so naming it here would leave four trees carrying a
+  // reference to an entity that never appears on them. The link is expressed
+  // once, in the direction that always resolves: the UK node's
+  // parentOrganization points back at this @id, which every tree does emit.
   knowsAbout: KNOWS_ABOUT,
   contactPoint: [
     {
@@ -189,6 +199,47 @@ const globalOrganizationNode = {
       availableLanguage: ["en", "fr"],
     },
   ],
+};
+
+/**
+ * Biteperk Ltd — the UK subsidiary, as a SEPARATE node.
+ *
+ * It has to be separate. `ORG_ID` is the shared AU-anchored @id that merges the
+ * two properties into one entity, and check-schema asserts that node carries no
+ * `address` / `geo` / `areaServed` on any global locale home — that assertion is
+ * the structured-data half of the Europe-truthful rules and must keep failing if
+ * anyone hangs a postal address off it. A distinct @id linked by
+ * parentOrganization says the true thing (one group, two registered companies)
+ * without weakening the guard.
+ *
+ * Carries NO `telephone`: there is no UK line, and check-truthful bans any +44
+ * number in the built global HTML — structured data included.
+ *
+ * Global build only. The AU tree describes one Australian company.
+ */
+const ukOrganizationNode = {
+  "@type": "Organization",
+  "@id": UK_ORG_ID,
+  name: site.name,
+  legalName: entities.uk.legalName,
+  identifier: [
+    {
+      "@type": "PropertyValue",
+      propertyID: "UK Company Number",
+      value: entities.uk.registerNumber,
+    },
+  ],
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: entities.uk.office.street,
+    addressLocality: entities.uk.office.locality,
+    postalCode: entities.uk.office.postalCode,
+    addressCountry: entities.uk.office.countryCode,
+  },
+  // The Companies House record is the government's own page for this entity —
+  // the same reasoning as the ABN Lookup URL on the AU node.
+  sameAs: [entities.uk.registerUrl],
+  parentOrganization: { "@id": ORG_ID },
 };
 
 export const organizationNode = IS_GLOBAL ? globalOrganizationNode : auOrganizationNode;
@@ -214,6 +265,22 @@ export const websiteNode = {
 export const siteGraph = {
   "@context": "https://schema.org",
   "@graph": [organizationNode, websiteNode],
+};
+
+/**
+ * The UK subsidiary node, for the UK tree only.
+ *
+ * Emitted by IntlLayout on /gb-en and nowhere else — deliberately NOT folded
+ * into `siteGraph`, which every page shares. A London postal address on /fr or
+ * /be-* would be true and still wrong: the whole point of the Europe-truthful
+ * rules is that a market page never carries a presence signal for a country it
+ * has no presence in, and check-schema exists to stop an address reaching the
+ * shared org node for exactly that reason. Structured data mirrors the visible
+ * footer, which is /gb-en-only for the same reason.
+ */
+export const ukEntityGraph = {
+  "@context": "https://schema.org",
+  "@graph": [ukOrganizationNode],
 };
 
 /**

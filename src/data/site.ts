@@ -176,3 +176,98 @@ export const site: SiteData = {
  * Never use this for `sameAs` — that takes the full `site.social` list.
  */
 export const visibleSocial: readonly SocialProfile[] = site.social.filter((s) => s.visible);
+
+/**
+ * The two legal entities behind the site.
+ *
+ * `site` above stays SINGLE-ENTITY on purpose: dozens of call sites read
+ * `site.address` / `site.abn` / `site.phone` and every one of them means the
+ * Australian operating company. Reshaping it into a map would have touched all
+ * of them to say the same thing. This is a sibling export instead — the UK
+ * facts in one place, nothing else moved.
+ *
+ * `uk` is a REGISTERED OFFICE, not a premises. There is no UK staff, no UK
+ * phone line and no VAT registration (the £90k threshold is a long way off for
+ * a company incorporated 4 Aug 2026). Copy must never imply otherwise, and
+ * check-truthful's `+44` ban plus its "our London office/team" ban both stay in
+ * force precisely because none of that is true yet.
+ *
+ * Source of record is Companies House, never a third-party aggregator. Those
+ * sites publish INFERRED size/turnover bands for companies that have filed no
+ * accounts — Biteperk Ltd's first are not due until 4 May 2028 — and
+ * republishing an inference as fact is what check-claims exists to stop.
+ */
+export type LegalEntity = {
+  readonly legalName: string;
+  /** Wording for the "registered in …" disclosure. */
+  readonly placeOfRegistration: string;
+  readonly registerLabel: string;
+  readonly registerNumber: string;
+  /** Public register record, so the number can be checked in one click. */
+  readonly registerUrl: string;
+  readonly office: {
+    readonly street: string;
+    readonly locality: string;
+    readonly region: string;
+    readonly postalCode: string;
+    readonly country: string;
+    readonly countryCode: string;
+  };
+};
+
+export const entities = {
+  au: {
+    legalName: "Biteperk Pty Ltd",
+    placeOfRegistration: "Australia",
+    registerLabel: "ABN",
+    registerNumber: site.abn,
+    registerUrl: site.abnLookupUrl,
+    office: {
+      street: site.address.street,
+      locality: site.address.locality,
+      region: site.address.region,
+      postalCode: site.address.postalCode,
+      country: site.address.country,
+      countryCode: site.address.countryCode,
+    },
+  },
+  uk: {
+    legalName: "Biteperk Ltd",
+    placeOfRegistration: "England and Wales",
+    registerLabel: "Company number",
+    registerNumber: "17379647",
+    registerUrl: "https://find-and-update.company-information.service.gov.uk/company/17379647",
+    office: {
+      street: "124 City Road",
+      locality: "London",
+      region: "England",
+      postalCode: "EC1V 2NX",
+      country: "United Kingdom",
+      countryCode: "GB",
+    },
+  },
+} as const satisfies Record<string, LegalEntity>;
+
+/**
+ * Contact address for the UK entity.
+ *
+ * Separate from `site.email` (the AU published address) because of two
+ * independent rules that happen to point the same way: CLAUDE.md's
+ * domain-by-audience rule puts international correspondence on `@biteperk.com`,
+ * and the E-Commerce Regulations 2002 reg 6 require a service provider to give
+ * "an electronic mail address" allowing rapid and direct communication — a
+ * contact form alone does not satisfy it.
+ *
+ * Deliberately `sales@biteperk.com`, the address CLAUDE.md already documents as
+ * the live rest-of-world identity, rather than a fresh `uk@`. Publishing an
+ * address that has not been provisioned would defeat the very requirement this
+ * exists to meet. Swap it for a dedicated UK mailbox here, in one place, once
+ * one exists and is monitored.
+ *
+ * MUST be monitored. An unread address here is a compliance failure, not a
+ * cosmetic one.
+ */
+export const ukEmail = {
+  display: "sales@biteperk.com",
+  href: "mailto:sales@biteperk.com",
+} as const;

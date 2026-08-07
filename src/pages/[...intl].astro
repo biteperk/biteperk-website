@@ -20,6 +20,8 @@ import {
   type CopyBundle, type SimplePageCopy,
 } from "@/data/intl";
 import { intlCitiesForBase } from "@/data/intl/cities";
+import { companyDetails } from "@/data/intl/company-details";
+import { ukEmail } from "@/data/site";
 import { intlProducts, intlProductsOverview } from "@/data/intl/products";
 import { pageImageFor, productImageFor } from "@/data/intl/page-images";
 import { products } from "@/data/products";
@@ -62,6 +64,10 @@ const SIMPLE_PAGES: Readonly<Record<string, (c: CopyBundle) => SimplePageCopy>> 
   "legal/privacy": (c) => c.privacy,
   "legal/terms": (c) => c.terms,
   "legal/cookies": (c) => c.cookies,
+  // Ignores the bundle: this page is UK-only and English-only, so its copy is a
+  // standalone module rather than a CopyBundle key every tree would carry. It
+  // still renders through the shared prose template — see company-details.ts.
+  "legal/company-details": () => companyDetails,
 };
 
 const { locale, page } = Astro.props;
@@ -75,6 +81,9 @@ const media = resolveMedia(locale);
 const support = resolveSupport(locale);
 const hero = resolveHero(locale);
 const { home: h, contact: ct } = c;
+// Only /gb-en carries market "gb" — the tree Biteperk Ltd's UK disclosures
+// attach to. There is no French or Belgian entity.
+const isUk = locale.market === "gb";
 
 const simple = SIMPLE_PAGES[page]?.(c) ?? null;
 // Supporting photo for sub-pages. undefined on the home (it has a hero) and on
@@ -460,7 +469,18 @@ const appJsonLd =
               back down to card scale in IntlLayout. */}
           <h2>{ct.aside.heading}</h2>
           <p>{ct.aside.body}</p>
-          <p><a class="link-arrow" href="mailto:hello@biteperk.com.au">{ct.aside.emailLabel}</a></p>
+          {/* The UK tree must offer the UK entity's own address: E-Commerce
+              Regs 2002 reg 6(1)(c) requires an email address allowing rapid and
+              direct communication, and a form does not satisfy it. It is also
+              the domain-by-audience rule (CLAUDE.md) — international
+              correspondence belongs on @biteperk.com, not the AU property.
+              The other four trees keep c.email until their mailboxes are
+              decided; that inconsistency predates this change. */}
+          <p>
+            <a class="link-arrow" href={isUk ? ukEmail.href : `mailto:${c.chrome.email}`}>
+              {ct.aside.emailLabel}
+            </a>
+          </p>
           <SocialLinks label={c.chrome.footerFollow} />
           {/* Contact takes its photo in the aside, not under the intro: the
               page is a two-column grid, and a full-width band between the
