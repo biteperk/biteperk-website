@@ -229,6 +229,14 @@ One-off documents Claude produces for this project — pitch decks, proposals, e
 | Contact | Published line `+61 2 5504 1140`; NAP Level 1/457-459 Elizabeth Street, Surry Hills NSW 2010 (moved from Haymarket, 28 Jul 2026) — byte-identical everywhere. Print-only demo line `(02) 7501 1140` stays off the website and all directories. Outbound email sender follows the **domain-by-audience rule** below — `@biteperk.com.au` to Australian prospects, `@biteperk.com` to everyone else. | Never. |
 | Legacy slugs | `voco*` and `perk*` redirects + `PRODUCT_SLUGS` entries | **Keep forever** — printed collateral and cached links still use them. |
 | Infra ids | Firebase project `vocotable`, the app subdomain, GCP project `vocotable-497209`, DB/image/package names, localStorage + event keys | Never — these are identity, not brand. |
+
+> 🏷️ **App/API/KDS hostnames and every infrastructure name are registered in the
+> product repo's [`NAMES.md`](https://github.com/biteperk/voxtable/blob/integration/NAMES.md)
+> — the estate-wide naming SSOT. Don't restate them here.** In flight since 3 Aug 2026:
+> `vocotable.* → app./api./kds.biteperk.com.au` (additive; old names keep serving).
+> `site.voxtableUrl` moves to `app.biteperk.com.au` at that migration's Phase 5 —
+> do not change it before the Firebase Hosting custom domain exists.
+
 ### Sender identity — which domain to email from (rev. 28 Jul 2026)
 
 **BitePerk owns two live front doors and they are audience-scoped, not legacy-vs-current.** Both are real, both stay. Which one you use in outbound email, signatures and collateral is decided by *where the prospect is*, not by which address is handy:
