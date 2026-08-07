@@ -22,6 +22,7 @@ import SocialLinks from "@/components/SocialLinks.astro";
 import LocaleSuggest from "@/components/LocaleSuggest.astro";
 import CityNav from "@/components/intl/CityNav.astro";
 import { INTL_NAV } from "@/data/intl/nav";
+import { products } from "@/data/products";
 import { entities, ukEmail } from "@/data/site";
 import { ukEntityGraph } from "@/data/schema";
 import { intlCitiesForBase } from "@/data/intl/cities";
@@ -164,11 +165,27 @@ const isUk = locale.market === "gb";
               keeps class intl-footer-links so chrome.spec's 44px-target and
               cookie-href locators keep their teeth. */}
           <div class="intl-footer-cols">
+            {/* Product links are brand nouns (VoxTable, …) shared across every
+                language, sourced from the AU catalogue's slug+name — every
+                locale emits /products/ and all four product pages. */}
+            <nav class="intl-footer-links" aria-labelledby="ifc-products">
+              <p class="intl-footer-col-title" id="ifc-products">{c.footerProducts}</p>
+              {products.map((prod) => (
+                <a href={p(`products/${prod.slug}`)}>{prod.name}</a>
+              ))}
+            </nav>
             <nav class="intl-footer-links" aria-labelledby="ifc-explore">
               <p class="intl-footer-col-title" id="ifc-explore">{c.footerExplore}</p>
               {INTL_NAV.map((item) => (
                 <a href={p(item.path)}>{c.nav[item.key]}</a>
               ))}
+              {/* The UK entity's published contact address (already in the
+                  statutory line below) — email only, never a phone: there is
+                  no European line and check-truthful bans inventing one. */}
+              {isUk && <a href={ukEmail.href}>{ukEmail.display}</a>}
+            </nav>
+            <nav class="intl-footer-links" aria-labelledby="ifc-legal">
+              <p class="intl-footer-col-title" id="ifc-legal">{c.footerLegal}</p>
               <a href={p("legal/privacy")}>{c.privacy}</a>
               <a href={p("legal/terms")}>{c.terms}</a>
               <a href={p("legal/cookies")}>{c.cookies}</a>
@@ -437,7 +454,11 @@ const isUk = locale.market === "gb";
 
   /* ── Footer ── */
   .intl-footer { border-top: 1px solid var(--line); padding-block: var(--space-8); margin-top: var(--space-9); }
-  .intl-footer-grid { display: grid; gap: var(--space-7); grid-template-columns: minmax(240px, 1.2fr) 1fr; }
+  /* AU-like ratio: the brand cell holds a short blurb; the link columns are
+     the footer's substance. The old 1.2fr/1fr split gave the BLURB more room
+     than all columns combined — with only two columns that produced the big
+     dead patch on the right that made the intl footer read as unfinished. */
+  .intl-footer-grid { display: grid; gap: var(--space-7); grid-template-columns: minmax(200px, 1fr) 2.2fr; }
   .intl-footer-brand { display: inline-flex; align-items: center; gap: 8px; }
   .intl-footer-blurb { color: var(--mist); max-width: 44ch; margin-top: var(--space-3); font-size: var(--fs-small); }
   /* Negative inline start cancels the icon's own 12px tap padding so the first
