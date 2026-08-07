@@ -57,6 +57,12 @@ export type ChromeCopy = {
       already aria-label="Site" and duplicate landmark names trip axe. */
   footerExplore: string;
   footerRegions: string;
+  /** Products column title (the links themselves are brand nouns from
+      products.ts — deliberately NOT a copy array; merge() replaces arrays
+      wholesale and a market override would silently truncate the list). */
+  footerProducts: string;
+  /** Legal column title (privacy/terms/cookies split out of Explore). */
+  footerLegal: string;
   /** Label for the social-profile row. Renders as a <p>, never a heading. */
   footerFollow: string;
   /** Locale-suggestion chip: shown in the TARGET locale's language. */
@@ -175,6 +181,8 @@ export const chrome: Record<Lang, ChromeCopy> = {
     citiesTitle: "Choose a city",
     footerExplore: "Explore",
     footerRegions: "Regions & languages",
+    footerProducts: "Products",
+    footerLegal: "Legal",
     footerFollow: "Follow us",
     suggest: "There's a BitePerk site for your region.",
     suggestDismiss: "Dismiss",
@@ -200,6 +208,10 @@ export const chrome: Record<Lang, ChromeCopy> = {
     citiesTitle: "Choisissez une ville",
     footerExplore: "Explorer",
     footerRegions: "Régions et langues",
+    // DRAFT French (7 Aug 2026) — needs Ludovic's pass. Column titles only;
+    // the product links themselves are brand nouns.
+    footerProducts: "Produits",
+    footerLegal: "Mentions légales",
     footerFollow: "Suivez-nous",
     suggest: "Un site BitePerk existe pour votre région.",
     suggestDismiss: "Fermer",
