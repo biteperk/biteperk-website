@@ -32,7 +32,6 @@ jobs:
           semgrep scan
           --config p/javascript
           --config p/typescript
-         
           --severity ERROR
           --error
 
@@ -41,7 +40,6 @@ jobs:
           semgrep scan
           --config p/javascript
           --config p/typescript
-         
           || true
 
   gitleaks:
