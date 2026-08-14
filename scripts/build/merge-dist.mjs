@@ -68,7 +68,10 @@ const urlsFrom = (file) => {
 const auUrls = urlsFrom(join(AU, "sitemap-0.xml"));
 // Keep only the /au-en/** locs from the AU sitemap (defensive; it should already
 // be all /au-en because the AU build's Astro base is /au-en).
-const auEnUrls = auUrls.filter((u) => u.includes(`${ORIGIN}/au-en/`));
+const auEnUrls = auUrls.filter((u) => {
+  const loc = u.match(/<loc>([^<]*)<\/loc>/)?.[1] ?? "";
+  return loc.startsWith(`${ORIGIN}/au-en/`);
+});
 const intlUrls = urlsFrom(join(GLOBAL, "sitemap-0.xml")); // /en + /fr
 const allUrls = [...auEnUrls, ...intlUrls];
 const sitemap =
