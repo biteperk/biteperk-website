@@ -131,15 +131,23 @@ const pages = globals.flatMap((l) => htmlFiles(join(DIST, l.base.replace(/^\//, 
 
 function alternatesOf(html) {
   const out = [];
-  for (const m of html.matchAll(/<link\b[^>]*rel="alternate"[^>]*>/g)) {
+  // One bounded quantifier per tag keeps the scan linear on whole HTML files;
+  // the attribute tests run on the short matched tag, not the document.
+  for (const m of html.matchAll(/<link\b[^>]*>/g)) {
     const tag = m[0];
+    if (!tag.includes('rel="alternate"')) continue;
     const hl = tag.match(/hreflang="([^"]+)"/);
     const hf = tag.match(/href="([^"]+)"/);
     if (hl && hf) out.push({ hreflang: hl[1], href: hf[1] });
   }
   return out;
 }
-const canonicalOf = (html) => (html.match(/<link\b[^>]*rel="canonical"[^>]*href="([^"]+)"/) || [])[1] ?? null;
+const canonicalOf = (html) => {
+  for (const m of html.matchAll(/<link\b[^>]*>/g)) {
+    if (m[0].includes('rel="canonical"')) return m[0].match(/href="([^"]+)"/)?.[1] ?? null;
+  }
+  return null;
+};
 
 const AU_BASE = AU[0]?.base.replace(/^\//, "") ?? "au-en";
 const AU_DIST = join(ROOT, "dist");

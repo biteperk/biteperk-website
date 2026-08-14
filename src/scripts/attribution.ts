@@ -26,7 +26,15 @@ function capture(): void {
     }
     // Only persist when there's a real campaign signal (or an external
     // referrer worth keeping) — avoids storing an empty blob for direct hits.
-    const ref = document.referrer && !document.referrer.includes(location.hostname)
+    // Hostname equality, not substring: "evil.com/?x=biteperk.com.au" must
+    // still count as external.
+    let refHost = "";
+    try {
+      refHost = document.referrer ? new URL(document.referrer).hostname : "";
+    } catch {
+      refHost = "";
+    }
+    const ref = refHost && refHost !== location.hostname
       ? document.referrer.slice(0, 300)
       : "";
     if (Object.keys(attr).length === 0 && !ref) return;
