@@ -105,8 +105,10 @@ const textOf = (content) =>
     .replace(/<(script|style)[\s\S]*?<\/\1>/g, " ")
     .replace(/<[^>]+>/g, " ")
     .replace(/&#39;/g, "'")
-    .replace(/&amp;/g, "&")
     .replace(/&nbsp;/g, " ")
+    // &amp; must be unescaped LAST or literal text like "&amp;nbsp;" would be
+    // double-unescaped into a space and vanish from the claim scan.
+    .replace(/&amp;/g, "&")
     .replace(/\s+/g, " ")
     .trim();
 

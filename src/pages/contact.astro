@@ -558,7 +558,14 @@ const description =
       function showError(msg: string) {
         if (!status) return;
         status.classList.add("is-error");
-        status.innerHTML = msg;
+        // The message can include text echoed from the server response, so it
+        // must never be interpreted as HTML — build the mailto link as a node.
+        status.textContent = msg + " You can also email us at ";
+        const mail = document.createElement("a");
+        mail.href = "mailto:hello@biteperk.com.au";
+        mail.textContent = "hello@biteperk.com.au";
+        status.appendChild(mail);
+        status.appendChild(document.createTextNode("."));
         status.hidden = false;
       }
 
@@ -620,15 +627,9 @@ const description =
             return; // form is gone; nothing left to re-enable
           }
 
-          showError(
-            (body.error || "Sorry — something went wrong.") +
-              ' You can also email us at <a href="mailto:hello@biteperk.com.au">hello@biteperk.com.au</a>.'
-          );
+          showError(body.error || "Sorry — something went wrong.");
         } catch {
-          showError(
-            'Network error — please try again, or email us at ' +
-              '<a href="mailto:hello@biteperk.com.au">hello@biteperk.com.au</a>.'
-          );
+          showError("Network error — please try again.");
         } finally {
           busy = false;
           if (btn) {
