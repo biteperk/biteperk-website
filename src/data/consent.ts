@@ -7,8 +7,9 @@
  *
  * Go-live checklist (one edit each):
  *   - `plausibleReady = true`  ← once the Plausible site for biteperk.com.au exists
+ *   - `googleAdsId = "AW-..."`  ← once the Google Ads account exists
  *   - `linkedInPartnerId = "1234567"`  ← once the LinkedIn ads account exists
- *   - (optional) fill `linkedInConversions` to fire ad conversions on goals
+ *   - (optional) fill platform conversion maps to fire ad conversions on goals
  *
  * `TRACKING_ARMED` is derived: while it's false NOTHING is armed, so the
  * banner does not show at all (nothing to consent to). The banner
@@ -16,7 +17,7 @@
  */
 
 /** Bump to invalidate stored choices and re-prompt everyone. */
-export const CONSENT_VERSION = 1;
+export const CONSENT_VERSION = 2;
 
 /** localStorage key holding the visitor's choice. Necessary, first-party. */
 export const CONSENT_KEY = "bp-consent";
@@ -26,6 +27,9 @@ export const plausibleReady = false;
 
 /** Marketing: LinkedIn Partner ID, e.g. "1234567". null = dormant. */
 export const linkedInPartnerId: string | null = null;
+
+/** Marketing: Google Ads tag ID. null = dormant. */
+export const googleAdsId: string | null = "AW-18397306929";
 
 /**
  * LinkedIn conversion IDs keyed by our goal name (see GOALS). Dormant
@@ -42,7 +46,7 @@ export const linkedInConversions: Partial<Record<GoalName, string>> = {
  * are dormant (not even rendered visible) until this is true, so shipping
  * before any account exists puts NO cookie notice on a tracker-free site.
  */
-export const TRACKING_ARMED = plausibleReady || linkedInPartnerId !== null;
+export const TRACKING_ARMED = plausibleReady || linkedInPartnerId !== null || googleAdsId !== null;
 
 /**
  * Canonical marketing goal taxonomy. Every conversion-worthy interaction
@@ -106,6 +110,6 @@ export const categories: ReadonlyArray<{
     id: "marketing",
     title: "Marketing",
     locked: false,
-    body: "The LinkedIn Insight Tag, so we can measure our LinkedIn ads and show relevant updates to people who've visited. This one sets third-party cookies — it only runs if you switch it on.",
+    body: "Google Ads and the LinkedIn Insight Tag, so we can measure our ads and show relevant updates to people who've visited. Ad storage and personalisation stay off unless you switch Marketing on.",
   },
 ];
