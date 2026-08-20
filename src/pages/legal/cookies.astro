@@ -2,7 +2,7 @@
 import Base from "@/layouts/Base.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import { site } from "@/data/site";
-import { categories, plausibleReady, linkedInPartnerId } from "@/data/consent";
+import { categories, plausibleReady, linkedInPartnerId, googleAdsId } from "@/data/consent";
 import { u } from "@/data/locales";
 
 const title = "Cookie policy — Biteperk";
@@ -10,7 +10,7 @@ const description =
   "What Biteperk stores in your browser and why. Strict opt-in: nothing non-essential runs until you accept. Change your choice any time.";
 
 const analyticsLive = plausibleReady;
-const marketingLive = linkedInPartnerId !== null;
+const marketingLive = linkedInPartnerId !== null || googleAdsId !== null;
 
 const necessary = categories.find((c) => c.id === "necessary")!;
 const analytics = categories.find((c) => c.id === "analytics")!;
@@ -33,11 +33,11 @@ const marketing = categories.find((c) => c.id === "marketing")!;
       <section>
         <h2>The short version</h2>
         <p>
-          We keep tracking to a minimum and we ask first. Nothing non-essential runs until you choose
+          We keep tracking to a minimum and we ask first. Ad storage and personalisation stay off until you choose
           <strong>Accept</strong>, "Reject all" is one click, and you can change your mind any time from
           <button type="button" class="legal-inline-btn" data-cookie-settings>Cookie settings</button>
           (also linked in the footer of every page). Our analytics are cookieless by design, and marketing
-          cookies only ever load if you switch them on.
+          cookies only ever turn on if you switch them on.
         </p>
       </section>
 
@@ -71,21 +71,22 @@ const marketing = categories.find((c) => c.id === "marketing")!;
         <h2>{marketing.title} <span class="legal-status">{marketingLive ? "Active — opt-in" : "Configured, not yet live"}</span></h2>
         <p>{marketing.body}</p>
         <p>
-          When enabled and accepted, the <strong>LinkedIn Insight Tag</strong> sets third-party cookies to
-          measure our LinkedIn advertising and let us reach venues who've visited. These may include:
+          When enabled and accepted, <strong>Google Ads</strong> and the <strong>LinkedIn Insight Tag</strong>
+          can set cookies to measure advertising and let us reach venues who've visited. These may include:
         </p>
         <table class="legal-table">
           <thead><tr><th>Name</th><th>Set by</th><th>Purpose</th></tr></thead>
           <tbody>
+            <tr><td><code>_gcl_au</code>, <code>_gcl_aw</code></td><td>Google</td><td>Ad click and conversion measurement.</td></tr>
             <tr><td><code>li_gc</code>, <code>lidc</code></td><td>LinkedIn</td><td>Consent + routing.</td></tr>
             <tr><td><code>bcookie</code>, <code>bscookie</code></td><td>LinkedIn</td><td>Browser identifier for ad measurement.</td></tr>
             <tr><td><code>UserMatchHistory</code>, <code>AnalyticsSyncHistory</code></td><td>LinkedIn</td><td>Ad audience sync.</td></tr>
           </tbody>
         </table>
         <p>
-          If you withdraw marketing consent we stop loading the tag immediately and clear the cookies we can
-          reach. Some LinkedIn cookies are set on LinkedIn's own domains and can only be cleared by LinkedIn or
-          from your browser settings — they expire on LinkedIn's schedule.
+          If you withdraw marketing consent we deny ad storage immediately and clear the cookies we can reach.
+          Some platform cookies are set on Google or LinkedIn domains and can only be cleared by those platforms
+          or from your browser settings — they expire on the platform's schedule.
         </p>
       </section>
 

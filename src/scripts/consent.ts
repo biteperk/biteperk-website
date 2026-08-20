@@ -20,6 +20,7 @@ import {
   CONSENT_KEY,
   CONSENT_VERSION,
   TRACKING_ARMED,
+  googleAdsId,
   linkedInPartnerId,
   type StoredConsent,
 } from "@/data/consent";
@@ -77,6 +78,42 @@ function needsChoice(): boolean {
 /* ── Marketing (LinkedIn Insight Tag) ───────────────────────────────── */
 
 let marketingLoaded = false;
+let googleAdsLoaded = false;
+
+type Gtag = (...args: unknown[]) => void;
+
+function ensureGtag(): Gtag {
+  const w = window as unknown as {
+    dataLayer?: unknown[];
+    gtag?: Gtag;
+  };
+
+  w.dataLayer ||= [];
+  w.gtag ||= function gtag(...args: unknown[]) {
+    w.dataLayer?.push(args);
+  };
+
+  return w.gtag;
+}
+
+function loadGoogleAds(): void {
+  if (googleAdsId == null || googleAdsLoaded) return;
+  googleAdsLoaded = true;
+
+  const gtag = ensureGtag();
+  gtag("consent", "default", {
+    ad_storage: "denied",
+    ad_user_data: "denied",
+    ad_personalization: "denied",
+    analytics_storage: "denied",
+  });
+  gtag("js", new Date());
+
+  const s = document.createElement("script");
+  s.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(googleAdsId)}`;
+  s.async = true;
+  document.head.appendChild(s);
+}
 
 function loadLinkedIn(): void {
   if (linkedInPartnerId == null || marketingLoaded) return;
@@ -97,7 +134,19 @@ function loadLinkedIn(): void {
  *  Cross-origin cookies on licdn.com / linkedin.com are out of our reach —
  *  disclosed in the Cookie Policy. */
 function clearMarketingCookies(): void {
-  const names = ["li_gc", "lidc", "bcookie", "bscookie", "UserMatchHistory", "AnalyticsSyncHistory"];
+  const names = [
+    "_gcl_au",
+    "_gcl_aw",
+    "_gcl_dc",
+    "_gcl_gb",
+    "_gac",
+    "li_gc",
+    "lidc",
+    "bcookie",
+    "bscookie",
+    "UserMatchHistory",
+    "AnalyticsSyncHistory",
+  ];
   const host = location.hostname;
   const domains = [host, "." + host, ".biteperk.com.au"];
   for (const n of names) {
@@ -107,8 +156,21 @@ function clearMarketingCookies(): void {
   }
 }
 
+function updateGoogleAdsConsent(marketing: boolean): void {
+  if (googleAdsId == null) return;
+  if (marketing) loadGoogleAds();
+  const gtag = ensureGtag();
+  gtag("consent", "update", {
+    ad_storage: marketing ? "granted" : "denied",
+    ad_user_data: marketing ? "granted" : "denied",
+    ad_personalization: marketing ? "granted" : "denied",
+  });
+  if (marketing) gtag("config", googleAdsId);
+}
+
 /** Apply the current stored choice to the marketing tag. */
 function applyMarketing(marketing: boolean): void {
+  updateGoogleAdsConsent(marketing);
   if (marketing) loadLinkedIn();
   else if (marketingLoaded) clearMarketingCookies();
 }
