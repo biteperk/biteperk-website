@@ -54,7 +54,8 @@ function onToggleClick(e: Event) {
   if (!reduce && typeof document.startViewTransition === "function") {
     try {
       root.setAttribute("data-theme-switching", "");
-      const vt = document.startViewTransition(() => apply(next));
+      apply(next);
+      const vt = document.startViewTransition(() => {});
       vt.finished.finally(() => root.removeAttribute("data-theme-switching"));
       return;
     } catch {
