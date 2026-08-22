@@ -1,0 +1,72 @@
+name: Deploy Firebase Hosting
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: firebase-hosting-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy:
+    name: Deploy latest main to Firebase Hosting
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    env:
+      INTL_LAUNCHED: "true"
+      FIREBASE_PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID }}
+      GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+      GCP_FIREBASE_DEPLOY_SERVICE_ACCOUNT: ${{ vars.GCP_FIREBASE_DEPLOY_SERVICE_ACCOUNT }}
+
+    steps:
+      - name: Checkout latest main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Validate deploy environment
+        run: |
+          set -euo pipefail
+
+          require_env() {
+            local name="$1"
+            if [[ -z "${!name:-}" ]]; then
+              echo "::error title=Missing GitHub variable::Set ${name} on the production GitHub Environment or repository variables." >&2
+              exit 1
+            fi
+          }
+
+          require_env "FIREBASE_PROJECT_ID"
+          require_env "GCP_WORKLOAD_IDENTITY_PROVIDER"
+          require_env "GCP_FIREBASE_DEPLOY_SERVICE_ACCOUNT"
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.GCP_FIREBASE_DEPLOY_SERVICE_ACCOUNT }}
+
+      - name: Build merged production site
+        run: npm run build:site
+
+      - name: Deploy Firebase Hosting
+        run: |
+          npx --yes firebase-tools@13.35.1 deploy \
+            --project "$FIREBASE_PROJECT_ID" \
+            --only hosting:biteperk-global,hosting:biteperk \
+            --non-interactive
