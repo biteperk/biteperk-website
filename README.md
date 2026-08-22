@@ -93,7 +93,22 @@ marketing/      print collateral + generators
 deliverables/   gitignored working material (decks, plans, local archive)
 ```
 
-## Deploy (manual — CI builds and gates, never deploys)
+## Deploy
+
+`.github/workflows/deploy-firebase.yml` manually deploys Firebase Hosting from
+`main` only. It checks out the latest `main`, builds the merged production tree
+with `INTL_LAUNCHED=true npm run build:site`, then deploys both Hosting targets:
+
+- `biteperk-global` — the site at `biteperk.com`.
+- `biteperk` — the `biteperk.com.au` redirect host.
+
+Required GitHub variables, normally on the `production` Environment:
+
+- `FIREBASE_PROJECT_ID` — `vocotable`.
+- `GCP_WORKLOAD_IDENTITY_PROVIDER`.
+- `GCP_FIREBASE_DEPLOY_SERVICE_ACCOUNT`.
+
+Manual deploy remains available for break-glass use:
 
 ```bash
 npm run build:site

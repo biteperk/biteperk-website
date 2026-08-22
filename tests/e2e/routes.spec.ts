@@ -18,7 +18,7 @@ for (const route of routes) {
     });
     page.on("pageerror", (err) => errors.push(`pageerror: ${err.message}`));
 
-    const res = await page.goto(route, { waitUntil: "networkidle" });
+    const res = await page.goto(route, { waitUntil: "domcontentloaded" });
     expect(res, `no response for ${route}`).toBeTruthy();
     // A direct request for the literal /404.html file is a file hit (200)
     // on astro preview; production serves it as the not-found handler with
@@ -45,7 +45,7 @@ for (const route of routes) {
   ]) {
     test(`no horizontal overflow @${label}: ${route}`, async ({ page }) => {
       await page.setViewportSize({ width, height });
-      await page.goto(route, { waitUntil: "networkidle" });
+      await page.goto(route, { waitUntil: "domcontentloaded" });
       const overflow = await page.evaluate(
         () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
       );
