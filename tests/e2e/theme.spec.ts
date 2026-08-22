@@ -44,6 +44,7 @@ test.describe("theme", () => {
     for (const stored of ["light", "dark"] as const) {
       await instrumentThemeLog(page, stored);
       await page.goto(p(), { waitUntil: "networkidle" });
+      await page.waitForFunction(() => window.__themeLog?.length > 0);
       const log = await page.evaluate(() => window.__themeLog);
       expect(log.length, "pre-paint script should set data-theme").toBeGreaterThan(0);
       // First value observed (set during <head> parse) is already correct,
