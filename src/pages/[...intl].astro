@@ -435,7 +435,7 @@ const appJsonLd =
           <h1>{ct.h1}</h1>
           <p class="lede">{ct.intro}</p>
 
-          <form class="intl-form" method="post" action="/api/contact">
+          <form class="intl-form" method="post" action="/api/contact" data-astro-reload>
             {/* Honeypot — same contract as the AU form / Cloud Function. */}
             <p class="hp" aria-hidden="true">
               <label>Leave this field empty<input type="text" name="_gotcha" tabindex="-1" autocomplete="off" /></label>
@@ -458,6 +458,7 @@ const appJsonLd =
               <textarea id="if-message" name="message" required maxlength="4000" rows="5" placeholder={ct.form.messagePlaceholder}></textarea>
             </div>
             <button class="btn" type="submit">{ct.form.submit}</button>
+            <p class="intl-form-status" role="status" aria-live="polite" hidden></p>
             <p class="muted form-note">{ct.form.note}</p>
           </form>
         </div>
@@ -734,6 +735,16 @@ const appJsonLd =
     box-shadow: var(--ring-focus);
   }
   .intl-form .btn { justify-self: start; }
+  .intl-form-status {
+    margin: 0;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    color: var(--mist-2);
+  }
+  .intl-form-status[hidden] { display: none; }
+  .intl-form-status.is-error { color: var(--danger); }
+  .intl-form-success h2 { margin-bottom: var(--space-3); }
   .form-note { font-size: var(--fs-small); margin: 0; }
 
   /* ── Product pages ────────────────────────────────────────────── */
@@ -793,3 +804,86 @@ const appJsonLd =
      so only city pages (and the market home strip) carry them. Restating
      them here would inline them on every page of every tree. */
 </style>
+
+<script>
+  import { googleAdsGlobalDemoContactConversionId } from "@/data/consent";
+  import { reportGoogleAdsConversion } from "@/scripts/google-ads";
+
+  (function () {
+    function initGlobalContact(): void {
+      if (location.pathname.replace(/\/+$/, "") !== "/en/contact") return;
+
+      const form = document.querySelector<HTMLFormElement>(".intl-form");
+      if (!form || form.dataset.enhanced === "1") return;
+      form.dataset.enhanced = "1";
+
+      const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      const status = form.querySelector<HTMLParagraphElement>(".intl-form-status");
+      const buttonLabel = button?.textContent ?? "Request a pilot";
+      let busy = false;
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        if (busy) return;
+        busy = true;
+
+        if (status) {
+          status.hidden = true;
+          status.classList.remove("is-error");
+        }
+        if (button) {
+          button.disabled = true;
+          button.setAttribute("aria-busy", "true");
+          button.textContent = "Sending…";
+        }
+
+        const payload: Record<string, string> = {};
+        new FormData(form).forEach((value, key) => {
+          payload[key] = typeof value === "string" ? value : "";
+        });
+
+        try {
+          const response = await fetch("/api/contact", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify(payload),
+          });
+          const body = await response.json().catch(() => ({})) as { ok?: boolean; error?: string };
+
+          if (response.ok && body.ok) {
+            reportGoogleAdsConversion(googleAdsGlobalDemoContactConversionId);
+            document.dispatchEvent(new CustomEvent("bp:event", { detail: { name: "form-success" } }));
+            form.innerHTML =
+              '<div class="intl-form-success">' +
+              "<h2>Thanks — we'll be in touch.</h2>" +
+              "<p>Your request has reached the BitePerk team. We'll reply within a business day.</p>" +
+              "</div>";
+            return;
+          }
+
+          if (status) {
+            status.textContent = body.error || "Sorry — something went wrong. Please try again.";
+            status.classList.add("is-error");
+            status.hidden = false;
+          }
+        } catch {
+          if (status) {
+            status.textContent = "Network error — please try again or email hello@biteperk.com.au.";
+            status.classList.add("is-error");
+            status.hidden = false;
+          }
+        } finally {
+          busy = false;
+          if (button && button.isConnected) {
+            button.disabled = false;
+            button.removeAttribute("aria-busy");
+            button.textContent = buttonLabel;
+          }
+        }
+      });
+    }
+
+    initGlobalContact();
+    document.addEventListener("astro:page-load", initGlobalContact);
+  })();
+</script>

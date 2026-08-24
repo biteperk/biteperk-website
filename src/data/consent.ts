@@ -31,6 +31,16 @@ export const linkedInPartnerId: string | null = null;
 /** Marketing: Google Ads tag ID. null = dormant. */
 export const googleAdsId: string | null = "AW-18397306929";
 
+/** Google Ads conversion destination for a confirmed AU demo-form submission. */
+export const googleAdsDemoContactConversionId: string | null = googleAdsId
+  ? `${googleAdsId}/m_x8COqW9OYcELHAwsRE`
+  : null;
+
+/** Google Ads conversion destination for a confirmed /en contact submission. */
+export const googleAdsGlobalDemoContactConversionId: string | null = googleAdsId
+  ? `${googleAdsId}/bn2iCLeH5-YcELHAwsRE`
+  : null;
+
 /**
  * LinkedIn conversion IDs keyed by our goal name (see GOALS). Dormant
  * until both a partner ID and an entry here exist. Only the mapped goals
