@@ -15,6 +15,37 @@ async function fillForm(page: Page) {
 }
 
 test.describe("contact form", () => {
+  test("reports the Google Ads demo conversion after a confirmed demo submission", async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem(
+        "bp-consent",
+        JSON.stringify({ v: 2, analytics: false, marketing: true, ts: Date.now() }),
+      );
+      const w = window as unknown as {
+        __gtagCalls: unknown[][];
+        gtag: (...args: unknown[]) => void;
+      };
+      w.__gtagCalls = [];
+      w.gtag = (...args: unknown[]) => w.__gtagCalls.push(args);
+    });
+    await page.route("**/api/contact", (route) =>
+      route.fulfill({ status: 200, json: { ok: true } }),
+    );
+
+    await page.goto(p("/contact/?intent=demo"));
+    await fillForm(page);
+    await page.click(".contact-submit");
+    await expect(page.locator(".contact-success")).toBeVisible();
+
+    const conversions = await page.evaluate(() => {
+      const calls = (window as unknown as { __gtagCalls: unknown[][] }).__gtagCalls;
+      return calls.filter((call) => call[0] === "event" && call[1] === "conversion");
+    });
+    expect(conversions).toEqual([
+      ["event", "conversion", { send_to: "AW-18397306929/m_x8COqW9OYcELHAwsRE" }],
+    ]);
+  });
+
   test("sends the documented JSON payload and shows success state", async ({ page }) => {
     let captured: Record<string, string> | null = null;
     await page.route("**/api/contact", async (route) => {
