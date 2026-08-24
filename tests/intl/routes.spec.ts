@@ -17,6 +17,18 @@ const WIDTHS = [
   { label: "tablet", width: 768, height: 1024 },
 ];
 
+test.beforeEach(async ({ page }) => {
+  // The generic route sweep gates console errors produced by Biteperk code.
+  // Google's cross-origin reCAPTCHA iframe calls the Storage Access API and
+  // headless Chromium reports its expected denial as console.error, even
+  // though the widget still works. Stub only the vendor loader here to keep
+  // that third-party diagnostic from masking first-party failures. The
+  // dedicated contact spec verifies the widget contract and submitted token.
+  await page.route("https://www.google.com/recaptcha/api.js**", (route) =>
+    route.fulfill({ contentType: "application/javascript", body: "" }),
+  );
+});
+
 for (const route of routes) {
   test(`renders clean: ${route}`, async ({ page }) => {
     const errors: string[] = [];
