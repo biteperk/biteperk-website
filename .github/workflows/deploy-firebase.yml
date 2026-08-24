@@ -23,6 +23,7 @@ jobs:
       FIREBASE_PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID }}
       GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
       GCP_FIREBASE_DEPLOY_SERVICE_ACCOUNT: ${{ vars.GCP_FIREBASE_DEPLOY_SERVICE_ACCOUNT }}
+      PUBLIC_RECAPTCHA_SITE_KEY: ${{ vars.PUBLIC_RECAPTCHA_SITE_KEY }}
 
     steps:
       - name: Checkout latest main
@@ -54,6 +55,7 @@ jobs:
           require_env "FIREBASE_PROJECT_ID"
           require_env "GCP_WORKLOAD_IDENTITY_PROVIDER"
           require_env "GCP_FIREBASE_DEPLOY_SERVICE_ACCOUNT"
+          require_env "PUBLIC_RECAPTCHA_SITE_KEY"
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
