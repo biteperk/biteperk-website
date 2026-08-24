@@ -644,13 +644,13 @@ export const privacy: Record<Lang, SimplePageCopy> = {
       {
         heading: "What we collect on this site",
         body: [
-          "The contact form asks for your name, work email, venue name and message. We use these to respond to your enquiry and, if you ask about a pilot, to organise it. Nothing else on this site collects personal data: there is no advertising tracking, and no analytics cookies run without consent.",
+          "The contact form asks for your name, work email, venue name and message. We use these to respond to your enquiry and, if you ask about a pilot, to organise it. Google reCAPTCHA processes technical request data when you submit the /en contact form to verify that you are human and prevent spam. There is no advertising tracking, and no analytics cookies run without consent.",
         ],
       },
       {
         heading: "Where it's stored",
         body: [
-          "Form submissions are stored with our infrastructure provider, Google Cloud (Firestore), in an Australian region, and a notification email is sent to our team. If you are in the EU/EEA this involves a transfer of your data outside the EEA; we limit it to the enquiry itself and are putting standard contractual clauses and a European data path in place as part of our European launch.",
+          "Form submissions are stored with our infrastructure provider, Google Cloud (Firestore), entered into our Zoho CRM account for follow-up, and sent to our team by notification email. If you are in the EU/EEA this involves a transfer of your data outside the EEA; we limit it to the enquiry itself and are putting standard contractual clauses and a European data path in place as part of our European launch.",
         ],
       },
       {
@@ -791,7 +791,7 @@ export const cookies: Record<Lang, SimplePageCopy> = {
       {
         heading: "Strictly necessary",
         body: [
-          "One small entry remembers your cookie choice so we don't ask again on every page, and another remembers whether you prefer the light or dark theme. These are stored in your browser, are never shared, and cannot be switched off — without them the site cannot honour the choices you have already made.",
+          "One small entry remembers your cookie choice so we don't ask again on every page, and another remembers whether you prefer the light or dark theme. When you submit the /en contact form, Google reCAPTCHA runs as a strictly necessary anti-spam check and processes technical request data to verify that you are human. These protections cannot be switched off because the site cannot safely accept the form without them.",
         ],
       },
       {
