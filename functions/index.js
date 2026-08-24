@@ -22,6 +22,7 @@ const db = getFirestore("biteperk-leads"); // named DB in australia-southeast1
 const ZOHO_SMTP_PASS = defineSecret("ZOHO_SMTP_PASS");
 const RECAPTCHA_SECRET_KEY = defineSecret("RECAPTCHA_SECRET_KEY");
 const RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
+const RECAPTCHA_TOKEN_MAX_LENGTH = 16384;
 
 // --- Non-secret config (hardcoded on purpose; only the password is a secret) ---
 // Auth as the real mailbox (biteperk@); hello@ is an alias of it. We send From
@@ -125,7 +126,15 @@ exports.contactForm = onRequest(
     // The checkbox is only a token generator. The /en CRM form is not
     // accepted until Google verifies that token here on the server.
     if (zohoGlobal) {
-      const recaptchaToken = str(b["g-recaptcha-response"], 2048);
+      // reCAPTCHA response sizes are not fixed and can exceed 2 KiB. Reject an
+      // unreasonable payload instead of truncating its cryptographic signature.
+      const recaptchaToken = typeof b["g-recaptcha-response"] === "string"
+        ? b["g-recaptcha-response"].trim()
+        : "";
+      if (recaptchaToken.length > RECAPTCHA_TOKEN_MAX_LENGTH) {
+        logger.warn("contactForm: oversized reCAPTCHA token", { tokenLength: recaptchaToken.length });
+        return finish(res, false, 403, "Please complete the human verification and try again.", wantsJson);
+      }
       const remoteIp = str((req.get("x-forwarded-for") || "").split(",")[0], 60);
       const verified = await verifyRecaptcha(recaptchaToken, remoteIp);
       if (!verified) {
@@ -213,7 +222,10 @@ async function verifyRecaptcha(token, remoteIp) {
 
     const result = await response.json();
     if (!result.success) {
-      logger.warn("contactForm: reCAPTCHA rejected token", { errors: result["error-codes"] || [] });
+      logger.warn("contactForm: reCAPTCHA rejected token", {
+        errors: result["error-codes"] || [],
+        tokenLength: token.length,
+      });
       return false;
     }
 
