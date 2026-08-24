@@ -108,7 +108,7 @@ export const categories: ReadonlyArray<{
     id: "necessary",
     title: "Strictly necessary",
     locked: true,
-    body: "Remembers your theme and your cookie choice so the site works and doesn't ask you twice. Stored only in your browser (localStorage) — never sent to a server, no personal data.",
+    body: "Remembers your theme and cookie choice in your browser. When you submit the global contact form, Google reCAPTCHA processes technical request data to verify that you are human and prevent spam.",
   },
   {
     id: "analytics",

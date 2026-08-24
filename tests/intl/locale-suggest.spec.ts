@@ -27,8 +27,12 @@ async function pageWithLanguages(browser: Browser, languages: string[]): Promise
   return ctx.newPage();
 }
 
-const chip = (page: Page) =>
-  page.evaluate(() => {
+const chip = async (page: Page) => {
+  // `networkidle` does not guarantee that Astro's deferred client module has
+  // executed, particularly in WebKit under a busy parallel CI run. Wait for
+  // the initializer's own bound marker before reading the link it replaces.
+  await expect(page.locator("[data-locale-suggest]")).toHaveAttribute("data-ls-bound", "1");
+  return page.evaluate(() => {
     const el = document.querySelector<HTMLElement>("[data-locale-suggest]");
     return {
       visible: !!el && !el.hidden,
@@ -36,6 +40,7 @@ const chip = (page: Page) =>
       text: el?.querySelector("[data-ls-text]")?.textContent ?? null,
     };
   });
+};
 
 test("offers the UK site to a UK browser that landed on /en", async ({ browser }) => {
   const page = await pageWithLanguages(browser, ["en-GB", "en"]);

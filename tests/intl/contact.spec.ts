@@ -21,6 +21,10 @@ test("global contact submits every field and reports its Google Ads conversion",
     await route.fulfill({ status: 200, json: { ok: true } });
   });
 
+  // Avoid a third-party dependency in browser tests. The production widget
+  // creates this same hidden response field after its challenge succeeds.
+  await page.route("https://www.google.com/recaptcha/**", (route) => route.abort());
+
   await page.goto("/en/contact/");
   const form = page.locator(".intl-form");
   await expect(form).toHaveAttribute("data-astro-reload", "");
@@ -28,7 +32,15 @@ test("global contact submits every field and reports its Google Ads conversion",
   await page.fill("#if-name", "Test Diner");
   await page.fill("#if-email", "diner@example.com");
   await page.fill("#if-venue", "QA Bistro");
+  await page.selectOption("#if-product", "voxorder");
   await page.fill("#if-message", "Automated QA message — please ignore.");
+  await page.locator(".g-recaptcha").evaluate((widget) => {
+    const token = document.createElement("input");
+    token.type = "hidden";
+    token.name = "g-recaptcha-response";
+    token.value = "test-recaptcha-token";
+    widget.append(token);
+  });
 
   await form.locator('button[type="submit"]').click();
   await expect(page.locator(".intl-form-success")).toBeVisible();
@@ -39,8 +51,10 @@ test("global contact submits every field and reports its Google Ads conversion",
     email: "diner@example.com",
     venue: "QA Bistro",
     message: "Automated QA message — please ignore.",
-    product: "general",
+    product: "voxorder",
+    crmForm: "zoho-global",
     _gotcha: "",
+    "g-recaptcha-response": "test-recaptcha-token",
   });
 
   const conversions = await page.evaluate(() => {
