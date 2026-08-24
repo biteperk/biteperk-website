@@ -512,6 +512,9 @@ const description =
 </style>
 
 <script>
+  import { googleAdsDemoContactConversionId } from "@/data/consent";
+  import { reportGoogleAdsConversion } from "@/scripts/google-ads";
+
   (function () {
     function init() {
       const form = document.querySelector<HTMLFormElement>(".contact-form");
@@ -554,6 +557,11 @@ const description =
       const status = form.querySelector<HTMLParagraphElement>(".contact-status");
       const btnLabel = btn ? btn.textContent : "Send message →";
       let busy = false;
+
+      function reportDemoConversion(): void {
+        if (params.get("intent") !== "demo" || googleAdsDemoContactConversionId == null) return;
+        reportGoogleAdsConversion(googleAdsDemoContactConversionId);
+      }
 
       function showError(msg: string) {
         if (!status) return;
@@ -623,6 +631,7 @@ const description =
 
           if (res.ok && body.ok) {
             showSuccess();
+            reportDemoConversion();
             document.dispatchEvent(new CustomEvent("bp:event", { detail: { name: "form-success" } }));
             return; // form is gone; nothing left to re-enable
           }
