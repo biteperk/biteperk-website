@@ -87,11 +87,11 @@ export const site: SiteData = {
     "Biteperk builds voice and AI tools for hospitality — starting with VoxTable, the AI phone host that answers every restaurant call in a warm Australian voice. Made in Sydney.",
   phone: { display: "+61 2 5504 1140", href: "tel:+61255041140" },
   email: { display: "hello@biteperk.com.au", href: "mailto:hello@biteperk.com.au" },
-  // NOTE (Vox rename, Jul 2026): the booking app still lives on the legacy
-  // `vocotable.` subdomain. Do NOT change this URL until the app + DNS are
-  // migrated to a `voxtable.` subdomain (then update the lychee exclude in
-  // .github/workflows/web.yml too).
-  voxtableUrl: "https://vocotable.biteperk.com.au",
+  // Canonical dashboard host since the 25 Aug 2026 product-subdomain
+  // decision (NAMES.md §2 in the voxtable repo). The legacy `vocotable.`
+  // host still serves and redirects here. If this ever changes again,
+  // update the lychee exclude in .github/workflows/web.yml with it.
+  voxtableUrl: "https://voxtable.biteperk.com.au",
   // Registered with ASIC 29 Jul 2026 (application 2607-PG-3124). The ABN
   // embeds the ACN — "36" + "700831303" — which is how every Australian
   // company's two identifiers relate. Both verified against their official

@@ -115,7 +115,7 @@ jobs:
           args: >-
             --no-progress
             --exclude-mail
-            --exclude '^https://(vocotable\.biteperk|formspree)'
+            --exclude '^https://((voco|vox)table\.biteperk|formspree)'
             # Social hosts bot-block CI runners (LinkedIn 999, Instagram 403).
             # `fail: false` means they can never redden the build, but a report
             # full of false failures is how a real one gets scrolled past.

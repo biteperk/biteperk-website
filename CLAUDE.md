@@ -233,8 +233,8 @@ One-off documents Claude produces for this project — pitch decks, proposals, e
 > 🏷️ **App/API/KDS hostnames and every infrastructure name are registered in the
 > product repo's [`NAMES.md`](https://github.com/biteperk/voxtable/blob/integration/NAMES.md)
 > — the estate-wide naming SSOT. Don't restate them here.** In flight since 3 Aug 2026:
-> `vocotable.* → app./api./kds.biteperk.com.au` (additive; old names keep serving).
-> `site.voxtableUrl` moves to `app.biteperk.com.au` at that migration's Phase 5 —
+> `vocotable.* → voxtable./api./kds.biteperk.com.au` (product-named subdomains, decided 25 Aug 2026; the earlier `app.` plan was superseded before shipping) (additive; old names keep serving).
+> `site.voxtableUrl` moved to `voxtable.biteperk.com.au` (25 Aug 2026) —
 > do not change it before the Firebase Hosting custom domain exists.
 
 ### Sender identity — which domain to email from (rev. 28 Jul 2026)
