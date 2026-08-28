@@ -120,6 +120,9 @@ function loadGoogleAds(): void {
   const s = document.createElement("script");
   s.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(googleAdsId)}`;
   s.async = true;
+  // Consent-mode diagnostics still see the tag, while low priority keeps this
+  // third-party download from competing with the page's LCP image and fonts.
+  s.fetchPriority = "low";
   document.head.appendChild(s);
 }
 
