@@ -1,9 +1,10 @@
 /**
  * Cookie-consent + tracking config — the single source of truth.
  *
- * The website ships privacy-first: strict opt-in, nothing non-essential
- * runs until the visitor clicks Accept. Everything here is STAGED and
- * inert until an account ID is filled in — flip one field to go live.
+ * The website ships privacy-first. Google Ads uses advanced consent mode:
+ * it initializes with advertising storage, user-data use and personalisation
+ * denied, and may send limited cookieless measurement signals in that state.
+ * Optional storage and all other marketing trackers remain opt-in.
  *
  * Go-live checklist (one edit each):
  *   - `plausibleReady = true`  ← once the Plausible site for biteperk.com.au exists
@@ -17,7 +18,10 @@
  */
 
 /** Bump to invalidate stored choices and re-prompt everyone. */
-export const CONSENT_VERSION = 2;
+export const CONSENT_VERSION = 3;
+
+/** Display date for the privacy/cookie disclosures changed with this version. */
+export const CONSENT_POLICY_LAST_UPDATED = "2026-08-28";
 
 /** localStorage key holding the visitor's choice. Necessary, first-party. */
 export const CONSENT_KEY = "bp-consent";
@@ -120,6 +124,6 @@ export const categories: ReadonlyArray<{
     id: "marketing",
     title: "Marketing",
     locked: false,
-    body: "Google Ads and the LinkedIn Insight Tag, so we can measure our ads and show relevant updates to people who've visited. Ad storage and personalisation stay off unless you switch Marketing on.",
+    body: "Google Ads uses consent mode to send limited cookieless measurement signals while consent is denied. Ad storage, advertising user-data use, personalisation and the LinkedIn Insight Tag stay off unless you switch Marketing on.",
   },
 ];

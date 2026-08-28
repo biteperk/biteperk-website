@@ -1,18 +1,10 @@
-import { CONSENT_KEY, CONSENT_VERSION } from "@/data/consent";
-
-/** Report a Google Ads conversion only when current marketing consent permits it. */
+/**
+ * Report a confirmed conversion through Google's advanced consent mode.
+ * The Google tag owns the consent decision: when advertising consent is
+ * denied it sends a cookieless ping; when granted it may use ad storage.
+ */
 export function reportGoogleAdsConversion(destination: string | null): void {
   if (destination == null) return;
-
-  try {
-    const consent = JSON.parse(localStorage.getItem(CONSENT_KEY) ?? "null") as {
-      v?: number;
-      marketing?: boolean;
-    } | null;
-    if (consent?.v !== CONSENT_VERSION || consent.marketing !== true) return;
-  } catch {
-    return;
-  }
 
   const gtag = (window as unknown as {
     gtag?: (...args: unknown[]) => void;

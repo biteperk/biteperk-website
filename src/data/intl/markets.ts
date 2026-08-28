@@ -329,7 +329,7 @@ const gbEn: MarketContent = {
         {
           heading: "What we collect on this site",
           body: [
-            "The contact form asks for your name, work email, venue name and message. We use these to respond to your enquiry and, if you ask about a pilot, to organise it. Nothing else on this site collects personal data: there is no advertising tracking, and no analytics cookies run without consent.",
+            "The contact form asks for your name, work email, venue name and message. We use these to respond to your enquiry and, if you ask about a pilot, to organise it. Google Ads consent mode may send limited cookieless measurement signals while advertising storage, user-data use and personalisation are denied. Analytics cookies do not run without consent.",
           ],
         },
         {

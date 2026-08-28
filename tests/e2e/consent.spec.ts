@@ -8,16 +8,59 @@ import { p } from "../helpers/routes";
  * tests force it visible with ?cookie-preview=1. Contract lives in
  * src/scripts/consent.ts + src/components/ConsentBanner.astro.
  *
- * Strict opt-in: nothing is asserted about tracking network calls here
- * (Plausible/LinkedIn are both un-armed); the behavioural contract is
- * storage + UI. A separate manual devtools check covers "no beacon
- * before consent" once a tracker is armed locally.
+ * Google Ads uses advanced consent mode, while Plausible and LinkedIn remain
+ * strict opt-in. These tests cover the denied-before-config command order as
+ * well as the storage and UI contract.
  */
 
 const PREVIEW = p("/?cookie-preview=1");
 
 test.describe("cookie consent", () => {
   test.use({ viewport: { width: 1280, height: 800 } });
+
+  test("initializes Google Ads denied before config, then grants after Accept", async ({ page }) => {
+    let tagRequests = 0;
+    await page.route(/https:\/\/www\.googletagmanager\.com\/gtag\/js.*/, async (route) => {
+      tagRequests += 1;
+      await route.fulfill({ status: 200, contentType: "application/javascript", body: "" });
+    });
+
+    await page.goto(PREVIEW);
+
+    const beforeChoice = await page.evaluate(() =>
+      ((window as unknown as { dataLayer?: unknown[][] }).dataLayer ?? []).filter(Array.isArray)
+    );
+    const defaultIndex = beforeChoice.findIndex(
+      (call) => call[0] === "consent" && call[1] === "default"
+    );
+    const configIndex = beforeChoice.findIndex(
+      (call) => call[0] === "config" && call[1] === "AW-18397306929"
+    );
+
+    expect(tagRequests).toBe(1);
+    expect(defaultIndex).toBeGreaterThanOrEqual(0);
+    expect(configIndex).toBeGreaterThan(defaultIndex);
+    expect(beforeChoice[defaultIndex][2]).toMatchObject({
+      ad_storage: "denied",
+      ad_user_data: "denied",
+      ad_personalization: "denied",
+      analytics_storage: "denied",
+      wait_for_update: 500,
+    });
+
+    await page.locator("[data-consent-accept]").click();
+    const granted = await page.evaluate(() =>
+      ((window as unknown as { dataLayer?: unknown[][] }).dataLayer ?? [])
+        .filter((call) => call[0] === "consent" && call[1] === "update")
+        .at(-1)
+    );
+    expect(granted?.[2]).toMatchObject({
+      ad_storage: "granted",
+      ad_user_data: "granted",
+      ad_personalization: "granted",
+      analytics_storage: "denied",
+    });
+  });
 
   test("shows once, Accept persists + hides + survives reload/navigation", async ({ page }) => {
     await page.goto(PREVIEW);

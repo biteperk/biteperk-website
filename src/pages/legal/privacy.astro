@@ -2,6 +2,7 @@
 import Base from "@/layouts/Base.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import { site } from "@/data/site";
+import { CONSENT_POLICY_LAST_UPDATED } from "@/data/consent";
 import { u } from "@/data/locales";
 
 const title = "Privacy policy — Biteperk";
@@ -19,7 +20,7 @@ const description =
       ]} />
       <header class="legal-head">
         <h1>Privacy policy</h1>
-        <p class="legal-updated">Last updated <time datetime={site.legalLastUpdated}>{site.legalLastUpdated}</time></p>
+        <p class="legal-updated">Last updated <time datetime={CONSENT_POLICY_LAST_UPDATED}>{CONSENT_POLICY_LAST_UPDATED}</time></p>
       </header>
 
       <section>
@@ -41,8 +42,9 @@ const description =
         <p>
           <strong>If you visit this website:</strong> when you contact us we collect the name, email, venue
           and message you provide, plus — if you arrived from a campaign link — the campaign details attached
-          to that enquiry. For the website itself we use privacy-first, cookieless analytics and, only if you
-          opt in, marketing tags for ad measurement. Ad storage and personalisation stay off until you choose <strong>Accept</strong>;
+          to that enquiry. For the website itself we use privacy-first analytics and Google Ads advanced consent
+          mode. Google may receive limited cookieless measurement signals while consent is denied. Ad storage,
+          advertising user-data use and personalisation stay off until you choose <strong>Accept</strong>;
           you can change or withdraw your choice any time from <strong>Cookie settings</strong> in the footer.
           Full details are in our <a href={u("/legal/cookies/")}>Cookie Policy</a>.
         </p>

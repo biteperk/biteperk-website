@@ -1,12 +1,12 @@
 import { expect, test } from "@playwright/test";
 
-test("global contact submits every field and reports its Google Ads conversion", async ({ page }) => {
+test("global contact submits every field and reports its consent-aware Google Ads conversion", async ({ page }) => {
   let submittedBody: Record<string, string> = {};
 
   await page.addInitScript(() => {
     localStorage.setItem(
       "bp-consent",
-      JSON.stringify({ v: 2, analytics: false, marketing: true, ts: Date.now() }),
+      JSON.stringify({ v: 3, analytics: false, marketing: false, ts: Date.now() }),
     );
     const w = window as unknown as {
       __gtagCalls: unknown[][];

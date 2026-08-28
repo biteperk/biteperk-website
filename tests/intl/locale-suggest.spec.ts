@@ -21,7 +21,7 @@ async function pageWithLanguages(browser: Browser, languages: string[]): Promise
     Object.defineProperty(navigator, "language", { get: () => langs[0] });
     localStorage.setItem(
       "bp-consent",
-      JSON.stringify({ v: 2, analytics: false, marketing: false, ts: Date.now() })
+      JSON.stringify({ v: 3, analytics: false, marketing: false, ts: Date.now() })
     );
   }, languages);
   return ctx.newPage();
