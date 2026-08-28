@@ -190,7 +190,7 @@ jobs:
       # A genuine regression still fails both attempts, so the budget keeps its
       # teeth. If this starts retrying often, that is signal — shorten the
       # text-LCP path rather than widening the number.
-      - name: Lighthouse CI budgets (perf ≥95, LCP ≤2.5s, CLS ≤0.02, JS ≤60KB)
+      - name: Lighthouse CI budgets (perf ≥95, LCP ≤2.5s, CLS ≤0.02, first-party JS ≤60KB)
         if: matrix.target == 'au'
         id: lhci
         continue-on-error: true
@@ -252,4 +252,3 @@ jobs:
           node scripts/gates/check-routes.mjs
           node scripts/gates/check-hreflang.mjs
           node scripts/gates/check-links.mjs
-
