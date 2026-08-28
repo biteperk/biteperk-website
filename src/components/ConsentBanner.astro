@@ -2,8 +2,9 @@
 /**
  * Cookie consent — bottom bar + settings modal.
  *
- * Strict opt-in, no dark patterns: "Reject all" is a real button of equal
- * weight to "Accept all". Behaviour + focus-trap live in
+ * No dark patterns: "Reject all" is a real button of equal weight to
+ * "Accept all". Google Ads uses denied-by-default advanced consent mode;
+ * other optional trackers remain strict opt-in. Behaviour + focus-trap live in
  * src/scripts/consent.ts (mirrors mobile-menu.ts). Theme-aware via tokens.
  *
  * Visibility: rendered on every page but shown ONLY when
@@ -39,9 +40,9 @@ const necessary = categories.find((c) => c.locked)!;
   >
     <div class="consent-bar-inner">
       <p class="consent-copy">
-        We use privacy-first, cookieless analytics and — only if you allow it —
-        ad measurement, to improve the site and reach venues like yours.
-        Ad storage and personalisation stay off until you choose. <a href={cookiesHref}>Cookie Policy</a>.
+        We use privacy-first analytics and Google consent mode for ad measurement.
+        Google may receive limited cookieless signals while consent is denied;
+        ad storage and personalisation stay off unless you allow Marketing. <a href={cookiesHref}>Cookie Policy</a>.
       </p>
       <div class="consent-actions">
         <button type="button" class="consent-btn-text" data-consent-settings>

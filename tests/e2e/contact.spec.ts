@@ -19,7 +19,7 @@ test.describe("contact form", () => {
     await page.addInitScript(() => {
       localStorage.setItem(
         "bp-consent",
-        JSON.stringify({ v: 2, analytics: false, marketing: true, ts: Date.now() }),
+        JSON.stringify({ v: 3, analytics: false, marketing: true, ts: Date.now() }),
       );
       const w = window as unknown as {
         __gtagCalls: unknown[][];

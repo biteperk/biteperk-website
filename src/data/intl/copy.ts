@@ -644,7 +644,7 @@ export const privacy: Record<Lang, SimplePageCopy> = {
       {
         heading: "What we collect on this site",
         body: [
-          "The contact form asks for your name, work email, venue name and message. We use these to respond to your enquiry and, if you ask about a pilot, to organise it. Google reCAPTCHA processes technical request data when you submit the /en contact form to verify that you are human and prevent spam. There is no advertising tracking, and no analytics cookies run without consent.",
+          "The contact form asks for your name, work email, venue name and message. We use these to respond to your enquiry and, if you ask about a pilot, to organise it. Google reCAPTCHA processes technical request data when you submit the /en contact form to verify that you are human and prevent spam. Google Ads consent mode may send limited cookieless measurement signals while advertising storage, user-data use and personalisation are denied. Analytics cookies do not run without consent.",
         ],
       },
       {
@@ -678,7 +678,7 @@ export const privacy: Record<Lang, SimplePageCopy> = {
       {
         heading: "Ce que nous collectons sur ce site",
         body: [
-          "Le formulaire de contact demande votre nom, votre e-mail professionnel, le nom de votre établissement et votre message. Nous les utilisons pour répondre à votre demande et, si vous vous renseignez sur un pilote, pour l'organiser. Rien d'autre sur ce site ne collecte de données personnelles : pas de traçage publicitaire, et aucun cookie de mesure d'audience sans consentement.",
+          "Le formulaire de contact demande votre nom, votre e-mail professionnel, le nom de votre établissement et votre message. Nous les utilisons pour répondre à votre demande et, si vous vous renseignez sur un pilote, pour l'organiser. Le mode Consentement de Google Ads peut transmettre des signaux de mesure limités et sans cookie lorsque le stockage publicitaire, l'utilisation des données publicitaires et la personnalisation sont refusés. Aucun cookie de mesure d'audience ne fonctionne sans consentement.",
         ],
       },
       {
@@ -775,18 +775,18 @@ export const terms: Record<Lang, SimplePageCopy> = {
  * it — a notice whose policy link 404s is a compliance failure, and these are
  * the strictest cookie regimes (UK GDPR/PECR, CNIL, Belgian DPA).
  *
- * Kept factually in step with src/data/consent.ts: the site is strict opt-in,
- * analytics are cookieless by design, and nothing non-essential is armed yet.
+ * Kept factually in step with src/data/consent.ts: Google Ads uses denied-by-
+ * default advanced consent mode; optional storage and other trackers are opt-in.
  */
 export const cookies: Record<Lang, SimplePageCopy> = {
   en: {
     title: "Cookie policy — BitePerk",
     description:
-      "What BitePerk stores in your browser and why. Strict opt-in: nothing non-essential runs until you accept, and you can change your mind at any time.",
+      "How BitePerk uses local storage, cookies and denied-by-default Google consent mode, and how you can change your choice at any time.",
     eyebrow: "Legal",
     h1: "Cookie policy",
     intro:
-      "We keep tracking to a minimum and we ask first. Nothing non-essential runs on this site until you choose to allow it, refusing is a single click, and you can change your mind at any time from Cookie settings in the footer of every page.",
+      "We keep tracking to a minimum. Google Ads starts with every advertising consent signal denied and may send limited cookieless measurement signals in that state. Advertising storage and personalisation stay off unless you allow Marketing; refusing is a single click, and you can change your mind at any time from Cookie settings in the footer of every page.",
     sections: [
       {
         heading: "Strictly necessary",
@@ -803,7 +803,7 @@ export const cookies: Record<Lang, SimplePageCopy> = {
       {
         heading: "Marketing",
         body: [
-          "We run no advertising or marketing trackers on this site today. If that ever changes, they will be off by default, listed here first, and will only ever load after you switch them on.",
+          "Google Ads uses advanced consent mode. Its tag loads with advertising storage, advertising user-data use and personalisation denied, and may send consent status and limited cookieless measurement pings in that state. If you allow Marketing, Google Ads may use advertising cookies and the LinkedIn Insight Tag may load. With Marketing denied, neither may use advertising storage or personalisation.",
         ],
       },
       {
@@ -818,11 +818,11 @@ export const cookies: Record<Lang, SimplePageCopy> = {
   fr: {
     title: "Politique relative aux cookies — BitePerk",
     description:
-      "Ce que BitePerk enregistre dans votre navigateur, et pourquoi. Consentement préalable : rien de non essentiel ne se déclenche sans votre accord, révocable à tout moment.",
+      "Comment BitePerk utilise le stockage local, les cookies et le mode Consentement de Google, refusé par défaut, et comment modifier votre choix à tout moment.",
     eyebrow: "Mentions légales",
     h1: "Politique relative aux cookies",
     intro:
-      "Nous limitons le suivi au strict minimum et nous demandons votre accord au préalable. Rien de non essentiel ne se déclenche sur ce site tant que vous ne l'avez pas autorisé, refuser tient en un clic, et vous pouvez revenir sur votre choix à tout moment depuis « Paramètres des cookies », en bas de chaque page.",
+      "Nous limitons le suivi au strict minimum. Google Ads démarre avec tous les signaux de consentement publicitaire refusés et peut transmettre, dans cet état, des signaux de mesure limités et sans cookie. Le stockage publicitaire et la personnalisation restent désactivés sauf si vous autorisez le Marketing ; refuser tient en un clic et vous pouvez modifier votre choix à tout moment depuis « Paramètres des cookies », en bas de chaque page.",
     sections: [
       {
         heading: "Strictement nécessaires",
@@ -839,7 +839,7 @@ export const cookies: Record<Lang, SimplePageCopy> = {
       {
         heading: "Marketing",
         body: [
-          "Aucun traceur publicitaire ou marketing n'est utilisé sur ce site à ce jour. Si cela devait changer, ces traceurs seraient désactivés par défaut, décrits ici au préalable, et ne se chargeraient qu'après votre autorisation explicite.",
+          "Google Ads utilise le mode Consentement avancé. Sa balise se charge alors que le stockage publicitaire, l'utilisation des données publicitaires et la personnalisation sont refusés, et peut transmettre l'état du consentement ainsi que des signaux de mesure limités et sans cookie. Si vous autorisez le Marketing, Google Ads peut utiliser des cookies publicitaires et la balise LinkedIn Insight peut se charger. En cas de refus, aucun des deux ne peut utiliser le stockage publicitaire ni la personnalisation.",
         ],
       },
       {

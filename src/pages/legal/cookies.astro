@@ -2,12 +2,18 @@
 import Base from "@/layouts/Base.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import { site } from "@/data/site";
-import { categories, plausibleReady, linkedInPartnerId, googleAdsId } from "@/data/consent";
+import {
+  categories,
+  plausibleReady,
+  linkedInPartnerId,
+  googleAdsId,
+  CONSENT_POLICY_LAST_UPDATED,
+} from "@/data/consent";
 import { u } from "@/data/locales";
 
 const title = "Cookie policy — Biteperk";
 const description =
-  "What Biteperk stores in your browser and why. Strict opt-in: nothing non-essential runs until you accept. Change your choice any time.";
+  "How Biteperk uses local storage, cookies and denied-by-default Google consent mode. Change your choice any time.";
 
 const analyticsLive = plausibleReady;
 const marketingLive = linkedInPartnerId !== null || googleAdsId !== null;
@@ -27,13 +33,14 @@ const marketing = categories.find((c) => c.id === "marketing")!;
       ]} />
       <header class="legal-head">
         <h1>Cookie policy</h1>
-        <p class="legal-updated">Last updated <time datetime={site.legalLastUpdated}>{site.legalLastUpdated}</time></p>
+        <p class="legal-updated">Last updated <time datetime={CONSENT_POLICY_LAST_UPDATED}>{CONSENT_POLICY_LAST_UPDATED}</time></p>
       </header>
 
       <section>
         <h2>The short version</h2>
         <p>
-          We keep tracking to a minimum and we ask first. Ad storage and personalisation stay off until you choose
+          We keep tracking to a minimum. Google Ads starts with every advertising consent signal denied and may
+          send limited cookieless measurement signals in that state. Ad storage and personalisation stay off until you choose
           <strong>Accept</strong>, "Reject all" is one click, and you can change your mind any time from
           <button type="button" class="legal-inline-btn" data-cookie-settings>Cookie settings</button>
           (also linked in the footer of every page). Our analytics are cookieless by design, and marketing
@@ -68,11 +75,14 @@ const marketing = categories.find((c) => c.id === "marketing")!;
       </section>
 
       <section>
-        <h2>{marketing.title} <span class="legal-status">{marketingLive ? "Active — opt-in" : "Configured, not yet live"}</span></h2>
+        <h2>{marketing.title} <span class="legal-status">{marketingLive ? "Active — consent mode" : "Configured, not yet live"}</span></h2>
         <p>{marketing.body}</p>
         <p>
-          When enabled and accepted, <strong>Google Ads</strong> and the <strong>LinkedIn Insight Tag</strong>
-          can set cookies to measure advertising and let us reach venues who've visited. These may include:
+          The <strong>Google Ads</strong> tag loads with ad storage, advertising user-data use and personalisation
+          denied. In that state Google may receive consent status and cookieless measurement pings, without
+          advertising cookies or cross-site identifiers. If you accept Marketing, Google Ads and the
+          <strong>LinkedIn Insight Tag</strong> can set cookies to measure advertising and let us reach venues
+          who've visited. These may include:
         </p>
         <table class="legal-table">
           <thead><tr><th>Name</th><th>Set by</th><th>Purpose</th></tr></thead>
