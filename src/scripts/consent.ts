@@ -1,8 +1,10 @@
 /**
  * Cookie-consent engine — store, banner, settings modal, tracking gates.
  *
- * Strict opt-in: nothing non-essential runs until the visitor Accepts.
- * State lives in localStorage (`bp-consent`) + `html[data-consent]`, NOT
+ * Google Ads uses advanced consent mode: its tag initializes with every
+ * advertising storage/use signal denied, then receives the visitor's choice.
+ * Other optional trackers remain strict opt-in. State lives in localStorage
+ * (`bp-consent`) + `html[data-consent]`, NOT
  * component memory, so it survives Astro View Transitions and multiple
  * tabs. Every consumer (analytics.ts, the LinkedIn loader) listens for
  * the `bp:consent-change` event rather than importing state.
@@ -101,13 +103,19 @@ function loadGoogleAds(): void {
   googleAdsLoaded = true;
 
   const gtag = ensureGtag();
+  // Advanced consent mode requires the denied default before any Google tag
+  // config or measurement command. Google may send cookieless consent-mode
+  // pings in this state, but it cannot use ad storage or personalisation.
   gtag("consent", "default", {
     ad_storage: "denied",
     ad_user_data: "denied",
     ad_personalization: "denied",
     analytics_storage: "denied",
+    wait_for_update: 500,
   });
+  gtag("set", "ads_data_redaction", true);
   gtag("js", new Date());
+  gtag("config", googleAdsId);
 
   const s = document.createElement("script");
   s.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(googleAdsId)}`;
@@ -158,21 +166,21 @@ function clearMarketingCookies(): void {
 
 function updateGoogleAdsConsent(marketing: boolean): void {
   if (googleAdsId == null) return;
-  if (marketing) loadGoogleAds();
+  loadGoogleAds();
   const gtag = ensureGtag();
   gtag("consent", "update", {
     ad_storage: marketing ? "granted" : "denied",
     ad_user_data: marketing ? "granted" : "denied",
     ad_personalization: marketing ? "granted" : "denied",
+    analytics_storage: "denied",
   });
-  if (marketing) gtag("config", googleAdsId);
 }
 
 /** Apply the current stored choice to the marketing tag. */
 function applyMarketing(marketing: boolean): void {
   updateGoogleAdsConsent(marketing);
   if (marketing) loadLinkedIn();
-  else if (marketingLoaded) clearMarketingCookies();
+  else if (marketingLoaded || googleAdsLoaded) clearMarketingCookies();
 }
 
 /* ── Decisions ──────────────────────────────────────────────────────── */
@@ -347,10 +355,12 @@ function init(): void {
   // Preview the banner on a live-but-dormant (or any) site via ?cookie-preview=1.
   if (previewForced()) document.documentElement.classList.add("consent-preview");
 
-  // Apply any already-stored marketing choice on load (e.g. returning
-  // visitor who previously accepted marketing).
+  // Advanced consent mode starts Google Ads on every page with denied
+  // defaults. The stored choice, if any, is applied immediately afterwards.
+  loadGoogleAds();
+
   const stored = read();
-  if (stored) applyMarketing(stored.marketing);
+  applyMarketing(stored?.marketing === true);
 
   // Show the banner if a valid choice is still needed. The pre-paint inline
   // reader may have set data-consent="set" from an older-version blob; the
