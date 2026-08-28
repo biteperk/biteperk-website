@@ -156,8 +156,18 @@ function clearMarketingCookies(): void {
     "AnalyticsSyncHistory",
   ];
   const host = location.hostname;
-  const domains = [host, "." + host, ".biteperk.com.au"];
+  // A host-only deletion is valid everywhere, including localhost/IP-based
+  // preview servers. Domain-scoped deletion must only target a parent domain
+  // of the current host; Firefox reports invalid cross-domain attempts as
+  // console errors, which also makes those attempts ineffective.
+  const domains: string[] = [];
+  if (host === "biteperk.com" || host.endsWith(".biteperk.com")) {
+    domains.push(host, ".biteperk.com");
+  } else if (host === "biteperk.com.au" || host.endsWith(".biteperk.com.au")) {
+    domains.push(host, ".biteperk.com.au");
+  }
   for (const n of names) {
+    document.cookie = `${n}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
     for (const d of domains) {
       document.cookie = `${n}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${d}`;
     }
