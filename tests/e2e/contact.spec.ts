@@ -18,8 +18,17 @@ async function fillForm(page: Page) {
   await page.fill("#cf-message", "Automated QA message — please ignore.");
 }
 
+async function submitAndWaitForContactResponse(page: Page) {
+  const response = page.waitForResponse("**/api/contact");
+  await page.click(".contact-submit");
+  await response;
+}
+
 test.describe("contact form", () => {
   test("reports the Google Ads demo conversion after a confirmed demo submission", async ({ page }) => {
+    await page.route(/https:\/\/www\.googletagmanager\.com\/gtag\/js.*/, (route) =>
+      route.fulfill({ status: 200, contentType: "application/javascript", body: "" }),
+    );
     await page.addInitScript(() => {
       localStorage.setItem(
         "bp-consent",
@@ -38,7 +47,7 @@ test.describe("contact form", () => {
 
     await page.goto(p("/contact/?intent=demo"));
     await fillForm(page);
-    await page.click(".contact-submit");
+    await submitAndWaitForContactResponse(page);
     await expect(page.locator(".contact-success")).toBeVisible();
 
     const conversions = await page.evaluate(() => {
@@ -62,7 +71,7 @@ test.describe("contact form", () => {
     await fillForm(page);
     await page.fill("#cf-venue", "QA Bistro");
     await page.selectOption("#cf-product", "voxtable");
-    await page.click(".contact-submit");
+    await submitAndWaitForContactResponse(page);
 
     await expect(page.locator(".contact-success")).toBeVisible();
     await expect(page.locator(".contact-success h2")).toContainText("Thanks");
@@ -87,10 +96,12 @@ test.describe("contact form", () => {
     await page.goto(p("/contact/"));
     await fillForm(page);
     const btn = page.locator(".contact-submit");
+    const response = page.waitForResponse("**/api/contact");
     await btn.click();
     await expect(btn).toBeDisabled();
     await expect(btn).toHaveAttribute("aria-busy", "true");
     await expect(btn).toHaveText("Sending…");
+    await response;
     await expect(page.locator(".contact-success")).toBeVisible();
   });
 
@@ -101,7 +112,7 @@ test.describe("contact form", () => {
 
     await page.goto(p("/contact/"));
     await fillForm(page);
-    await page.click(".contact-submit");
+    await submitAndWaitForContactResponse(page);
 
     const status = page.locator(".contact-status");
     await expect(status).toBeVisible();
