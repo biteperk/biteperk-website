@@ -136,7 +136,9 @@ const [headStart, headAccent] = (() => {
         <Breadcrumbs items={[{ label: "Home", href: u("/") }, { label: city.name }]} />
       </div>
       <div class="city-hero-grid">
-        <div class="reveal">
+        {/* Hero content is already in view. Keeping it out of the reveal
+            observer lets the priority image paint immediately at LCP. */}
+        <div>
           <span class="pill">
             <span class="dot"></span>
             {city.name}, {city.state}
@@ -155,7 +157,7 @@ const [headStart, headAccent] = (() => {
             <li><span class="gold">24/7</span> every call answered</li>
           </ul>
         </div>
-        <div class="reveal city-hero-photo">
+        <div class="city-hero-photo">
           <ImageBlock
             slug={city.heroImage}
             alt={city.heroImageAlt}

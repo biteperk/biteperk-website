@@ -9,6 +9,10 @@ import { p } from "../helpers/routes";
  */
 
 async function fillForm(page: Page) {
+  // WebKit can make the static form interactive before its module script has
+  // attached the submit handler. Wait for the handler's readiness marker so a
+  // click cannot fall through to the form's native POST navigation.
+  await expect(page.locator(".contact-form")).toHaveAttribute("data-bound", "1");
   await page.fill("#cf-name", "Test Diner");
   await page.fill("#cf-email", "diner@example.com");
   await page.fill("#cf-message", "Automated QA message — please ignore.");
