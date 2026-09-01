@@ -91,8 +91,10 @@ function ensureGtag(): Gtag {
   };
 
   w.dataLayer ||= [];
-  w.gtag ||= function gtag(...args: unknown[]) {
-    w.dataLayer?.push(args);
+  w.gtag ||= function gtag(..._args: unknown[]) {
+    // Google processes array-like Arguments objects, matching its supported
+    // `function gtag(){dataLayer.push(arguments);}` bootstrap exactly.
+    w.dataLayer!.push(arguments);
   };
 
   return w.gtag;
