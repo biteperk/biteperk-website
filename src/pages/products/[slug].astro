@@ -52,7 +52,9 @@ const isConcept = product.status === "concept";
   {/* ── Hero visual ─────────────────────────────────────────────── */}
   <section class="p-section p-hero-visual">
     <div class="wrap">
-      <div class="reveal">
+      {/* This priority image is the mobile LCP element. It must paint as soon
+          as its preload completes instead of waiting for reveal.ts. */}
+      <div>
         {product.slug === "voxtable" ? (
           <Composite
             name="voxtable-hero"
