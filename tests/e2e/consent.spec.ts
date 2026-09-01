@@ -27,20 +27,27 @@ test.describe("cookie consent", () => {
 
     await page.goto(PREVIEW);
 
-    const beforeChoice = await page.evaluate(() =>
-      ((window as unknown as { dataLayer?: unknown[][] }).dataLayer ?? []).filter(Array.isArray)
-    );
-    const defaultIndex = beforeChoice.findIndex(
+    const beforeChoice = await page.evaluate(() => {
+      const entries = (window as unknown as { dataLayer?: ArrayLike<unknown>[] }).dataLayer ?? [];
+      return {
+        calls: entries.map((entry) => Array.from(entry)),
+        usesGoogleArgumentsShape: entries.every(
+          (entry) => Object.prototype.toString.call(entry) === "[object Arguments]",
+        ),
+      };
+    });
+    expect(beforeChoice.usesGoogleArgumentsShape).toBe(true);
+    const defaultIndex = beforeChoice.calls.findIndex(
       (call) => call[0] === "consent" && call[1] === "default"
     );
-    const configIndex = beforeChoice.findIndex(
+    const configIndex = beforeChoice.calls.findIndex(
       (call) => call[0] === "config" && call[1] === "AW-18397306929"
     );
 
     expect(tagRequests).toBe(1);
     expect(defaultIndex).toBeGreaterThanOrEqual(0);
     expect(configIndex).toBeGreaterThan(defaultIndex);
-    expect(beforeChoice[defaultIndex][2]).toMatchObject({
+    expect(beforeChoice.calls[defaultIndex][2]).toMatchObject({
       ad_storage: "denied",
       ad_user_data: "denied",
       ad_personalization: "denied",
@@ -50,7 +57,8 @@ test.describe("cookie consent", () => {
 
     await page.locator("[data-consent-accept]").click();
     const granted = await page.evaluate(() =>
-      ((window as unknown as { dataLayer?: unknown[][] }).dataLayer ?? [])
+      ((window as unknown as { dataLayer?: ArrayLike<unknown>[] }).dataLayer ?? [])
+        .map((entry) => Array.from(entry))
         .filter((call) => call[0] === "consent" && call[1] === "update")
         .at(-1)
     );
