@@ -127,6 +127,8 @@ export type ContactCopy = {
     email: string;
     venue: string;
     venuePlaceholder: string;
+    product: string;
+    productPlaceholder: string;
     message: string;
     messagePlaceholder: string;
     submit: string;
@@ -595,6 +597,8 @@ export const contact: Record<Lang, ContactCopy> = {
       email: "Work email",
       venue: "Venue or group",
       venuePlaceholder: "e.g. Brasserie Lumière, Paris",
+      product: "Product",
+      productPlaceholder: "Select a product…",
       message: "Tell us about your venue",
       messagePlaceholder: "Covers, locations, what the phone is like on a busy night…",
       submit: "Request a pilot",
@@ -619,6 +623,8 @@ export const contact: Record<Lang, ContactCopy> = {
       email: "E-mail professionnel",
       venue: "Établissement ou groupe",
       venuePlaceholder: "ex. Brasserie Lumière, Paris",
+      product: "Produit",
+      productPlaceholder: "Choisissez un produit…",
       message: "Parlez-nous de votre établissement",
       messagePlaceholder: "Couverts, adresses, à quoi ressemble le téléphone un soir de service…",
       submit: "Demander un pilote",
@@ -644,7 +650,7 @@ export const privacy: Record<Lang, SimplePageCopy> = {
       {
         heading: "What we collect on this site",
         body: [
-          "The contact form asks for your name, work email, venue name and message. We use these to respond to your enquiry and, if you ask about a pilot, to organise it. Google reCAPTCHA processes technical request data when you submit the /en contact form to verify that you are human and prevent spam. Google Ads consent mode may send limited cookieless measurement signals while advertising storage, user-data use and personalisation are denied. Analytics cookies do not run without consent.",
+          "The contact form asks for your name, work email, venue name and message. We use these to respond to your enquiry and, if you ask about a pilot, to organise it. Google reCAPTCHA processes technical request data when you submit the contact form to verify that you are human and prevent spam. Google Ads consent mode may send limited cookieless measurement signals while advertising storage, user-data use and personalisation are denied. Analytics cookies do not run without consent.",
         ],
       },
       {
@@ -678,13 +684,13 @@ export const privacy: Record<Lang, SimplePageCopy> = {
       {
         heading: "Ce que nous collectons sur ce site",
         body: [
-          "Le formulaire de contact demande votre nom, votre e-mail professionnel, le nom de votre établissement et votre message. Nous les utilisons pour répondre à votre demande et, si vous vous renseignez sur un pilote, pour l'organiser. Le mode Consentement de Google Ads peut transmettre des signaux de mesure limités et sans cookie lorsque le stockage publicitaire, l'utilisation des données publicitaires et la personnalisation sont refusés. Aucun cookie de mesure d'audience ne fonctionne sans consentement.",
+          "Le formulaire de contact demande votre nom, votre e-mail professionnel, le nom de votre établissement et votre message. Nous les utilisons pour répondre à votre demande et, si vous vous renseignez sur un pilote, pour l'organiser. Google reCAPTCHA traite des données techniques de la requête lorsque vous soumettez le formulaire de contact, afin de vérifier que vous êtes humain et d'empêcher le spam. Le mode Consentement de Google Ads peut transmettre des signaux de mesure limités et sans cookie lorsque le stockage publicitaire, l'utilisation des données publicitaires et la personnalisation sont refusés. Aucun cookie de mesure d'audience ne fonctionne sans consentement.",
         ],
       },
       {
         heading: "Où elles sont stockées",
         body: [
-          "Les envois du formulaire sont stockés chez notre fournisseur d'infrastructure, Google Cloud (Firestore), dans une région australienne, et un e-mail de notification est adressé à notre équipe. Si vous êtes dans l'UE/EEE, cela implique un transfert de vos données hors de l'EEE ; nous le limitons à la demande elle-même et mettons en place des clauses contractuelles types ainsi qu'un hébergement européen dans le cadre de notre lancement en Europe.",
+          "Les envois du formulaire sont stockés chez notre fournisseur d'infrastructure, Google Cloud (Firestore), enregistrés dans notre CRM Zoho pour le suivi commercial, et un e-mail de notification est adressé à notre équipe. Si vous êtes dans l'UE/EEE, cela implique un transfert de vos données hors de l'EEE ; nous le limitons à la demande elle-même et mettons en place des clauses contractuelles types ainsi qu'un hébergement européen dans le cadre de notre lancement en Europe.",
         ],
       },
       {
@@ -791,7 +797,7 @@ export const cookies: Record<Lang, SimplePageCopy> = {
       {
         heading: "Strictly necessary",
         body: [
-          "One small entry remembers your cookie choice so we don't ask again on every page, and another remembers whether you prefer the light or dark theme. When you submit the /en contact form, Google reCAPTCHA runs as a strictly necessary anti-spam check and processes technical request data to verify that you are human. These protections cannot be switched off because the site cannot safely accept the form without them.",
+          "One small entry remembers your cookie choice so we don't ask again on every page, and another remembers whether you prefer the light or dark theme. When you submit the contact form, Google reCAPTCHA runs as a strictly necessary anti-spam check and processes technical request data to verify that you are human. These protections cannot be switched off because the site cannot safely accept the form without them.",
         ],
       },
       {
@@ -827,7 +833,7 @@ export const cookies: Record<Lang, SimplePageCopy> = {
       {
         heading: "Strictement nécessaires",
         body: [
-          "Une donnée mémorise votre choix en matière de cookies, afin de ne pas vous solliciter à chaque page, et une autre retient si vous préférez le thème clair ou sombre. Elles restent dans votre navigateur, ne sont jamais transmises et ne peuvent être désactivées : sans elles, le site ne peut pas respecter les choix que vous avez déjà exprimés.",
+          "Une donnée mémorise votre choix en matière de cookies, afin de ne pas vous solliciter à chaque page, et une autre retient si vous préférez le thème clair ou sombre. Elles restent dans votre navigateur, ne sont jamais transmises et ne peuvent être désactivées : sans elles, le site ne peut pas respecter les choix que vous avez déjà exprimés. Lorsque vous soumettez le formulaire de contact, Google reCAPTCHA s'exécute comme vérification anti-spam strictement nécessaire et traite des données techniques de la requête afin de vérifier que vous êtes humain. Cette protection ne peut pas être désactivée, car le site ne peut pas accepter le formulaire en toute sécurité sans elle.",
         ],
       },
       {

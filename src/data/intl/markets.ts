@@ -312,6 +312,13 @@ const gbEn: MarketContent = {
     // contracting party changes what these documents mean; the wording below is
     // drafted to be accurate and complete, not to substitute for that review.
     //
+    // ⚠️ 2026-09-02 DRAFT, UNREVIEWED: the reCAPTCHA sentence in "What we
+    // collect on this site" and the Zoho CRM mention in "Where it goes, and
+    // transfers out of the UK" are new, added when the contact form's Zoho
+    // CRM + reCAPTCHA flow (previously /en-only) was extended to gb-en. They
+    // have not had a counsel pass and must not be treated as cleared for
+    // production until they do — this note stands until that review happens.
+    //
     // `sections` is restated IN FULL rather than patched. merge() replaces
     // arrays wholesale (tests/unit/intl-merge.test.mjs) — supplying a partial
     // list would silently drop the sections it omits.
@@ -329,7 +336,7 @@ const gbEn: MarketContent = {
         {
           heading: "What we collect on this site",
           body: [
-            "The contact form asks for your name, work email, venue name and message. We use these to respond to your enquiry and, if you ask about a pilot, to organise it. Google Ads consent mode may send limited cookieless measurement signals while advertising storage, user-data use and personalisation are denied. Analytics cookies do not run without consent.",
+            "The contact form asks for your name, work email, venue name and message. We use these to respond to your enquiry and, if you ask about a pilot, to organise it. Google reCAPTCHA processes technical request data when you submit the contact form to verify that you are human and prevent spam. Google Ads consent mode may send limited cookieless measurement signals while advertising storage, user-data use and personalisation are denied. Analytics cookies do not run without consent.",
           ],
         },
         {
@@ -341,7 +348,7 @@ const gbEn: MarketContent = {
         {
           heading: "Where it goes, and transfers out of the UK",
           body: [
-            "Form submissions are stored with our infrastructure provider, Google Cloud (Firestore), in an Australian region, and a notification email is sent to our team. That is a transfer of your data out of the United Kingdom.",
+            "Form submissions are stored with our infrastructure provider, Google Cloud (Firestore), entered into our Zoho CRM account for follow-up, and a notification email is sent to our team. That is a transfer of your data out of the United Kingdom.",
             "The United Kingdom has no adequacy regulations for Australia, so the transfer needs a safeguard under Article 46 UK GDPR. We are putting an International Data Transfer Agreement (or the UK Addendum to the EU standard contractual clauses) in place together with the transfer risk assessment that must accompany it. Until that is complete we keep the transfer limited to the enquiry itself. If you would rather not have your details leave the UK, email us instead of using the form and tell us so.",
           ],
         },
