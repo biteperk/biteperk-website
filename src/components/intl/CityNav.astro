@@ -76,8 +76,16 @@ const cities = intlCitiesForBase(locale.base);
       </svg>
     </summary>
 
+    <div class="intl-citynav-scrim" data-city-nav-scrim aria-hidden="true"></div>
+
     <div class="intl-citynav-menu" data-city-nav-menu>
-      <p class="intl-citynav-title">{title}</p>
+      <span class="intl-citynav-grabber" aria-hidden="true"></span>
+      <div class="intl-citynav-header">
+        <p class="intl-citynav-title">{title}</p>
+        <button type="button" class="intl-citynav-close" data-city-nav-close aria-label="Close cities menu">
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+        </button>
+      </div>
       <ul class="intl-citynav-list" role="list">
         {cities.map((x) => (
           <li>
@@ -101,6 +109,20 @@ const cities = intlCitiesForBase(locale.base);
      namespace on every selector here. Values mirror LocalePicker's .lp-*
      rules so the two controls read as one family in the bar. */
   .intl-citynav { position: relative; line-height: 1; }
+
+  /* Mirrors LocalePicker's mobile-sheet CSS — see the long comment on
+     .lp-scrim there for why this split (base display:none vs. no display
+     authored in the mobile block) is load-bearing, not stylistic:
+     .intl-citynav-grabber/-close are nested INSIDE .intl-citynav-menu so a
+     display:none ancestor already hides them for free; .intl-citynav-scrim
+     is a SIBLING of .intl-citynav-menu, so authoring display:block on it
+     unconditionally inside the ≤720px block would fight the native
+     <details> open/close toggle and leave it stuck visible at all times. */
+  .intl-citynav-grabber { display: none; }
+  .intl-citynav-close { display: none; }
+  @media (min-width: 721px) {
+    .intl-citynav-scrim { display: none; }
+  }
 
   .intl-citynav-trigger {
     display: inline-flex;
@@ -158,6 +180,11 @@ const cities = intlCitiesForBase(locale.base);
     to { opacity: 1; transform: none; }
   }
 
+  .intl-citynav-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
   .intl-citynav-title {
     margin: 6px 10px 4px;
     font-size: 11px;
@@ -209,18 +236,94 @@ const cities = intlCitiesForBase(locale.base);
     margin-inline-start: auto;
   }
 
-  /* ≤720px: viewport-anchored bottom sheet, byte-cloned from .lp-menu.
-     Depends on .intl-nav dropping its backdrop-filter at this width. */
+  /* ≤720px: edge-to-edge bottom sheet with a scrim, byte-cloned from
+     LocalePicker's .lp-menu/.lp-scrim (see that file for the full
+     rationale + the ConsentBanner.astro precedent every hardcoded value
+     here is lifted from). Depends on .intl-nav dropping its
+     backdrop-filter at this width. */
   @media (max-width: 720px) {
     .intl-citynav-pin { display: none; }
+
+    /* No `display` here — see the desktop-only hiding rule above. */
+    .intl-citynav-scrim {
+      position: fixed;
+      inset: 0;
+      z-index: var(--z-overlay);
+      background: rgba(10, 11, 13, 0.6);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .intl-citynav[open] .intl-citynav-scrim {
+        animation: intl-citynav-scrim-in var(--dur-base) var(--ease-out) backwards;
+      }
+    }
+    @keyframes intl-citynav-scrim-in {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
     .intl-citynav-menu {
       position: fixed;
-      inset: auto 16px calc(16px + env(safe-area-inset-bottom)) 16px;
+      inset: auto 0 0 0;
+      z-index: calc(var(--z-overlay) + 1);
       min-width: 0;
       max-height: min(60vh, 420px);
       overflow-y: auto;
       overscroll-behavior: contain;
+      padding: 10px 16px calc(16px + env(safe-area-inset-bottom));
+      border: 0;
+      border-top: 1px solid var(--line);
+      border-radius: var(--r-xl) var(--r-xl) 0 0;
+      box-shadow: 0 -12px 40px -20px rgba(0, 0, 0, 0.6);
     }
+    @media (prefers-reduced-motion: no-preference) {
+      .intl-citynav[open] .intl-citynav-menu {
+        animation: intl-citynav-sheet-in var(--dur-base) var(--ease-out) backwards;
+      }
+    }
+    @keyframes intl-citynav-sheet-in {
+      from { transform: translateY(100%); opacity: 0; }
+      to   { transform: translateY(0); opacity: 1; }
+    }
+
+    .intl-citynav-grabber {
+      display: block;
+      width: 36px;
+      height: 4px;
+      margin: 2px auto 10px;
+      border-radius: var(--r-pill);
+      background: var(--line-strong);
+    }
+
+    .intl-citynav-header { padding: 0 0 4px; }
+    .intl-citynav-title { padding: 0; margin: 0; }
+
+    .intl-citynav-close {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: none;
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--line);
+      border-radius: var(--r-pill);
+      background: var(--fill-subtle);
+      color: var(--mist-2);
+      cursor: pointer;
+    }
+    @media (hover: hover) {
+      .intl-citynav-close:hover {
+        background: var(--fill-hover);
+        color: var(--white);
+        border-color: var(--line-strong);
+      }
+    }
+    .intl-citynav-close:focus-visible {
+      outline: none;
+      box-shadow: var(--ring-focus);
+    }
+
     .intl-citynav-item { min-height: 48px; }
   }
 </style>
