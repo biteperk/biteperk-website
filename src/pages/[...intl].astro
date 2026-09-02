@@ -444,11 +444,13 @@ const appJsonLd =
             <p class="hp" aria-hidden="true">
               <label>Leave this field empty<input type="text" name="_gotcha" tabindex="-1" autocomplete="off" /></label>
             </p>
-            {locale.base === "/en" ? (
-              <input type="hidden" name="crmForm" value="zoho-global" />
-            ) : (
-              <input type="hidden" name="product" value="general" />
-            )}
+            {/* Every locale posts through the same Zoho CRM + reCAPTCHA path —
+                previously /en-only. Extending to gb-en/fr/be-en/be-fr must
+                stay in lockstep with the privacy + cookie policy disclosures
+                (src/data/intl/copy.ts, markets.ts gbEn.privacy), which now
+                mention reCAPTCHA and Zoho CRM unconditionally rather than
+                scoped to "/en". */}
+            <input type="hidden" name="crmForm" value="zoho-global" />
             <div class="field">
               <label for="if-name">{ct.form.name}</label>
               <input id="if-name" name="name" type="text" required maxlength="200" autocomplete="name" />
@@ -459,41 +461,41 @@ const appJsonLd =
             </div>
             <div class="field">
               <label for="if-venue">{ct.form.venue}</label>
-              <input id="if-venue" name="venue" type="text" required={locale.base === "/en"} maxlength="200" autocomplete="organization" placeholder={ct.form.venuePlaceholder} />
+              <input id="if-venue" name="venue" type="text" required maxlength="200" autocomplete="organization" placeholder={ct.form.venuePlaceholder} />
             </div>
-            {locale.base === "/en" && (
-              <div class="field">
-                <label for="if-product">Product</label>
-                <select id="if-product" name="product" required>
-                  <option value="voxtable" selected>VoxTable</option>
-                  <option value="voxorder">VoxOrder</option>
-                  <option value="voxconcierge">VoxConcierge</option>
-                  <option value="voxdrive">VoxDrive</option>
-                  <option value="voxstay">VoxStay</option>
-                </select>
-              </div>
-            )}
+            <div class="field">
+              <label for="if-product">{ct.form.product}</label>
+              {/* No default selection — a visitor who skips this field should
+                  fail validation, not get silently recorded as a VoxTable
+                  enquiry (the previous /en-only markup pre-selected VoxTable). */}
+              <select id="if-product" name="product" required>
+                <option value="" disabled selected>{ct.form.productPlaceholder}</option>
+                <option value="voxtable">VoxTable</option>
+                <option value="voxorder">VoxOrder</option>
+                <option value="voxconcierge">VoxConcierge</option>
+                <option value="voxdrive">VoxDrive</option>
+                <option value="voxstay">VoxStay</option>
+              </select>
+            </div>
             <div class="field">
               <label for="if-message">{ct.form.message}</label>
               <textarea id="if-message" name="message" required maxlength="4000" rows="5" placeholder={ct.form.messagePlaceholder}></textarea>
             </div>
-            {locale.base === "/en" && (
-              <div class="recaptcha-wrap">
-                <script
-                  is:inline
-                  data-astro-rerun
-                  src="https://www.google.com/recaptcha/api.js"
-                  async
-                  defer
-                ></script>
-                <div
-                  class="g-recaptcha"
-                  data-sitekey={recaptchaSiteKey}
-                  data-theme="light"
-                ></div>
-                <noscript>JavaScript is required to verify this form.</noscript>
-              </div>
-            )}
+            <div class="recaptcha-wrap">
+              <script
+                is:inline
+                data-astro-rerun
+                src="https://www.google.com/recaptcha/api.js"
+                async
+                defer
+              ></script>
+              <div
+                class="g-recaptcha"
+                data-sitekey={recaptchaSiteKey}
+                data-theme="light"
+              ></div>
+              <noscript>JavaScript is required to verify this form.</noscript>
+            </div>
             <button class="btn" type="submit">{ct.form.submit}</button>
             <p class="intl-form-status" role="status" aria-live="polite" hidden></p>
             <p class="muted form-note">{ct.form.note}</p>
@@ -851,8 +853,10 @@ const appJsonLd =
 
   (function () {
     function initGlobalContact(): void {
-      if (location.pathname.replace(/\/+$/, "") !== "/en/contact") return;
-
+      // .intl-form only ever renders on a locale's contact page, so this is
+      // already scoped correctly for all five locales without matching on
+      // pathname (which used to hardcode "/en/contact" and silently skipped
+      // gb-en/fr/be-en/be-fr).
       const form = document.querySelector<HTMLFormElement>(".intl-form");
       if (!form || form.dataset.enhanced === "1") return;
       form.dataset.enhanced = "1";
