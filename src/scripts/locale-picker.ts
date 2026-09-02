@@ -71,6 +71,8 @@ function attach(root: HTMLDetailsElement): void {
   if (!trigger || !menu) return;
 
   const refs: Refs = { root, trigger, menu };
+  const scrim = root.querySelector<HTMLElement>("[data-locale-picker-scrim]");
+  const closeBtn = root.querySelector<HTMLElement>("[data-locale-picker-close]");
 
   // Keep at most one picker open.
   root.addEventListener("toggle", () => {
@@ -122,6 +124,13 @@ function attach(root: HTMLDetailsElement): void {
   menu.addEventListener("click", (e) => {
     if ((e.target as HTMLElement).closest("a")) close(refs);
   });
+
+  // Mobile-sheet scrim tap / X button. Both live INSIDE <details>, so the
+  // outside-click and focusin handlers below (which check
+  // !root.contains(e.target)) never treat them as "outside" — they need
+  // their own explicit close.
+  scrim?.addEventListener("click", () => close(refs, true));
+  closeBtn?.addEventListener("click", () => close(refs, true));
 
   // Outside click closes.
   document.addEventListener("click", (e) => {

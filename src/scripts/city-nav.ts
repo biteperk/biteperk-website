@@ -73,6 +73,8 @@ function attach(root: HTMLDetailsElement): void {
   if (!trigger || !menu) return;
 
   const refs: Refs = { root, trigger, menu };
+  const scrim = root.querySelector<HTMLElement>("[data-city-nav-scrim]");
+  const closeBtn = root.querySelector<HTMLElement>("[data-city-nav-close]");
 
   root.addEventListener("toggle", () => {
     if (root.open) closeOthers(root);
@@ -120,6 +122,11 @@ function attach(root: HTMLDetailsElement): void {
   menu.addEventListener("click", (e) => {
     if ((e.target as HTMLElement).closest("a")) close(refs);
   });
+
+  // Mobile-sheet scrim tap / X button — see locale-picker.ts for why these
+  // need their own listener instead of falling out of the outside-click check.
+  scrim?.addEventListener("click", () => close(refs, true));
+  closeBtn?.addEventListener("click", () => close(refs, true));
 
   document.addEventListener("click", (e) => {
     if (root.open && !root.contains(e.target as Node)) close(refs);

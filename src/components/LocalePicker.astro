@@ -41,8 +41,16 @@ const current = localeFromPath(path);
     <span class="sr-only">Region and language — currently {current.label}</span>
   </summary>
 
+  <div class="lp-scrim" data-locale-picker-scrim aria-hidden="true"></div>
+
   <div class="lp-menu" data-locale-picker-menu>
-    <p class="lp-menu-title">{title}</p>
+    <span class="lp-grabber" aria-hidden="true"></span>
+    <div class="lp-menu-header">
+      <p class="lp-menu-title">{title}</p>
+      <button type="button" class="lp-menu-close" data-locale-picker-close aria-label="Close region picker">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+      </button>
+    </div>
     <ul class="lp-list" role="list">
       {locales.map((l) => (
         <li>
@@ -68,6 +76,28 @@ const current = localeFromPath(path);
   .lp {
     position: relative;
     line-height: 1;
+  }
+
+  /* Mobile-sheet-only affordances (grabber, close button). Hidden here
+     unconditionally so they never show on the desktop dropdown even while
+     it's open — the ≤720px block below re-enables them. Safe to gate on
+     plain display:none/block because both live nested inside .lp-menu,
+     whose own visibility already comes for free from the native
+     details:not([open]) > :not(summary) rule; a display:none ancestor hides
+     this whole subtree regardless of their own display value. */
+  .lp-grabber { display: none; }
+  .lp-menu-close { display: none; }
+
+  /* .lp-scrim is a SIBLING of .lp-menu (not nested inside it), so it does
+     NOT inherit .lp-menu's free open/close hiding once its own display is
+     authored. Hide it above the phone breakpoint here; below it, in the
+     ≤720px block, its display is deliberately left unset so it shares the
+     exact same native <details> toggle .lp-menu already relies on. Setting
+     display:block unconditionally inside the mobile block instead would
+     fight that native toggle and leave the scrim stuck visible at all
+     times, open or closed — see the comment on the mobile block. */
+  @media (min-width: 721px) {
+    .lp-scrim { display: none; }
   }
 
   /* ── Trigger: matches the 44px pill idiom of ThemeToggle / .nav-phone ── */
@@ -147,6 +177,11 @@ const current = localeFromPath(path);
     to   { opacity: 1; transform: translateY(0) scale(1); }
   }
 
+  .lp-menu-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
   .lp-menu-title {
     margin: 0;
     padding: 7px 10px 8px;
@@ -223,26 +258,108 @@ const current = localeFromPath(path);
   }
   .lp-item.is-current .lp-check { opacity: 1; }
 
-  /* ── Phones: a viewport-anchored bottom sheet ────────────────────────
+  /* ── Phones: a true edge-to-edge bottom sheet, with a scrim ──────────
      The trigger sits mid-bar in the intl chrome (brand · picker · toggle), so
-     NEITHER anchor fits a 276px menu: `right:0` overflowed the left edge and
-     `left:0` — what shipped — overflowed the RIGHT edge by ~43px on a 390px
-     screen. Anchoring to the viewport instead of the trigger is the only
-     option that can't overflow, and it gives a calmer, thumb-reachable list.
+     NEITHER anchor fits a floating menu: `right:0` overflows the left edge
+     and `left:0` overflows the right edge. Anchoring to the viewport instead
+     of the trigger avoids that entirely, and going edge-to-edge (flush to
+     the bottom, rounded top corners only) plus a scrim behind it reads as a
+     deliberate iOS-style sheet instead of a stray floating card glued mid-page.
 
      Requires no backdrop-filter on any ancestor: a filtered element becomes
      the containing block for fixed descendants (IntlLayout drops its filter
      at this breakpoint for exactly this reason). The AU chrome never hits
-     this rule — below 1180px its picker lives in the overlay menu instead. */
+     this rule — below 1180px its picker lives in the overlay menu instead.
+
+     Every hardcoded value below (scrim color/blur, upward shadow, the
+     translateY(100%) slide, the inset:auto 0 0 0 anchor) is lifted from
+     ConsentBanner.astro's .consent-bar/.consent-backdrop/consent-slide,
+     not invented — that's this codebase's own precedent for a real
+     bottom-anchored sheet with a scrim. */
   @media (max-width: 720px) {
+    /* No `display` here on purpose — see the note above the desktop-only
+       hiding rule. Visibility comes entirely from the native <details>
+       open/close toggle this element shares with .lp-menu (same DOM level,
+       same UA default); only its look, once shown, is authored here. */
+    .lp-scrim {
+      position: fixed;
+      inset: 0;
+      z-index: var(--z-overlay);
+      background: rgba(10, 11, 13, 0.6);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .lp[open] .lp-scrim {
+        animation: lp-scrim-in var(--dur-base) var(--ease-out) backwards;
+      }
+    }
+    @keyframes lp-scrim-in {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
     .lp-menu {
       position: fixed;
-      inset: auto 16px calc(16px + env(safe-area-inset-bottom)) 16px;
+      inset: auto 0 0 0;
+      z-index: calc(var(--z-overlay) + 1);
       min-width: 0;
       max-height: min(60vh, 420px);
       overflow-y: auto;
       overscroll-behavior: contain;
+      padding: 10px 16px calc(16px + env(safe-area-inset-bottom));
+      border: 0;
+      border-top: 1px solid var(--line);
+      border-radius: var(--r-xl) var(--r-xl) 0 0;
+      box-shadow: 0 -12px 40px -20px rgba(0, 0, 0, 0.6);
     }
+    @media (prefers-reduced-motion: no-preference) {
+      .lp[open] .lp-menu {
+        animation: lp-sheet-in var(--dur-base) var(--ease-out) backwards;
+      }
+    }
+    @keyframes lp-sheet-in {
+      from { transform: translateY(100%); opacity: 0; }
+      to   { transform: translateY(0); opacity: 1; }
+    }
+
+    .lp-grabber {
+      display: block;
+      width: 36px;
+      height: 4px;
+      margin: 2px auto 10px;
+      border-radius: var(--r-pill);
+      background: var(--line-strong);
+    }
+
+    .lp-menu-header { padding: 0 0 4px; }
+    .lp-menu-title { padding: 0; }
+
+    .lp-menu-close {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: none;
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--line);
+      border-radius: var(--r-pill);
+      background: var(--fill-subtle);
+      color: var(--mist-2);
+      cursor: pointer;
+    }
+    @media (hover: hover) {
+      .lp-menu-close:hover {
+        background: var(--fill-hover);
+        color: var(--white);
+        border-color: var(--line-strong);
+      }
+    }
+    .lp-menu-close:focus-visible {
+      outline: none;
+      box-shadow: var(--ring-focus);
+    }
+
     .lp-item { min-height: 48px; }
   }
 </style>
