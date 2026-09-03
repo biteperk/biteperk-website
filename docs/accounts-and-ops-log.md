@@ -521,10 +521,16 @@ Biteperk Ltd 17379647 for UK visitors). **It is sitting in Drafts.** Note the
 mailbox's auto-signature may have been displaced by the typed body — worth a
 glance before sending.
 
-### 3 Sep 2026 — ICO registration for Biteperk Ltd: STARTED, needs Sam
+### 3 Sep 2026 — ICO registration for Biteperk Ltd: STARTED, handed to Abhishek (issue #27)
 
 **The register was searched first: Biteperk is NOT currently registered**, so
 there is no duplicate risk and the registration is genuinely outstanding.
+
+**Owner: Abhishek** (Sam's call, 3 Sep 2026) — tracked as
+https://github.com/biteperk/biteperk-website/issues/27, which carries the full
+answer table, the three judgement calls and the shifting-button trap. Post the
+registration reference on that issue; it then goes into the `/gb-en` privacy
+notice and here.
 
 The form was completed up to the mandatory **Title** field on the
 data-protection-contact page. That is an honorific for Sam and was not
