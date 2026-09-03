@@ -392,6 +392,25 @@ merge on it. The corrected privacy + cookie texts replace
 are added to the memo's decisions table (§5, items 3d–3g) for Natalia's
 confirmation in her existing second pass — not a new engagement.
 
+> **COUNSEL REVIEW DISCHARGED — 3 Sep 2026.** Natalia (Integrant) reviewed the
+> contact-form privacy packet (item 15) and **passed it as drafted**, with all
+> four questions confirmed:
+> **3d** legitimate interests, Art 6(1)(f), is the right basis for answering a
+> B2B enquiry the visitor initiated · **3e** keep publishing the honest "no
+> transfer safeguard signed yet" line and keep the Zoho push running, rather
+> than suspending it for EU/UK visitors until the DPA lands · **3f** the
+> "putting an IDTA/UK Addendum and TRA in place" wording is acceptable while
+> they are executed, and ICO registration may follow publication · **3g** "up
+> to 24 months, earlier on request" needs no further review criterion.
+> Relayed verbally by Sam; there is no written opinion, which is the
+> provenance if the wording is ever questioned. This is the gate that had
+> blocked PR #26 since 2 Sep.
+>
+> **What it does NOT discharge:** the three `TODO(legal)` sentences. Those turn
+> on Zoho countersigning the DPA (and, for `/gb-en`, the IDTA/UK Addendum and
+> TRA actually being executed) — facts about the world, not review status.
+> They stay until the paperwork is signed.
+
 **What changed in code (PR #26):**
 
 - Google reCAPTCHA removed from the international form. It loaded before any
