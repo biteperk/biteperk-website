@@ -592,9 +592,9 @@ const frFr: MarketContent = {
         },
       ],
     },
-    // ⚠️ DRAFT French (3 Sep 2026) — Ludovic's pass. CNIL is the French
-    // supervisory authority; this is the only sentence that differs from the
-    // FR core (see privacyNaming).
+    // CNIL is the French supervisory authority; this is the only sentence that
+    // differs from the FR core (see privacyNaming). New French of 3 Sep 2026 —
+    // verbal pass from Ludovic, confirmed by Sam 3 Sep 2026 (see copy.ts header).
     privacy: {
       sections: privacyNaming(
         "fr",
@@ -910,9 +910,9 @@ const beFr: MarketContent = {
         },
       ],
     },
-    // ⚠️ DRAFT French (3 Sep 2026) — Ludovic's pass. The Belgian supervisory
-    // authority (APD/GBA) is the only sentence that differs from the FR core
-    // (see privacyNaming).
+    // The Belgian supervisory authority (APD/GBA) is the only sentence that
+    // differs from the FR core (see privacyNaming). New French of 3 Sep 2026 —
+    // verbal pass from Ludovic, confirmed by Sam 3 Sep 2026 (see copy.ts header).
     privacy: {
       sections: privacyNaming(
         "fr",

@@ -449,5 +449,12 @@ confirmation in her existing second pass — not a new engagement.
 5. `firebase functions:secrets:destroy RECAPTCHA_SECRET_KEY` and delete the
    `PUBLIC_RECAPTCHA_SITE_KEY` repository variable once the new function is
    live — both are unused now.
-6. Ludovic's pass on the new French (listed in PR #26) before it is
-   prospect-facing.
+6. ~~Ludovic's pass on the new French~~ — **done 3 Sep 2026.** Ludovic Roux
+   gave a **verbal** pass on the 3 Sep privacy/cookie French (the `privacy.fr`
+   core, the cookies "Strictement nécessaires" sentence, and the CNIL /
+   APD-GBA sentences in `markets.ts`), confirmed by Sam. Recorded as verbal on
+   purpose: unlike the 26 and 27 Jul sign-offs there is no email behind it.
+   The `⚠️ DRAFT French` markers are removed and the sign-off is noted in
+   `src/data/intl/copy.ts`'s header. Comment-only change — the built HTML is
+   byte-identical, verified by diffing a before/after `dist-global/`, so no
+   redeploy was needed.
