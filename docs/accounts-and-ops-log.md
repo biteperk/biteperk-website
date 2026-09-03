@@ -414,8 +414,13 @@ confirmation in her existing second pass — not a new engagement.
   --collection-group=contactSubmissions --database=biteperk-leads
   --project=vocotable --enable-ttl`. Verify with
   `gcloud firestore fields ttls list --database=biteperk-leads`.
-  **TTL policy deployed: ☐ (date / operator)** — until this box is ticked the
-  "up to 24 months" sentence is a promise, not a fact.
+  **TTL policy deployed: ☑ 3 Sep 2026** — `firebase deploy --only
+  firestore:indexes --project vocotable` run from Sam's Mac on Sam's
+  instruction; `firebase firestore:indexes --database biteperk-leads` then
+  showed `ttl: true` on `contactSubmissions.expireAt` and
+  `rateLimits.expireAt`. The "up to 24 months" sentence is now a fact.
+  PR #26 merged (rebase) and deployed the same day via
+  `deploy-firebase.yml` (functions → hosting), run 33701251750.
 - Privacy notice on every locale now states: controller (Biteperk Pty Ltd,
   ABN, Sydney — no street address; `check-truthful` bans the NAP on global
   pages), lawful basis (Art 6(1)(f)), named recipients with locations
