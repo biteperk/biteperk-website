@@ -476,7 +476,19 @@ entry. The Firestore document confirmed the 3 Sep work live: `expireAt`
 was then deleted from Zoho and Firestore, and both deletions re-queried to
 confirm. The setting is a toggle, so it is reversible.
 
-### 3 Sep 2026 — Zoho DPA request drafted (NOT SENT — Sam to send)
+### 3 Sep 2026 — Zoho DPA request SENT
+
+**Sent by Sam at 12:44 PM AEST, 3 Sep 2026** (confirmed in the Zoho Mail Sent
+folder: to `"legal"<legal@zohocorp.com>`, subject "Data Processing Addendum
+request - EU SCCs Module 2 + UK Addendum - Zoho CRM org biteperkau
+(Australian data centre)"). This starts the clock on the one open Article 46
+safeguard for the EU/UK → Australia transfer to Zoho. **When the DPA comes
+back countersigned**, flip the three `TODO(legal)` sentences — `copy.ts`
+(EN core, FR core) and `markets.ts` (gb-en, which is the IDTA/TRA variant and
+may need its own separate evidence) — and record the date here. Until then
+the notices correctly say no safeguard is signed.
+
+Drafting notes retained for reference:
 
 Drafted in Zoho Mail as **`biteperk@biteperk.com.au`** (an alias of the
 `vocotable@biteperk.com.au` mailbox) rather than a personal address, so Zoho
