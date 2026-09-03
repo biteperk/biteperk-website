@@ -26,6 +26,14 @@
  * 27 Jul 2026 — DISCHARGED, cleared for prospect-facing use. The standing rule
  * is unchanged and applies to whatever is written next: French added after that
  * date needs its own native pass.
+ *
+ * The 3 Sep 2026 privacy/cookie French (the whole `privacy.fr` block below, the
+ * last sentence of the cookies "Strictement nécessaires" body, and the CNIL /
+ * APD-GBA sentences in markets.ts) had a VERBAL pass from Ludovic, confirmed by
+ * Sam on 3 Sep 2026 — DISCHARGED. Recorded as verbal deliberately: unlike the
+ * two sign-offs above there is no email or document behind it, and that is the
+ * provenance if the wording is ever questioned. The standing rule is unchanged
+ * for French written after that date.
  */
 
 import type { Lang } from "@/data/locales";
@@ -697,9 +705,9 @@ export const privacy: Record<Lang, SimplePageCopy> = {
     ],
   },
   fr: {
-    // ⚠️ DRAFT French (3 Sep 2026) — every sentence in this block is new or
-    // reworded and needs Ludovic's pass before it is prospect-facing. The
-    // signed-off French of 26–27 Jul 2026 did not cover it.
+    // Every sentence in this block is new or reworded (3 Sep 2026) — the
+    // signed-off French of 26–27 Jul 2026 did not cover it. Verbal pass from
+    // Ludovic, confirmed by Sam 3 Sep 2026; see this file's header.
     title: "Politique de confidentialité — BitePerk",
     description: "Comment BitePerk traite les données personnelles sur biteperk.com.",
     eyebrow: "Mentions légales",
@@ -874,7 +882,8 @@ export const cookies: Record<Lang, SimplePageCopy> = {
       {
         heading: "Strictement nécessaires",
         body: [
-          // ⚠️ DRAFT French (3 Sep 2026): the last sentence is new — Ludovic's pass.
+          // The last sentence is new (3 Sep 2026, reCAPTCHA removal) — verbal
+          // pass from Ludovic, confirmed by Sam 3 Sep 2026; see file header.
           "Une donnée mémorise votre choix en matière de cookies, afin de ne pas vous solliciter à chaque page, et une autre retient si vous préférez le thème clair ou sombre. Elles restent dans votre navigateur, ne sont jamais transmises et ne peuvent être désactivées : sans elles, le site ne peut pas respecter les choix que vous avez déjà exprimés. Le formulaire de contact n'utilise aucun CAPTCHA et ne dépose rien sur votre appareil.",
         ],
       },
