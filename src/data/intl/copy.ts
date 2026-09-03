@@ -644,65 +644,106 @@ export const privacy: Record<Lang, SimplePageCopy> = {
     description: "How BitePerk handles personal data on biteperk.com.",
     eyebrow: "Legal",
     h1: "Privacy notice",
+    // Language core — market-neutral. Every sentence here is checked against
+    // what functions/index.js actually does (3 Sep 2026): no CAPTCHA, no IP or
+    // user agent on the lead, 24-month TTL, Firestore + Zoho CRM + Zoho Mail
+    // all in Australia. The supervisory authority is MARKET-scoped and lives
+    // in markets.ts overrides (fr → CNIL, be-* → APD/GBA, gb-en → ICO); the
+    // x-default /en names none. check-truthful bans "data … stored in
+    // Australia"-shaped phrases on global pages — say "to Australia".
     intro:
-      "This notice covers biteperk.com, the international site of BitePerk Pty Ltd (Sydney, Australia). It explains what we collect here, why, and the choices you have. A full GDPR-aligned notice, including the arrangements for European voice deployments, is being finalised with counsel and will replace this page.",
+      "This notice covers biteperk.com, the international site of Biteperk Pty Ltd (Sydney, Australia). It explains what we collect here, why, the legal basis for it, and the rights you have.",
     sections: [
       {
-        heading: "What we collect on this site",
+        heading: "Who controls your data",
         body: [
-          "The contact form asks for your name, work email, venue name and message. We use these to respond to your enquiry and, if you ask about a pilot, to organise it. Google reCAPTCHA processes technical request data when you submit the contact form to verify that you are human and prevent spam. Google Ads consent mode may send limited cookieless measurement signals while advertising storage, user-data use and personalisation are denied. Analytics cookies do not run without consent.",
+          "Biteperk Pty Ltd (ABN 36 700 831 303), Sydney, Australia, is the controller of the personal data described here. You can reach us about anything on this page at hello@biteperk.com.au.",
         ],
       },
       {
-        heading: "Where it's stored",
+        heading: "What we collect on this site",
         body: [
-          "Form submissions are stored with our infrastructure provider, Google Cloud (Firestore), entered into our Zoho CRM account for follow-up, and sent to our team by notification email. If you are in the EU/EEA this involves a transfer of your data outside the EEA; we limit it to the enquiry itself and are putting standard contractual clauses and a European data path in place as part of our European launch.",
+          "The contact form asks for your name, work email, venue name, the product you are interested in, and your message. We use these to respond to your enquiry and, if you ask about a pilot, to organise it. We do not keep your IP address or browser details with your enquiry; a short-lived, hashed record of your connection is used only to limit repeat submissions. Google Ads consent mode may send limited cookieless measurement signals while advertising storage, user-data use and personalisation are denied. Analytics cookies do not run without consent.",
+        ],
+      },
+      {
+        heading: "Our lawful basis",
+        body: [
+          "We rely on legitimate interests (Article 6(1)(f) GDPR) to answer a business enquiry you have chosen to send us — responding to it is what you asked for, and the data involved is limited to the enquiry itself. Where we place non-essential cookies we rely on your consent instead, which you can withdraw at any time through Cookie settings.",
+        ],
+      },
+      {
+        heading: "Where it goes, and international transfers",
+        body: [
+          "Form submissions are stored with our infrastructure provider, Google Cloud (Firestore, Australia region), entered into our Zoho CRM account (Zoho's Australian data centre) for follow-up, and sent to our team by notification email through Zoho Mail. If you are in the EU/EEA or the United Kingdom, that is a transfer of your personal data to Australia, which has no adequacy decision from the EU or the UK.",
+          // TODO(legal): flip this sentence once Zoho's DPA (EU SCCs + UK
+          // Addendum, AU data centre) is countersigned — see the ops log.
+          "We do not yet have a signed transfer safeguard (the EU standard contractual clauses) in place with Zoho for this transfer. Until it is signed we keep what we send limited to the enquiry itself. If you would rather your details did not leave the EU or the UK, email us instead of using the form and tell us so.",
         ],
       },
       {
         heading: "How long we keep it",
         body: [
-          "Enquiries are kept for as long as needed to handle the conversation and any pilot that follows, then deleted. You can ask us to delete your enquiry at any time.",
+          "Enquiries are kept for up to 24 months from the day you send them, then deleted automatically. You can ask us to delete your enquiry earlier at any time.",
         ],
       },
       {
-        heading: "Your rights and contact",
+        heading: "Your rights",
         body: [
-          "You can request access to, correction of, or deletion of your personal data at any time. Write to hello@biteperk.com.au and we'll act on it promptly.",
+          "You have the right to ask us for a copy of your personal data, to have it corrected or erased, to have its use restricted, to object to our use of it where we rely on legitimate interests, and to receive it in a portable form. Write to hello@biteperk.com.au and we will act on it within one month.",
+          "If you are in the EU/EEA or the United Kingdom, you also have the right to complain to your local data protection supervisory authority. We would rather you came to us first, but you do not have to.",
         ],
       },
     ],
   },
   fr: {
+    // ⚠️ DRAFT French (3 Sep 2026) — every sentence in this block is new or
+    // reworded and needs Ludovic's pass before it is prospect-facing. The
+    // signed-off French of 26–27 Jul 2026 did not cover it.
     title: "Politique de confidentialité — BitePerk",
     description: "Comment BitePerk traite les données personnelles sur biteperk.com.",
     eyebrow: "Mentions légales",
     h1: "Politique de confidentialité",
     intro:
-      "Cette notice couvre biteperk.com, le site international de BitePerk Pty Ltd (Sydney, Australie). Elle explique ce que nous collectons ici, pourquoi, et les choix dont vous disposez. Une politique complète conforme au RGPD, incluant les modalités des déploiements vocaux européens, est en cours de finalisation avec nos conseils et remplacera cette page.",
+      "Cette notice couvre biteperk.com, le site international de Biteperk Pty Ltd (Sydney, Australie). Elle explique ce que nous collectons ici, pourquoi, sur quelle base légale, et les droits dont vous disposez.",
     sections: [
       {
-        heading: "Ce que nous collectons sur ce site",
+        heading: "Qui est responsable de vos données",
         body: [
-          "Le formulaire de contact demande votre nom, votre e-mail professionnel, le nom de votre établissement et votre message. Nous les utilisons pour répondre à votre demande et, si vous vous renseignez sur un pilote, pour l'organiser. Google reCAPTCHA traite des données techniques de la requête lorsque vous soumettez le formulaire de contact, afin de vérifier que vous êtes humain et d'empêcher le spam. Le mode Consentement de Google Ads peut transmettre des signaux de mesure limités et sans cookie lorsque le stockage publicitaire, l'utilisation des données publicitaires et la personnalisation sont refusés. Aucun cookie de mesure d'audience ne fonctionne sans consentement.",
+          "Biteperk Pty Ltd (ABN 36 700 831 303), Sydney, Australie, est le responsable du traitement des données personnelles décrites ici. Pour toute question sur cette page, écrivez à hello@biteperk.com.au.",
         ],
       },
       {
-        heading: "Où elles sont stockées",
+        heading: "Ce que nous collectons sur ce site",
         body: [
-          "Les envois du formulaire sont stockés chez notre fournisseur d'infrastructure, Google Cloud (Firestore), enregistrés dans notre CRM Zoho pour le suivi commercial, et un e-mail de notification est adressé à notre équipe. Si vous êtes dans l'UE/EEE, cela implique un transfert de vos données hors de l'EEE ; nous le limitons à la demande elle-même et mettons en place des clauses contractuelles types ainsi qu'un hébergement européen dans le cadre de notre lancement en Europe.",
+          "Le formulaire de contact demande votre nom, votre e-mail professionnel, le nom de votre établissement, le produit qui vous intéresse et votre message. Nous les utilisons pour répondre à votre demande et, si vous vous renseignez sur un pilote, pour l'organiser. Nous ne conservons ni votre adresse IP ni les caractéristiques de votre navigateur avec votre demande ; une empreinte hachée et temporaire de votre connexion sert uniquement à limiter les envois répétés. Le mode Consentement de Google Ads peut transmettre des signaux de mesure limités et sans cookie lorsque le stockage publicitaire, l'utilisation des données publicitaires et la personnalisation sont refusés. Aucun cookie de mesure d'audience ne fonctionne sans consentement.",
+        ],
+      },
+      {
+        heading: "Notre base légale",
+        body: [
+          "Nous nous appuyons sur l'intérêt légitime (article 6, paragraphe 1, point f du RGPD) pour répondre à une demande professionnelle que vous avez choisi de nous adresser : y répondre est ce que vous nous demandez, et les données concernées se limitent à la demande elle-même. Pour les cookies non essentiels, nous nous appuyons sur votre consentement, que vous pouvez retirer à tout moment depuis « Paramètres des cookies ».",
+        ],
+      },
+      {
+        heading: "Où vont vos données, et les transferts internationaux",
+        body: [
+          "Les envois du formulaire sont stockés chez notre fournisseur d'infrastructure, Google Cloud (Firestore, région Australie), enregistrés dans notre compte Zoho CRM (centre de données australien de Zoho) pour le suivi, et transmis à notre équipe par e-mail de notification via Zoho Mail. Si vous êtes dans l'UE/EEE ou au Royaume-Uni, il s'agit d'un transfert de vos données personnelles vers l'Australie, qui ne bénéficie d'aucune décision d'adéquation de l'UE ni du Royaume-Uni.",
+          // TODO(legal): flip once Zoho's DPA is countersigned — see the ops log.
+          "Nous ne disposons pas encore d'une garantie de transfert signée (les clauses contractuelles types de l'UE) avec Zoho pour ce transfert. Tant qu'elle n'est pas signée, nous limitons ce que nous transmettons à la demande elle-même. Si vous préférez que vos coordonnées ne quittent pas l'UE ou le Royaume-Uni, écrivez-nous par e-mail plutôt que d'utiliser le formulaire, et dites-le-nous.",
         ],
       },
       {
         heading: "Durée de conservation",
         body: [
-          "Les demandes sont conservées le temps de traiter l'échange et l'éventuel pilote qui en découle, puis supprimées. Vous pouvez demander la suppression de votre demande à tout moment.",
+          "Les demandes sont conservées au maximum 24 mois à compter de leur envoi, puis supprimées automatiquement. Vous pouvez demander la suppression anticipée de votre demande à tout moment.",
         ],
       },
       {
-        heading: "Vos droits et contact",
+        heading: "Vos droits",
         body: [
-          "Vous pouvez demander à tout moment l'accès à vos données personnelles, leur rectification ou leur suppression. Écrivez à hello@biteperk.com.au : nous y donnerons suite rapidement.",
+          "Vous avez le droit de nous demander une copie de vos données personnelles, d'en obtenir la rectification ou l'effacement, d'en limiter l'utilisation, de vous opposer à leur traitement lorsqu'il repose sur notre intérêt légitime, et de les recevoir dans un format portable. Écrivez à hello@biteperk.com.au : nous y donnerons suite sous un mois.",
+          "Si vous êtes dans l'UE/EEE ou au Royaume-Uni, vous avez également le droit d'introduire une réclamation auprès de votre autorité de contrôle. Nous préférerions que vous vous adressiez d'abord à nous, mais rien ne vous y oblige.",
         ],
       },
     ],
@@ -797,7 +838,7 @@ export const cookies: Record<Lang, SimplePageCopy> = {
       {
         heading: "Strictly necessary",
         body: [
-          "One small entry remembers your cookie choice so we don't ask again on every page, and another remembers whether you prefer the light or dark theme. When you submit the contact form, Google reCAPTCHA runs as a strictly necessary anti-spam check and processes technical request data to verify that you are human. These protections cannot be switched off because the site cannot safely accept the form without them.",
+          "One small entry remembers your cookie choice so we don't ask again on every page, and another remembers whether you prefer the light or dark theme. Both stay in your browser, are never transmitted, and cannot be switched off — without them the site cannot honour the choices you have already made. The contact form uses no CAPTCHA and sets nothing on your device.",
         ],
       },
       {
@@ -833,7 +874,8 @@ export const cookies: Record<Lang, SimplePageCopy> = {
       {
         heading: "Strictement nécessaires",
         body: [
-          "Une donnée mémorise votre choix en matière de cookies, afin de ne pas vous solliciter à chaque page, et une autre retient si vous préférez le thème clair ou sombre. Elles restent dans votre navigateur, ne sont jamais transmises et ne peuvent être désactivées : sans elles, le site ne peut pas respecter les choix que vous avez déjà exprimés. Lorsque vous soumettez le formulaire de contact, Google reCAPTCHA s'exécute comme vérification anti-spam strictement nécessaire et traite des données techniques de la requête afin de vérifier que vous êtes humain. Cette protection ne peut pas être désactivée, car le site ne peut pas accepter le formulaire en toute sécurité sans elle.",
+          // ⚠️ DRAFT French (3 Sep 2026): the last sentence is new — Ludovic's pass.
+          "Une donnée mémorise votre choix en matière de cookies, afin de ne pas vous solliciter à chaque page, et une autre retient si vous préférez le thème clair ou sombre. Elles restent dans votre navigateur, ne sont jamais transmises et ne peuvent être désactivées : sans elles, le site ne peut pas respecter les choix que vous avez déjà exprimés. Le formulaire de contact n'utilise aucun CAPTCHA et ne dépose rien sur votre appareil.",
         ],
       },
       {

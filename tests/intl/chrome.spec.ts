@@ -56,6 +56,14 @@ test.describe("intl chrome — phone", () => {
     await page.locator("[data-locale-picker-trigger]").click();
     const menu = page.locator("[data-locale-picker-menu]");
     await expect(menu).toBeVisible();
+    // The sheet slides up from below the viewport (240ms). toBeVisible()
+    // resolves on its first painted frame, so under load boundingBox() can
+    // sample it mid-slide and report it as overflowing the bottom edge —
+    // exactly the false failure this measured on a busy machine. Wait for
+    // the entrance to settle; a no-op under prefers-reduced-motion.
+    await menu.evaluate((el) =>
+      Promise.all(el.getAnimations({ subtree: true }).map((a) => a.finished)),
+    );
     const box = (await menu.boundingBox())!;
     // It used to hang ~43px off the right edge on a 390px screen.
     expect(box.x).toBeGreaterThanOrEqual(0);
@@ -131,6 +139,10 @@ test.describe("intl chrome — Cities nav dropdown", () => {
     await page.locator("[data-city-nav-trigger]").click();
     const menu = page.locator("[data-city-nav-menu]");
     await expect(menu).toBeVisible();
+    // Same slide-up entrance as the region picker — settle before measuring.
+    await menu.evaluate((el) =>
+      Promise.all(el.getAnimations({ subtree: true }).map((a) => a.finished)),
+    );
     const box = (await menu.boundingBox())!;
     expect(box.x).toBeGreaterThanOrEqual(0);
     expect(box.x + box.width).toBeLessThanOrEqual(PHONE.width);

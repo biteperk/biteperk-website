@@ -84,10 +84,6 @@ const { home: h, contact: ct } = c;
 // Only /gb-en carries market "gb" — the tree Biteperk Ltd's UK disclosures
 // attach to. There is no French or Belgian entity.
 const isUk = locale.market === "gb";
-// Google's published always-pass v2 site key keeps local/CI builds testable.
-// The production deploy workflow refuses to deploy unless a real key replaces it.
-const recaptchaSiteKey =
-  import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY || "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI";
 
 const simple = SIMPLE_PAGES[page]?.(c) ?? null;
 // Supporting photo for sub-pages. undefined on the home (it has a hero) and on
@@ -444,12 +440,14 @@ const appJsonLd =
             <p class="hp" aria-hidden="true">
               <label>Leave this field empty<input type="text" name="_gotcha" tabindex="-1" autocomplete="off" /></label>
             </p>
-            {/* Every locale posts through the same Zoho CRM + reCAPTCHA path —
-                previously /en-only. Extending to gb-en/fr/be-en/be-fr must
-                stay in lockstep with the privacy + cookie policy disclosures
-                (src/data/intl/copy.ts, markets.ts gbEn.privacy), which now
-                mention reCAPTCHA and Zoho CRM unconditionally rather than
-                scoped to "/en". */}
+            {/* Every locale posts through the same Zoho CRM path — previously
+                /en-only. Anything this form sends must stay in lockstep with
+                the privacy + cookie policy disclosures (src/data/intl/copy.ts
+                cores, markets.ts per-market privacy overrides).
+                No CAPTCHA by design: Google reCAPTCHA was removed 3 Sep 2026 —
+                it loaded before any consent on every EU/UK contact page and
+                sent visitor IPs to Google. The honeypot plus the function's
+                per-connection rate limit do that job now. */}
             <input type="hidden" name="crmForm" value="zoho-global" />
             <div class="field">
               <label for="if-name">{ct.form.name}</label>
@@ -480,21 +478,6 @@ const appJsonLd =
             <div class="field">
               <label for="if-message">{ct.form.message}</label>
               <textarea id="if-message" name="message" required maxlength="4000" rows="5" placeholder={ct.form.messagePlaceholder}></textarea>
-            </div>
-            <div class="recaptcha-wrap">
-              <script
-                is:inline
-                data-astro-rerun
-                src="https://www.google.com/recaptcha/api.js"
-                async
-                defer
-              ></script>
-              <div
-                class="g-recaptcha"
-                data-sitekey={recaptchaSiteKey}
-                data-theme="light"
-              ></div>
-              <noscript>JavaScript is required to verify this form.</noscript>
             </div>
             <button class="btn" type="submit">{ct.form.submit}</button>
             <p class="intl-form-status" role="status" aria-live="polite" hidden></p>
@@ -776,7 +759,6 @@ const appJsonLd =
     box-shadow: var(--ring-focus);
   }
   .intl-form .btn { justify-self: start; }
-  .recaptcha-wrap { min-height: 78px; max-width: 304px; overflow: hidden; }
   .intl-form-status {
     margin: 0;
     padding: 12px 14px;
@@ -910,14 +892,12 @@ const appJsonLd =
             status.classList.add("is-error");
             status.hidden = false;
           }
-          (window as typeof window & { grecaptcha?: { reset: () => void } }).grecaptcha?.reset();
         } catch {
           if (status) {
             status.textContent = "Network error — please try again or email hello@biteperk.com.au.";
             status.classList.add("is-error");
             status.hidden = false;
           }
-          (window as typeof window & { grecaptcha?: { reset: () => void } }).grecaptcha?.reset();
         } finally {
           busy = false;
           if (button && button.isConnected) {

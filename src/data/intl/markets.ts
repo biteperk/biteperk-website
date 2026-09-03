@@ -27,6 +27,25 @@
  */
 import type { Locale } from "@/data/locales";
 import type { CopyBundle, Override } from "./index";
+import { privacy as privacyCore, type Lang, type SimplePageCopy } from "./copy";
+
+/**
+ * A market's privacy notice = its language core with the supervisory
+ * authority named. The core's final "Your rights" paragraph says "your local
+ * data protection supervisory authority" — true on the x-default /en, which
+ * serves no single market — and each market replaces exactly that sentence
+ * and nothing else. Deriving (rather than restating six sections three
+ * times) keeps the SHAPE identical to the core, which the bundle-parity unit
+ * test requires of every tree except /gb-en, and means the French is
+ * reviewed once, in copy.ts. merge() still replaces the array wholesale, so
+ * the full list is what ships. /gb-en keeps its own literal override below
+ * because it names a different controller, not just a different authority.
+ */
+function privacyNaming(lang: Lang, authority: string): SimplePageCopy["sections"] {
+  const sections = privacyCore[lang].sections;
+  const last = sections[sections.length - 1];
+  return [...sections.slice(0, -1), { ...last, body: [...last.body.slice(0, -1), authority] }];
+}
 
 /** A market's imagery band on the locale home (rendered by [...intl].astro). */
 export type MarketMedia = {
@@ -308,16 +327,11 @@ const gbEn: MarketContent = {
     // /be-en shares the EN core and correctly keeps Biteperk Pty Ltd, because
     // there is no Belgian entity.
     //
-    // ⚠️ COUNSEL REVIEW REQUIRED BEFORE DEPLOY. Naming a UK controller and a UK
-    // contracting party changes what these documents mean; the wording below is
-    // drafted to be accurate and complete, not to substitute for that review.
-    //
-    // ⚠️ 2026-09-02 DRAFT, UNREVIEWED: the reCAPTCHA sentence in "What we
-    // collect on this site" and the Zoho CRM mention in "Where it goes, and
-    // transfers out of the UK" are new, added when the contact form's Zoho
-    // CRM + reCAPTCHA flow (previously /en-only) was extended to gb-en. They
-    // have not had a counsel pass and must not be treated as cleared for
-    // production until they do — this note stands until that review happens.
+    // Review status (3 Sep 2026): this copy has been live since 7 Aug 2026 and
+    // is checked sentence-by-sentence against what functions/index.js does.
+    // It is queued for Natalia's confirmation in the legal pack v3.0 second
+    // pass (deliverables/2026-07-29-legal-compliance-pack, memo §5 items
+    // 3d–3g). The 2 Sep reCAPTCHA sentence is gone with the widget itself.
     //
     // `sections` is restated IN FULL rather than patched. merge() replaces
     // arrays wholesale (tests/unit/intl-merge.test.mjs) — supplying a partial
@@ -336,7 +350,7 @@ const gbEn: MarketContent = {
         {
           heading: "What we collect on this site",
           body: [
-            "The contact form asks for your name, work email, venue name and message. We use these to respond to your enquiry and, if you ask about a pilot, to organise it. Google reCAPTCHA processes technical request data when you submit the contact form to verify that you are human and prevent spam. Google Ads consent mode may send limited cookieless measurement signals while advertising storage, user-data use and personalisation are denied. Analytics cookies do not run without consent.",
+            "The contact form asks for your name, work email, venue name, the product you are interested in, and your message. We use these to respond to your enquiry and, if you ask about a pilot, to organise it. We do not keep your IP address or browser details with your enquiry; a short-lived, hashed record of your connection is used only to limit repeat submissions. Google Ads consent mode may send limited cookieless measurement signals while advertising storage, user-data use and personalisation are denied. Analytics cookies do not run without consent.",
           ],
         },
         {
@@ -348,14 +362,15 @@ const gbEn: MarketContent = {
         {
           heading: "Where it goes, and transfers out of the UK",
           body: [
-            "Form submissions are stored with our infrastructure provider, Google Cloud (Firestore), entered into our Zoho CRM account for follow-up, and a notification email is sent to our team. That is a transfer of your data out of the United Kingdom.",
+            "Form submissions are stored with our infrastructure provider, Google Cloud (Firestore, Australia region), entered into our Zoho CRM account (Zoho's Australian data centre) for follow-up, and sent to our team by notification email through Zoho Mail. That is a transfer of your personal data out of the United Kingdom, to Australia.",
+            // TODO(legal): flip once the IDTA / UK Addendum + TRA are executed.
             "The United Kingdom has no adequacy regulations for Australia, so the transfer needs a safeguard under Article 46 UK GDPR. We are putting an International Data Transfer Agreement (or the UK Addendum to the EU standard contractual clauses) in place together with the transfer risk assessment that must accompany it. Until that is complete we keep the transfer limited to the enquiry itself. If you would rather not have your details leave the UK, email us instead of using the form and tell us so.",
           ],
         },
         {
           heading: "How long we keep it",
           body: [
-            "Enquiries are kept for as long as needed to handle the conversation and any pilot that follows, then deleted. You can ask us to delete your enquiry at any time.",
+            "Enquiries are kept for up to 24 months from the day you send them, then deleted automatically. You can ask us to delete your enquiry earlier at any time.",
           ],
         },
         {
@@ -363,6 +378,38 @@ const gbEn: MarketContent = {
           body: [
             "Under the UK GDPR you have the right to ask us for a copy of your personal data, to have it corrected or erased, to have its use restricted, to object to our use of it where we rely on legitimate interests, and to receive it in a portable form. Write to sales@biteperk.com and we will act on it within one month.",
             "You also have the right to complain to the Information Commissioner's Office, the UK supervisory authority, at ico.org.uk or on 0303 123 1113. We would rather you came to us first, but you do not have to.",
+          ],
+        },
+      ],
+    },
+    // The cookie policy is language-scoped in copy.ts, but its contact line
+    // must match the UK controller story above (sales@biteperk.com, not the
+    // AU hello@ address). Only the last section's email differs from the core.
+    cookies: {
+      sections: [
+        {
+          heading: "Strictly necessary",
+          body: [
+            "One small entry remembers your cookie choice so we don't ask again on every page, and another remembers whether you prefer the light or dark theme. Both stay in your browser, are never transmitted, and cannot be switched off — without them the site cannot honour the choices you have already made. The contact form uses no CAPTCHA and sets nothing on your device.",
+          ],
+        },
+        {
+          heading: "Analytics",
+          body: [
+            "If and when we enable analytics, we use a cookieless product that records page views without cookies, without cross-site tracking and without building a profile of you. It stays off until you allow it, and you can withdraw that permission at any time.",
+          ],
+        },
+        {
+          heading: "Marketing",
+          body: [
+            "Google Ads uses advanced consent mode. Its tag loads with advertising storage, advertising user-data use and personalisation denied, and may send consent status and limited cookieless measurement pings in that state. If you allow Marketing, Google Ads may use advertising cookies and the LinkedIn Insight Tag may load. With Marketing denied, neither may use advertising storage or personalisation.",
+          ],
+        },
+        {
+          heading: "Changing or withdrawing your choice",
+          body: [
+            "Open Cookie settings in the footer of any page to review or change what you have allowed. Withdrawing permission is exactly as easy as giving it, takes effect immediately, and does not affect anything we did while permission was in place.",
+            "Questions about this policy, or about the personal data behind it, can go to sales@biteperk.com — the same address that handles data requests under our privacy notice.",
           ],
         },
       ],
@@ -545,6 +592,15 @@ const frFr: MarketContent = {
         },
       ],
     },
+    // ⚠️ DRAFT French (3 Sep 2026) — Ludovic's pass. CNIL is the French
+    // supervisory authority; this is the only sentence that differs from the
+    // FR core (see privacyNaming).
+    privacy: {
+      sections: privacyNaming(
+        "fr",
+        "Vous avez également le droit d'introduire une réclamation auprès de la CNIL, l'autorité de contrôle française, sur cnil.fr. Nous préférerions que vous vous adressiez d'abord à nous, mais rien ne vous y oblige.",
+      ),
+    },
     contact: {
       title: "Contacter BitePerk — pilotes en France",
       description:
@@ -694,6 +750,14 @@ const beEn: MarketContent = {
           ],
         },
       ],
+    },
+    // The Belgian supervisory authority (APD/GBA) is the only sentence that
+    // differs from the EN core (see privacyNaming).
+    privacy: {
+      sections: privacyNaming(
+        "en",
+        "You also have the right to complain to the Belgian Data Protection Authority (APD/GBA), the supervisory authority in Belgium, at dataprotectionauthority.be. We would rather you came to us first, but you do not have to.",
+      ),
     },
     contact: {
       form: { venuePlaceholder: "e.g. Maison Verte, Brussels" },
@@ -845,6 +909,15 @@ const beFr: MarketContent = {
           ],
         },
       ],
+    },
+    // ⚠️ DRAFT French (3 Sep 2026) — Ludovic's pass. The Belgian supervisory
+    // authority (APD/GBA) is the only sentence that differs from the FR core
+    // (see privacyNaming).
+    privacy: {
+      sections: privacyNaming(
+        "fr",
+        "Vous avez également le droit d'introduire une réclamation auprès de l'Autorité de protection des données (APD/GBA), l'autorité de contrôle belge, sur autoriteprotectiondonnees.be. Nous préférerions que vous vous adressiez d'abord à nous, mais rien ne vous y oblige.",
+      ),
     },
     contact: {
       form: { venuePlaceholder: "ex. Maison Verte, Bruxelles" },

@@ -373,3 +373,76 @@ once seeded.
 | Instagram | https://www.instagram.com/biteperk/ |
 
 Post-deploy: re-scrape LinkedIn Post Inspector and Facebook Sharing Debugger.
+
+## 3 Sep 2026 — International contact form: privacy position and sign-off
+
+PR #26 (Zoho CRM + Google Ads conversion tracking on all five biteperk.com
+locales) was held for a "legal review" that had no reviewer behind it: the
+v3.0 legal pack prepared for Natalia's second pass (25 Aug) had not been sent,
+and its website privacy/cookie drafts do not mention Zoho CRM, Google Ads or
+the contact-form data flow at all. Rather than wait on a document describing
+a site that no longer exists, the position below was fixed in code, checked
+sentence-by-sentence against `functions/index.js`, and accepted.
+
+**Decision (Sam, 3 Sep 2026, as controller):** the contact-form privacy
+position stated on `/en`, `/gb-en`, `/fr`, `/be-en`, `/be-fr` is accepted as a
+documented business decision for a low-risk B2B enquiry form, and PR #26 may
+merge on it. The corrected privacy + cookie texts replace
+`3-Website-Publish-Layer/03` and `04` in the v3.0 bundle, and four questions
+are added to the memo's decisions table (§5, items 3d–3g) for Natalia's
+confirmation in her existing second pass — not a new engagement.
+
+**What changed in code (PR #26):**
+
+- Google reCAPTCHA removed from the international form. It loaded before any
+  consent on every EU/UK contact page and sent each visitor's IP to Google
+  (CNIL fined Cityscoot €125k for reCAPTCHA-without-consent, 2023); the AU
+  form has never used a CAPTCHA. Replaced by the existing honeypot plus a
+  per-connection rate limit in the function (5 posts / 10 min, keyed by
+  sha256(IP), counter expires with the window).
+- Lead notification CC changed from `biteperk@gmail.com` (personal Gmail — an
+  undisclosed transfer of every lead's full details to Google, US) to the
+  Zoho-hosted `sales@biteperk.com`.
+- Visitor IP address and user agent no longer stored on the lead. Nothing
+  ever read them back.
+- Retention: every lead now carries `expireAt` = created + ~24 months, with a
+  Firestore TTL policy declared in `firestore.indexes.json` (`fieldOverrides`
+  → `ttl: true` on `contactSubmissions.expireAt` and `rateLimits.expireAt`)
+  and deployed with `firebase deploy --only firestore:indexes` (Firebase CLI
+  ≥ 15 manages TTL from that file; confirmed on 15.24.0). Fallback:
+  `gcloud firestore fields ttls update expireAt
+  --collection-group=contactSubmissions --database=biteperk-leads
+  --project=vocotable --enable-ttl`. Verify with
+  `gcloud firestore fields ttls list --database=biteperk-leads`.
+  **TTL policy deployed: ☐ (date / operator)** — until this box is ticked the
+  "up to 24 months" sentence is a promise, not a fact.
+- Privacy notice on every locale now states: controller (Biteperk Pty Ltd,
+  ABN, Sydney — no street address; `check-truthful` bans the NAP on global
+  pages), lawful basis (Art 6(1)(f)), named recipients with locations
+  (Firestore AU, Zoho CRM AU, Zoho Mail), the transfer to Australia with an
+  honest "no SCC signed yet" sentence, 24-month retention, the full GDPR
+  rights list, and the market's supervisory authority (CNIL / APD-GBA / ICO).
+  The "being finalised with counsel" promise is gone. Cookie policy and the
+  live settings panel no longer describe reCAPTCHA as strictly necessary.
+- Verified facts behind the copy: Firestore `biteperk-leads` is in
+  `australia-southeast1` (checked against the live database, not a comment);
+  the Zoho org `biteperkau` is on the Australian data centre; 51 leads held,
+  6 from the international form, on 3 Sep 2026.
+
+**Open, owner Sam (each is one action):**
+
+1. Deploy order: `firebase deploy --only functions:biteperk-website`, then
+   `--only firestore:indexes`, then hosting. Functions first so the old page
+   keeps working during the gap.
+2. Zoho CRM → Setup → Users & Control → Compliance Settings → enable GDPR
+   (`privacy_settings` was `false` on 3 Sep).
+3. Zoho DPA: email legal@zohocorp.com for the DPA (EU SCCs Module 2 + UK
+   Addendum), stating the account is on the **AU data centre**. When
+   countersigned, flip the `TODO(legal)` sentence in `copy.ts` (EN + FR) and
+   `markets.ts` (gb-en), and log it here.
+4. ICO registration + fee for Biteperk Ltd (open obligation #2 above).
+5. `firebase functions:secrets:destroy RECAPTCHA_SECRET_KEY` and delete the
+   `PUBLIC_RECAPTCHA_SITE_KEY` repository variable once the new function is
+   live — both are unused now.
+6. Ludovic's pass on the new French (listed in PR #26) before it is
+   prospect-facing.
