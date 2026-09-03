@@ -446,9 +446,91 @@ confirmation in her existing second pass — not a new engagement.
    countersigned, flip the `TODO(legal)` sentence in `copy.ts` (EN + FR) and
    `markets.ts` (gb-en), and log it here.
 4. ICO registration + fee for Biteperk Ltd (open obligation #2 above).
-5. `firebase functions:secrets:destroy RECAPTCHA_SECRET_KEY` and delete the
-   `PUBLIC_RECAPTCHA_SITE_KEY` repository variable once the new function is
-   live — both are unused now.
+5. ~~`firebase functions:secrets:destroy RECAPTCHA_SECRET_KEY` and delete the
+   `PUBLIC_RECAPTCHA_SITE_KEY` repository variable~~ — **done 3 Sep 2026.**
+   Verified first with `gcloud functions describe` that the deployed
+   `contactForm` binds only `ZOHO_SMTP_PASS` and `analyticsEvent` binds
+   nothing, so the secret was provably orphaned. Secret now `DESTROYED`
+   (v1), repo variable deleted, and an invalid POST to `/api/contact` still
+   returns 400 — the function is healthy without them. Recoverable if ever
+   needed: the key pair still exists in Google's reCAPTCHA admin console.
+
+### 3 Sep 2026 — Zoho CRM GDPR compliance settings ENABLED
+
+Setup → Security Control → Compliance Settings → **Enable GDPR Compliance**,
+configured as: modules **Leads, Contacts**; consent-unavailable behaviour
+**"Process data as usual"**; Waiting Period blank; all four Personal Data
+Handling restrictions (transfer to Zoho apps, transfer to third-party apps,
+**access through API**, data in export) left **off**. That combination turns
+on the GDPR tooling without changing how leads are processed — the API
+restriction in particular would have broken the MCP integration.
+
+**Verified, because a Zoho rejection is swallowed:** `submitZohoLead`
+failures are caught and the visitor still gets `{"ok":true}`, so a broken
+Web-to-Lead would be invisible from the form. After enabling, one clearly
+marked test enquiry was POSTed to the live `/api/contact` (curl, not a
+browser, to avoid firing a real Google Ads conversion). It reached Zoho
+(records 16 → 17), and Cloud Logging showed **no** `Zoho CRM lead failed`
+entry. The Firestore document confirmed the 3 Sep work live: `expireAt`
+2028-08-23 (~24 months) and **no `ip` or `userAgent` fields**. The test lead
+was then deleted from Zoho and Firestore, and both deletions re-queried to
+confirm. The setting is a toggle, so it is reversible.
+
+### 3 Sep 2026 — Zoho DPA request drafted (NOT SENT — Sam to send)
+
+Drafted in Zoho Mail as **`biteperk@biteperk.com.au`** (an alias of the
+`vocotable@biteperk.com.au` mailbox) rather than a personal address, so Zoho
+can match the request to the account. Deliberately not the `.com`/`.com.au`
+audience rule — that governs prospect correspondence; this is vendor account
+administration and must come from the account identity. To
+`legal@zohocorp.com`, requesting the DPA with **EU SCCs Module 2 + the UK
+Addendum/IDTA**, naming org `biteperkau` on the Australian data centre, and
+both controllers (Biteperk Pty Ltd ABN 36 700 831 303 for EEA visitors;
+Biteperk Ltd 17379647 for UK visitors). **It is sitting in Drafts.** Note the
+mailbox's auto-signature may have been displaced by the typed body — worth a
+glance before sending.
+
+### 3 Sep 2026 — ICO registration for Biteperk Ltd: STARTED, needs Sam
+
+**The register was searched first: Biteperk is NOT currently registered**, so
+there is no duplicate risk and the registration is genuinely outstanding.
+
+The form was completed up to the mandatory **Title** field on the
+data-protection-contact page. That is an honorific for Sam and was not
+guessed. The ICO flow must be **completed in one session and ends in card
+payment**, so if the session has expired, redo it with these answers:
+
+| Field | Value |
+|---|---|
+| Organisation type | Limited company / private limited company |
+| Company (Companies House lookup) | `17379647, BITEPERK LTD, LONDON` — auto-fills name, number, 124 City Road, London, EC1V 2NX, United Kingdom |
+| Trading names | left blank (optional) |
+| Public authority? | No |
+| Charity / exempt charitable status? | No |
+| Small occupational pension scheme? | No |
+| 10 or fewer staff? | Yes → **Tier 1, £52** (£47 by direct debit) |
+| Main contact | Sam Kalaliya · Director · sales@biteperk.com · +61 2 5504 1140 · 124 City Road, London EC1V 2NX, UK |
+| DPO needed? | Tracking/monitoring on a large scale: No. Large-scale special category or criminal offence data: No. → ICO confirms **no DPO required** |
+| Provide a data protection contact? | Yes — "provide a contact", not a nominated DPO |
+| Data protection contact | Title **← Sam to choose**, Sam Kalaliya; publish name: No; contact method: Email `sales@biteperk.com`; publish contact details: Yes |
+
+Two judgement calls to sanity-check before paying: the telephone is the **AU**
+business line (Biteperk Ltd has no UK number, and inventing a `+44` would
+breach the `check-truthful` gate's rationale), and the two DPO questions were
+answered No on the basis that the core activity is answering restaurant calls,
+with no biometric identification and no special category data.
+
+### 3 Sep 2026 — Review packet rendered for Natalia's bundle
+
+`15_Website_Contact_Form_Privacy_Review_3Sep2026.docx` generated into
+`3-Website-Publish-Layer/` and `5-Internal-Only/` by a new
+`_build/21-contact-form-review.js`, in the pack's house style. Two traps
+avoided: `refresh-natalia-bundle.sh` and `20-website-layer.js` rewrite
+documents `03`–`07` by absolute path (SHA-256 hashes were taken before and
+after to prove those five were untouched), and `style.js`'s exported `OUT`
+constant is a dead sandbox path, so the new script derives paths from
+`__dirname`. **Delivery is still Sam's**: Dropbox was not logged in, so the
+file has not been placed in Natalia's shared folder.
 6. ~~Ludovic's pass on the new French~~ — **done 3 Sep 2026.** Ludovic Roux
    gave a **verbal** pass on the 3 Sep privacy/cookie French (the `privacy.fr`
    core, the cookies "Strictement nécessaires" sentence, and the CNIL /
