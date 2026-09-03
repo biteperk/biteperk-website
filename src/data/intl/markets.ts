@@ -327,11 +327,19 @@ const gbEn: MarketContent = {
     // /be-en shares the EN core and correctly keeps Biteperk Pty Ltd, because
     // there is no Belgian entity.
     //
-    // Review status (3 Sep 2026): this copy has been live since 7 Aug 2026 and
-    // is checked sentence-by-sentence against what functions/index.js does.
-    // It is queued for Natalia's confirmation in the legal pack v3.0 second
-    // pass (deliverables/2026-07-29-legal-compliance-pack, memo §5 items
-    // 3d–3g). The 2 Sep reCAPTCHA sentence is gone with the widget itself.
+    // Review status (3 Sep 2026): COUNSEL-CONFIRMED. Checked sentence-by-
+    // sentence against what functions/index.js does, then reviewed by Natalia
+    // (Integrant) via the contact-form privacy packet — item 15 of legal pack
+    // v3.0 — and passed as drafted on 3 Sep 2026, including all four questions
+    // put to her (lawful basis Art 6(1)(f); publishing the honest "no
+    // safeguard signed yet" transfer line rather than suspending the Zoho
+    // push; the IDTA/TRA wording below; and 24-month retention without a
+    // further review criterion). Verbal pass relayed by Sam — no written
+    // opinion, which is the provenance if it is ever questioned.
+    // The 2 Sep reCAPTCHA sentence is gone with the widget itself.
+    //
+    // NOTE: this does NOT discharge the TODO(legal) below. That one is gated
+    // on the IDTA / UK Addendum + TRA actually being executed, not on review.
     //
     // `sections` is restated IN FULL rather than patched. merge() replaces
     // arrays wholesale (tests/unit/intl-merge.test.mjs) — supplying a partial
