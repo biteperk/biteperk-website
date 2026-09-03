@@ -112,7 +112,10 @@ export const categories: ReadonlyArray<{
     id: "necessary",
     title: "Strictly necessary",
     locked: true,
-    body: "Remembers your theme and cookie choice in your browser. When you submit the global contact form, Google reCAPTCHA processes technical request data to verify that you are human and prevent spam.",
+    // Keep identical in substance to the "Strictly necessary" section of the
+    // cookie policy (src/data/intl/copy.ts, src/pages/legal/cookies.astro) —
+    // the settings panel and the policy must never describe different things.
+    body: "Remembers your theme and cookie choice in your browser. Nothing else: the contact form uses no CAPTCHA and sets nothing on your device.",
   },
   {
     id: "analytics",
