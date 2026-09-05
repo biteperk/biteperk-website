@@ -14,6 +14,12 @@
  *     NB the character classes include U+00A0: built HTML joins address
  *     parts with &nbsp;, and a plain \s does not match it in all cases
  *   - the "$80" AU price (EU pricing is a pilot outcome, never quoted)
+ *   - the AU CHROME's CSS (.megamenu*, .mm*, .nav*, .foot* selectors) — not
+ *     a fact leak but a weight leak with the same root cause: Astro inlines
+ *     the CSS of every component in a page's import graph, so an AU-only
+ *     component imported from a shared layout ships its styles (and, via
+ *     the footer, its NAP-bearing markup one refactor later) into every
+ *     international page. ~20 KB of it rode on /fr/ until 6 Sep 2026.
  *
  * Domain mentions (biteperk.com.au) are deliberately NOT forbidden: the org
  * schema's sameAs, the "Australia site ↗" footer link and the hello@ contact
@@ -33,7 +39,9 @@ import { fileURLToPath } from "node:url";
 import { loadTS } from "../build/_load-ts.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
-const DIST = join(ROOT, "dist-global");
+// TRUTHFUL_DIST points the gate at a fixture directory for fault injection
+// (same convention as check-claims' CLAIMS_DIST). Never set in CI.
+const DIST = process.env.TRUTHFUL_DIST ? join(ROOT, process.env.TRUTHFUL_DIST) : join(ROOT, "dist-global");
 
 if (!existsSync(DIST)) {
   console.error(`check-truthful: ${DIST} not found — run BUILD_TARGET=global npm run build first.`);
@@ -109,6 +117,15 @@ const FORBIDDEN = [
     // (2-4-4 in London, 1-2-2-2-2 in Paris), so shape must not be assumed.
     label: "fabricated European phone number",
     re: /\+\s?(?:44|33|32)(?:[\s.\-()]*\d){7,}/,
+  },
+  {
+    // AU chrome leaking through the import graph (see header). Selector-shaped
+    // on purpose: `.megamenu{`, `.mm-panel{`, `.nav-inner{`, `.foot-abn{` are
+    // what Astro emits; the intl tree's own classes are all `.intl-*`. The
+    // trailing character class keeps `.navigation-…` or prose like "the
+    // .mm file" from matching — this is CSS, not text.
+    label: "AU chrome CSS (Nav/Footer/MobileMenu/megamenu reached the global tree — import AuBase only from AU pages)",
+    re: /\.(?:megamenu|mm|nav|foot)(?:-[a-z0-9-]+)?[\s{,:>\[]/,
   },
 ];
 
@@ -204,4 +221,4 @@ if (failed) {
   console.error(`\ncheck-truthful: ${failed} AU-fact leak(s) across ${pages.length} page(s).`);
   process.exit(1);
 }
-console.log(`check-truthful: ${pages.length} global page(s) carry no AU phone, NAP or price.`);
+console.log(`check-truthful: ${pages.length} global page(s) carry no AU phone, NAP, price or AU chrome CSS.`);
