@@ -114,6 +114,43 @@ test.describe("consent notice", () => {
     await page.goto("/gb-en/");
     await expect(page.locator("[data-cookie-settings]").first()).toBeVisible();
   });
+
+  // Informed consent means a notice the visitor can read. Until 6 Sep 2026
+  // the bar was hardcoded English on every tree. toHaveText reads
+  // textContent, so this holds whether or not the bar is currently shown.
+  for (const [home, accept] of [
+    ["/fr/", "Tout accepter"],
+    ["/be-fr/", "Tout accepter"],
+    ["/gb-en/", "Accept all"],
+    ["/be-en/", "Accept all"],
+  ] as const) {
+    test(`consent notice speaks the tree's language: ${home}`, async ({ page }) => {
+      await page.goto(home);
+      await expect(page.locator("[data-consent-accept]")).toHaveText(accept);
+    });
+  }
+});
+
+test.describe("trust facts", () => {
+  test.use({ viewport: PHONE });
+
+  // Every locale home and contact page carries the facts strip; the UK tree
+  // names Biteperk Ltd, the others the Australian company. Never an address.
+  for (const l of localesForTarget("global")) {
+    for (const page_ of ["", "contact/"]) {
+      test(`facts strip on ${l.base}/${page_}`, async ({ page }) => {
+        await page.goto(`${l.base}/${page_}`);
+        const facts = page.locator("[data-trust-facts]");
+        await expect(facts).toHaveCount(1);
+        await expect(facts).toContainText(l.market === "gb" ? "Biteperk Ltd" : "Biteperk Pty Ltd");
+        await expect(facts).not.toContainText(/City Road|Elizabeth Street|Surry Hills/);
+        await expect(facts.locator("a[href$='/legal/privacy/']")).toHaveAttribute(
+          "href",
+          `${l.base}/legal/privacy/`,
+        );
+      });
+    }
+  }
 });
 
 test.describe("intl chrome — tablet keeps the desktop layout", () => {
