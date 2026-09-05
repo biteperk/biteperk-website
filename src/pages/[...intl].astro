@@ -217,7 +217,7 @@ const appJsonLd =
     ? buildVoxApplication({
         description: overview.lede,
         // LIVE capabilities only — structured data must never claim unshipped
-        // work, and two of the four are in-development/concept. No `prices`:
+        // work, and three of the five are in-development/concept. No `prices`:
         // AU tiers are an Australian fact (Europe-truthful, PLAN.md §8).
         featureList: products
           .filter((x) => x.status === "live")
@@ -468,11 +468,11 @@ const appJsonLd =
                   enquiry (the previous /en-only markup pre-selected VoxTable). */}
               <select id="if-product" name="product" required>
                 <option value="" disabled selected>{ct.form.productPlaceholder}</option>
-                <option value="voxtable">VoxTable</option>
-                <option value="voxorder">VoxOrder</option>
-                <option value="voxconcierge">VoxConcierge</option>
-                <option value="voxdrive">VoxDrive</option>
-                <option value="voxstay">VoxStay</option>
+                {/* Derived from the catalogue, as contact.astro does — this
+                    list was hand-written and had already drifted once. */}
+                {products.map((x) => (
+                  <option value={x.slug}>{x.name}</option>
+                ))}
               </select>
             </div>
             <div class="field">
@@ -787,7 +787,7 @@ const appJsonLd =
   }
   .intl-crumbs a:focus-visible { outline: none; box-shadow: var(--ring-focus); border-radius: 4px; }
 
-  /* Status is honest and load-bearing here: two of the four capabilities are
+  /* Status is honest and load-bearing here: three of the five capabilities are
      not shipping. `--gold` (not --gold-fill) because this is text. */
   .status-pill {
     display: inline-block;

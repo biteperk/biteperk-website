@@ -34,7 +34,7 @@ const stripPhotos = [
   <div class="wrap">
     <SectionHeader
       eyebrow="The catalogue"
-      lede="Four products. One mission — keep restaurant teams on the floor while the phone, the bookings, and the no-shows quietly handle themselves."
+      lede="Five products. One mission — keep restaurant teams on the floor while the phone, the bookings, and the no-shows quietly handle themselves."
     >
       <Fragment slot="headline">
         Two products live today.
@@ -105,14 +105,13 @@ const stripPhotos = [
   .feature-wrap {
     margin-top: 64px;
   }
+  /* Four add-on tiles: a 2×2 block, not 3+1 — a lone 280px-tall orphan on the
+     second row read as a mistake, not a layout. */
   .grid-tiles {
     margin-top: 24px;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 20px;
-  }
-  @media (max-width: 980px) {
-    .grid-tiles { grid-template-columns: 1fr 1fr; }
   }
   @media (max-width: 640px) {
     .grid-tiles { grid-template-columns: 1fr; }

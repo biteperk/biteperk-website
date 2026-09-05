@@ -286,7 +286,7 @@ const gbEn: MarketContent = {
       title: "About BitePerk — who is behind Vox",
       h1: "A phone that gets answered, made by people who watched it ring out.",
       intro:
-        "We are a small company in Sydney with one product and no ambition to have five. Vox exists because missed calls are the most boring and most expensive problem in hospitality, and nobody had built a tool that simply picks up.",
+        "We are a small company in Sydney with one product and no ambition to turn it into a suite. Vox exists because missed calls are the most boring and most expensive problem in hospitality, and nobody had built a tool that simply picks up.",
       sections: [
         {
           heading: "What we actually sell",
@@ -577,8 +577,9 @@ const frFr: MarketContent = {
     about: {
       title: "À propos de BitePerk — qui construit Vox",
       h1: "Un téléphone auquel on répond, conçu par des gens qui l'ont vu sonner dans le vide.",
+      // DRAFT French (5 Sep 2026): "aucune envie d'en avoir cinq" → suite — needs Ludovic's pass.
       intro:
-        "Nous sommes une petite maison sydneysienne avec un seul produit et aucune envie d'en avoir cinq. Vox est né d'un constat sans gloire : l'appel manqué est ce qui coûte le plus cher en salle, et personne n'avait fait l'outil qui se contente de décrocher.",
+        "Nous sommes une petite maison sydneysienne avec un seul produit et aucune envie d'en faire une suite. Vox est né d'un constat sans gloire : l'appel manqué est ce qui coûte le plus cher en salle, et personne n'avait fait l'outil qui se contente de décrocher.",
       sections: [
         {
           heading: "Ce que nous vendons, très exactement",

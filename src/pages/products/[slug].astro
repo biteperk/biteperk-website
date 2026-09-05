@@ -18,6 +18,10 @@ const ambientBySlug: Record<string, { slug: string; alt: string }> = {
     slug: "restaurant-host",
     alt: "Front-of-house host scene in a dim restaurant.",
   },
+  voxstay: {
+    slug: "hotel-reception",
+    alt: "A brass reception bell on a hotel front desk.",
+  },
   voxdrive: {
     slug: "coffee-window",
     alt: "Café service window at morning, warm amber light.",
@@ -30,6 +34,7 @@ const featureIcon = (productSlug: string, idx: number) => {
     voxtable: ["phone-wave", "calendar-tick", "pin-au", "shield", "phone-wave", "calendar-tick", "ticket", "shield"],
     voxorder: ["phone-wave", "ticket", "clock-247"],
     voxconcierge: ["phone-wave", "calendar-tick", "shield"],
+    voxstay: ["phone-wave", "shield", "calendar-tick"],
     voxdrive: ["clock-247", "pin-au", "ticket"],
   };
   return map[productSlug]?.[idx] ?? "phone-wave";

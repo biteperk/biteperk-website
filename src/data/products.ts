@@ -360,6 +360,46 @@ const voxconcierge: Product = {
   },
 };
 
+const voxstay: Product = {
+  slug: "voxstay",
+  name: "VoxStay",
+  wordmark: { prefix: "Vox", suffix: "Stay" },
+  tagline: "Bella answers the hotel phone.",
+  summary:
+    "Bella as a hotel receptionist. She answers the room-booking call in the caller's language, offers rooms, quotes the real price with taxes, and texts a secure payment link — she never takes a card number on the phone.",
+  status: "in-development",
+  role: "addon",
+  outcome: "Turn a missed call into a booked room.",
+  // Teal, not the concierge green or the drive gold — the glow is the only
+  // per-product colour on the page and five products need five of them.
+  accent: "rgba(72, 140, 150, 0.30)",
+  hero: {
+    headline: "The hotel phone, answered — in the guest's language.",
+    sub: "VoxStay is Bella at the front desk. She understands the stay, offers two rooms, quotes the real price including taxes, takes a name and mobile, and texts a secure payment link. Built EU-first for independent and small-chain hotels; the first pilots are in Europe, and Australian hotels and motels can join the waitlist.",
+    primaryCta: { label: "Join the waitlist", href: u("/contact/?product=voxstay") },
+    secondaryCta: { label: "See VoxTable instead →", href: u("/products/voxtable/") },
+  },
+  features: [
+    {
+      title: "Eight languages, one receptionist",
+      body: "French, English, Flemish, Italian, German, Spanish, Mandarin and Japanese — Bella answers in the language the caller opens with, so a guest is never asked to switch.",
+    },
+    {
+      title: "Never a card number on the phone",
+      body: "Bella confirms the room and the real price with taxes, then texts a secure payment link. Card details stay out of the call — and out of your team's earshot.",
+    },
+    {
+      title: "Cannot invent a price",
+      body: "Every number Bella says has to come from your live rates; if it isn't there, she can't say it. And if anything on our side fails, the call simply rings the front desk as it always did.",
+    },
+  ],
+  seo: {
+    title: "VoxStay — AI phone receptionist for hotels · Biteperk",
+    description:
+      "VoxStay is Biteperk's AI voice receptionist for independent hotels — answers the booking call in eight languages, quotes real prices with taxes, and texts a secure payment link. In development — join the waitlist.",
+  },
+};
+
 const voxdrive: Product = {
   slug: "voxdrive",
   name: "VoxDrive",
@@ -402,6 +442,7 @@ export const products: ReadonlyArray<Product> = [
   voxtable,
   voxorder,
   voxconcierge,
+  voxstay,
   voxdrive,
 ];
 
@@ -423,7 +464,7 @@ export const products: ReadonlyArray<Product> = [
  * Vox is ONE product. `coreProduct` is the always-on agent every venue gets
  * (the live Table/bookings capability); `addonProducts` are the capabilities
  * switched on alongside it. The /products overview renders from these so the
- * page reads as "one product + add-ons", not a grid of four equals.
+ * page reads as "one product + add-ons", not a grid of five equals.
  */
 const _core = products.find((p) => p.role === "core");
 if (!_core) {
@@ -489,7 +530,7 @@ export const voxFaq: ReadonlyArray<ProductFAQ> = [
   },
   {
     q: "What can Vox do today, and what's coming?",
-    a: "Today Vox does two live jobs: it takes bookings (already serving paying venues) and it handles takeaway and pickup orders. The front-of-house concierge is in active development, and a drive-thru capability is on the drawing board. Start with what you need now and switch the rest on as they ship — same agent, same voice.",
+    a: "Today Vox does two live jobs: it takes bookings (already serving paying venues) and it handles takeaway and pickup orders. The front-of-house concierge and a hotel receptionist (VoxStay) are in active development, and a drive-thru capability is on the drawing board. Start with what you need now and switch the rest on as they ship — same agent, same voice.",
   },
   {
     q: "Can I start with just bookings?",
