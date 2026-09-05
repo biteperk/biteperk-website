@@ -22,9 +22,10 @@
 }
 
 /* ── Metrics-matched fallback: the anti-CLS font ──────────────────────
-   Inter loads with font-display:swap (fontsource default), so on a slow
-   connection the fallback paints first and every line reflows when Inter
-   arrives. On fast hardware the font wins the race and nothing shifts —
+   Inter is declared in fonts.css with font-display:optional (it was
+   fontsource's default `swap` when this was written), so on a slow connection
+   the fallback paints first — and under `swap` every line reflowed when Inter
+   arrived. On fast hardware the font wins the race and nothing shifts —
    which is exactly why this never showed up locally and only failed on CI's
    shared runners, worst on /fr where French copy runs longest (CLS 0.30 vs a
    0.02 budget).

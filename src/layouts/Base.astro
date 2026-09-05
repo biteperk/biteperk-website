@@ -1,32 +1,29 @@
 ---
 /**
- * Base layout — every page on biteperk.com.au extends this.
+ * Base layout — every page on both trees extends this (AU pages via
+ * AuBase.astro, which adds the AU chrome; international pages via IntlLayout).
  *
  * Responsibilities:
  *   - <head>: charset, viewport, theme-color, font preload, favicon, SEO
  *   - Skip-link for keyboard users
- *   - Sticky <Nav> across all pages
- *   - <main> slot for page content
- *   - <Footer> across all pages
+ *   - `nav` / `footer` named slots + <main> default slot
  *   - Astro View Transitions wired sitewide
- *   - Loads scripts/{reveal,nav,mobile-menu,counter}.ts as deferred modules
+ *   - Loads the scripts BOTH trees use as deferred modules
  *
  * Pages pass `title`, optional `description`, optional `path` (canonical
  * override), optional `preloadImage` (push critical hero image on home),
  * optional `ogImage` (per-page Open Graph card).
  */
-// Self-hosted fonts (woff2, hashed + immutable-cached by the build) —
-// replaces the render-blocking Google Fonts request. InterVariable covers
-// weights 300–900 in one file; Source Serif 4 only ships the weights the
-// serif PullQuote actually uses.
-import "@fontsource-variable/inter";
-import "@fontsource/source-serif-4/400.css";
-import "@fontsource/source-serif-4/500.css";
+// Self-hosted fonts: src/styles/fonts.css declares the four faces the site
+// actually uses (Inter latin + latin-ext, Source Serif 4 latin 400/500) and
+// nothing else — see the note there for why the fontsource index CSS is NOT
+// imported. The latin Inter file is preloaded below; `?url` and the CSS
+// url() resolve to the same hashed asset, and check-assets.mjs verifies the
+// preload href exists in the build.
+import "@/styles/fonts.css";
 import "@/styles/global.css";
-import "@/styles/megamenu.css";
+import interLatinUrl from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
 import SEO from "@/components/SEO.astro";
-import Nav from "@/components/Nav.astro";
-import Footer from "@/components/Footer.astro";
 import ConsentBanner from "@/components/ConsentBanner.astro";
 import { siteGraph } from "@/data/schema";
 import { u, buildHreflang, currentTarget, stripBase, isSharedPage, localeFromPath, INTL_LAUNCHED } from "@/data/locales";
@@ -57,11 +54,6 @@ interface Props {
   preloadComposite?: string;
   /** Per-page OG image, defaults to /og/default.png */
   ogImage?: string;
-  /** Skip the global Nav (e.g. on the 404 page if a custom chrome is wanted). */
-  hideNav?: boolean;
-  /** Skip the AU Footer (the international pages carry their own chrome —
-      the AU footer links routes that don't exist on biteperk.com). */
-  hideFooter?: boolean;
 }
 
 const {
@@ -77,8 +69,6 @@ const {
   preloadSlug,
   preloadComposite,
   ogImage,
-  hideNav = false,
-  hideFooter = false,
 } = Astro.props;
 
 // Which locale tree this page belongs to — drives the per-locale manifest.
@@ -148,6 +138,13 @@ if (!alternates && INTL_LAUNCHED && currentTarget() === "au") {
         not the international one. See src/pages/manifest/[loc].webmanifest.ts */}
     <link rel="manifest" href={u(`/manifest/${manifestLoc}.webmanifest`)} />
 
+    {/* Inter latin is the body face on every page and the LCP element on the
+        international trees is TEXT. Without this hint the browser only
+        discovers the woff2 after it has parsed the (fully inlined) stylesheet;
+        measured on /fr/ (Lighthouse mobile, 5 runs): FCP 2.78s → 1.88s, LCP
+        3.15s → 2.55s from this one line. Only the latin file — latin-ext loads
+        on demand for the rare glyph that needs it, the serif is one span. */}
+    <link rel="preload" as="font" type="font/woff2" crossorigin href={interLatinUrl} />
     {preloadImage && <link rel="preload" as="image" href={u(preloadImage)} fetchpriority="high" />}
     {preloadSlug && (
       <link
@@ -184,27 +181,31 @@ if (!alternates && INTL_LAUNCHED && currentTarget() === "au") {
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
-    {!hideNav && <Nav />}
+    {/* Chrome is a SLOT, not a prop. Astro inlines the CSS of every component
+        in a page's import graph — a `{!hideNav && <Nav />}` still shipped the
+        AU nav, mega-menu, mobile menu and footer styles (~20 KB) into every
+        international page that never rendered them. AU pages go through
+        AuBase.astro, which fills these slots; IntlLayout fills neither and
+        renders its own header/footer inside the default slot. */}
+    <slot name="nav" />
     <main id="main">
       <slot />
     </main>
-    {!hideFooter && <Footer />}
+    <slot name="footer" />
     {/* Persisted across View Transitions so its shown/animated state never
         replays on soft navigation. */}
     <ConsentBanner transition:persist />
 
 
+    {/* Scripts shared by BOTH trees. AU-only behaviour (sticky nav, mega
+        menu, mobile menu, counters, call simulation) is imported by
+        AuBase.astro so the international bundle doesn't carry it. */}
     <script>
       import "@/scripts/theme.ts";
       import "@/scripts/reveal.ts";
-      import "@/scripts/nav.ts";
-      import "@/scripts/mobile-menu.ts";
-      import "@/scripts/megamenu.ts";
       import "@/scripts/locale-picker.ts";
       import "@/scripts/city-nav.ts";
       import "@/scripts/locale-suggest.ts";
-      import "@/scripts/counter.ts";
-      import "@/scripts/call-sim.ts";
       import "@/scripts/card-glow.ts";
       import "@/scripts/attribution.ts";
       import "@/scripts/consent.ts";

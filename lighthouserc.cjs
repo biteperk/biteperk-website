@@ -40,10 +40,18 @@ module.exports = {
         // market and the shared Belgian hero.
         "http://localhost/en/",
         "http://localhost/be-en/",
+        // /be-fr was the one locale home not measured; it carries the longest
+        // French copy of the five. The VoxStay product page is the only intl
+        // product page with a portrait hero photo (Sep 2026).
+        "http://localhost/be-fr/",
+        "http://localhost/fr/products/voxstay/",
       ],
-      // Median of 3: single runs on shared 2-core CI runners produce
-      // coin-flip TBT/perf numbers (observed 619ms TBT with 26KB of JS).
-      numberOfRuns: 3,
+      // Median of 5: single runs on shared 2-core CI runners produce
+      // coin-flip TBT/perf numbers (observed 619ms TBT with 26KB of JS), and
+      // at 3 runs /gb-en and /be-en still swung 1.4–1.5s in LCP between runs
+      // of the same build. Costs ~4 min on the AU CI leg; cheaper than a
+      // flaky red.
+      numberOfRuns: 5,
       settings: {
         skipAudits: ["uses-http2"], // static server is h1
         // Advanced consent mode deliberately loads Google's tag while storage

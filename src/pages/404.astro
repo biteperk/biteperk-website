@@ -1,5 +1,10 @@
 ---
 import Base from "@/layouts/Base.astro";
+import AuBase from "@/layouts/AuBase.astro";
+// NB: this one file serves both hosts, so the global build's 404.html also
+// inlines the AU chrome CSS that AuBase pulls into the import graph (~20 KB,
+// no markup, no NAP). Every page did until 6 Sep 2026; the locale trees no
+// longer do. Tolerated here rather than splitting the route per target.
 import StarMark from "@/components/StarMark.astro";
 import { currentTarget, u } from "@/data/locales";
 
@@ -13,7 +18,7 @@ const description = "We couldn't find that page. Here are a few useful places to
 ---
 
 {isGlobal ? (
-  <Base title={title} description={description} path="/404" lang="en" noindex={true} hideNav={true} hideFooter={true}>
+  <Base title={title} description={description} path="/404" lang="en" noindex={true}>
     <section class="nf">
       <div class="nf-glow" aria-hidden="true"></div>
       <div class="wrap">
@@ -34,7 +39,7 @@ const description = "We couldn't find that page. Here are a few useful places to
     </section>
   </Base>
 ) : (
-  <Base title={title} description={description} path="/404">
+  <AuBase title={title} description={description} path="/404">
     <section class="nf">
       <div class="nf-glow" aria-hidden="true"></div>
       <div class="wrap">
@@ -54,7 +59,7 @@ const description = "We couldn't find that page. Here are a few useful places to
         </div>
       </div>
     </section>
-  </Base>
+  </AuBase>
 )}
 
 <style>

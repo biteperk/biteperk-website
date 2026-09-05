@@ -1,0 +1,74 @@
+/*
+ * Self-hosted web fonts — the ONLY @font-face declarations on the site.
+ *
+ * Why hand-written instead of `import "@fontsource-variable/inter"`:
+ *
+ *   1. The fontsource index CSS declares seven subsets (cyrillic, cyrillic-ext,
+ *      greek, greek-ext, vietnamese, latin-ext, latin) for each family. With
+ *      `inlineStylesheets: "always"` every one of those 20 blocks (6.8 KB) was
+ *      inlined into every page, and Lighthouse named the blob as its unused-CSS
+ *      item. The site renders English and French; two Inter subsets and two
+ *      Source Serif weights cover it.
+ *
+ *   2. fontsource's latin-ext unicode-range (U+0100-02BA …) OVERLAPS latin's
+ *      U+0152-0153 (Œ œ). Chrome matched "œuvre" on /fr/ against BOTH faces,
+ *      downloaded the 85 KB latin-ext file, found it has no œ glyph at all
+ *      (verified with fontkitten: latin has it, latin-ext does not), and fell
+ *      back to latin anyway. One character, 85 KB, on the page that was failing
+ *      its LCP budget. The latin-ext range below carves U+0152-0153 out.
+ *
+ *   3. `font-display: optional` for Inter used to be applied by a PostCSS pass
+ *      over fontsource's output. Now it is just written here. The metrics-
+ *      matched "Inter Fallback" face in global.css is what makes `optional`
+ *      acceptable — the fallback occupies identical space, so a first-time
+ *      visitor on a slow connection sees the same layout in slightly different
+ *      letterforms and Inter renders from the next page on. If that fallback
+ *      is ever removed, revisit this together with it.
+ *
+ * File URLs point at the package files (relative to this stylesheet) so a
+ * `npm update` changes the bytes without anyone hand-copying a woff2. Vite
+ * hashes them into /_astro/ and firebase.json gives *.woff2 the immutable
+ * cache policy. Base.astro preloads the Inter latin file via the same package
+ * path (`?url`), so both references resolve to the same hashed asset —
+ * check-assets.mjs verifies the preload href exists in the build.
+ */
+
+/* Inter — latin (body face; preloaded) */
+@font-face {
+  font-family: "Inter Variable";
+  font-style: normal;
+  font-display: optional;
+  font-weight: 100 900;
+  src: url("../../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2") format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Inter — latin-ext (on demand: Ÿ, Ł, ő … — NOT Œ/œ, see note 2) */
+@font-face {
+  font-family: "Inter Variable";
+  font-style: normal;
+  font-display: optional;
+  font-weight: 100 900;
+  src: url("../../node_modules/@fontsource-variable/inter/files/inter-latin-ext-wght-normal.woff2") format("woff2-variations");
+  unicode-range: U+0100-0151, U+0154-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* Source Serif 4 — one inline accent span (.serif-accent / PullQuote), so
+   `swap` is fine: it contributes no measured layout shift. Latin only. */
+@font-face {
+  font-family: "Source Serif 4";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url("../../node_modules/@fontsource/source-serif-4/files/source-serif-4-latin-400-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Source Serif 4";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url("../../node_modules/@fontsource/source-serif-4/files/source-serif-4-latin-500-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}

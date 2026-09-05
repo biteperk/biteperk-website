@@ -260,13 +260,6 @@ const catalogue = [
     brief: "Eiffel Tower over the Seine at dusk",
   },
   {
-    slug: "paris-street",
-    id: "photo-1549144511-f099e773c147",
-    photographer: "Unsplash contributor",
-    url: "https://images.unsplash.com/photo-1549144511-f099e773c147",
-    brief: "Cobbled Paris street beneath the Eiffel Tower",
-  },
-  {
     slug: "belgium-dinant",
     id: "photo-1491557345352-5929e343eb89",
     photographer: "Unsplash contributor",
