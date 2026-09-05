@@ -1,0 +1,40 @@
+---
+/**
+ * AuBase — Base + the Australian chrome. Every page on the AU tree
+ * (biteperk.com/au-en/**) extends THIS, not Base directly.
+ *
+ * Why a separate layout instead of `hideNav`/`hideFooter` props on Base:
+ * Astro inlines the CSS of every component in a page's import graph whether
+ * or not it renders, so while Base imported <Nav>/<Footer>/megamenu.css the
+ * international pages carried ~20 KB of AU nav, mega-menu, mobile-menu and
+ * footer styles they never used — on pages whose LCP element is text and
+ * whose stylesheet is fully inlined into the HTML. Importing the chrome from
+ * here means only AU pages pay for it. The same goes for the AU-only scripts
+ * below: sticky-nav, mega menu, mobile menu, metric counters, the call
+ * simulation. Shared scripts stay in Base.
+ *
+ * Props are Base's, forwarded verbatim; the `jsonld` slot is forwarded too.
+ */
+import type { ComponentProps } from "astro/types";
+import "@/styles/megamenu.css";
+import Base from "@/layouts/Base.astro";
+import Nav from "@/components/Nav.astro";
+import Footer from "@/components/Footer.astro";
+
+type Props = ComponentProps<typeof Base>;
+---
+
+<Base {...Astro.props}>
+  <slot name="jsonld" slot="jsonld" />
+  <Nav slot="nav" />
+  <slot />
+  <Footer slot="footer" />
+</Base>
+
+<script>
+  import "@/scripts/nav.ts";
+  import "@/scripts/mobile-menu.ts";
+  import "@/scripts/megamenu.ts";
+  import "@/scripts/counter.ts";
+  import "@/scripts/call-sim.ts";
+</script>

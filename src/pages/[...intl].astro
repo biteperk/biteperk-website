@@ -90,6 +90,11 @@ const simple = SIMPLE_PAGES[page]?.(c) ?? null;
 // the legal pages (deliberately text-only — see page-images.ts).
 const pageImage = pageImageFor(page);
 
+// `cv-auto` (content-visibility:auto, global.css) is on every section below
+// the proof band: the browser skips style/layout/paint for them until they
+// near the viewport. The AU tree has used it since Jul 2026; the intl tree
+// never did, and Style & Layout was ~200ms of the /fr/ LCP render delay. Not
+// on the hero, proof band or quote — they sit at the fold, nothing to skip.
 // Product pages: STRUCTURE from products.ts (order, status, which is core),
 // PROSE from intl/products.ts. The overview lists every capability; a
 // /products/<slug>/ page renders one.
@@ -302,7 +307,7 @@ const appJsonLd =
       </section>
 
       {media && (
-        <section class="intl-market">
+        <section class="cv-auto intl-market">
           <div class="wrap">
             <p class="eyebrow">{media.eyebrow}</p>
             <h2>{media.heading}</h2>
@@ -330,7 +335,7 @@ const appJsonLd =
       )}
 
       {cityStrip && homeCities.length > 0 && (
-        <section class="intl-cities">
+        <section class="cv-auto intl-cities">
           <div class="wrap">
             <p class="eyebrow">{cityStrip.eyebrow}</p>
             <h2>{cityStrip.heading}</h2>
@@ -347,7 +352,7 @@ const appJsonLd =
         </section>
       )}
 
-      <section>
+      <section class="cv-auto">
         <div class="wrap">
           <p class="eyebrow">{h.steps.eyebrow}</p>
           <h2>{h.steps.heading}</h2>
@@ -377,7 +382,7 @@ const appJsonLd =
         </div>
       </section>
 
-      <section class="intl-band">
+      <section class="cv-auto intl-band">
         <div class="wrap">
           <p class="eyebrow">{h.pilot.eyebrow}</p>
           <h2>{h.pilot.heading}</h2>
@@ -391,7 +396,7 @@ const appJsonLd =
         </div>
       </section>
 
-      <section>
+      <section class="cv-auto">
         <div class="wrap">
           <h2>{h.trust.heading}</h2>
           <div class="intl-grid">
@@ -408,14 +413,14 @@ const appJsonLd =
       {/* NOT wrapped in .intl-band: the band and FAQ.astro's items are both
           var(--ink-1), so banding this would make every item vanish into the
           background. The item borders carry the structure instead. */}
-      <section class="intl-faq">
+      <section class="cv-auto intl-faq">
         <div class="wrap">
           <h2>{h.faq.heading}</h2>
           <FAQ items={h.faq.items} stagger />
         </div>
       </section>
 
-      <section class="intl-closing">
+      <section class="cv-auto intl-closing">
         <div class="wrap">
           <h2>{h.closing.heading}</h2>
           <p>{h.closing.body}</p>
@@ -606,7 +611,7 @@ const appJsonLd =
         </div>
       </section>
 
-      <section class="intl-band">
+      <section class="cv-auto intl-band">
         <div class="wrap">
           <h2>{overview.capabilitiesHeading}</h2>
           <div class="intl-grid">
@@ -629,7 +634,7 @@ const appJsonLd =
         </div>
       </section>
 
-      <section>
+      <section class="cv-auto">
         <div class="wrap intl-prose">
           <h2>{overview.pilotHeading}</h2>
           <p>{overview.pilotBody}</p>
@@ -672,7 +677,7 @@ const appJsonLd =
         </div>
       </section>
 
-      <section class="intl-band">
+      <section class="cv-auto intl-band">
         <div class="wrap">
           <h2>{product.featuresHeading}</h2>
           <div class="intl-grid">
@@ -686,7 +691,7 @@ const appJsonLd =
         </div>
       </section>
 
-      <section>
+      <section class="cv-auto">
         <div class="wrap intl-prose">
           <h2>{product.faqHeading}</h2>
           {product.faqs.map((f) => (
@@ -698,7 +703,7 @@ const appJsonLd =
         </div>
       </section>
 
-      <section class="intl-closing">
+      <section class="cv-auto intl-closing">
         <div class="wrap">
           <h2>{product.ctaHeading}</h2>
           <div class="intl-ctas" style="justify-content: center;">

@@ -472,9 +472,15 @@ const frFr: MarketContent = {
       slug: "paris-skyline",
       alt: "La tour Eiffel au-dessus de la Seine au crépuscule",
     },
+    // Was `paris-street` until 6 Sep 2026: a cobbled street under the Eiffel
+    // Tower — not a hospitality scene at all — and, being a dark, high-detail
+    // portrait frame shown in a 16:10 landscape slot, 160 KB at 768w for a
+    // picture the slot cropped to its middle third. Lighthouse named it as the
+    // largest single byte cost on the one page failing its LCP budget. The
+    // banquette is the same brasserie shot the Belgian trees lead with (47 KB).
     hospitality: {
-      slug: "paris-street",
-      alt: "Une rue pavée de Paris au pied de la tour Eiffel",
+      slug: "brasserie-banquette",
+      alt: "Banquette en velours bleu et tables en marbre dressées pour le service",
     },
     eyebrow: "Pour les établissements français",
     heading: "Pensé pour le rythme des services à la française.",
