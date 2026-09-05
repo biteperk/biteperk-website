@@ -3,7 +3,12 @@
  * The Google tag owns the consent decision: when advertising consent is
  * denied it sends a cookieless ping; when granted it may use ad storage.
  */
-export function reportGoogleAdsConversion(destination: string | null): void {
+export function reportGoogleAdsConversion(
+  destination: string | null,
+  /** Dedupe key (the lead's `leadRef`): lets an offline conversion upload
+      carrying the same Order ID dedupe against this web pixel. */
+  transactionId?: string,
+): void {
   if (destination == null) return;
 
   const gtag = (window as unknown as {
@@ -13,5 +18,8 @@ export function reportGoogleAdsConversion(destination: string | null): void {
 
   // These forms render success in place, so Google's link-oriented callback
   // redirect is unnecessary and could navigate away from the confirmation.
-  gtag("event", "conversion", { send_to: destination });
+  gtag("event", "conversion", {
+    send_to: destination,
+    ...(transactionId ? { transaction_id: transactionId } : {}),
+  });
 }
