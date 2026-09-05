@@ -161,12 +161,16 @@ if (!alternates && INTL_LAUNCHED && currentTarget() === "au") {
         measured on /fr/ (Lighthouse mobile, 5 runs): FCP 2.78s → 1.88s, LCP
         3.15s → 2.55s from this one line. Only the latin file — latin-ext loads
         on demand for the rare glyph that needs it, the serif is one span.
-        AFTER the image preloads on purpose: the preload scanner issues
-        requests in document order, and on the AU home — an IMAGE LCP — the
-        font placed first cost 20ms on CI (2519.7 vs the 2500 budget). The
-        text-LCP trees pass no image preload, so for them this is still the
-        first hint in the document. */}
-    <link rel="preload" as="font" type="font/woff2" crossorigin href={interLatinUrl} />
+        NOT on pages that preload an LCP IMAGE (AU home, city pages, the
+        VoxTable product page): there the font contributes nothing to LCP —
+        the metric-matched fallback paints identically — while its 48 KB
+        shares the throttled link with the hero. On CI (5-run medians) the AU
+        home sat at 2519.7 with the font preload first and 2516–2526 with it
+        placed after the image preload; the budget is 2500. Pages with a text
+        LCP get the hint, pages with an image LCP keep the bandwidth. */}
+    {!preloadImage && !preloadSlug && !preloadComposite && (
+      <link rel="preload" as="font" type="font/woff2" crossorigin href={interLatinUrl} />
+    )}
 
     <SEO title={title} description={description} path={path} ogImage={ogImage} noindex={noindex} ogLocale={ogLocale}>
       <slot name="jsonld" slot="jsonld" />
