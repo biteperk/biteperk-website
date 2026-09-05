@@ -14,7 +14,7 @@ import { routes } from "../helpers/routes";
  * off-screen and a consent banner linking to a 404 reached production."
  *
  * ── Why a SUBSET of routes, and which one ───────────────────────────────────
- * All 60 global routes render from one file ([...intl].astro), so scanning
+ * All 65 global routes render from one file ([...intl].astro), so scanning
  * every route in both themes would be 120 axe runs to exercise ~12 distinct
  * markup shapes. Two risk axes, each covered in O(n):
  *
@@ -31,7 +31,7 @@ import { routes } from "../helpers/routes";
  *
  * Heading order is NOT left to this subset: axe rates `heading-order` as
  * `moderate`, which the AU spec's serious/critical gate would let through, so
- * it is gated explicitly below AND swept across all 60 routes without axe.
+ * it is gated explicitly below AND swept across all 65 routes without axe.
  */
 
 const THEMES = ["dark", "light"] as const;
@@ -44,8 +44,10 @@ const homes = localesForTarget("global").map((l) => `${l.base}/`);
  * Dropped as duplicates, not as gaps:
  *   ""                       already covered by the five homes
  *   legal/terms, cookies     byte-identical template to legal/privacy
- *   products/vox{order,…}    all four detail pages render one branch; voxtable
- *                            stands in for them
+ *   products/vox{order,…}    the detail pages render one branch; voxtable
+ *                            stands in for them. A NEW product is left out of
+ *                            the set for its first CI run so axe actually sees
+ *                            it once, then added here.
  * Derived from pagesForLocale so a NEW page kind fails loudly here (it will
  * appear in the list) rather than silently going unscanned.
  */

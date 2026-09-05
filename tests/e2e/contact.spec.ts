@@ -158,4 +158,9 @@ test.describe("contact form", () => {
     await page.goto(p("/contact/?product=voxorder"));
     await expect(page.locator("#cf-product")).toHaveValue("voxorder");
   });
+
+  test("?product=voxstay preselects too — the select is derived from the catalogue", async ({ page }) => {
+    await page.goto(p("/contact/?product=voxstay"));
+    await expect(page.locator("#cf-product")).toHaveValue("voxstay");
+  });
 });

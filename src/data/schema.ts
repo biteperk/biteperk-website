@@ -308,9 +308,9 @@ export function buildFaqPage(
 /**
  * Build the Vox SoftwareApplication node for the /products overview.
  *
- * Vox is ONE product. This single node — as opposed to the four per-capability
+ * Vox is ONE product. This single node — as opposed to the five per-capability
  * SoftwareApplication nodes on the /products/<slug>/ pages — is what tells
- * Google the brand sells one product (with capabilities), not four. Linked to
+ * Google the brand sells one product (with capabilities), not five. Linked to
  * the Organization (publisher) and WebSite (isPartOf) by @id so it merges into
  * the one sitewide entity graph.
  *

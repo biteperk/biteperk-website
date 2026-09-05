@@ -382,6 +382,21 @@ const catalogue = [
     url: "https://unsplash.com/photos/3690e2489514",
     brief: "The Three Graces on Liverpool's Pier Head under a blue sky",
   },
+  {
+    // VoxStay (hotel reception) — the one non-restaurant slot. A brass desk
+    // bell: reads as a hotel front desk anywhere, no faces, no signage. Chosen
+    // over a far more evocative wall of illuminated key cubbies because that
+    // frame — dark, full of small bright highlights — encoded at 244KB/1280
+    // AVIF against 83-152KB sibling heroes, and the AU product page preloads
+    // this slot as its LCP (see CLAUDE.md on weighing encode cost). The bell
+    // encodes at ~124KB. Portrait original; the 16/10 and 16/9 crops centre on
+    // the bell.
+    slug: "hotel-reception",
+    id: "photo-1641897742619-0324f1ae2c45",
+    photographer: "Luca Discenza",
+    url: "https://unsplash.com/photos/95Bc9REy-w8",
+    brief: "Brass reception bell on a pale stone hotel front desk",
+  },
 ];
 
 const FETCH_W = 2000;

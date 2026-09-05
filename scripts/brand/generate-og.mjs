@@ -316,7 +316,7 @@ async function buildGlobalCards() {
       const prod = intlProducts[lang][slug];
       cards.push({
         file: `${slug}-${lang}.png`,
-        // The status pill IS the eyebrow: two of the four are not shipping, and
+        // The status pill IS the eyebrow: three of the five are not shipping, and
         // a social card that hides that is the dishonest version of this page.
         eyebrow: prod.statusLabel,
         headline: prod.h1,
@@ -358,7 +358,7 @@ const auCards = [
   {
     file: "products.png",
     eyebrow: "The catalogue",
-    headline: "Four products. One mission.",
+    headline: "Five products. One mission.",
     showBella: false,
   },
   {
@@ -377,6 +377,14 @@ const auCards = [
     eyebrow: "VoxConcierge · In development",
     headline: "Everything between the booking and the table.",
     accent: "#7ad97a",
+  },
+  {
+    file: "voxstay.png",
+    eyebrow: "VoxStay · In development",
+    headline: "Bella answers the hotel phone.",
+    // No accent: the card accent also tints the `perk` in the wordmark, and
+    // the brand kit keeps that gold. The teal is the product glow on the page,
+    // not a social-card colour.
   },
   {
     file: "voxdrive.png",
@@ -440,6 +448,21 @@ const auCards = [
     showBella: false,
   },
 ];
+
+// Every product page sets og:image=/og/<slug>.png (ProductLayout.astro), so a
+// product without an AU card here fails check-assets on the built page — but
+// only after a full build. Fail here instead, at the moment the card is missing.
+{
+  const { loadTS } = await import("../build/_load-ts.mjs");
+  const { PRODUCT_SLUGS } = await loadTS(join(ROOT, "src/data/product-slugs.ts"));
+  const have = new Set(auCards.map((c) => c.file));
+  const missing = PRODUCT_SLUGS.filter((slug) => !have.has(`${slug}.png`));
+  if (missing.length) {
+    throw new Error(
+      `generate-og: no AU card for product(s) ${missing.join(", ")} — add an auCards entry.`,
+    );
+  }
+}
 
 const cards = TARGET === "global" ? globalCards : auCards;
 

@@ -104,6 +104,14 @@ export const intlProductImages: Readonly<Record<string, PageImage>> = {
     },
     aspect: "16 / 9",
   },
+  voxstay: {
+    slug: "hotel-reception",
+    alt: {
+      en: "A brass reception bell on a hotel front desk",
+      fr: "Une sonnette en laiton sur le comptoir d'une réception d'hôtel",
+    },
+    aspect: "16 / 9",
+  },
   voxdrive: {
     slug: "staff-hands-tray",
     alt: {

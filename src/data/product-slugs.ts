@@ -18,6 +18,6 @@
  * and perk slugs. (Not written as a glob pair: a star followed by a slash ends
  * a block comment, which has broken this repo's build three times in one day.)
  */
-export const PRODUCT_SLUGS = ["voxtable", "voxorder", "voxconcierge", "voxdrive"] as const;
+export const PRODUCT_SLUGS = ["voxtable", "voxorder", "voxconcierge", "voxstay", "voxdrive"] as const;
 
 export type ProductSlug = (typeof PRODUCT_SLUGS)[number];
