@@ -19,7 +19,10 @@ jobs:
   build:
     name: Build & gate (${{ matrix.target }})
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    # 40, not 25: the AU leg's Lighthouse pass is 12 URLs × 5 runs ≈ 12.5 min
+    # on a shared runner, and the retry step below doubles that. At 25 the
+    # retry was cancelled mid-run on 6 Sep 2026 — a red leg with no verdict.
+    timeout-minutes: 40
     strategy:
       fail-fast: false
       matrix:
