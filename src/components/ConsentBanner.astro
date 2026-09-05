@@ -17,13 +17,27 @@
  */
 import { categories, TRACKING_ARMED } from "@/data/consent";
 import { localeFromPath } from "@/data/locales";
+import { chrome } from "@/data/intl/copy";
 
 // The policy link must resolve in the locale the visitor is actually reading.
 // `u()` is a no-op on the global build, so it used to emit a root-level
 // /legal/cookies/ that exists in NO tree — every international page shipped a
 // consent notice whose policy link 404'd. Deriving from the served path works
 // on both builds (the AU build's pathname carries its /au-en base).
-const cookiesHref = `${localeFromPath(Astro.url.pathname).base}/legal/cookies/`;
+const served = localeFromPath(Astro.url.pathname);
+const cookiesHref = `${served.base}/legal/cookies/`;
+
+// Copy in the language of the tree being served. Language-scoped (copy.ts
+// `chrome.consent`), not market-scoped — a consent notice does not differ
+// between France and Belgium — so it is read straight from the language core
+// rather than through resolveCopy(). The AU tree resolves to "en" and keeps
+// the English it always had. Until 6 Sep 2026 every tree got English.
+//
+// NB: this component is `transition:persist`ed in Base.astro, so a View
+// Transition from /fr/ to /gb-en/ keeps the French bar until a full load.
+// Accepted: the region picker is the only cross-locale link and it is a
+// full navigation on the global build.
+const cc = chrome[served.copyLang].consent;
 
 const toggleable = categories.filter((c) => !c.locked);
 const necessary = categories.find((c) => c.locked)!;
@@ -35,24 +49,22 @@ const necessary = categories.find((c) => c.locked)!;
     class="consent-bar"
     data-consent-bar
     role="region"
-    aria-label="Cookie consent"
+    aria-label={cc.region}
     hidden
   >
     <div class="consent-bar-inner">
       <p class="consent-copy">
-        We use privacy-first analytics and Google consent mode for ad measurement.
-        Google may receive limited cookieless signals while consent is denied;
-        ad storage and personalisation stay off unless you allow Marketing. <a href={cookiesHref}>Cookie Policy</a>.
+        {cc.body} <a href={cookiesHref}>{cc.policy}</a>.
       </p>
       <div class="consent-actions">
         <button type="button" class="consent-btn-text" data-consent-settings>
-          Cookie settings
+          {cc.settings}
         </button>
         <button type="button" class="btn-ghost consent-btn" data-consent-reject>
-          Reject all
+          {cc.reject}
         </button>
         <button type="button" class="btn consent-btn" data-consent-accept>
-          Accept all
+          {cc.accept}
         </button>
       </div>
     </div>
@@ -69,18 +81,15 @@ const necessary = categories.find((c) => c.locked)!;
   >
     <div class="consent-backdrop" data-consent-backdrop aria-hidden="true"></div>
     <div class="consent-panel">
-      <h2 id="consent-modal-title">Cookie settings</h2>
-      <p class="consent-panel-lede">
-        Choose what you're comfortable with. You can change this any time from
-        <strong>Cookie settings</strong> in the footer.
-      </p>
+      <h2 id="consent-modal-title">{cc.modalTitle}</h2>
+      <p class="consent-panel-lede">{cc.modalLede}</p>
 
       <ul class="consent-cats">
         {/* Necessary — always on */}
         <li class="consent-cat">
           <div class="consent-cat-copy">
-            <h3 id="cat-necessary">{necessary.title}</h3>
-            <p id="cat-necessary-desc">{necessary.body}</p>
+            <h3 id="cat-necessary">{cc.categories[necessary.id].title}</h3>
+            <p id="cat-necessary-desc">{cc.categories[necessary.id].body}</p>
           </div>
           <div class="consent-switch consent-switch-locked">
             <input
@@ -91,15 +100,15 @@ const necessary = categories.find((c) => c.locked)!;
               aria-labelledby="cat-necessary"
               aria-describedby="cat-necessary-desc"
             />
-            <span class="consent-switch-always">Always on</span>
+            <span class="consent-switch-always">{cc.alwaysOn}</span>
           </div>
         </li>
 
         {toggleable.map((c) => (
           <li class="consent-cat">
             <div class="consent-cat-copy">
-              <h3 id={`cat-${c.id}`}>{c.title}</h3>
-              <p id={`cat-${c.id}-desc`}>{c.body}</p>
+              <h3 id={`cat-${c.id}`}>{cc.categories[c.id].title}</h3>
+              <p id={`cat-${c.id}-desc`}>{cc.categories[c.id].body}</p>
             </div>
             <input
               type="checkbox"
@@ -114,10 +123,10 @@ const necessary = categories.find((c) => c.locked)!;
 
       <div class="consent-modal-actions">
         <span class="consent-saved" data-consent-saved role="status" aria-live="polite">
-          Preferences saved ✓
+          {cc.saved}
         </span>
-        <button type="button" class="btn-ghost consent-btn" data-consent-close>Cancel</button>
-        <button type="button" class="btn consent-btn" data-consent-save>Save choices</button>
+        <button type="button" class="btn-ghost consent-btn" data-consent-close>{cc.cancel}</button>
+        <button type="button" class="btn consent-btn" data-consent-save>{cc.save}</button>
       </div>
     </div>
   </div>
