@@ -37,7 +37,13 @@
  */
 
 import type { Lang } from "@/data/locales";
+import { categories as consentCategories } from "@/data/consent";
 export type { Lang };
+
+const cat = (id: "necessary" | "analytics" | "marketing") => {
+  const c = consentCategories.find((x) => x.id === id)!;
+  return { title: c.title, body: c.body };
+};
 
 type Step = { title: string; body: string };
 type Principle = { title: string; body: string };
@@ -78,6 +84,56 @@ export type ChromeCopy = {
   suggestDismiss: string;
   email: string;
   rights: string;
+  /**
+   * Cookie-consent notice + settings modal (ConsentBanner.astro). Language-
+   * scoped here, not hardcoded in the component: until 6 Sep 2026 the banner
+   * was English on /fr and /be-fr — GDPR consent has to be informed, and a
+   * notice the visitor cannot read is not that. Category ids mirror
+   * src/data/consent.ts; the English titles/bodies are taken FROM it so the
+   * two cannot drift.
+   */
+  consent: ConsentCopy;
+};
+
+export type ConsentCopy = {
+  /** aria-label of the bar's landmark region. */
+  region: string;
+  body: string;
+  policy: string;
+  settings: string;
+  reject: string;
+  accept: string;
+  modalTitle: string;
+  modalLede: string;
+  alwaysOn: string;
+  saved: string;
+  cancel: string;
+  save: string;
+  categories: Record<"necessary" | "analytics" | "marketing", { title: string; body: string }>;
+};
+
+/**
+ * The facts strip of the trust module (TrustPanel.astro) — labels and the
+ * three sentences that are true on every tree. Values that differ by market
+ * (the UK's "UK GDPR") are overridden in markets.ts, never re-typed here.
+ * Everything in `records` must agree with the privacy notice: records in
+ * Australia, live calls processed in the United States, safeguards described
+ * there. No "Paris", no "EU-hosted", no "human oversight" — check-truthful
+ * bans them, and the plan guardrails say why.
+ */
+export type TrustFactsCopy = {
+  heading: string;
+  entityLabel: string;
+  /** Register wording for the UK entity ("Company number") and the AU one ("ABN"). */
+  registerUk: string;
+  registerAu: string;
+  transparencyLabel: string;
+  transparency: string;
+  recordsLabel: string;
+  records: string;
+  basisLabel: string;
+  basis: string;
+  privacyLink: string;
 };
 
 export type HomeCopy = {
@@ -198,6 +254,21 @@ export const chrome: Record<Lang, ChromeCopy> = {
     suggestDismiss: "Dismiss",
     email: "hello@biteperk.com.au",
     rights: "All rights reserved.",
+    consent: {
+      region: "Cookie consent",
+      body: "We use privacy-first analytics and Google consent mode for ad measurement. Google may receive limited cookieless signals while consent is denied; ad storage and personalisation stay off unless you allow Marketing.",
+      policy: "Cookie Policy",
+      settings: "Cookie settings",
+      reject: "Reject all",
+      accept: "Accept all",
+      modalTitle: "Cookie settings",
+      modalLede: "Choose what you're comfortable with. You can change this any time from Cookie settings in the footer.",
+      alwaysOn: "Always on",
+      saved: "Preferences saved ✓",
+      cancel: "Cancel",
+      save: "Save choices",
+      categories: { necessary: cat("necessary"), analytics: cat("analytics"), marketing: cat("marketing") },
+    },
   },
   fr: {
     tagline: "La voix et l'IA pour l'hôtellerie-restauration",
@@ -227,6 +298,73 @@ export const chrome: Record<Lang, ChromeCopy> = {
     suggestDismiss: "Fermer",
     email: "hello@biteperk.com.au",
     rights: "Tous droits réservés.",
+    // DRAFT French (6 Sep 2026) — needs Ludovic's pass. The category titles
+    // match the cookies page (which had his verbal pass on 3 Sep 2026);
+    // the bar/modal sentences are new.
+    consent: {
+      region: "Consentement aux cookies",
+      body: "Nous utilisons des statistiques respectueuses de la vie privée et le mode consentement de Google pour la mesure publicitaire. Google peut recevoir des signaux limités, sans cookies, tant que le consentement est refusé ; le stockage publicitaire et la personnalisation restent désactivés sauf si vous autorisez le marketing.",
+      policy: "Politique relative aux cookies",
+      settings: "Paramètres des cookies",
+      reject: "Tout refuser",
+      accept: "Tout accepter",
+      modalTitle: "Paramètres des cookies",
+      modalLede: "Choisissez ce qui vous convient. Vous pouvez modifier ce choix à tout moment via Paramètres des cookies, dans le pied de page.",
+      alwaysOn: "Toujours actif",
+      saved: "Préférences enregistrées ✓",
+      cancel: "Annuler",
+      save: "Enregistrer mes choix",
+      categories: {
+        necessary: {
+          title: "Strictement nécessaires",
+          body: "Mémorise votre thème et votre choix de cookies dans votre navigateur. Rien d'autre : le formulaire de contact n'utilise aucun CAPTCHA et ne dépose rien sur votre appareil.",
+        },
+        analytics: {
+          title: "Statistiques",
+          body: "Statistiques sans cookies et respectueuses de la vie privée (Plausible), qui comptent les visites et les liens utiles aux visiteurs — agrégées, sans cookies, sans suivi entre sites, sans profil personnel.",
+        },
+        marketing: {
+          title: "Marketing",
+          body: "Google Ads utilise le mode consentement pour envoyer des signaux de mesure limités, sans cookies, tant que le consentement est refusé. Le stockage publicitaire, l'utilisation des données utilisateur à des fins publicitaires, la personnalisation et le LinkedIn Insight Tag restent désactivés sauf si vous activez le marketing.",
+        },
+      },
+    },
+  },
+};
+
+export const trustFacts: Record<Lang, TrustFactsCopy> = {
+  en: {
+    heading: "Where you stand with us",
+    entityLabel: "Who you contract with",
+    registerUk: "Company number",
+    registerAu: "ABN",
+    transparencyLabel: "Bella says she is an AI",
+    transparency:
+      "At the start of every call. Ask for a person and the call is handed to your own team, and every conversation stays reviewable afterwards.",
+    recordsLabel: "Where your data goes",
+    records:
+      "Enquiry and booking records are stored on Google Cloud in Australia. Live calls are processed by our voice platform in the United States. Both are transfers out of Europe, and the safeguards are set out plainly in our privacy notice.",
+    basisLabel: "Lawful basis",
+    basis:
+      "Legitimate interests (Article 6(1)(f) GDPR) for answering the enquiry you send us; consent for optional cookies, withdrawable at any time. Your rights are listed in the privacy notice.",
+    privacyLink: "Read the privacy notice",
+  },
+  // DRAFT French (6 Sep 2026) — needs Ludovic's pass.
+  fr: {
+    heading: "Où vous en êtes avec nous",
+    entityLabel: "Votre cocontractant",
+    registerUk: "Numéro de société",
+    registerAu: "ABN",
+    transparencyLabel: "Bella annonce qu'elle est une IA",
+    transparency:
+      "Dès le début de chaque appel. Demandez une personne et l'appel est transmis à votre propre équipe ; chaque conversation reste consultable ensuite.",
+    recordsLabel: "Où vont vos informations",
+    records:
+      "Les enregistrements des demandes et des réservations sont conservés sur Google Cloud, en Australie. Les appels en direct sont traités par notre plateforme vocale aux États-Unis. Il s'agit dans les deux cas de transferts hors d'Europe, et les garanties sont exposées clairement dans notre politique de confidentialité.",
+    basisLabel: "Base juridique",
+    basis:
+      "L'intérêt légitime (article 6(1)(f) du RGPD) pour répondre à la demande que vous nous adressez ; le consentement pour les cookies facultatifs, retirable à tout moment. Vos droits sont détaillés dans la politique de confidentialité.",
+    privacyLink: "Lire la politique de confidentialité",
   },
 };
 

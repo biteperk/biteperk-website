@@ -1,0 +1,137 @@
+---
+/**
+ * TrustPanel — the international trees' trust module (rev. 6 Sep 2026).
+ *
+ * Two parts, both fed from single sources of truth rather than fresh prose:
+ *
+ *   1. `variant="full"` (locale homes): the market's three `home.trust`
+ *      principles as icon cards — the same copy that rendered as a bare
+ *      `.intl-card` grid before, now with an Illustration each.
+ *   2. The FACTS strip (both variants; the only part on contact pages): a
+ *      <dl> of four things a European buyer actually asks — who they
+ *      contract with, that Bella announces herself as an AI, where records
+ *      and live-call audio go, and the lawful basis — every value derived
+ *      from `entities` (site.ts) or `trustFacts` (copy.ts, language-scoped,
+ *      market-overridable), never typed here.
+ *
+ * What it deliberately does NOT say, because it is not true (see the plan
+ * guardrails and check-truthful): no European office or staff, no "human
+ * oversight" (the hand-off is to the VENUE's own phone), no "EU-hosted" or
+ * "Google Cloud Paris" for the restaurant products (records are in Australia,
+ * live calls are processed in the United States — the privacy notice says so
+ * and this strip says the same), no regulator logos, no "certified".
+ *
+ * Styles are `is:inline` (unscoped, `.intl-trust*`-namespaced) for the same
+ * reason as CityBody/CityCards: [...intl].astro renders every intl page, so
+ * a scoped <style> here would be inlined into all 75 of them. Rendered in
+ * place, it costs only the pages that show it.
+ */
+import type { Locale } from "@/data/locales";
+import type { CopyBundle } from "@/data/intl";
+import { entities } from "@/data/site";
+import Illustration from "@/components/Illustration.astro";
+
+interface Props {
+  locale: Locale;
+  copy: CopyBundle;
+  variant?: "full" | "facts";
+}
+
+const { locale, copy, variant = "full" } = Astro.props;
+const tf = copy.trustFacts;
+const isUk = locale.market === "gb";
+// The UK tree contracts through Biteperk Ltd (controller for UK customers,
+// site.ts `entities.uk`); every other tree contracts through the Australian
+// company, exactly as its privacy notice names it. Register number only —
+// never the office address, which is a registered office, not a premises.
+const entity = isUk ? entities.uk : entities.au;
+const registerLabel = isUk ? tf.registerUk : tf.registerAu;
+const privacyHref = `${locale.base}/legal/privacy/`;
+
+// One icon per principle, by position: hand-off → phone, data → shield,
+// honesty-about-what-ships → calendar. Decorative; the card title carries
+// the meaning.
+const ICONS = ["phone-wave", "shield", "calendar-tick"] as const;
+const Heading = variant === "full" ? "h3" : "h2";
+---
+
+<section class:list={["cv-auto", "intl-trust", { "intl-trust-facts-only": variant === "facts" }]}>
+  <div class="wrap">
+    {variant === "full" && (
+      <>
+        <h2>{copy.home.trust.heading}</h2>
+        <div class="intl-grid intl-trust-grid">
+          {copy.home.trust.items.map((t, i) => (
+            <div class="intl-card intl-trust-card">
+              <Illustration name={ICONS[i % ICONS.length]} size={36} trace />
+              <h3>{t.title}</h3>
+              <p>{t.body}</p>
+            </div>
+          ))}
+        </div>
+      </>
+    )}
+
+    <div class="intl-facts" data-trust-facts>
+      <Heading class="intl-facts-heading">{tf.heading}</Heading>
+      <dl class="intl-facts-list">
+        <div class="intl-fact">
+          <dt>{tf.entityLabel}</dt>
+          <dd>
+            <a href={entity.registerUrl} rel="noopener">{entity.legalName}</a>{" · "}{registerLabel} {entity.registerNumber}
+          </dd>
+        </div>
+        <div class="intl-fact">
+          <dt>{tf.transparencyLabel}</dt>
+          <dd>{tf.transparency}</dd>
+        </div>
+        <div class="intl-fact">
+          <dt>{tf.recordsLabel}</dt>
+          <dd>{tf.records}</dd>
+        </div>
+        <div class="intl-fact">
+          <dt>{tf.basisLabel}</dt>
+          <dd>
+            {tf.basis}{" "}
+            <a class="link-arrow" href={privacyHref}>{tf.privacyLink}</a>
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<style is:inline>
+  /* UNSCOPED (is:inline skips the scoping pass) — keep every selector under
+     .intl-trust / .intl-facts so nothing here can reach another component. */
+  .intl-trust-card svg { display: block; margin-bottom: var(--space-3); }
+  .intl-trust-facts-only { padding-top: 0; }
+  .intl-facts {
+    margin-top: var(--space-7);
+    background: var(--ink-1);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: var(--space-6);
+  }
+  .intl-trust-facts-only .intl-facts { margin-top: 0; }
+  .intl-facts-heading {
+    font-size: var(--fs-h3);
+    margin: 0 0 var(--space-5);
+  }
+  .intl-facts-list {
+    display: grid;
+    gap: var(--space-5) var(--space-6);
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    margin: 0;
+  }
+  .intl-fact dt {
+    color: var(--gold);
+    font-size: var(--fs-small);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-2);
+  }
+  .intl-fact dd { margin: 0; color: var(--mist-2); }
+  .intl-fact dd a { color: var(--white); }
+</style>

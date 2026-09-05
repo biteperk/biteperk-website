@@ -620,3 +620,50 @@ Post-ship (Sam): Search Console inspect `/au-en/products/voxstay/` + resubmit
 the sitemap; re-scrape the LinkedIn / Facebook share caches for
 `products.png`; confirm "VoxStay" is in the Zoho product picklist (the Cloud
 Function has accepted the slug since the Zoho integration commit).
+
+## 6 Sep 2026 — International trust module, French consent notice, and the Ludovic batch
+
+**Shipped (PR after `perf/intl-lcp`, branch `feat/intl-trust`).** The five
+locale homes and contact pages carry a **trust module** (`TrustPanel.astro`):
+the market's three trust principles as icon cards, and a facts strip — who the
+visitor contracts with (Biteperk Ltd on `/gb-en`, Biteperk Pty Ltd elsewhere,
+register number only, never the office address), that Bella announces herself
+as an AI and hands the call to the venue's own team, where records and
+live-call audio go (Google Cloud Australia; voice platform in the United
+States — the same words as the privacy notice), and the lawful basis (Article
+6(1)(f) GDPR; **UK GDPR** on `/gb-en` via a market override). Every value is
+derived from `site.ts` `entities` or `copy.ts` `trustFacts`; none is typed on
+the page.
+
+**Deliberately absent, and now gated.** `check-truthful` gained four
+`FORBIDDEN_CLAIMS` (text pass, fault-injected): EU / Paris hosting for the
+restaurant products (`europe-west*`, "hosted in the EU / Paris", the French
+equivalents — exempting only `/products/voxstay/`, whose single design-intent
+sentence is allowed), "human oversight" / "supervision humaine" (there is no
+European staff; the hand-off is to the venue), "certified" / "accredited"
+(nothing is), and a named carrier next to forwarding vocabulary (BT, EE, O2,
+Gamma, Vodafone, Orange, Proximus, Bouygues, SFR, Telenet — an untested
+compatibility claim). The 6 Sep proposal that prompted this work had suggested
+a "Google Cloud Paris for EU/UK pilots" badge and "supervision humaine
+permanente"; both would have been false for VoxTable and are exactly what the
+rules catch.
+
+**Consent notice now in the tree's language.** `ConsentBanner.astro` was
+hardcoded English on `/fr` and `/be-fr` — informed consent under GDPR needs a
+notice the visitor can read. The strings moved to `copy.ts` `chrome.consent`
+(language-scoped; the English category titles/bodies are read from
+`consent.ts` so they cannot drift). `tests/intl/chrome.spec.ts` asserts the
+accept button reads "Tout accepter" on the French trees.
+
+**French written today is DRAFT — the Ludovic batch.** Everything below needs
+his pass before it is treated as reviewed; until then `/fr` and `/be-fr`
+serve it by decision, as with the VoxStay copy on 5 Sep. One request, sequenced
+with the VoxStay demo (he is also the hotel prospect):
+
+1. `copy.ts` `chrome.consent` (fr) — the cookie bar and settings modal.
+2. `copy.ts` `trustFacts` (fr) — the facts strip: heading, four labels, three sentences, the privacy link label.
+3. Still open from before: `copy.ts:214,221` footer/nav labels (29 Jul, 7 Aug), `copy.ts:933` the French city-page furniture (gates every FR city), `markets.ts` about-intro clause (5 Sep), `intl/products.ts` VoxStay overview + detail (5 Sep).
+4. Coming next and to be bundled if ready: the localised call-simulation transcript (Phase 3) and the Paris / Bruxelles city copy (Phase 4).
+
+Owner: Sam sends; record the pass here when it lands and drop the `DRAFT`
+markers in the same commit.

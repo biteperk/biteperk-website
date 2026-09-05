@@ -189,6 +189,12 @@ const gbEn: MarketContent = {
     body: "Vox works the same anywhere a phone rings, but hospitality doesn't sound the same in every city. These pages talk about yours specifically.",
   },
   copy: {
+    // The UK regime is its own statute since Brexit (UK GDPR + DPA 2018); the
+    // core facts strip says "GDPR", which on this tree would be the wrong law.
+    trustFacts: {
+      basis:
+        "Legitimate interests (Article 6(1)(f) UK GDPR) for answering the enquiry you send us; consent for optional cookies, withdrawable at any time. Your rights are listed in the privacy notice.",
+    },
     home: {
       title: "BitePerk — Vox, the AI phone host for UK restaurants",
       description:

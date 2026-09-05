@@ -25,8 +25,9 @@
  */
 import type { Lang, Locale } from "@/data/locales";
 import {
-  chrome, home, howItWorks, about, contact, privacy, terms, cookies, cityPage,
+  chrome, home, howItWorks, about, contact, privacy, terms, cookies, cityPage, trustFacts,
   type ChromeCopy, type HomeCopy, type SimplePageCopy, type ContactCopy, type CityPageCopy,
+  type TrustFactsCopy,
 } from "./copy";
 import {
   marketContent,
@@ -44,6 +45,8 @@ export type CopyBundle = {
   cookies: SimplePageCopy;
   /** City-page section labels — furniture around the per-city copy, see copy.ts. */
   cityPage: CityPageCopy;
+  /** TrustPanel facts strip — labels + the sentences true on every tree. */
+  trustFacts: TrustFactsCopy;
 };
 
 /**
@@ -62,12 +65,12 @@ const cores: Record<Lang, CopyBundle> = {
   en: {
     chrome: chrome.en, home: home.en, howItWorks: howItWorks.en,
     about: about.en, contact: contact.en, privacy: privacy.en, terms: terms.en,
-    cookies: cookies.en, cityPage: cityPage.en,
+    cookies: cookies.en, cityPage: cityPage.en, trustFacts: trustFacts.en,
   },
   fr: {
     chrome: chrome.fr, home: home.fr, howItWorks: howItWorks.fr,
     about: about.fr, contact: contact.fr, privacy: privacy.fr, terms: terms.fr,
-    cookies: cookies.fr, cityPage: cityPage.fr,
+    cookies: cookies.fr, cityPage: cityPage.fr, trustFacts: trustFacts.fr,
   },
 };
 
@@ -127,4 +130,4 @@ export function resolveCityStrip(locale: Locale): MarketCities | undefined {
 }
 
 export type { MarketContent, MarketMedia, MarketHero, MarketSupport, MarketCities };
-export type { ChromeCopy, HomeCopy, SimplePageCopy, ContactCopy, CityPageCopy, Lang };
+export type { ChromeCopy, HomeCopy, SimplePageCopy, ContactCopy, CityPageCopy, TrustFactsCopy, Lang };

@@ -14,6 +14,9 @@
  *     NB the character classes include U+00A0: built HTML joins address
  *     parts with &nbsp;, and a plain \s does not match it in all cases
  *   - the "$80" AU price (EU pricing is a pilot outcome, never quoted)
+ *   - European claims that are true nowhere: EU/Paris hosting for the
+ *     restaurant products, "human oversight", certifications, a named
+ *     carrier as a tested forwarding path (FORBIDDEN_CLAIMS, 6 Sep 2026)
  *   - the AU CHROME's CSS (.megamenu*, .mm*, .nav*, .foot* selectors) — not
  *     a fact leak but a weight leak with the same root cause: Astro inlines
  *     the CSS of every component in a page's import graph, so an AU-only
@@ -130,6 +133,41 @@ const FORBIDDEN = [
 ];
 
 /**
+ * European claims that are not true anywhere (rev. 6 Sep 2026, with the trust
+ * module). Text-pass rules — they hinge on words, not markup. `unless` is a
+ * path regex that exempts a page: VoxStay's product page carries the ONE
+ * sentence allowed to mention EU hosting, and only as future-tense design
+ * intent ("designed so … hosted in the EU (Paris region)").
+ */
+const FORBIDDEN_CLAIMS = [
+  {
+    // Records are in Australia and live calls are processed in the United
+    // States — the privacy notice says so. A "regional cloud boundary" badge
+    // for the restaurant products would be exactly the false claim this repo's
+    // gates exist to stop.
+    label: "EU / Paris hosting claim (only VoxStay's design-intent sentence may say it, on its own page)",
+    re: /europe-west\d|hosted\s+(?:in|on)\s+(?:Paris|the\s+EU|Europe|European\s+(?:soil|servers?))|héberg\w*\s+(?:à\s+Paris|dans\s+l['’]UE|en\s+Europe)/i,
+    unless: /\/products\/voxstay\//,
+  },
+  {
+    // There is no European staff. The hand-off is to the VENUE's phone; say
+    // that, never "human oversight" / "supervision humaine".
+    label: "human-oversight claim (no European staff exists; the hand-off is to the venue)",
+    re: /human\s+(?:oversight|supervision|monitoring)|supervision\s+humaine|surveillance\s+humaine|humain\s+en\s+permanence/i,
+  },
+  {
+    label: "certification / accreditation claim (none exists)",
+    re: /\b(?:certified|certification|accredited|certifié(?:e|s|es)?|accrédité(?:e|s|es)?)\b/i,
+  },
+  {
+    // Naming a carrier next to forwarding vocabulary reads as a tested
+    // compatibility claim. Case-sensitive: "orange" and "free" are words.
+    label: "telecom carrier presented as a tested forwarding path",
+    re: /\b(?:BT|EE|O2|Gamma|Vodafone|Orange|Proximus|Bouygues|SFR|Telenet)\b[^.!?]{0,60}\b(?:forward|divert|renvoi|transf[eé]r)|\b(?:forward|divert|renvoi|transf[eé]r)\w*[^.!?]{0,60}\b(?:BT|EE|O2|Gamma|Vodafone|Orange|Proximus|Bouygues|SFR|Telenet)\b/,
+  },
+];
+
+/**
  * Rules scanned against TAG-STRIPPED TEXT rather than raw HTML.
  *
  * Everything in FORBIDDEN above is deliberately matched against raw HTML: a
@@ -210,6 +248,14 @@ for (const file of pages) {
       console.error(`FAIL  ${rel}: contains ${label} — "…${m[0]}…"`);
     }
   }
+  for (const { label, re, unless } of FORBIDDEN_CLAIMS) {
+    if (unless && unless.test(rel)) continue;
+    const m = text.match(re);
+    if (m) {
+      failed++;
+      console.error(`FAIL  ${rel}: contains ${label} — "…${m[0]}…"`);
+    }
+  }
 }
 
 if (!pages.length) {
@@ -221,4 +267,4 @@ if (failed) {
   console.error(`\ncheck-truthful: ${failed} AU-fact leak(s) across ${pages.length} page(s).`);
   process.exit(1);
 }
-console.log(`check-truthful: ${pages.length} global page(s) carry no AU phone, NAP, price or AU chrome CSS.`);
+console.log(`check-truthful: ${pages.length} global page(s) carry no AU phone, NAP, price, AU chrome CSS or unsubstantiated European claim.`);

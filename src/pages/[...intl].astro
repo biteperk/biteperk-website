@@ -37,6 +37,8 @@ import PullQuote from "@/components/PullQuote.astro";
 // CSS by import graph, dynamic imports included, not by what renders.)
 import CityBody from "@/components/intl/CityBody.astro";
 import CityCards from "@/components/intl/CityCards.astro";
+// Same `is:inline` contract as the city components — see its header.
+import TrustPanel from "@/components/intl/TrustPanel.astro";
 
 export function getStaticPaths() {
   if (currentTarget() !== "global") return [];
@@ -396,19 +398,10 @@ const appJsonLd =
         </div>
       </section>
 
-      <section class="cv-auto">
-        <div class="wrap">
-          <h2>{h.trust.heading}</h2>
-          <div class="intl-grid">
-            {h.trust.items.map((t) => (
-              <div class="intl-card">
-                <h3>{t.title}</h3>
-                <p>{t.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Trust principles + the facts strip (entity, AI disclosure, where the
+          data goes, lawful basis) — TrustPanel derives every fact from
+          site.ts/copy.ts rather than restating it here. */}
+      <TrustPanel locale={locale} copy={c} />
 
       {/* NOT wrapped in .intl-band: the band and FAQ.astro's items are both
           var(--ink-1), so banding this would make every item vanish into the
@@ -433,6 +426,7 @@ const appJsonLd =
   )}
 
   {page === "contact" && (
+    <>
     <section class="intl-hero">
       <div class="wrap contact-grid">
         <div>
@@ -527,6 +521,10 @@ const appJsonLd =
         </aside>
       </div>
     </section>
+    {/* The facts strip again on the page where someone is about to hand us
+        their details: who they contract with and where the enquiry goes. */}
+    <TrustPanel locale={locale} copy={c} variant="facts" />
+    </>
   )}
 
   {simple && (
