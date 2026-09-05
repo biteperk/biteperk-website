@@ -22,12 +22,18 @@ _Last verified against `src/styles/tokens.css` and `CLAUDE.md` — 6 August 2026
 |---|---|---|
 | **Company** | **BitePerk** · `biteperk.com.au` · `@biteperk.com.au` | **Never** |
 | **Legal entity** | **BITEPERK PTY LTD** · ABN 36 700 831 303 · ACN 700 831 303 | Never |
-| **Products** | **Vox** (umbrella) · **VoxTable** · **VoxOrder** · **VoxConcierge** · **VoxDrive** | This family renamed from `Voco*`/`Perk*` in July 2026 |
+| **Products** | **Vox** (umbrella) · **VoxTable** · **VoxOrder** · **VoxConcierge** · **VoxStay** · **VoxDrive** | This family renamed from `Voco*`/`Perk*` in July 2026 |
 | **Persona** | **Bella** — the voice agent | Never |
 
 - Product names are **CamelCase**, written "VoxTable **by BitePerk**" on first use in
   external material.
-- **VoxStay** is pitch-only (hotel prospects). Never put it in site code or public material.
+- **VoxStay** (Bella as a hotel receptionist) is a public `in-development` product since **5 Sep 2026**
+  — it was pitch-only before that. Public copy is architectural only: eight languages, real price with
+  taxes, texted payment link, never a card number, cannot invent a price, falls back to the front desk,
+  *designed* for EU hosting. **Never** on the site: prospect names (WiZiU, Accor, Covivio), any hotel
+  PMS/OTA name (`check-truthful` bans them, case-sensitively), any price, any metric, a European
+  office/team, or the +61 test number. It is the one exception to the "Australian data residency" line —
+  say so where that line appears.
 - `voco*` and `perk*` legacy slugs redirect **forever** — printed collateral still uses them.
 
 > ⚠️ **`perk` in `biteperk` is not a product token.** A bulk `Perk*`→`Vox*` rename once turned

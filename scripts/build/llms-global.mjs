@@ -73,6 +73,10 @@ ${citySection}
 - Vox is BitePerk's AI phone host. It answers restaurant calls in a natural
   voice, checks real availability and writes bookings to the venue's dashboard.
 - Bookings are LIVE in production in Australia (shipping as "VoxTable").
+- VoxStay (hotel reception) is IN DEVELOPMENT, not available anywhere yet: Bella
+  as a hotel receptionist for independent hotels — eight languages, real prices
+  with taxes, a texted secure payment link, never a card number on the call.
+  Built EU-first (designed for EU hosting, Paris region); first pilots in Europe.
 - European availability is via pilot partnerships (the UK, France and Belgium first);
   local languages and local numbers are part of the pilot build, not yet
   generally available.

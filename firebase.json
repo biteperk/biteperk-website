@@ -77,6 +77,11 @@
           "type": 301
         },
         {
+          "source": "/au-en/voxstay",
+          "destination": "/au-en/products/voxstay/",
+          "type": 301
+        },
+        {
           "source": "/au-en/voxdrive",
           "destination": "/au-en/products/voxdrive/",
           "type": 301

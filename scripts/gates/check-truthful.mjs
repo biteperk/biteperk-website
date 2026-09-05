@@ -88,6 +88,16 @@ const FORBIDDEN = [
     re: /\b(?:OpenTable|TheFork|LaFourchette|Zenchef|SevenRooms|Guestonline|Formitable|Resy|Toast\s+POS|Lightspeed)\b/i,
   },
   {
+    // The hotel-side twin of the rule above, for VoxStay copy. Deliberately a
+    // SEPARATE, CASE-SENSITIVE entry rather than more alternatives on the
+    // case-insensitive one: "mews" is an ordinary London street word that a UK
+    // city page could legitimately use, and "Opera" collides with the Opera
+    // House on the AU tree. Same removal rule — drop a name here in the commit
+    // that actually ships the integration.
+    label: "unshipped hotel PMS / channel / OTA integration named",
+    re: /\b(?:D-EDGE|Apaleo|Mews|Opera\s+(?:PMS|Cloud)|Cloudbeds|Booking\.com|Expedia|SiteMinder|Guestline|RoomRaccoon)\b/,
+  },
+  {
     // No European number exists until the Twilio regulatory bundles land, so
     // any +44/+33/+32 in the built HTML is fabricated.
     //

@@ -12,11 +12,11 @@ import { buildFaqPage, buildVoxApplication, voxEditionId } from "@/data/schema";
 import { site } from "@/data/site";
 import { u, abs } from "@/data/locales";
 
-const title = "Vox — AI phone host for restaurants · Biteperk";
+const title = "Vox — AI phone host for restaurants and hotels · Biteperk";
 const description =
-  "Vox is one AI phone host for your restaurant — a warm Australian voice that answers every call and books the table, day or night. Start with bookings; add takeaway, concierge and drive-thru as you grow.";
+  "Vox is one AI phone host for your venue — a warm voice that answers every call and books the table, day or night. Start with bookings; add takeaway, concierge, hotel stays and drive-thru as you grow.";
 
-// One product, four capabilities — core first, then add-ons (from products.ts).
+// One product, five capabilities — core first, then add-ons (from products.ts).
 const capabilities = [coreProduct, ...addonProducts];
 
 const breadcrumbJsonLd = {
@@ -31,7 +31,7 @@ const breadcrumbJsonLd = {
 // Page-level FAQPage, linked into the sitewide entity graph by @id.
 const faqJsonLd = buildFaqPage(voxFaq);
 
-// Vox-level SoftwareApplication — the ONE product (vs the four per-capability
+// Vox-level SoftwareApplication — the ONE product (vs the five per-capability
 // nodes on the /products/<slug>/ pages). Prices come from the live capability's
 // real tiers; featureList is live-only so the schema never overpromises.
 const corePrices = (coreProduct.pricing?.tiers ?? [])
@@ -39,7 +39,7 @@ const corePrices = (coreProduct.pricing?.tiers ?? [])
   .filter((n) => Number.isFinite(n) && n > 0);
 const voxAppJsonLd = buildVoxApplication({
   description:
-    'Vox is one AI phone host for restaurants, voiced by "Bella" — a warm Australian voice that answers every call and books the table, 24/7. Bookings and takeaway ordering are live today; concierge and drive-thru capabilities are rolling out.',
+    'Vox is one AI phone host for restaurants, voiced by "Bella" — a warm Australian voice that answers every call and books the table, 24/7. Bookings and takeaway ordering are live today; concierge, hotel-stay and drive-thru capabilities are rolling out.',
   featureList: [
     "24/7 phone answering in a natural Australian voice",
     "Live table bookings written straight into your diary",
@@ -48,7 +48,7 @@ const voxAppJsonLd = buildVoxApplication({
     "Booking log with analytics, PDF and CSV export",
     "Live tables, kitchen display screen and menu management with photo import",
     "Owner, manager, staff and kitchen roles across multiple venues",
-    "Australian data residency, Privacy Act compliant",
+    "Australian data residency for VoxTable and VoxOrder, Privacy Act compliant",
   ],
   prices: corePrices,
   editionIds: capabilities.map((p) => voxEditionId(p.slug)),
@@ -94,12 +94,12 @@ const collage = [
       <SectionHeader
         as="h1"
         eyebrow="Meet Vox"
-        lede="A warm Australian voice that answers every call, day or night. Start with bookings; add takeaway, concierge and drive-thru as you need them — same agent, same voice, your whole front-of-house line handled."
+        lede="A warm voice that answers every call, day or night. Start with bookings; add takeaway, concierge, hotel stays and drive-thru as you need them — same agent, same voice, your whole front-of-house line handled."
       >
         <Fragment slot="headline">
           One AI phone host
           <br />
-          for <span class="gold">your restaurant.</span>
+          for <span class="gold">your front of house.</span>
         </Fragment>
       </SectionHeader>
 
@@ -135,7 +135,7 @@ const collage = [
     <div class="wrap">
       <SectionHeader
         eyebrow="What Vox does"
-        headline="Four jobs. One agent, one voice."
+        headline="Five jobs. One agent, one voice."
         lede="Vox handles your phone line end to end. Bookings and takeaway ordering are live today; the rest switch on as they ship — no new number, no second system to learn."
       />
       <div class="vx-caps-grid reveal reveal-stagger">
@@ -242,7 +242,7 @@ const collage = [
         <h2 class="vx-h2">{voxBundle.name}</h2>
         <p class="vx-bundle-tag">{voxBundle.tagline}</p>
         <p class="vx-bundle-note">
-          Start with bookings and takeaway today. As concierge and drive-thru ship, Vox can run your
+          Start with bookings and takeaway today. As concierge, hotel stays and drive-thru ship, Vox can run your
           entire front-of-house line — one agent, one voice, one bill.
         </p>
         <a class="btn" href={voxBundle.cta.href}>{voxBundle.cta.label}</a>
@@ -343,6 +343,15 @@ const collage = [
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
+  }
+  /* The core capability spans the row; the four add-ons sit 2×2 beneath it.
+     Five equal cards in a 2-up grid left one orphan and flattened the
+     "one product + add-ons" hierarchy the page exists to make. */
+  /* :global — the cards are a child component, so a scoped `> :first-child`
+     compiles to a selector their root element can never match (verified in
+     the built CSS: the rule was emitted and matched nothing). */
+  .vx-caps-grid > :global(*:first-child) {
+    grid-column: 1 / -1;
   }
   @media (max-width: 760px) {
     .vx-caps-grid { grid-template-columns: 1fr; }

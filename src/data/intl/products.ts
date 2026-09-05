@@ -20,8 +20,8 @@
  * a pilot outcome, so these pages carry no `pricing` field at all — the type
  * has no slot for one. No AU phone, no NAP. "Live" always means live IN
  * AUSTRALIA, said explicitly; Europe is always the pilot programme. Status
- * language must match products.ts honestly: two capabilities ship today, one is
- * in development, one is a concept — say so rather than implying four products.
+ * language must match products.ts honestly: two capabilities ship today, two are
+ * in development, one is a concept — say so rather than implying five products.
  *
  * French: reviewed and signed off by Ludovic (26 Jul 2026) — product copy as
  * well as the copy.ts core. Any NEW French added here needs a fresh pass; this
@@ -76,11 +76,11 @@ export type IntlProductsOverviewCopy = {
 
 // ── English ──────────────────────────────────────────────────────────────────
 const overviewEn: IntlProductsOverviewCopy = {
-  title: "Vox — one AI phone host, four capabilities · BitePerk",
+  title: "Vox — one AI phone host, five capabilities · BitePerk",
   description:
     "Vox answers your restaurant's phone in a natural voice, checks real availability and writes the booking down. Live in Australia today; opening pilot partnerships in Europe.",
   eyebrow: "The product",
-  h1: "One AI phone host. Four things it can do.",
+  h1: "One AI phone host. Five things it can do.",
   lede:
     "Vox is a single product, not a suite. It answers your phone. What you switch on beyond bookings is up to you.",
   intro: [
@@ -103,6 +103,11 @@ const overviewEn: IntlProductsOverviewCopy = {
       outcome: "The twenty questions that aren't bookings.",
       body:
         "Opening hours, parking, dietary questions, where the entrance is. Answered correctly, at 11pm, without waking anyone up.",
+    },
+    voxstay: {
+      outcome: "A room booked in the caller's own language.",
+      body:
+        "Understands the stay, offers rooms, quotes the real price with taxes and texts a secure payment link. Built for hotels; in development, with the first pilots in Europe.",
     },
     voxdrive: {
       outcome: "Order-point conversation, minus the crackle.",
@@ -266,6 +271,50 @@ const productsEn: Record<string, IntlProductCopy> = {
       },
     ],
   },
+  voxstay: {
+    ...featureFaqCtaEn,
+    title: "VoxStay — AI phone receptionist for hotels · BitePerk",
+    description:
+      "VoxStay answers a hotel's booking call in eight languages, quotes the real price with taxes and texts a secure payment link. In development — not yet available to book.",
+    eyebrow: "Hotel reception",
+    h1: "Room bookings, answered in eight languages.",
+    lede:
+      "A hotel's phone rings in eight languages and the front desk speaks two. VoxStay is Bella at reception: she understands the stay, offers rooms, quotes the real price including taxes and texts a secure payment link — never a card number on the call.",
+    statusLabel: "In development",
+    statusNote:
+      "Being built now, not yet available — including in Australia. Built EU-first: it is designed so a European hotel's guest data is hosted in the EU (Paris region). Listed so you can see where Vox is going, not so you can buy it today.",
+    features: [
+      {
+        title: "Eight languages, one receptionist",
+        body:
+          "French, English, Flemish, Italian, German, Spanish, Mandarin and Japanese. Bella answers in the language the caller opens with, so a guest is never asked to switch.",
+      },
+      {
+        title: "A price it cannot invent",
+        body:
+          "Every number Bella says out loud has to come from your live rates; if it is not there, she cannot say it. She confirms the room, the dates and the price with taxes before anything is booked.",
+      },
+      {
+        title: "Card details never touch the call",
+        body:
+          "Bella takes the guest's name and mobile and texts a secure payment link. Nobody reads a card number down the phone, and your team never hears one.",
+      },
+    ],
+    faqs: [
+      {
+        q: "What happens if it breaks?",
+        a: "The call rings the front desk, exactly as it did before. A caller never hears dead air — the failure mode is the old behaviour.",
+      },
+      {
+        q: "Where is guest data processed?",
+        a: "VoxStay is designed for EU hosting, in the Paris region, so a European hotel's guest data is meant to stay in the EU. That is a design commitment we will document in full with pilot partners, not a claim about a system you can buy today.",
+      },
+      {
+        q: "Does it write into our hotel system?",
+        a: "The first version captures the booking — dates, room, price, guest details — and hands the guest a pre-filled link, which works at any property regardless of what runs behind the desk. Writing directly into a hotel system is a later step, built with pilot partners.",
+      },
+    ],
+  },
   voxdrive: {
     ...featureFaqCtaEn,
     title: "VoxDrive — drive-thru voice ordering (concept) · BitePerk",
@@ -292,7 +341,7 @@ const productsEn: Record<string, IntlProductCopy> = {
       {
         title: "Where it sits",
         body:
-          "Behind bookings, ordering and concierge — all of which serve far more venues. We would rather ship three things properly than four things partly.",
+          "Behind bookings, ordering, concierge and hotel reception — all of which serve far more venues. We would rather ship the rest properly than everything partly.",
       },
     ],
     faqs: [
@@ -306,11 +355,11 @@ const productsEn: Record<string, IntlProductCopy> = {
 
 // ── Français ─────────────────────────────────────────────────────────────────
 const overviewFr: IntlProductsOverviewCopy = {
-  title: "Vox — un seul hôte téléphonique IA, quatre usages · BitePerk",
+  title: "Vox — un seul hôte téléphonique IA, cinq usages · BitePerk",
   description:
     "Vox répond au téléphone de votre établissement d'une voix naturelle, vérifie les disponibilités réelles et enregistre la réservation. En production en Australie ; partenariats pilotes ouverts en Europe.",
   eyebrow: "Le produit",
-  h1: "Un seul hôte téléphonique IA. Quatre usages.",
+  h1: "Un seul hôte téléphonique IA. Cinq usages.",
   lede:
     "Vox est un produit unique, pas une suite. Il répond au téléphone. Ce que vous activez au-delà des réservations ne dépend que de vous.",
   intro: [
@@ -333,6 +382,12 @@ const overviewFr: IntlProductsOverviewCopy = {
       outcome: "Les vingt questions qui ne sont pas des réservations.",
       body:
         "Horaires, stationnement, allergènes, où se trouve l'entrée. Des réponses justes, à 23 h, sans réveiller personne.",
+    },
+    // DRAFT French (5 Sep 2026) — needs Ludovic's pass.
+    voxstay: {
+      outcome: "Une chambre réservée dans la langue de l'appelant.",
+      body:
+        "Comprend le séjour, propose des chambres, annonce le vrai prix taxes comprises et envoie un lien de paiement sécurisé par SMS. Conçu pour les hôtels ; en développement, premiers pilotes en Europe.",
     },
     voxdrive: {
       outcome: "La borne de commande, sans les grésillements.",
@@ -496,6 +551,51 @@ const productsFr: Record<string, IntlProductCopy> = {
       },
     ],
   },
+  // DRAFT French (5 Sep 2026) — needs Ludovic's pass.
+  voxstay: {
+    ...featureFaqCtaFr,
+    title: "VoxStay — réceptionniste téléphonique IA pour hôtels · BitePerk",
+    description:
+      "VoxStay répond à l'appel de réservation d'un hôtel en huit langues, annonce le vrai prix taxes comprises et envoie un lien de paiement sécurisé par SMS. En développement — pas encore disponible.",
+    eyebrow: "Réception d'hôtel",
+    h1: "Des chambres réservées, en huit langues.",
+    lede:
+      "Le téléphone d'un hôtel sonne en huit langues et la réception en parle deux. VoxStay, c'est Bella à l'accueil : elle comprend le séjour, propose des chambres, annonce le vrai prix taxes comprises et envoie un lien de paiement sécurisé par SMS — jamais de numéro de carte au téléphone.",
+    statusLabel: "En développement",
+    statusNote:
+      "En cours de construction, pas encore disponible — y compris en Australie. Conçu d'abord pour l'Europe : les données des clients d'un hôtel européen sont prévues pour être hébergées dans l'UE (région parisienne). Présenté pour montrer où va Vox, pas pour être vendu aujourd'hui.",
+    features: [
+      {
+        title: "Huit langues, une seule réceptionniste",
+        body:
+          "Français, anglais, flamand, italien, allemand, espagnol, mandarin et japonais. Bella répond dans la langue de l'appelant, sans jamais lui demander d'en changer.",
+      },
+      {
+        title: "Un prix qu'elle ne peut pas inventer",
+        body:
+          "Chaque nombre que Bella prononce doit venir de vos tarifs en direct ; s'il n'y figure pas, elle ne peut pas le dire. Elle confirme la chambre, les dates et le prix taxes comprises avant toute réservation.",
+      },
+      {
+        title: "La carte bancaire ne passe jamais par l'appel",
+        body:
+          "Bella note le nom et le mobile du client, puis envoie un lien de paiement sécurisé par SMS. Personne ne dicte un numéro de carte au téléphone, et votre équipe n'en entend jamais un.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Que se passe-t-il en cas de panne ?",
+        a: "L'appel sonne à la réception, exactement comme avant. L'appelant n'entend jamais le vide : le mode dégradé, c'est l'ancien fonctionnement.",
+      },
+      {
+        q: "Où sont traitées les données des clients ?",
+        a: "VoxStay est conçu pour un hébergement dans l'UE, en région parisienne, afin que les données des clients d'un hôtel européen restent dans l'UE. C'est un engagement de conception que nous documenterons intégralement avec les partenaires pilotes, pas une promesse sur un système achetable aujourd'hui.",
+      },
+      {
+        q: "Écrit-il dans notre logiciel hôtelier ?",
+        a: "La première version capture la réservation — dates, chambre, prix, coordonnées — et remet au client un lien prérempli, ce qui fonctionne dans n'importe quel établissement, quel que soit l'outil derrière le comptoir. L'écriture directe dans le logiciel de l'hôtel viendra ensuite, construite avec les partenaires pilotes.",
+      },
+    ],
+  },
   voxdrive: {
     ...featureFaqCtaFr,
     title: "VoxDrive — commande vocale au drive (concept) · BitePerk",
@@ -522,7 +622,7 @@ const productsFr: Record<string, IntlProductCopy> = {
       {
         title: "Sa place dans l'ordre des choses",
         body:
-          "Après les réservations, la commande et l'accueil, qui servent bien plus d'établissements. Nous préférons livrer trois choses correctement que quatre à moitié.",
+          "Après les réservations, la commande, l'accueil et la réception d'hôtel, qui servent bien plus d'établissements. Nous préférons livrer le reste correctement que tout à moitié.",
       },
     ],
     faqs: [

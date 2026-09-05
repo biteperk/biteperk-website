@@ -577,3 +577,46 @@ file has not been placed in Natalia's shared folder.
    `src/data/intl/copy.ts`'s header. Comment-only change — the built HTML is
    byte-identical, verified by diffing a before/after `dist-global/`, so no
    redeploy was needed.
+
+## 5 Sep 2026 — VoxStay goes public on the site
+
+Decision (Sam, 5 Sep 2026): **VoxStay** — Bella as a hotel receptionist,
+built in `~/voxstay` since 20 Aug 2026 and running as a demo on Google Cloud
+Paris — moves from *pitch-only* to a public **`in-development`** product on
+every tree (`/au-en` and the five international locales), status pill and
+"Join the waitlist" CTA, shipped **now** rather than after the September
+hotel-platform demo. `BRAND.md` and `CLAUDE.md` previously forbade exactly
+this; both were rewritten in the same PR.
+
+What the public copy is allowed to say was fixed before a word was written:
+architectural facts only (eight languages, real price with taxes, texted
+secure payment link, never a card number on the call, cannot invent a price,
+falls back to ringing the front desk, *designed* for EU hosting). No prospect
+names, no hotel PMS/OTA names (a new **case-sensitive** `check-truthful`
+entry bans D-EDGE / Apaleo / Mews / Opera PMS / Cloudbeds / Booking.com /
+Expedia / SiteMinder / Guestline / RoomRaccoon — case-sensitive because
+`mews` is a London street word and `Opera` is a Sydney building), no price,
+no metric, no "our Paris team", no +61 test number. VoxStay is the one
+exception to the AU tree's "Australian data residency" line, and the copy
+says so where that line appears.
+
+**French is DRAFT.** `src/data/intl/products.ts` (`voxstay` in both the
+detail table and the overview capabilities, plus the "cinq usages" overview
+title/h1 and a VoxDrive sentence) and one about-intro clause in `markets.ts`
+are marked `// DRAFT French (5 Sep 2026) — needs Ludovic's pass.` Ludovic
+Roux is also the hotel prospect, so **Sam sequences the review request with
+the demo**. Until the pass lands, `/fr` and `/be-fr` serve draft French on
+those pages by decision.
+
+Gate found and closed on the way: `tests/unit/intl-merge.test.mjs` walks
+`resolveCopy()` only, so product prose was never parity-tested — English
+pasted into the French product table would have shipped. New
+`tests/unit/intl-products.test.mjs` asserts slug parity with
+`PRODUCT_SLUGS`, no empty leaves, no identical EN/FR leaves, h1 ≤ 45 chars
+(the intl OG card has no overflow guard) and a per-product photo with a
+French alt. `generate-og.mjs` now throws if a catalogue slug has no AU card.
+
+Post-ship (Sam): Search Console inspect `/au-en/products/voxstay/` + resubmit
+the sitemap; re-scrape the LinkedIn / Facebook share caches for
+`products.png`; confirm "VoxStay" is in the Zoho product picklist (the Cloud
+Function has accepted the slug since the Zoho integration commit).

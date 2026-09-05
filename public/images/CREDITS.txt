@@ -214,3 +214,8 @@ liverpool-pier-head
   Photographer: David White
   Original:     https://unsplash.com/photos/3690e2489514
   Brief:        The Three Graces on Liverpool's Pier Head under a blue sky
+
+hotel-reception
+  Photographer: Luca Discenza
+  Original:     https://unsplash.com/photos/95Bc9REy-w8
+  Brief:        Brass reception bell on a pale stone hotel front desk
