@@ -124,6 +124,41 @@ export type ConsentCopy = {
  * there. No "Paris", no "EU-hosted", no "human oversight" — check-truthful
  * bans them, and the plan guardrails say why.
  */
+/**
+ * The call simulation on the locale homes (CallSim.astro).
+ *
+ * Transcript rules, and they are not stylistic:
+ *   - Bella ANNOUNCES SHE IS AN AI in the opening line. The trust strip on
+ *     this same page says she does; a transcript that did not would make the
+ *     page contradict itself, and the EU AI Act transparency duty is one of
+ *     the things the market copy leans on.
+ *   - She offers to pass the caller to the venue's own team. That is the
+ *     honest shape of "human in the loop" — there is no European staff, so
+ *     the hand-off is to the restaurant, never to us.
+ *   - Fictional venue, no city, no price, no third-party integration, no
+ *     phone number. check-truthful enforces the last three; the first two are
+ *     on us.
+ */
+export type CallSimCopy = {
+  eyebrow: string;
+  /** The h2 is two lines: a lead and a gold accent. */
+  headingLead: string;
+  headingAccent: string;
+  lede: string;
+  note: string;
+  /** Label for the link through to the VoxTable product page. */
+  ctaLabel: string;
+  /** Card chrome. */
+  status: string;
+  badge: string;
+  whoBella: string;
+  whoCaller: string;
+  written: string;
+  replay: string;
+  disclaimer: string;
+  lines: ReadonlyArray<{ role: "bella" | "caller"; text: string }>;
+};
+
 export type TrustFactsCopy = {
   heading: string;
   entityLabel: string;
@@ -374,6 +409,64 @@ export const trustFacts: Record<Lang, TrustFactsCopy> = {
     basis:
       "L'intérêt légitime (article 6(1)(f) du RGPD) pour répondre à la demande que vous nous adressez ; le consentement pour les cookies facultatifs, retirable à tout moment. Vos droits sont détaillés dans la politique de confidentialité.",
     privacyLink: "Lire la politique de confidentialité",
+  },
+};
+
+export const callSim: Record<Lang, CallSimCopy> = {
+  en: {
+    eyebrow: "The 8pm test",
+    headingLead: "This is what a missed call",
+    headingAccent: "sounds like instead.",
+    lede:
+      "Mid-service, every table is seated and the phone is still ringing. Bella answers in under a second, checks what is genuinely free, and writes the booking down.",
+    note:
+      "And when she is unsure, she does not guess — she offers to put the caller through to your own team. That is by design.",
+    ctaLabel: "See how VoxTable works",
+    status: "Incoming call · 8:04pm",
+    badge: "Answered <1s",
+    whoBella: "Bella",
+    whoCaller: "Caller",
+    written: "Booking written to the venue dashboard",
+    replay: "Replay",
+    disclaimer: "Illustrative — a fictional venue, but exactly the way Bella handles a call.",
+    lines: [
+      { role: "bella", text: "Good evening — you've reached The Lantern Room. This is Bella, the AI assistant. How can I help?" },
+      { role: "caller", text: "Hi — any chance of a table for four tonight, around eight?" },
+      { role: "bella", text: "Let me check the book… eight is full, but I can do 7:15, or 8:30 on the terrace." },
+      { role: "caller", text: "8:30 works." },
+      { role: "bella", text: "Lovely. Four at 8:30 tonight — what name should I put it under?" },
+      { role: "caller", text: "Ellis." },
+      { role: "bella", text: "Booked, Ellis. If you would rather speak to someone, I can pass you to the team at any point. A confirmation is on its way." },
+    ],
+  },
+  // DRAFT French (6 Sep 2026) — needs Ludovic's pass. The transcript is the
+  // most prospect-facing French on the site after the hero, so it should not
+  // be treated as reviewed until he has read it aloud.
+  fr: {
+    eyebrow: "Le test de 20 h",
+    headingLead: "Voici ce qu'un appel manqué",
+    headingAccent: "donne à la place.",
+    lede:
+      "En plein service, toutes les tables sont occupées et le téléphone sonne encore. Bella répond en moins d'une seconde, vérifie ce qui est réellement libre et inscrit la réservation.",
+    note:
+      "Et quand elle a un doute, elle ne devine pas : elle propose de passer l'appel à votre propre équipe. C'est voulu.",
+    ctaLabel: "Voir comment fonctionne VoxTable",
+    status: "Appel entrant · 20 h 04",
+    badge: "Décroché en <1 s",
+    whoBella: "Bella",
+    whoCaller: "Appelant",
+    written: "Réservation inscrite au tableau de bord de l'établissement",
+    replay: "Rejouer",
+    disclaimer: "À titre d'illustration — un établissement fictif, mais exactement la façon dont Bella gère un appel.",
+    lines: [
+      { role: "bella", text: "Bonsoir, vous êtes bien à La Table d'Élise. Je suis Bella, l'assistante IA. Que puis-je pour vous ?" },
+      { role: "caller", text: "Bonsoir — auriez-vous une table pour quatre ce soir, vers 20 h ?" },
+      { role: "bella", text: "Je regarde le registre… 20 h est complet, mais je peux vous proposer 19 h 15, ou 20 h 30 en terrasse." },
+      { role: "caller", text: "20 h 30, très bien." },
+      { role: "bella", text: "Parfait. Quatre personnes à 20 h 30 ce soir — à quel nom ?" },
+      { role: "caller", text: "Ellis." },
+      { role: "bella", text: "C'est noté, Ellis. Si vous préférez parler à quelqu'un, je peux vous passer l'équipe à tout moment. Vous recevez une confirmation." },
+    ],
   },
 };
 

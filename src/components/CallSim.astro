@@ -12,11 +12,33 @@
  * Honesty rules: the venue is fictional, the card says so, and every
  * behaviour depicted (answers fast, checks real availability, human in
  * the loop when unsure) is a claim already published on the site.
+ *
+ * LOCALISABLE since 6 Sep 2026. Omit `copy` and this renders the AU English
+ * literals byte-for-byte, which is what /au-en/ still does. The international
+ * homes pass `copy` (CopyBundle.callSim) plus `showDemo={false}` — that demo
+ * link points at the AU booking app, which no global page may link to.
+ *
+ * The style block is `is:inline` for the reason CityBody/CityCards/TrustPanel
+ * are: [...intl].astro emits ~75 pages, and a scoped <style> here would inline
+ * 6.6KB of call-sim CSS into every one of them while rendering on five. Every
+ * selector is already namespaced under the .callsim- and .cs- prefixes,
+ * so dropping the scoping pass changes nothing about what matches.
  */
 import { voxProof } from "@/data/products";
 import { u } from "@/data/locales";
+import type { CallSimCopy } from "@/data/intl";
 
-const lines = [
+interface Props {
+  /** Localised copy. Omitted → the AU English literals below, unchanged. */
+  copy?: CallSimCopy;
+  /** Where "see how it works" points. Defaults to the AU product page. */
+  productHref?: string;
+  /** The AU booking-app audio demo. MUST be false on the global trees. */
+  showDemo?: boolean;
+}
+const { copy, productHref, showDemo = true } = Astro.props;
+
+const auLines = [
   {
     role: "bella",
     text: "Good evening — you've called Marlow Lane. This is Bella. How can I help?",
@@ -46,32 +68,46 @@ const lines = [
     text: "Done, Matilda — you're booked, and I've let the team know it's a birthday. A confirmation text is on its way.",
   },
 ] as const;
+
+/** AU English defaults — the exact strings this component shipped with. */
+const t = copy ?? {
+  eyebrow: "The 7:42pm test",
+  headingLead: "This is what a missed call",
+  headingAccent: "sounds like instead.",
+  lede:
+    "Friday night, phone rings, every host is mid-service. Bella answers in under a second, checks your real availability, and writes the booking straight to your dashboard.",
+  note:
+    "And when she's ever unsure, she doesn't guess — she takes a message so a human calls back. That's by design.",
+  ctaLabel: "See how VoxTable works",
+  status: "Incoming call · Friday, 7:42pm",
+  badge: "Answered <1s",
+  whoBella: "Bella",
+  whoCaller: "Caller",
+  written: "Booking written to the venue dashboard",
+  replay: "Replay",
+  disclaimer: "Illustrative — a fictional venue, but exactly the way Bella handles a call.",
+  lines: auLines,
+};
+const href = productHref ?? u("/products/voxtable/");
 ---
 
 <section class="callsim-section cv-auto" aria-labelledby="callsim-h">
   <div class="wrap">
     <div class="callsim-grid">
       <div class="callsim-copy reveal">
-        <span class="eyebrow">The 7:42pm test</span>
+        <span class="eyebrow">{t.eyebrow}</span>
         <h2 class="callsim-h" id="callsim-h">
-          This is what a missed call<br />
-          <span class="gold">sounds like instead.</span>
+          {t.headingLead}<br />
+          <span class="gold">{t.headingAccent}</span>
         </h2>
-        <p class="lede callsim-lede">
-          Friday night, phone rings, every host is mid-service. Bella answers in
-          under a second, checks your real availability, and writes the booking
-          straight to your dashboard.
-        </p>
-        <p class="callsim-note">
-          And when she's ever unsure, she doesn't guess — she takes a message so
-          a human calls back. That's by design.
-        </p>
+        <p class="lede callsim-lede">{t.lede}</p>
+        <p class="callsim-note">{t.note}</p>
         <div class="callsim-ctas">
-          <a class="btn-ghost link-arrow callsim-cta" href={u("/products/voxtable/")}>
-            See how VoxTable works
+          <a class="btn-ghost link-arrow callsim-cta" href={href}>
+            {t.ctaLabel}
             <span class="arrow" aria-hidden="true">→</span>
           </a>
-          {voxProof.demo && (
+          {showDemo && voxProof.demo && (
             <a
               class="callsim-audio-link link-arrow"
               href={voxProof.demo.href}
@@ -90,14 +126,14 @@ const lines = [
         <figcaption class="callsim-head">
           <span class="callsim-status">
             <span class="callsim-dot" aria-hidden="true"></span>
-            Incoming call · Friday, 7:42pm
+            {t.status}
           </span>
-          <span class="callsim-badge">Answered &lt;1s</span>
+          <span class="callsim-badge">{t.badge}</span>
         </figcaption>
         <ol class="callsim-lines">
-          {lines.map((l) => (
+          {t.lines.map((l) => (
             <li class="cs-line" data-cs-line data-role={l.role}>
-              <span class="cs-who">{l.role === "bella" ? "Bella" : "Caller"}</span>
+              <span class="cs-who">{l.role === "bella" ? t.whoBella : t.whoCaller}</span>
               <span class="cs-bubble">{l.text}</span>
               {l.role === "bella" && (
                 <span class="cs-typing" aria-hidden="true">
@@ -114,19 +150,17 @@ const lines = [
                 <path d="M2.5 8.5l3.5 3.5 7-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
               </svg>
             </span>
-            Booking written to the venue dashboard
+            {t.written}
           </span>
-          <button type="button" class="callsim-replay" data-cs-replay data-cta="callsim-replay">Replay</button>
+          <button type="button" class="callsim-replay" data-cs-replay data-cta="callsim-replay">{t.replay}</button>
         </div>
-        <p class="callsim-disclaimer">
-          Illustrative — a fictional venue, but exactly the way Bella handles a call.
-        </p>
+        <p class="callsim-disclaimer">{t.disclaimer}</p>
       </figure>
     </div>
   </div>
 </section>
 
-<style>
+<style is:inline>
   .callsim-section {
     padding-block: var(--space-section);
     border-top: 1px solid var(--line);

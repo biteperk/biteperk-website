@@ -247,10 +247,22 @@ const FR_SHARED_WITH_EN = new Set([
   "chrome.cookies",           // "Cookies"
   "chrome.email",             // shared mailbox
   "home.testimonial.author",  // a person's name
+  "callSim.whoBella",         // the persona is named Bella in every language
+  "callSim.lines[5].text",    // "Ellis." — the caller's name, same in both
   "contact.eyebrow",          // "Contact"
   "terms.sections[3].heading",
   "cookies.sections[2].heading", // "Marketing"
 ]);
+
+/**
+ * Paths that are STRUCTURE, not prose, and so can never be "untranslated".
+ *
+ * `callSim.lines[n].role` is the "bella" | "caller" discriminator the
+ * component switches on to pick a speaker label and bubble side. Translating
+ * it would break the render. Listing all seven in the set above would also
+ * work and would be seven lines of noise that grow with the transcript.
+ */
+const STRUCTURAL = /\.role$/;
 
 test("bundle parity: the French trees carry no untranslated English", () => {
   const en = leavesOf(intl.resolveCopy(globalLocales().find((l) => l.base === "/en")));
@@ -258,7 +270,7 @@ test("bundle parity: the French trees carry no untranslated English", () => {
     const offenders = [];
     for (const [path, v] of leavesOf(intl.resolveCopy(l))) {
       if (typeof v !== "string" || v.length <= 3) continue;
-      if (FR_SHARED_WITH_EN.has(path)) continue;
+      if (FR_SHARED_WITH_EN.has(path) || STRUCTURAL.test(path)) continue;
       if (en.get(path) === v) offenders.push(`${path} = ${JSON.stringify(v.slice(0, 70))}`);
     }
     assert.deepEqual(
