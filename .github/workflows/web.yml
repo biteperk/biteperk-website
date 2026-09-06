@@ -234,6 +234,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      # The sentinel's own instruction, enacted. Fault-injection run
+      # 34031780496 (7 Sep 2026) proved 11GB is not enough headroom for a
+      # browser job on an unlucky runner: intl shard 2/2 died of "No space
+      # left on device" mid-suite with the sentinel reading 11G free — the
+      # same failure mode the 6 Sep incident had, back on the new pipeline.
+      # FAST subset ONLY (~10s, frees several GB): never the android SDK
+      # (that is what cost the old cleanup its 70 seconds) and never
+      # /usr/local/lib/node_modules (npm itself lives there).
+      - name: Free disk (FAST subset)
+        run: sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -261,16 +273,14 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium webkit firefox
 
-      # The 70s `rm -rf` of preinstalled toolchains is gone. It existed because
-      # ONE runner did two builds, three browsers and a full suite, and died of
-      # "No space left on device" on 6 Sep 2026 — taking its own log with it,
-      # so the run reported a failure with no step conclusion and nothing to
-      # read (the cause was only visible in the check-run ANNOTATION). Each job
-      # now does one build and cached browsers. This sentinel keeps the margin
-      # visible; if it ever reports under ~10GB free, put back the FAST subset
-      # only (/usr/share/dotnet /opt/ghc /usr/local/share/boost) — never the
-      # android SDK, which is what cost the 70 seconds. And never
-      # /usr/local/lib/node_modules: npm itself lives there.
+      # The full 70s `rm -rf` of preinstalled toolchains stays gone; the FAST
+      # subset above is back because the sentinel's own trigger fired: run
+      # 34031780496 lost intl shard 2/2 to "No space left on device" after
+      # this step had printed 11G free — a full disk takes the job's own log
+      # with it, so the cause is only visible in the check-run ANNOTATION.
+      # This sentinel keeps the post-cleanup margin visible; if it drops under
+      # ~10GB again, the next lever is shrinking the shard (the intl-a11y
+      # extraction), not deleting more of the runner.
       - name: Disk sentinel
         run: |
           echo "free: $(df -h / | awk 'NR==2 {print $4}')"
@@ -313,6 +323,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      # See the identical step in playwright-au for why. This is the job type
+      # that actually died (shard 2/2 carries every axe scan and ran longest).
+      - name: Free disk (FAST subset)
+        run: sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -376,6 +392,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      # See the identical step in playwright-au for why. This job builds the
+      # merged tree (all three dists), the biggest disk footprint of the tier.
+      - name: Free disk (FAST subset)
+        run: sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -389,6 +411,11 @@ jobs:
       # /au-en/** assets, which 404 when served at the root.
       - name: Build merged site
         run: npm run build:site
+
+      # Same margin visibility the Playwright jobs have; this job had none.
+      - name: Disk sentinel
+        run: |
+          echo "free: $(df -h / | awk 'NR==2 {print $4}')"
 
       # ── Why this step retries ────────────────────────────────────────────
       # (This header used to read "and why the budget is NOT raised". It was
