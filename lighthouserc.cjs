@@ -46,12 +46,19 @@ module.exports = {
         "http://localhost/be-fr/",
         "http://localhost/fr/products/voxstay/",
       ],
-      // Median of 5: single runs on shared 2-core CI runners produce
-      // coin-flip TBT/perf numbers (observed 619ms TBT with 26KB of JS), and
-      // at 3 runs /gb-en and /be-en still swung 1.4–1.5s in LCP between runs
-      // of the same build. Costs ~4 min on the AU CI leg; cheaper than a
-      // flaky red.
-      numberOfRuns: 5,
+      // Median of 3: single runs on shared 2-core CI runners produce
+      // coin-flip TBT/perf numbers (observed 619ms TBT with 26KB of JS).
+      //
+      // 5 was tried on 6 Sep 2026 and reverted the same day. It is the more
+      // accurate measurement, and what it measured was the AU home at a
+      // 2514–2526ms median on five consecutive CI passes against this 2500
+      // budget — a page nothing in that branch had slowed (its bytes went
+      // DOWN). Two things to know before trying 5 again, both in issue #32:
+      // this server (@lhci/cli's fallback, bare express.static) serves the
+      // 261KB AU home UNCOMPRESSED, so every LCP here is ~1s pessimistic
+      // against production's brotli; and a 5-run pass takes ~12.5 min on the
+      // runner, which with the retry step needs the 40-min job timeout.
+      numberOfRuns: 3,
       settings: {
         skipAudits: ["uses-http2"], // static server is h1
         // Advanced consent mode deliberately loads Google's tag while storage
