@@ -275,7 +275,7 @@ export const chrome: Record<Lang, ChromeCopy> = {
     cta: "Book a pilot",
     auSite: "Australia site",
     footerBlurb:
-      "BitePerk builds voice and AI tools for hospitality. Vox, our AI phone host, answers restaurant calls in a natural voice and books tables straight into the venue's dashboard.",
+      "BitePerk builds voice and AI tools for hospitality. Vox, our AI phone host, answers restaurant calls in a natural voice and books tables straight into the venue's dashboard. Call us on +61 2 5504 1140.",
     privacy: "Privacy",
     terms: "Terms",
     cookies: "Cookies",
