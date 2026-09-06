@@ -20,12 +20,32 @@
  * Measured locally, same build and machine, uncompressed → compressed:
  * /fr 2404→1977ms, /gb-en 2553→2044ms, AU home FCP 2932→1429ms.
  *
- * That pessimism is why the AU home has been failing at 2514–2526ms against
- * this 2500 budget while its bytes went DOWN (the last green main, 144bab6,
- * built a 259,259-byte AU home; today's is 261,244 — 2KB, ~10ms). The page did
- * not regress; it sits ON the line, and which side a given runner lands on is
- * luck. Serving what production serves is the fix; raising the budget is not,
- * and the assertion block below says why.
+ * WHAT COMPRESSION DID AND DID NOT FIX (corrected against the first CI run
+ * of this change — the local numbers above led me to the wrong conclusion).
+ * On CI it roughly HALVED FCP: the AU home went ~2600 → 1430ms, and the
+ * document now transfers at 40,639 bytes instead of 261KB. It barely moved
+ * LCP: the AU home measured 2511 on that run's first pass and 2535 on the
+ * uploaded median, against 2519 before. It passed only on the retry step.
+ *
+ * The reason is in the phase breakdown, and it is worth knowing before
+ * anyone optimises bytes again. AU home, compressed, on the runner:
+ *
+ *     TTFB 468 · Load Delay 0 · Load Time 215 · Render Delay 1852  = 2535
+ *
+ * The hero AVIF is fully downloaded 65ms in. Then nothing paints for another
+ * 1.85 SECONDS. TBT is 0, so this is not blocking script — it is layout and
+ * paint of a large DOM against a large stylesheet on a throttled 2-core
+ * runner (observed main thread: Style & Layout 240ms, Parse HTML & CSS 72ms,
+ * Other 518ms, before Lantern's 4× CPU multiplier). /fr/ is the same shape:
+ * FCP 1394, Render Delay 1776, LCP 2234 — with a TEXT LCP and no image at
+ * all. Render delay of ~1800ms is the floor on every page here.
+ *
+ * So brotli fixed the transfer, and transfer was never what LCP was waiting
+ * for. Compressing further, or shaving image bytes, cannot move this number.
+ * Reducing the WORK can: less DOM and less CSS per page (the AU home ships
+ * 261KB of HTML, 133KB of it inline CSS). That is issue #32, and it is a real
+ * user-facing win too — Lighthouse mobile emulates a moto g power, which is
+ * what a lot of the guests calling these venues are holding.
  *
  * `serve` is a pinned devDependency (NOT `npx serve`) so CI installs a known
  * version with `npm ci` instead of resolving one over the network mid-run.
@@ -113,12 +133,13 @@ module.exports = {
         // optimisations applied first (inlined CSS, responsive preload,
         // async decode, content-visibility on below-fold sections).
         //
-        // DELIBERATELY UNCHANGED while compression lands, and therefore
-        // temporarily loose: the same pages that measured 2103–2496ms
-        // uncompressed-locally now have ~1.2s more headroom, so 2500 no longer
-        // bites. It must be re-tightened to the observed compressed CI maximum
-        // plus a margin, in a follow-up on real CI numbers rather than a guess
-        // that turns main red again. Tracked in issue #32 — do not leave it.
+        // UNCHANGED, and it still bites. I expected compression to buy ~1.2s
+        // of headroom here and it did not (see the phase breakdown above):
+        // the AU home still measures 2511–2535 on CI and passes only via the
+        // retry step below. Do not tighten this until the AU home's render
+        // delay comes down, and do not raise it either — the number is
+        // Google's "good" threshold and the page genuinely misses it on a
+        // low-end phone. Fix the page; issue #32.
         "largest-contentful-paint": ["error", { maxNumericValue: 2500 }],
         "cumulative-layout-shift": ["error", { maxNumericValue: 0.02 }],
         // 300ms sits between Google's "good" (200) and "needs
@@ -129,9 +150,10 @@ module.exports = {
         // is a budget for JavaScript shipped by this repository.
         //
         // 61440 was a RAW-byte budget (the old server sent no encoding).
-        // Transfer size is now compressed, so the same number would be ~3×
-        // looser in real terms. Re-tightened to 24576 (24KB) against measured
-        // compressed transfer — see issue #32 for the before/after table.
+        // Transfer size is now compressed, so the same number would have gone
+        // ~3× looser overnight. Re-tightened to 24576 (24KB) against a
+        // measured 16950 worst case. This is the one budget the compression
+        // change actually altered the meaning of — see issue #32.
         "resource-summary:script:size": ["error", { maxNumericValue: 24576 }],
       },
     },
