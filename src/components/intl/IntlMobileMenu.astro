@@ -1,0 +1,216 @@
+---
+/**
+ * Slide-over navigation for the international trees, ≤720px.
+ *
+ * Replaces the two-row wrapped link bar. That design was deliberate and its
+ * two reasons are both gone: a sticky two-row bar cost ~105px of an iPhone
+ * viewport (this bar is one 56px row), and a `backdrop-filter` on the header
+ * would have become the containing block for the LocalePicker's fixed bottom
+ * sheet (the mobile bar carries no filter — see IntlLayout).
+ *
+ * DRIVEN BY THE AU SCRIPT. src/scripts/mobile-menu.ts owns open/close, the
+ * focus trap, the scroll lock and the astro:page-load rebinding; this markup
+ * satisfies its contract exactly — `[data-mobile-menu-trigger]` (rendered by
+ * IntlLayout, in the bar), `#mobile-menu[data-mobile-menu][hidden]`,
+ * `[data-mobile-menu-backdrop]`, `[data-mobile-menu-close]`, and an `.is-open`
+ * class it toggles. The script closes on any internal `<a>` click, so every
+ * link here dismisses the drawer for free. It also waits for `transitionend`
+ * before setting `hidden`, so the panel MUST keep a transition (there is a
+ * 350ms fallback, but reduced-motion users would otherwise hold the a11y tree
+ * open for a third of a second).
+ *
+ * NO AU DATA IMPORTS. Everything arrives as props; pulling `@/data/nav`,
+ * `@/data/products` or `@/data/cities` in here would drag the AU catalogue
+ * into the global build and undo the Base/AuBase split (#29).
+ *
+ * The region picker deliberately stays in the BAR, not in here: a drawer
+ * panel that animates with `transform` is a containing block for
+ * `position: fixed`, which would trap the picker's bottom sheet inside it.
+ *
+ * Styles are `is:inline` (unscoped, `.imm*`-namespaced), the same contract as
+ * CityNav/CityCards/TrustPanel.
+ */
+import ThemeToggle from "@/components/ThemeToggle.astro";
+import StarMark from "@/components/StarMark.astro";
+import type { Locale } from "@/data/locales";
+import type { ChromeCopy } from "@/data/intl";
+import type { IntlCity } from "@/data/intl/cities";
+
+interface Props {
+  locale: Locale;
+  /** Current page path within the locale — marks the active link. */
+  page: string;
+  chrome: ChromeCopy;
+  /** INTL_NAV, passed in rather than imported so this stays data-agnostic. */
+  nav: ReadonlyArray<{ key: keyof ChromeCopy["nav"]; path: string }>;
+  /** Published cities for this tree; empty on the four trees without any. */
+  cities: ReadonlyArray<IntlCity>;
+}
+
+const { locale, page, chrome: c, nav, cities } = Astro.props;
+const p = (seg: string) => `${locale.base}/${seg ? `${seg}/` : ""}`;
+---
+
+<div
+  id="mobile-menu"
+  class="imm"
+  data-mobile-menu
+  hidden
+  role="dialog"
+  aria-modal="true"
+  aria-label={c.menu}
+>
+  <div class="imm-backdrop" data-mobile-menu-backdrop aria-hidden="true"></div>
+  <div class="imm-panel">
+    <div class="imm-header">
+      <a class="brand" href={p("")} aria-label="BitePerk home">
+        <StarMark size={28} />
+        <span class="brand-name">bite<span class="perk">perk</span></span>
+      </a>
+      <button class="imm-close" data-mobile-menu-close type="button" aria-label={c.menuClose}>
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+          <path d="M6 6l12 12M18 6L6 18"></path>
+        </svg>
+      </button>
+    </div>
+
+    <nav class="imm-body" aria-label="Site">
+      {nav.map((item) => (
+        <a
+          class:list={["imm-link", { "is-current": item.path === page }]}
+          href={p(item.path)}
+          aria-current={item.path === page ? "page" : undefined}
+        >
+          {c.nav[item.key]}
+        </a>
+      ))}
+
+      {cities.length > 0 && (
+        <div class="imm-section">
+          <p class="imm-section-title">{c.cities}</p>
+          <div class="imm-cities">
+            {cities.map((city) => (
+              <a class="imm-city" href={p(city.slug)}>{city.name}</a>
+            ))}
+          </div>
+        </div>
+      )}
+    </nav>
+
+    <div class="imm-foot">
+      {/* The CTA the bar drops below 400px, so it is always reachable. */}
+      <a class="btn imm-cta" href={p("contact")}>{c.cta}</a>
+      <ThemeToggle />
+    </div>
+  </div>
+</div>
+
+<style is:inline>
+  /* UNSCOPED (is:inline skips the scoping pass) — every selector stays under
+     .imm so nothing here can reach another component. */
+  .imm[hidden] { display: none; }
+  .imm {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-modal);
+  }
+  /* Desktop never sees this: the bar shows its own links above 720px and the
+     trigger is display:none there, so the panel must not be reachable either. */
+  @media (min-width: 721px) { .imm { display: none; } }
+
+  .imm-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 11, 13, 0.6);
+    opacity: 0;
+    transition: opacity var(--dur-mid, 220ms) var(--ease-out);
+  }
+  .imm.is-open .imm-backdrop { opacity: 1; }
+
+  .imm-panel {
+    position: absolute;
+    inset: 0 0 0 auto;
+    width: min(88vw, 360px);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    padding: 14px var(--space-5) calc(var(--space-5) + env(safe-area-inset-bottom));
+    background: var(--ink-0);
+    border-inline-start: 1px solid var(--line);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    transform: translateX(100%);
+    /* transitionend on this property is what un-hides → the script relies on
+       it firing. Keep a transition here even if the design changes. */
+    transition: transform var(--dur-mid, 220ms) var(--ease-soft);
+  }
+  .imm.is-open .imm-panel { transform: translateX(0); }
+
+  .imm-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+  .imm-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin-inline-end: -8px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-pill);
+    background: var(--fill-subtle);
+    color: var(--white);
+    cursor: pointer;
+  }
+
+  .imm-body { display: flex; flex-direction: column; }
+  .imm-link {
+    display: flex;
+    align-items: center;
+    min-height: 52px;
+    font-size: var(--fs-h4, 1.0625rem);
+    font-weight: 600;
+    color: var(--white);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line);
+  }
+  .imm-link.is-current { color: var(--gold); }
+
+  .imm-section { margin-top: var(--space-5); }
+  .imm-section-title {
+    margin: 0 0 var(--space-3);
+    font-size: var(--fs-small);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .imm-cities { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .imm-city {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-pill);
+    background: var(--fill-subtle);
+    color: var(--mist-2);
+    text-decoration: none;
+  }
+
+  .imm-foot {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .imm-cta { flex: 1; justify-content: center; min-height: 48px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Still a transition (the script waits for transitionend), just instant. */
+    .imm-panel, .imm-backdrop { transition-duration: 1ms; }
+  }
+</style>
