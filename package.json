@@ -44,6 +44,7 @@
     "@resvg/resvg-js": "^2.6.2",
     "satori": "^0.26.0",
     "satori-html": "^0.3.2",
+    "serve": "^14.2.6",
     "sharp": "^0.34.5",
     "typescript": "^5.9.3"
   }
