@@ -53,6 +53,77 @@
  * Note: script:size asserts on TRANSFER size, which is now compressed — so
  * that budget got looser in real terms when this changed. See the note on it.
  */
+/**
+ * Split the URL list across parallel CI jobs.
+ *
+ * `LHCI_SHARD` is "n/total" (e.g. "1/2"), set per matrix job by web.yml. Unset
+ * — which is every local run — returns the whole list, so `npm run lhci` on a
+ * laptop still measures all 12 URLs and behaves exactly as it did before.
+ *
+ * Contiguous slices, not round-robin: the list is ordered by template and
+ * grouping neighbours keeps a shard's failures legible ("both product pages"
+ * rather than "two unrelated URLs").
+ *
+ * Malformed input throws rather than silently measuring the wrong subset — a
+ * shard that quietly asserts nothing is worse than a red build.
+ */
+function shardUrls(all) {
+  const raw = process.env.LHCI_SHARD;
+  if (!raw) return all;
+  const m = /^(\d+)\/(\d+)$/.exec(raw.trim());
+  if (!m) {
+    console.error(`lighthouserc: LHCI_SHARD must look like "1/2", got ${JSON.stringify(raw)}.`);
+    process.exit(1);
+  }
+  const index = Number(m[1]);
+  const total = Number(m[2]);
+  if (total < 1 || index < 1 || index > total) {
+    console.error(`lighthouserc: LHCI_SHARD "${raw}" is out of range (need 1 <= n <= total, total >= 1).`);
+    process.exit(1);
+  }
+  const size = Math.ceil(all.length / total);
+  const slice = all.slice((index - 1) * size, index * size);
+  if (slice.length === 0) {
+    console.error(
+      `lighthouserc: LHCI_SHARD "${raw}" selects no URLs from ${all.length} — ` +
+        `more shards than URLs asserts nothing at all.`,
+    );
+    process.exit(1);
+  }
+  console.log(`lighthouserc: shard ${raw} → ${slice.length} of ${all.length} URLs`);
+  return slice;
+}
+
+/** Every URL the budget covers. Sharded by shardUrls() above. */
+const ALL_URLS = [
+  "http://localhost:4173/au-en/",
+  "http://localhost:4173/au-en/products/voxtable/",
+  "http://localhost:4173/au-en/sydney/",
+  "http://localhost:4173/au-en/blog/what-missed-calls-cost-your-restaurant/",
+  "http://localhost:4173/au-en/contact/",
+  // The market trees are in the same merged build and must stay inside
+  // the perf contract — they carry hero imagery and a market band, and
+  // their visitors are the furthest from the Sydney origin.
+  "http://localhost:4173/gb-en/",
+  // The city-page template (Jul 2026): photographic split hero
+  // (deprioritized cityscape beside the headline — text stays the LCP
+  // element), one lazy story image, the district chips and the
+  // seven-card cross-link grid. London stands in for all eight cities.
+  "http://localhost:4173/gb-en/london/",
+  "http://localhost:4173/fr/",
+  // /en is the x-default and had the largest perf delta of any tree when
+  // heroes landed (0 images → a priority-loaded LCP hero), so it is the
+  // one most worth measuring. /be-en covers the second French/Flemish
+  // market and the shared Belgian hero.
+  "http://localhost:4173/en/",
+  "http://localhost:4173/be-en/",
+  // /be-fr was the one locale home not measured; it carries the longest
+  // French copy of the five. The VoxStay product page is the only intl
+  // product page with a portrait hero photo (Sep 2026).
+  "http://localhost:4173/be-fr/",
+  "http://localhost:4173/fr/products/voxstay/",
+];
+
 module.exports = {
   ci: {
     collect: {
@@ -61,46 +132,23 @@ module.exports = {
       startServerReadyPattern: "Accepting connections",
       // Representative page of each template. The port is explicit now that
       // we start our own server (startServerCommand), not LHCI's.
-      url: [
-        "http://localhost:4173/au-en/",
-        "http://localhost:4173/au-en/products/voxtable/",
-        "http://localhost:4173/au-en/sydney/",
-        "http://localhost:4173/au-en/blog/what-missed-calls-cost-your-restaurant/",
-        "http://localhost:4173/au-en/contact/",
-        // The market trees are in the same merged build and must stay inside
-        // the perf contract — they carry hero imagery and a market band, and
-        // their visitors are the furthest from the Sydney origin.
-        "http://localhost:4173/gb-en/",
-        // The city-page template (Jul 2026): photographic split hero
-        // (deprioritized cityscape beside the headline — text stays the LCP
-        // element), one lazy story image, the district chips and the
-        // seven-card cross-link grid. London stands in for all eight cities.
-        "http://localhost:4173/gb-en/london/",
-        "http://localhost:4173/fr/",
-        // /en is the x-default and had the largest perf delta of any tree when
-        // heroes landed (0 images → a priority-loaded LCP hero), so it is the
-        // one most worth measuring. /be-en covers the second French/Flemish
-        // market and the shared Belgian hero.
-        "http://localhost:4173/en/",
-        "http://localhost:4173/be-en/",
-        // /be-fr was the one locale home not measured; it carries the longest
-        // French copy of the five. The VoxStay product page is the only intl
-        // product page with a portrait hero photo (Sep 2026).
-        "http://localhost:4173/be-fr/",
-        "http://localhost:4173/fr/products/voxstay/",
-      ],
-      // Median of 3: single runs on shared 2-core CI runners produce
-      // coin-flip TBT/perf numbers (observed 619ms TBT with 26KB of JS).
+      url: shardUrls(ALL_URLS),
+      // Median of 5: single runs on shared 2-core CI runners produce coin-flip
+      // TBT/perf numbers (observed 619ms TBT with 26KB of JS), and 5 is the
+      // more accurate measurement.
       //
-      // 5 was tried on 6 Sep 2026 and reverted the same day: it is the more
-      // accurate measurement, and it accurately measured the AU home at
-      // 2514–2526ms against a 2500 budget on an UNCOMPRESSED server. The
-      // compression fix above is what actually addressed that; 5 runs is worth
-      // restoring once these budgets have been re-tightened against real
-      // compressed CI numbers (issue #32). Cost to weigh then: a 5-run pass is
-      // ~12.5 min on the runner, and the retry step doubles it — which is what
-      // the AU job's 40-minute timeout exists for.
-      numberOfRuns: 3,
+      // It went 5 → 3 on 6 Sep 2026 and back to 5 the same day, which is worth
+      // explaining rather than looking like churn. 5 was reverted because a
+      // 12-URL pass took ~12.5 min INSIDE a serial job that had already spent
+      // 10 minutes in Playwright, and the retry step doubled it past the
+      // timeout. It is back because the job is now parallel AND sharded: each
+      // matrix job measures 6 URLs, ~7.6 min, with its own 25-minute budget.
+      //
+      // The number that made 5 look expensive — the AU home at 2514–2537ms —
+      // was never variance. It is deterministic and CPU-bound (issue #32), and
+      // sits under the 2600 budget either way. More runs make it read more
+      // consistently, not more favourably.
+      numberOfRuns: 5,
       settings: {
         skipAudits: ["uses-http2"], // static server is h1
         // Advanced consent mode deliberately loads Google's tag while storage
