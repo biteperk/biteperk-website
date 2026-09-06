@@ -675,7 +675,31 @@ const beEn: MarketContent = {
     heading: "Built for Belgium's table culture.",
     body: "From Brussels brasseries to canal-side cafés, the phone rings right through service. Vox answers it — in French or English — so your team can stay with their guests.",
   },
+  // The city-links strip. Fresh copy, NOT a paraphrase of gbEn.cities: the
+  // English home pool (/en vs /gb-en vs /be-en) runs 26–28% against a 35%
+  // ceiling in check-intl-similarity, and three homes reciting one strip is
+  // how that margin gets spent. Adding this also moves the market band's
+  // cityscape into the cards ([...intl].astro:323) — the band goes
+  // hospitality-only here, exactly as /gb-en's does.
+  cities: {
+    eyebrow: "Where it starts",
+    heading: "One city at a time, on real lines.",
+    body: "A pilot is a conversation with a particular room in a particular street, not a launch. This is where those conversations are open.",
+  },
   copy: {
+    // cityPage.en was written when cities were a /gb-en-only feature and says
+    // "the UK" in two visible places. merge() recurses plain objects, so this
+    // overrides three keys and inherits the rest.
+    //
+    // othersEyebrow/othersHeading are dead while Brussels is the only Belgian
+    // city — CityBody gates that section on otherCities.length — but they are
+    // set now so a future Antwerp cannot silently inherit UK copy.
+    cityPage: {
+      districtsNote:
+        "Not on the list? The pilot programme isn't drawn on a map — a venue anywhere in Belgium works exactly the same way.",
+      othersEyebrow: "Elsewhere in Belgium",
+      othersHeading: "Also in pilot conversations with venues in",
+    },
     home: {
       title: "BitePerk — Vox, the AI phone host for restaurants in Belgium",
       description:

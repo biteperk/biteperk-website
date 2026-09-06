@@ -253,6 +253,26 @@ test.describe("intl chrome — Cities nav dropdown", () => {
     await page.goto("/fr/");
     await expect(page.locator("[data-city-nav]")).toHaveCount(0);
   });
+
+  // /be-en is the FIRST non-UK city-bearing tree (Brussels, 6 Sep 2026). Until
+  // it existed, every positive city assertion in this file ran against /gb-en,
+  // so nothing checked the chrome against non-UK label lengths — and the
+  // `[data-has-cities]` 1080px wrap band exists precisely because the Cities
+  // trigger widens the actions row. This is the counterpart assertion.
+  test("opens on /be-en/ too, with the Belgian city listed", async ({ page }) => {
+    await page.goto("/be-en/");
+    await page.locator("[data-city-nav-trigger]").click();
+    const menu = page.locator("[data-city-nav-menu]");
+    await expect(menu).toBeVisible();
+    await settle(page, "[data-city-nav-menu]");
+    const box = (await menu.boundingBox())!;
+    expect(box.x).toBeGreaterThanOrEqual(0);
+    expect(box.x + box.width).toBeLessThanOrEqual(TABLET.width);
+    await expect(page.locator("[data-city-nav-item]")).toHaveCount(
+      intlCitiesForBase("/be-en").length,
+    );
+    expect(await horizontalOverflow(page), "the bar must not overflow").toBe(0);
+  });
 });
 
 test.describe("intl chrome — cities on a phone live in the drawer", () => {

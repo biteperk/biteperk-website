@@ -99,6 +99,14 @@ const UK_STORY = {
   storyImageAlt: "A bar mid-service, glassware and spirits lit under filament bulbs",
 } as const;
 
+// The shared Belgian hospitality shot, same contract as UK_STORY. Already
+// graded and already this market's `media.hospitality` slug (markets.ts), so a
+// Belgian city costs no new photography — rule 3 again.
+const BE_STORY = {
+  storyImage: "cafe-continental",
+  storyImageAlt: "A relaxed continental café interior between services",
+} as const;
+
 export const intlCities: readonly IntlCity[] = [
   // ── London ────────────────────────────────────────────────────────────
   {
@@ -826,6 +834,112 @@ export const intlCities: readonly IntlCity[] = [
     cityscapeImage: "liverpool-pier-head",
     cityscapeImageAlt: "The Three Graces on Liverpool's Pier Head under a blue sky",
     ...UK_STORY,
+  },
+
+  // ── Brussels (/be-en) — the first non-UK market city ───────────────────
+  //
+  // Two things make this entry different from the eight above, and both are
+  // gates rather than taste:
+  //
+  //   1. check-cities pools similarity BY LANGUAGE, so this is scored against
+  //      all eight UK cities on `intro` and `aiLocal` — 16 comparisons. Those
+  //      two fields are deliberately built on a different spine (a lunch
+  //      service with a hard edge, not an evening one) and the `shield` point
+  //      names EU law, where every UK entry names UK GDPR.
+  //   2. LANGUAGE CLAIMS. /be-en's own FAQ says handling French and English on
+  //      one line "is the specific thing a Belgian pilot is built to prove. We
+  //      would rather demonstrate it on your calls than assert it on a
+  //      website", and says Dutch is "Not built." This page holds that line:
+  //      the two languages are the VENUE's reality and what a pilot is for,
+  //      never a shipped capability, and Dutch is never implied.
+  {
+    slug: "brussels",
+    base: "/be-en",
+    copyLang: "en",
+    name: "Brussels",
+    published: true,
+    seoTitle: "AI phone answering for Brussels restaurants — Vox by BitePerk",
+    seoDescription:
+      "Vox answers your Brussels restaurant's phone in a natural voice, checks the real book and takes the booking — while your team stays with the room. Belgian pilots now opening.",
+    heroHeadline: "Lunch is ninety minutes. The phone doesn't wait for you.",
+    intro: [
+      "Half past twelve in the EU quarter and the room fills in one movement. Everyone who is going to eat today arrives inside twenty minutes, wants to be paid up by two, and the phone starts somewhere under all of it — a table for six on Thursday, a cancellation, someone asking whether the terrace is open yet.",
+      "Brussels eats to a timetable that leaves no slack. A lunch service here is not a long evening you can staff around; it is a narrow window where the person who could answer the phone is carrying three plates, and the caller who gets a ringing tone simply tries the next place on the street. The languages arriving on that line are their own question — this is a city where the same number takes French and English within a minute of each other.",
+      "Vox is our answer to the narrow window. It picks up on the first ring whatever the hour, reads what the book genuinely has left, and hands the call to your own staff the moment it stops being routine. It runs live in Australia today; Belgium is a pilot programme, and Brussels is where it starts.",
+    ],
+    districts: [
+      "Ixelles", "Saint-Gilles", "Sablon", "Dansaert", "Châtelain",
+      "Sainte-Catherine", "Flagey", "Marolles", "Etterbeek", "Uccle",
+    ],
+    scenarios: [
+      {
+        title: "12:40, and the room turns over once",
+        body: "The lunch rush has one shape and no gaps in it. Vox takes the Thursday six-top while your floor staff stay on the plates, and the booking is in the book before the caller has put the phone down.",
+      },
+      {
+        title: "The first warm Friday",
+        body: "Terrace weather arrives overnight and so do the calls. Every one of them gets answered at the same moment rather than queued behind a ringing tone, which is the difference between a full terrace and a half-full one.",
+      },
+      {
+        title: "A caller who switches language mid-sentence",
+        body: "It happens here constantly, and it is exactly what a Belgian pilot exists to test. We would rather show you Vox handling one of your own recordings than claim a result on a web page.",
+      },
+      {
+        title: "\"I cancelled that table on Monday\"",
+        body: "Every call keeps its recording and transcript. A disputed cancellation stops being one person's memory against another's and becomes something you look up in a few seconds.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Is Vox running in Brussels today?",
+        a: "No. It is live in Australia, answering real calls for venues that pay for it, and Belgium is a pilot programme we are opening now. The honest version is proven elsewhere, arriving here — and pilot terms are written to reflect exactly that.",
+      },
+      {
+        q: "Our callers use French and English on the same line. Can it cope?",
+        a: "Handling both on one number is the specific thing a Belgian pilot is built to prove, so we would rather demonstrate it on your calls than assert it here. Which languages your venue actually needs is one of the first things we establish together.",
+      },
+      {
+        q: "What about Dutch?",
+        a: "Not built. Serving Flanders properly means Dutch, and that is a genuine commitment rather than a setting we switch on — it follows demand from venues rather than the other way round.",
+      },
+      {
+        q: "Do we need a Belgian number, or new equipment?",
+        a: "Neither. You keep the number your guests already dial and forward calls to Vox — all of them, or only the ones that would otherwise ring out. That forward is the whole installation. Belgian numbering needs an approved regulatory bundle and comes through the pilot.",
+      },
+      {
+        q: "What does a pilot cost?",
+        a: "Terms are agreed venue by venue rather than read off a price list, and we settle what a good result looks like before the first call is answered. If it does not earn its place, you stop.",
+      },
+    ],
+    aiLocal: {
+      lead: "Underneath: a model that listens to how this city actually speaks, a live check against the book before anything is promised, and a firm rule that anything unusual goes to your staff rather than being guessed at.",
+      points: [
+        {
+          icon: "pin",
+          title: "Gets the names right",
+          body: "Châtelain, Sainte-Catherine, Flagey — off-the-shelf transcription turns Brussels street names into guesswork. Getting them into a booking note intact is unglamorous and it is what a venue notices first.",
+        },
+        {
+          icon: "calendar-tick",
+          title: "A promise it can keep",
+          body: "Nothing is offered before the book has been read. A service with one sitting cannot absorb an over-eager yes, and a table invented at 13:15 costs you the whole window.",
+        },
+        {
+          icon: "phone-wave",
+          title: "Built to listen in a loud room",
+          body: "Brussels calls arrive from across Europe, over a terrace at full volume. The listening model is built for that spread of accents and that much background, and every pilot call sharpens it.",
+        },
+        {
+          icon: "shield",
+          title: "EU rules, treated as design",
+          body: "GDPR and the AI Act's transparency duties apply to a voice agent talking to consumers, and the APD/GBA is the authority that matters here. Call data completes a booking, stays yours to review, and never builds a profile.",
+        },
+      ],
+    },
+    relatedGuides: [],
+    cityscapeImage: "brussels-grand-place",
+    cityscapeImageAlt: "The guild houses of the Grand-Place in Brussels",
+    ...BE_STORY,
   },
 ];
 
