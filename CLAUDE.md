@@ -124,7 +124,26 @@ that keep them fixed:
   768 on every route**; CI runs the global suite on the global matrix leg (it
   previously ran zero browser tests there — that's how the above shipped).
   Markdown and legal tables are wrapped in accessible scroll boxes rather than
-  allowed to widen the page.
+  allowed to widen the page. `chrome.spec.ts` additionally probes **412×915**
+  (`/be-fr`), the one band (400–719px) where the CTA, picker chip and burger
+  share the 56px row and neither 390 nor 768 exercises it.
+
+- **"Pillar 1" spec disposition (7 Sep 2026) — do not re-plan these.** An
+  architectural spec circulated for a UK trust panel, EU AI Act callout, 56px
+  sticky mobile nav with a modal market-switcher, and a LocaleSuggest banner.
+  Audit outcome: the nav, mini-CTA and LocaleSuggest had already shipped
+  (6 Sep); the UK statutory display is satisfied by the gate-enforced footer +
+  `legal/company-details` (an address in the trust strip would break the
+  deliberate `no address strings` test); the market-switcher-in-drawer idea is
+  **rejected** (the drawer is a transformed ancestor — it would trap the
+  picker's fixed bottom sheet); the spec's French "supervision humaine
+  permanente" and Paris/europe-west9 trust framing are **banned by
+  `check-truthful`** (no EU staff; only VoxStay's own page may cite EU
+  hosting). What shipped from it: the formal AI Act citation "(article 50,
+  règlement (UE) 2024/1689)" in the three FR/BE trust cards, and the
+  LocalePicker chip's language suffix where `short` is ambiguous (BE · EN /
+  BE · FR only — everywhere else the suffix is redundant width the AU desktop
+  bar cannot afford).
 
 ## Deploy
 

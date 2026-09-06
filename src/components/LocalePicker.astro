@@ -28,6 +28,15 @@ const { title = "Choose your region" } = Astro.props;
 
 const path = Astro.url.pathname;
 const current = localeFromPath(path);
+
+// Market indicator (Pillar 1 closeout, 7 Sep 2026): append the language to the
+// chip ONLY where another locale shares the same `short` — i.e. the Belgium
+// pair, where "BE" alone doesn't say which tree you are on. Everywhere else
+// the language would be redundant ("EN · EN", "FR · FR") and the extra width
+// is what the AU desktop bar's budget cannot afford (see the width comment
+// below). Derived from locales.ts — never a hardcoded list.
+const shortIsShared = locales.some((l) => l.short === current.short && l.base !== current.base);
+const chip = shortIsShared ? `${current.short} · ${current.copyLang.toUpperCase()}` : current.short;
 ---
 
 <details class="lp" data-locale-picker>
@@ -36,7 +45,7 @@ const current = localeFromPath(path);
       <circle cx="12" cy="12" r="9"></circle>
       <path d="M3 12h18M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18"></path>
     </svg>
-    <span class="lp-chip">{current.short}</span>
+    <span class="lp-chip">{chip}</span>
     <svg class="lp-caret" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
     <span class="sr-only">Region and language — currently {current.label}</span>
   </summary>

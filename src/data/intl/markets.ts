@@ -552,7 +552,8 @@ const frFr: MarketContent = {
           },
           {
             title: "RGPD, et le règlement européen sur l'IA",
-            body: "Un agent vocal qui parle à des clients relève des obligations de transparence du règlement européen sur l'IA. Nous le traitons comme une contrainte de conception, pas comme une mention en bas de page.",
+            // DRAFT French (7 Sep 2026) — citation clause added, needs Ludovic's pass.
+            body: "Un agent vocal qui parle à des clients relève des obligations de transparence du règlement européen sur l'IA (article 50 du règlement (UE) 2024/1689). Nous le traitons comme une contrainte de conception, pas comme une mention en bas de page.",
           },
           {
             title: "Nous disons ce qui n'existe pas encore",
@@ -736,7 +737,7 @@ const beEn: MarketContent = {
           },
           {
             title: "GDPR and the EU AI Act",
-            body: "A voice agent speaking to consumers falls squarely under the AI Act's transparency duties. We treat that as a design constraint rather than a footnote, and call data serves the booking, not a profile.",
+            body: "A voice agent speaking to consumers falls squarely under the AI Act's transparency duties (Article 50, Regulation (EU) 2024/1689). We treat that as a design constraint rather than a footnote, and call data serves the booking, not a profile.",
           },
           {
             title: "Language is not an afterthought here",
@@ -895,7 +896,8 @@ const beFr: MarketContent = {
           },
           {
             title: "RGPD et règlement européen sur l'IA",
-            body: "Un agent vocal qui s'adresse à des consommateurs relève pleinement des obligations de transparence du règlement sur l'IA. Nous en faisons une contrainte de conception, et les données d'appel servent la réservation, pas un profil.",
+            // DRAFT French (7 Sep 2026) — citation clause added, needs Ludovic's pass.
+            body: "Un agent vocal qui s'adresse à des consommateurs relève pleinement des obligations de transparence du règlement sur l'IA — son article 50, dans le règlement (UE) 2024/1689. Nous en faisons une contrainte de conception, et les données d'appel servent la réservation, pas un profil.",
           },
           {
             title: "Ici, la langue n'est pas un détail",
