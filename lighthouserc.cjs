@@ -127,20 +127,52 @@ module.exports = {
       // about `serve -s`, which silently measures the home page instead.
       assertions: {
         "categories:performance": ["error", { minScore: 0.95 }],
-        // 2500ms = Google's official "good" LCP threshold. The original
-        // 2000 budget was authored for the minimal v1 site; the v2 design
-        // deliberately ships a cinematic full-viewport hero. Real
-        // optimisations applied first (inlined CSS, responsive preload,
-        // async decode, content-visibility on below-fold sections).
+        // 2600ms, RAISED FROM 2500 on 6 Sep 2026 by Sam's decision, with the
+        // diagnosis this file's own rule demands done first (issue #32).
         //
-        // UNCHANGED, and it still bites. I expected compression to buy ~1.2s
-        // of headroom here and it did not (see the phase breakdown above):
-        // the AU home still measures 2511–2535 on CI and passes only via the
-        // retry step below. Do not tighten this until the AU home's render
-        // delay comes down, and do not raise it either — the number is
-        // Google's "good" threshold and the page genuinely misses it on a
-        // low-end phone. Fix the page; issue #32.
-        "largest-contentful-paint": ["error", { maxNumericValue: 2500 }],
+        // 2500 was Google's "good" LCP threshold and the right target. The AU
+        // home measures 2511–2537 on the runner and will not come down for
+        // any of the levers that were actually tried — all measured, 5 runs
+        // each, all negative:
+        //
+        //   brotli/compression   FCP ~2600→1430, LCP unchanged
+        //   −27KB of chrome CSS  +1ms
+        //   hero AVIF → WebP     +74ms (worse; AVIF is helping)
+        //   content-visibility   already on 12 sections
+        //   dead CSS             <1KB, nothing to delete
+        //   hero image bytes     irrelevant — downloaded at 13ms
+        //
+        // FCP is 1578–1580 and Render Delay 1877–1952 in EVERY variant. The
+        // number does not respond to bytes, codec or stylesheet size; what is
+        // left is CPU-bound layout of the whole page (observed main thread:
+        // Other 518ms, Style & Layout 240ms, before Lantern's 4× multiplier).
+        // That is a design change to the above-fold hero, not an optimisation
+        // pass, and it was not worth blocking every PR in the repo on.
+        //
+        // KNOW WHAT THIS COSTS. It buys unblocked CI, not a faster site —
+        // real users see exactly what they saw before. Worst-median LCP per
+        // URL on the run this was set from (34012014050), and the slack each
+        // page gains that it did not ask for:
+        //
+        //   /au-en/                    2537   -37 →  +63   (the only failure)
+        //   /au-en/blog/what-missed…   2348   152 →  252
+        //   /au-en/contact/            2329   171 →  271
+        //   /au-en/sydney/             2297   203 →  303
+        //   /gb-en/london/             2282   218 →  318
+        //   /gb-en/ /fr/ /be-*/ /en/   2227–2258  ~250 → ~350
+        //   /au-en/products/voxtable/  2081   419 →  519
+        //   /fr/products/voxstay/      2062   438 →  538
+        //
+        // Eleven healthy pages just got 100ms of slack to accommodate one sick
+        // one: a change that quietly adds ~100ms to /gb-en/ now passes where
+        // it used to fail. And 2600 is adequate, not generous — the AU home's
+        // observed spread is 26ms, so 63ms of headroom is ~2.4× it. It remains
+        // the tightest page here and another runner drift puts it back.
+        //
+        // The rule below still stands and is not softened by this: the fix is
+        // to make /au-en/ cheaper to lay out and then bring this back to 2500.
+        // Do not raise it again to make a number pass.
+        "largest-contentful-paint": ["error", { maxNumericValue: 2600 }],
         "cumulative-layout-shift": ["error", { maxNumericValue: 0.02 }],
         // 300ms sits between Google's "good" (200) and "needs
         // improvement" (600) boundaries — strict but achievable on
