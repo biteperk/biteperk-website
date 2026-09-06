@@ -132,8 +132,33 @@ jobs:
       # mobile-device suites and the Lighthouse budgets; the global leg runs
       # the international browser suite (device widths, chrome, consent). ----
 
+      # The global leg's runner died twice on 6 Sep 2026 with
+      # "No space left on device", killing the worker mid-Playwright — which
+      # also destroyed its own log, so the run reported a failure with no
+      # step conclusion and nothing to read. Reclaim the ~20GB of preinstalled
+      # toolchains this repo never touches, and PRINT the free space either
+      # side so the next disk problem is visible instead of fatal.
+      - name: Free runner disk (the global leg ran out on 6 Sep 2026)
+        run: |
+          echo "before: $(df -h / | awk 'NR==2 {print $4}') free"
+          # NOT /usr/local/lib/node_modules — npm itself lives there and
+          # every later step needs npx.
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc \
+                      /usr/local/share/boost /usr/local/graalvm \
+                      /usr/local/share/powershell || true
+          echo "after:  $(df -h / | awk 'NR==2 {print $4}') free"
+
+      # Per-leg, not all three everywhere. The intl projects are Desktop
+      # Chrome + Pixel 7 (chromium) and iPhone 14 (webkit) — firefox is never
+      # launched on this leg, and installing it cost disk on the one leg that
+      # ran out of it. The AU config genuinely has a firefox project.
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium webkit firefox
+        run: |
+          if [ "$BUILD_TARGET" = "global" ]; then
+            npx playwright install --with-deps chromium webkit
+          else
+            npx playwright install --with-deps chromium webkit firefox
+          fi
 
       - name: Playwright E2E + axe (theme, menus, contact, routes, a11y, mobile devices)
         if: matrix.target == 'au'
