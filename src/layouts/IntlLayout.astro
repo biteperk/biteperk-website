@@ -562,18 +562,26 @@ const isUk = locale.market === "gb";
      row, which pushes the measured single-row need from ~833px (EN) to
      ~950px — past the 940px band below. Wrap EARLIER on those trees only:
      this block restates the 940px ruleset at 1080px, scoped to
-     [data-has-cities], so /fr and the other city-less trees keep today's
-     exact bands. Keep the two blocks' rules in lockstep. */
+     [data-has-cities="true"], so /fr and the other city-less trees keep
+     today's exact bands. Keep the two blocks' rules in lockstep.
+
+     The ="true" is load-bearing, and it was missing until 6 Sep 2026.
+     `data-has-cities={hasCities}` renders the string "false" on a city-less
+     tree, and a bare [data-has-cities] is an attribute-PRESENCE selector, so
+     it matched "false" too — every tree wrapped at 1080px and the sentence
+     above was simply untrue. Measured on /fr: 121px bar between 940 and 1080
+     where 65px fits. Found while /be-en became the first tree to cross the
+     city-bearing line, which is exactly when the distinction first mattered. */
   @media (max-width: 1080px) {
-    .intl-nav[data-has-cities] .intl-nav-row { flex-wrap: wrap; }
-    .intl-nav[data-has-cities] .intl-links {
+    .intl-nav[data-has-cities="true"] .intl-nav-row { flex-wrap: wrap; }
+    .intl-nav[data-has-cities="true"] .intl-links {
       order: 3;
       flex-basis: 100%;
       flex-wrap: wrap;
       margin-inline-start: 0;
       gap: var(--space-2);
     }
-    .intl-nav[data-has-cities] .intl-links a {
+    .intl-nav[data-has-cities="true"] .intl-links a {
       display: inline-flex;
       align-items: center;
       min-height: 44px;
@@ -582,7 +590,7 @@ const isUk = locale.market === "gb";
       border-radius: var(--r-pill);
       background: var(--fill-subtle);
     }
-    .intl-nav[data-has-cities] .intl-actions { margin-inline-start: auto; }
+    .intl-nav[data-has-cities="true"] .intl-actions { margin-inline-start: auto; }
   }
 
   @media (max-width: 940px) {
