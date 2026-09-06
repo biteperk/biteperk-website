@@ -243,8 +243,20 @@ jobs:
       # FAST subset ONLY (~10s, frees several GB): never the android SDK
       # (that is what cost the old cleanup its 70 seconds) and never
       # /usr/local/lib/node_modules (npm itself lives there).
-      - name: Free disk (FAST subset)
-        run: sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost
+      #
+      # The core_pattern line is the actual root-cause fix. WPEWebProcess
+      # (Playwright webkit-2311) SIGSEGVs repeatedly through a suite without
+      # failing a single test — WebKit just respawns it — and the runner's
+      # default core_pattern pipes every crash to systemd-coredump, which
+      # absorbs 2–3GB of deleted-open scratch PER DUMP (run 34059573771:
+      # free space bottomed at ~620MB twice on a 468/468 green run; run
+      # 34060348387's coredumpctl named the binary, 10 SEGVs in one shard).
+      # A file pattern honours RLIMIT_CORE, and the test steps set
+      # `ulimit -c 0`, so a crash costs zero bytes instead of gigabytes.
+      - name: Free disk (FAST subset) + no piped core dumps
+        run: |
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost
+          sudo sysctl -w kernel.core_pattern=core
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -286,7 +298,9 @@ jobs:
           echo "free: $(df -h / | awk 'NR==2 {print $4}')"
 
       - name: Playwright E2E + axe (theme, menus, contact, routes, a11y, mobile devices)
-        run: npx playwright test --shard=${{ matrix.shard }}/2
+        run: |
+          ulimit -c 0
+          npx playwright test --shard=${{ matrix.shard }}/2
 
       # upload-artifact@v4 requires a UNIQUE name per job — without the shard
       # suffix the second uploader fails the job it was meant to diagnose.
@@ -324,10 +338,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # See the identical step in playwright-au for why. This is the job type
-      # that actually died (shard 2/2 carries every axe scan and ran longest).
-      - name: Free disk (FAST subset)
-        run: sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost
+      # See the identical step in playwright-au for why (incl. the
+      # WPEWebProcess/core-dump story). This is the job type that actually
+      # died: its webkit-heavy shard is where the SEGVs concentrate.
+      - name: Free disk (FAST subset) + no piped core dumps
+        run: |
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost
+          sudo sysctl -w kernel.core_pattern=core
 
       - name: Setup Node
         uses: actions/setup-node@v4
