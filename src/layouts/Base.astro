@@ -215,6 +215,10 @@ if (!alternates && INTL_LAUNCHED && currentTarget() === "au") {
       // Shared since 6 Sep 2026: the international trees have a slide-over
       // drawer too (IntlMobileMenu), driven by exactly this script. ~4.5KB.
       import "@/scripts/mobile-menu.ts";
+      // Shared since 6 Sep 2026: the locale homes carry the call
+      // simulation too. The transcript is server-rendered either way —
+      // this only adds the timed playback.
+      import "@/scripts/call-sim.ts";
       import "@/scripts/locale-picker.ts";
       import "@/scripts/city-nav.ts";
       import "@/scripts/locale-suggest.ts";

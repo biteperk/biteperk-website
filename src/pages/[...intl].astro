@@ -16,7 +16,7 @@
 import IntlLayout from "@/layouts/IntlLayout.astro";
 import { localesForTarget, pagesForLocale, currentTarget, ORIGIN, type Locale } from "@/data/locales";
 import {
-  resolveCopy, resolveMedia, resolveHero, resolveSupport, resolveCityStrip,
+  resolveCopy, resolveMedia, resolveHero, resolveSupport, resolveCityStrip, resolveShowCallSim,
   type CopyBundle, type SimplePageCopy,
 } from "@/data/intl";
 import { intlCitiesForBase } from "@/data/intl/cities";
@@ -39,6 +39,9 @@ import CityBody from "@/components/intl/CityBody.astro";
 import CityCards from "@/components/intl/CityCards.astro";
 // Same `is:inline` contract as the city components — see its header.
 import TrustPanel from "@/components/intl/TrustPanel.astro";
+// Same is:inline contract — its 6.6KB stylesheet renders with the
+// component, on the five homes, not into all ~75 pages this file emits.
+import CallSim from "@/components/CallSim.astro";
 
 export function getStaticPaths() {
   if (currentTarget() !== "global") return [];
@@ -114,6 +117,9 @@ const catalogue = productSlug ? products.find((x) => x.slug === productSlug) : n
 const city = intlCitiesForBase(locale.base).find((x) => x.slug === page) ?? null;
 // Home city strip: rendered only when the market has BOTH the strip copy and
 // at least one published city — so /en, /fr, /be-* stay untouched by derivation.
+// Opt-in per market (markets.ts) — the shared transcript moves the
+// anti-doorway similarity score, so it is not on all five homes.
+const showCallSim = page === "" && resolveShowCallSim(locale);
 const cityStrip = page === "" ? resolveCityStrip(locale) : undefined;
 const homeCities = page === "" ? intlCitiesForBase(locale.base) : [];
 
@@ -397,6 +403,17 @@ const appJsonLd =
           </div>
         </div>
       </section>
+
+      {/* The strongest proof the AU home has, now on the market trees too.
+          showDemo={false} is load-bearing: that link points at the AU booking
+          app, which no global page may link to. */}
+      {showCallSim && (
+        <CallSim
+          copy={c.callSim}
+          productHref={p("products/voxtable")}
+          showDemo={false}
+        />
+      )}
 
       {/* Trust principles + the facts strip (entity, AI disclosure, where the
           data goes, lawful basis) — TrustPanel derives every fact from

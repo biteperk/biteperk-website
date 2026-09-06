@@ -25,9 +25,9 @@
  */
 import type { Lang, Locale } from "@/data/locales";
 import {
-  chrome, home, howItWorks, about, contact, privacy, terms, cookies, cityPage, trustFacts,
+  chrome, home, howItWorks, about, contact, privacy, terms, cookies, cityPage, trustFacts, callSim,
   type ChromeCopy, type HomeCopy, type SimplePageCopy, type ContactCopy, type CityPageCopy,
-  type TrustFactsCopy,
+  type TrustFactsCopy, type CallSimCopy,
 } from "./copy";
 import {
   marketContent,
@@ -47,6 +47,8 @@ export type CopyBundle = {
   cityPage: CityPageCopy;
   /** TrustPanel facts strip — labels + the sentences true on every tree. */
   trustFacts: TrustFactsCopy;
+  /** The locale home's call simulation. */
+  callSim: CallSimCopy;
 };
 
 /**
@@ -65,12 +67,12 @@ const cores: Record<Lang, CopyBundle> = {
   en: {
     chrome: chrome.en, home: home.en, howItWorks: howItWorks.en,
     about: about.en, contact: contact.en, privacy: privacy.en, terms: terms.en,
-    cookies: cookies.en, cityPage: cityPage.en, trustFacts: trustFacts.en,
+    cookies: cookies.en, cityPage: cityPage.en, trustFacts: trustFacts.en, callSim: callSim.en,
   },
   fr: {
     chrome: chrome.fr, home: home.fr, howItWorks: howItWorks.fr,
     about: about.fr, contact: contact.fr, privacy: privacy.fr, terms: terms.fr,
-    cookies: cookies.fr, cityPage: cityPage.fr, trustFacts: trustFacts.fr,
+    cookies: cookies.fr, cityPage: cityPage.fr, trustFacts: trustFacts.fr, callSim: callSim.fr,
   },
 };
 
@@ -129,5 +131,14 @@ export function resolveCityStrip(locale: Locale): MarketCities | undefined {
   return marketContent[locale.base]?.cities;
 }
 
+/**
+ * Does this locale's home carry the call simulation? See MarketContent.callSim
+ * in markets.ts — it is opt-in per market because the shared transcript moves
+ * the anti-doorway similarity score.
+ */
+export function resolveShowCallSim(locale: Locale): boolean {
+  return marketContent[locale.base]?.callSim === true;
+}
+
 export type { MarketContent, MarketMedia, MarketHero, MarketSupport, MarketCities };
-export type { ChromeCopy, HomeCopy, SimplePageCopy, ContactCopy, CityPageCopy, TrustFactsCopy, Lang };
+export type { ChromeCopy, HomeCopy, SimplePageCopy, ContactCopy, CityPageCopy, TrustFactsCopy, CallSimCopy, Lang };

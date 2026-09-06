@@ -112,8 +112,29 @@ export type MarketCities = {
   body: string;
 };
 
+/**
+ * Whether this market's home carries the call simulation (CallSim).
+ *
+ * OPT-IN, and deliberately not on all five. The transcript plus its framing is
+ * ~150 words of identical copy, and check-intl-similarity pools pages BY
+ * LANGUAGE: putting it on every English home pushed /en vs /gb-en from 26% to
+ * 41% against a 35% ceiling, and the French pair from 34% to 46%. That gate is
+ * the anti-doorway guard and it was right — five homes reciting the same demo
+ * is the templated-copy shape it exists to catch.
+ *
+ * On one home per language pool it does the opposite: the block is on one side
+ * of every comparison, so it DIFFERENTIATES. Measured with it on /gb-en + /fr:
+ * English unchanged at 26/27/28%, French 34% → 33%.
+ *
+ * So this is an editorial choice with a measurement behind it — the demo lands
+ * on the flagship of each language (the UK tree, which carries the cities and
+ * the Ltd entity; and France). Before adding a third, re-run
+ * `node scripts/gates/check-intl-similarity.mjs` and look at the pool it joins.
+ */
 export type MarketContent = {
   copy?: Override<CopyBundle>;
+  /** Home carries the call simulation. See the note above before adding one. */
+  callSim?: true;
   /** Absent (e.g. /en) → the home renders no market band. */
   media?: MarketMedia;
   /** Absent → the hero renders text-only, as every tree did before Jul 2026. */
@@ -149,6 +170,7 @@ const enNeutral: MarketContent = {
 
 // ── United Kingdom (/gb-en) ─────────────────────────────────────────
 const gbEn: MarketContent = {
+  callSim: true,
   hero: {
     // FOURTH iteration, art-directed by Sam: v3 (white-linen evening room)
     // was premium but read "night and shady" — the brief flipped to blossoms
@@ -468,6 +490,7 @@ const gbEn: MarketContent = {
 
 // ── France (/fr) — France-specific touches over the neutral FR core ─
 const frFr: MarketContent = {
+  callSim: true,
   hero: {
     slug: "bistro-red-velvet",
     alt: "Salle de bistrot aux murs rouges, une table dressée près de la fenêtre",
