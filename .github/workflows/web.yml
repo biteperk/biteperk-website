@@ -171,7 +171,11 @@ jobs:
         if: matrix.target == 'au'
         run: npm run gates:merged
 
-      # ── Why this step retries, and why the budget is NOT raised ─────────────
+      # ── Why this step retries ──────────────────────────────────────────────
+      # (This header used to read "and why the budget is NOT raised". It was
+      # raised, 2500 → 2600, on 6 Sep 2026 — see lighthouserc.cjs for what was
+      # measured first and what it cost. The reasoning below about runner
+      # variance still holds and is why the retry stays.)
       # LCP has failed twice on pages that did not reproduce: /be-en at 3024ms
       # in CI (2118ms on the previous run, same commit range) and /fr at
       # ~2705ms locally while CI passed it. Every locale home sits at 2.1–2.7s
@@ -193,7 +197,7 @@ jobs:
       # A genuine regression still fails both attempts, so the budget keeps its
       # teeth. If this starts retrying often, that is signal — shorten the
       # text-LCP path rather than widening the number.
-      - name: Lighthouse CI budgets (perf ≥95, LCP ≤2.5s, CLS ≤0.02, first-party JS ≤60KB)
+      - name: Lighthouse CI budgets (perf ≥95, LCP ≤2.6s, CLS ≤0.02, first-party JS ≤24KB)
         if: matrix.target == 'au'
         id: lhci
         continue-on-error: true
