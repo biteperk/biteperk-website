@@ -376,45 +376,15 @@ jobs:
         run: |
           echo "free: $(df -h / | awk 'NR==2 {print $4}')"
 
-      # DIAGNOSTIC (temporary — remove before merge or slim to the monitor):
-      # this shard has died twice of "No space left on device" ~5.5 min into
-      # the suite (runs 34031780496, 34058763007) while the suite itself
-      # writes ~4KB locally, and the runner's post-steps wrote fine seconds
-      # after the browsers died — the signature of a process writing to
-      # DELETED-but-open files, which du/artifacts can never see. The monitor
-      # samples df + test-results + `lsof +L1` (open-but-deleted files) every
-      # 15s so the last flushed lines name the writer even if the tail of the
-      # log is lost with the disk.
+      # ulimit -c 0 pairs with the core_pattern step above: with a file
+      # pattern the kernel honours it, so WPEWebProcess SEGVs cost nothing.
+      # To re-diagnose disk pressure here, the instrumented step lives at
+      # 2ea0e82^ (df + lsof +L1 monitor, coredumpctl autopsy) — that is what
+      # caught systemd-coredump eating the disk in the first place.
       - name: Playwright — global build (device widths, chrome, consent)
         run: |
           ulimit -c 0
-          npm run test:intl -- --shard=${{ matrix.shard }}/2 &
-          pw=$!
-          (
-            while kill -0 "$pw" 2>/dev/null; do
-              echo "[disk $(date +%T)] free=$(df -m / | awk 'NR==2{print $4}')MB tr=$(du -sm test-results 2>/dev/null | cut -f1)MB crash=$(sudo du -sm /var/crash 2>/dev/null | cut -f1)MB shm=$(df -m /dev/shm | awk 'NR==2{print $3}')MB"
-              sudo lsof +L1 2>/dev/null | awk '$7 > 200000000 {printf "[deleted-open] %s pid=%s size=%.0fMB %s\n", $1, $2, $7/1048576, $NF}' | sort -u | head -8
-              sleep 15
-            done
-          ) &
-          mon=$!
-          wait "$pw"; ec=$?
-          kill "$mon" 2>/dev/null || true
-          exit "$ec"
-
-      - name: Disk autopsy
-        if: always()
-        continue-on-error: true
-        run: |
-          df -m /
-          echo "--- coredumpctl list (who crashed) ---"
-          sudo coredumpctl list --no-pager 2>/dev/null | tail -25 || true
-          echo "--- last core detail ---"
-          sudo coredumpctl info --no-pager 2>/dev/null | head -40 || true
-          echo "--- journal: systemd-coredump ---"
-          sudo journalctl -t systemd-coredump --no-pager 2>/dev/null | tail -25 || true
-          echo "--- stored cores ---"
-          sudo ls -lh /var/lib/systemd/coredump 2>/dev/null || true
+          npm run test:intl -- --shard=${{ matrix.shard }}/2
 
       - name: Upload Playwright report
         if: failure()
