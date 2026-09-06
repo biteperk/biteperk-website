@@ -390,7 +390,14 @@ jobs:
         continue-on-error: true
         run: |
           df -m /
-          sudo du -xm -d 3 /home/runner /tmp /var/crash /var/tmp 2>/dev/null | sort -rn | head -30
+          echo "--- coredumpctl list (who crashed) ---"
+          sudo coredumpctl list --no-pager 2>/dev/null | tail -25 || true
+          echo "--- last core detail ---"
+          sudo coredumpctl info --no-pager 2>/dev/null | head -40 || true
+          echo "--- journal: systemd-coredump ---"
+          sudo journalctl -t systemd-coredump --no-pager 2>/dev/null | tail -25 || true
+          echo "--- stored cores ---"
+          sudo ls -lh /var/lib/systemd/coredump 2>/dev/null || true
 
       - name: Upload Playwright report
         if: failure()
