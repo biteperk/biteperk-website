@@ -18,12 +18,18 @@ permissions:
   pull-requests: write
 
 # ─────────────────────────────────────────────────────────────────────────────
-# STRUCTURE (rev. 6 Sep 2026). Three tiers plus the independent rollback job.
+# STRUCTURE (rev. 7 Sep 2026). Three tiers plus the independent rollback job.
 #
-#   preflight ──► build-and-gate ──┬─► playwright-au    [shard 1/2, 2/2]
-#   (no build)    (all 3 dists,    ├─► playwright-intl  [shard 1/2, 2/2]
-#                  every gate)     └─► lighthouse       [shard 1/2, 2/2]
+#   preflight ──► build-and-gate ──┬─► playwright-au       [shard 1/2, 2/2]
+#   (no build)    (all 3 dists,    ├─► playwright-intl     [shard 1/2, 2/2]
+#                  every gate)     ├─► playwright-intl-a11y [no matrix]
+#                                  └─► lighthouse          [shard 1/2, 2/2]
 #   rollback (independent, no needs)
+#
+# The intl-a11y extraction (7 Sep 2026): --shard splits by test COUNT, so the
+# axe scans all landed in intl shard 2/2 and made it 10m52s — the measured
+# critical path of the first run. As its own job the device shards split
+# 228/228 exactly and the axe pass runs beside them.
 #
 # This replaced a 2-leg [au, global] matrix of 21 serial steps each. What the
 # measurements said (run 34025378195), and why the shape is this shape:
@@ -381,7 +387,16 @@ jobs:
       # To re-diagnose disk pressure here, the instrumented step lives at
       # 2ea0e82^ (df + lsof +L1 monitor, coredumpctl autopsy) — that is what
       # caught systemd-coredump eating the disk in the first place.
+      #
+      # PW_INTL_SKIP_A11Y drops the intl-a11y project in the CONFIG's project
+      # list (the SSOT — no project names restated here), because `--shard`
+      # splits by test count, not duration: with the axe scans included they
+      # all landed in shard 2/2 and made it nearly double its sibling (10m52s,
+      # the pipeline's critical path). The a11y project runs as its own job
+      # below. Measured with the flag: 228 + 228 device tests, perfectly even.
       - name: Playwright — global build (device widths, chrome, consent)
+        env:
+          PW_INTL_SKIP_A11Y: "1"
         run: |
           ulimit -c 0
           npm run test:intl -- --shard=${{ matrix.shard }}/2
@@ -392,6 +407,73 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report-intl-${{ matrix.shard }}
+          path: playwright-report
+          retention-days: 7
+
+  # ── Tier 2b′ ────────────────────────────────────────────────────────────
+  # The intl-a11y project (axe + heading sweep, Desktop Chrome, both themes)
+  # as its own job. It was inside the shards above, where --shard's
+  # split-by-count put every axe scan in shard 2/2 — 10m52s against its
+  # sibling's ~6, the whole pipeline's critical path. Standalone it runs in
+  # parallel with the evenly-split device shards. Chromium ONLY: the project
+  # is Desktop Chrome, so installing webkit here would repeat the
+  # installed-never-launched mistake the comment above warns about.
+  playwright-intl-a11y:
+    name: Playwright intl a11y (axe, both themes)
+    needs: build-and-gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      INTL_LAUNCHED: "true"
+      # Same rule as playwright-intl: no job-level BUILD_TARGET — the npm
+      # scripts set it.
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # See playwright-au for the cleanup + core-dump story.
+      - name: Free disk (FAST subset) + no piped core dumps
+        run: |
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost
+          sudo sysctl -w kernel.core_pattern=core
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install
+        run: npm ci
+
+      - name: Build the global tree
+        run: npm run build:global
+
+      - name: Resolve Playwright version
+        id: pw
+        run: echo "v=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+      - name: Cache browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: pw-${{ runner.os }}-${{ steps.pw.outputs.v }}
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Disk sentinel
+        run: |
+          echo "free: $(df -h / | awk 'NR==2 {print $4}')"
+
+      - name: Playwright — intl a11y (axe + heading sweep, both themes)
+        run: |
+          ulimit -c 0
+          npm run test:intl -- --project=intl-a11y
+
+      - name: Upload Playwright report
+        if: failure()
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-intl-a11y
           path: playwright-report
           retention-days: 7
 

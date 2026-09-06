@@ -48,6 +48,15 @@ export default defineConfig({
     { name: "intl-mobile-safari", testIgnore: /a11y\.spec\.ts/, use: { ...devices["iPhone 14"] } },
     // Mirrors the `a11y` project in playwright.config.ts: one browser, both
     // themes, driven by the spec.
+    //
+    // CI runs this project as its OWN job (`playwright-intl-a11y` in
+    // web.yml), not inside the device shards: `--shard` splits by test count,
+    // not duration, and every axe scan landing in shard 2/2 made it nearly
+    // double its sibling (10m52s — the pipeline's whole critical path). The
+    // shards set PW_INTL_SKIP_A11Y=1, which drops the project here via the
+    // filter below, so the project list stays the single source and a new
+    // device project needs no CI edit. Locally (env unset) nothing changes:
+    // `npm run test:intl` still runs everything.
     { name: "intl-a11y", testMatch: /a11y\.spec\.ts/, use: { ...devices["Desktop Chrome"] } },
-  ],
+  ].filter((p) => !(process.env.PW_INTL_SKIP_A11Y && p.name === "intl-a11y")),
 });
