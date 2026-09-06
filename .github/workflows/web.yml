@@ -6,7 +6,9 @@ on:
   pull_request:
     branches: [main]
 
-# Cancel any in-flight runs on the same ref when a new push lands.
+# Cancel any in-flight runs on the same ref when a new push lands. Doubly right
+# for a fan-out: a superseded push would otherwise leave six Tier-2 jobs
+# billing minutes against a commit nobody is waiting for.
 concurrency:
   group: web-${{ github.ref }}
   cancel-in-progress: true
@@ -15,29 +17,44 @@ permissions:
   contents: read
   pull-requests: write
 
-jobs:
-  build:
-    name: Build & gate (${{ matrix.target }})
-    runs-on: ubuntu-latest
-    # 40, not 25: the AU leg's Lighthouse pass is 12 URLs × 5 runs ≈ 12.5 min
-    # on a shared runner, and the retry step below doubles that. At 25 the
-    # retry was cancelled mid-run on 6 Sep 2026 — a red leg with no verdict.
-    timeout-minutes: 40
-    strategy:
-      fail-fast: false
-      matrix:
-        target: [au, global]
-    env:
-      BUILD_TARGET: ${{ matrix.target }}
-      # Gate WHAT SHIPS. The international site launched 27 Jul 2026 and every
-      # production build runs `INTL_LAUNCHED=true npm run build:site`, but CI
-      # left the flag unset — so it validated the pre-launch configuration:
-      # global pages noindex, and NO cross-domain hreflang cluster. check-hreflang
-      # was therefore asserting a cluster shape that production does not emit.
-      # The flag-OFF path is now the rollback lever and is covered by the
-      # `rollback` job below, so both configurations stay tested.
-      INTL_LAUNCHED: "true"
+# ─────────────────────────────────────────────────────────────────────────────
+# STRUCTURE (rev. 6 Sep 2026). Three tiers plus the independent rollback job.
+#
+#   preflight ──► build-and-gate ──┬─► playwright-au    [shard 1/2, 2/2]
+#   (no build)    (all 3 dists,    ├─► playwright-intl  [shard 1/2, 2/2]
+#                  every gate)     └─► lighthouse       [shard 1/2, 2/2]
+#   rollback (independent, no needs)
+#
+# This replaced a 2-leg [au, global] matrix of 21 serial steps each. What the
+# measurements said (run 34025378195), and why the shape is this shape:
+#
+#   - EVERY gate together cost under 3 seconds. There was never time to save by
+#     "tiering the gates" — only their ORDER matters, so the split is between
+#     what needs a build and what does not.
+#   - The AU leg ran Playwright (10.2 min) THEN Lighthouse (8.1 min) serially.
+#     That alone was 18 of its 21.3 minutes. Splitting them is the whole win.
+#   - The build is ~7s, so passing dists between jobs as artifacts would save
+#     nothing and push ~200MB (three copies of the 74MB public/images) through
+#     the store that hit its quota on 29 Jul 2026. Each job rebuilds instead;
+#     it is cheaper than downloading.
+#
+# Critical path ~21.3 → ~9.6 min. Total compute ~38 → ~45 min, which is a real
+# cost: this repo is PRIVATE, so those minutes are billed. 2 shards was chosen
+# over 3 for exactly that reason (3 would be ~7.5 min wall / ~47 min compute).
+# Shard count is the dial if that trade ever changes.
+#
+# package.json stays the single source of the gate list (CLAUDE.md). CI only
+# decides WHEN each script runs; it never restates which gates exist.
+# ─────────────────────────────────────────────────────────────────────────────
 
+jobs:
+  # ── Tier 0 ──────────────────────────────────────────────────────────────
+  # Everything that needs no build at all. A type error, a red unit test or a
+  # broken token pair fails here in ~40s instead of behind two Astro builds.
+  preflight:
+    name: Preflight (no build)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -54,31 +71,66 @@ jobs:
       - name: Type-check
         run: npm run check
 
-      # BUILD_TARGET (job env) drives astro.config: au → dist/, global → dist-global/.
-      - name: Build
-        run: npm run build
+      # tests/unit/* read src via loadTS (plus functions/index.js and
+      # firestore.indexes.json) and touch no dist. They used to run first inside
+      # gates:global — i.e. behind two full builds — for no reason.
+      - name: Unit tests
+        run: npm run test:unit
 
-      # Global pass: prune the AU pages that build alongside, write global llms.txt.
-      - name: Finalize global build
-        if: matrix.target == 'global'
+      # The two gates that read src only. They also run again inside gates:au /
+      # gates:global below; that duplication costs ~1s and is deliberate,
+      # because removing them there would mean editing the package.json gate
+      # lists, and those lists are the SSOT the workflow must not fork.
+      - name: Source-only gates (image manifest, colour contrast)
         run: |
-          node scripts/build/prune-global.mjs
-          node scripts/build/llms-global.mjs
+          node scripts/gates/check-images.mjs
+          node scripts/gates/check-contrast.mjs
 
-      - name: Resolve dist dir
-        run: echo "DIST=$([ "$BUILD_TARGET" = "global" ] && echo dist-global || echo dist)" >> "$GITHUB_ENV"
+  # ── Tier 1 ──────────────────────────────────────────────────────────────
+  # One build of all three trees, then every gate that reads a dist. Under 3s
+  # of gates guarding six browser jobs — this is the fail-fast that matters,
+  # because a truthfulness leak must not cost six machine-minutes to discover.
+  build-and-gate:
+    name: Build & gate
+    needs: preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # Gate WHAT SHIPS. The international site launched 27 Jul 2026 and every
+      # production build runs `INTL_LAUNCHED=true npm run build:site`, but CI
+      # left the flag unset — so it validated the pre-launch configuration:
+      # global pages noindex, and NO cross-domain hreflang cluster.
+      # check-hreflang was therefore asserting a cluster shape that production
+      # does not emit. The flag-OFF path is now the rollback lever and is
+      # covered by the `rollback` job below, so both stay tested.
+      #
+      # It must be set at JOB level, not per step: stamp-build.mjs records the
+      # flag into each dist's .build-meta.json, and check-hreflang refuses a
+      # pair of dists stamped differently.
+      INTL_LAUNCHED: "true"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      # With INTL_LAUNCHED on, every hreflang cluster includes the AU half, so
-      # check-hreflang legitimately needs BOTH trees to verify reciprocity —
-      # and this leg only builds dist-global/. It passed before only because
-      # the flag was off and the cluster excluded AU: CI had never once
-      # validated the launched cluster shape. Building the AU tree here is what
-      # makes the global leg able to check what production actually emits.
-      - name: Build the AU tree too (hreflang reciprocity needs both halves)
-        if: matrix.target == 'global'
-        env:
-          BUILD_TARGET: au
-        run: npm run build
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      # dist/ + dist-global/ + dist-site/ in one command, ending in
+      # gates:merged. This replaces the old "Build the AU tree too" step: with
+      # INTL_LAUNCHED on, every hreflang cluster includes the AU half, so
+      # check-hreflang legitimately needs BOTH trees to verify reciprocity, and
+      # the old global leg built only dist-global/. It passed before merely
+      # because the flag was off and the cluster excluded AU — CI had never
+      # once validated the launched cluster shape. Building everything in the
+      # same job that runs the gates makes that mistake structurally impossible.
+      - name: Build all three trees
+        run: npm run build:site
 
       # ONE gate list, not two. These steps used to restate the gate sequence
       # inline, and the two lists silently drifted: `check-cities` is documented
@@ -86,33 +138,42 @@ jobs:
       # across gb-en + be-en, which is where templated market copy actually
       # leaks), but CI had it behind `if: matrix.target == 'au'`. It was vacuous
       # while intl/cities.ts was empty, so nothing showed — the gate would have
-      # come back as "covered" the day market cities shipped.
+      # come back "covered" the day market cities shipped.
       #
-      # `gates:au` / `gates:global` in package.json are now the single source.
-      # Add a gate there and both CI legs pick it up; there is no second list to
-      # forget. Per-gate logs still appear — each gate prints its own result.
-      - name: Gates (${{ matrix.target }})
-        run: npm run gates:${{ matrix.target }}
+      # `gates:au` / `gates:global` in package.json are the single source. Add a
+      # gate there and CI picks it up; there is no second list to forget.
+      - name: Gates (AU tree)
+        run: npm run gates:au
 
-      - name: Sanity-check sitemap
+      - name: Gates (global tree)
+        run: npm run gates:global
+
+      # Belt-and-braces: `build:site` already ends with gates:merged, so this
+      # re-runs it. Kept as its own step so a merged-tree failure is legible in
+      # the CI UI rather than buried in the build step, and so the gate survives
+      # anyone later trimming it out of build:site.
+      - name: Merged tree integrity (dist-site — root-file pointers + sitemap union)
+        run: npm run gates:merged
+
+      # Both trees in one step; each branch is the assertion its old matrix leg
+      # ran.
+      - name: Sanity-check sitemaps
         run: |
           set -e
-          test -f "$DIST/sitemap-0.xml" || { echo "Missing $DIST/sitemap-0.xml"; exit 1; }
-          if [ "$BUILD_TARGET" = "global" ]; then
-            grep -qF 'biteperk.com/en/' "$DIST/sitemap-0.xml"
-          else
-            # -F (literal): the old pattern 'biteperk.com.au' had unescaped
-            # dots, so it matched 'biteperk.com/au-en' and kept passing after
-            # the single-domain move — a no-op assertion. The AU sitemap must
-            # now point at the /au-en base on the canonical host, and must NOT
-            # still be emitting the retired ccTLD.
-            grep -qF 'https://biteperk.com/au-en/' "$DIST/sitemap-0.xml"
-            grep -qF 'products/voxtable' "$DIST/sitemap-0.xml"
-            ! grep -qF 'https://biteperk.com.au' "$DIST/sitemap-0.xml"
-          fi
-          echo "Sitemap looks healthy."
+          test -f dist/sitemap-0.xml || { echo "Missing dist/sitemap-0.xml"; exit 1; }
+          test -f dist-global/sitemap-0.xml || { echo "Missing dist-global/sitemap-0.xml"; exit 1; }
+          # -F (literal): the old pattern 'biteperk.com.au' had unescaped dots,
+          # so it matched 'biteperk.com/au-en' and kept passing after the
+          # single-domain move — a no-op assertion. The AU sitemap must now
+          # point at the /au-en base on the canonical host, and must NOT still
+          # be emitting the retired ccTLD.
+          grep -qF 'https://biteperk.com/au-en/' dist/sitemap-0.xml
+          grep -qF 'products/voxtable' dist/sitemap-0.xml
+          ! grep -qF 'https://biteperk.com.au' dist/sitemap-0.xml
+          grep -qF 'biteperk.com/en/' dist-global/sitemap-0.xml
+          echo "Both sitemaps look healthy."
 
-      - name: Internal link check (lychee)
+      - name: Internal link check — AU tree (lychee)
         uses: lycheeverse/lychee-action@v2
         with:
           args: >-
@@ -123,136 +184,258 @@ jobs:
             # `fail: false` means they can never redden the build, but a report
             # full of false failures is how a real one gets scrolled past.
             --exclude '^https://(www\.)?(linkedin|instagram|facebook|youtube)\.com'
-            --base ./${{ env.DIST }}
-            ./${{ env.DIST }}/**/*.html
+            --base ./dist
+            ./dist/**/*.html
           fail: false
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      # ---- Behavioural QA: BOTH legs. The AU leg runs the full e2e + axe +
-      # mobile-device suites and the Lighthouse budgets; the global leg runs
-      # the international browser suite (device widths, chrome, consent). ----
+      - name: Internal link check — global tree (lychee)
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --no-progress
+            --exclude-mail
+            --exclude '^https://((voco|vox)table\.biteperk|formspree)'
+            --exclude '^https://(www\.)?(linkedin|instagram|facebook|youtube)\.com'
+            --base ./dist-global
+            ./dist-global/**/*.html
+          fail: false
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      # The global leg's runner died twice on 6 Sep 2026 with
-      # "No space left on device", killing the worker mid-Playwright — which
-      # also destroyed its own log, so the run reported a failure with no
-      # step conclusion and nothing to read. Reclaim the ~20GB of preinstalled
-      # toolchains this repo never touches, and PRINT the free space either
-      # side so the next disk problem is visible instead of fatal.
-      - name: Free runner disk (the global leg ran out on 6 Sep 2026)
-        run: |
-          echo "before: $(df -h / | awk 'NR==2 {print $4}') free"
-          # NOT /usr/local/lib/node_modules — npm itself lives there and
-          # every later step needs npx.
-          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc \
-                      /usr/local/share/boost /usr/local/graalvm \
-                      /usr/local/share/powershell || true
-          echo "after:  $(df -h / | awk 'NR==2 {print $4}') free"
+      # Debug-only download; nothing deploys from it. Upload failure must not
+      # fail a green build — the artifact quota being hit turned both legs red
+      # on 29 Jul 2026 after every gate had passed. Short retention on purpose:
+      # ~160MB per push at 7 days is what filled the quota (~4.9GB stored).
+      # One artifact now, not two: dist-site is the merged tree and carries
+      # both halves.
+      - name: Upload build artefact
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-site
+          path: dist-site
+          retention-days: 2
 
-      # Per-leg, not all three everywhere. The intl projects are Desktop
-      # Chrome + Pixel 7 (chromium) and iPhone 14 (webkit) — firefox is never
-      # launched on this leg, and installing it cost disk on the one leg that
-      # ran out of it. The AU config genuinely has a firefox project.
+  # ── Tier 2a ─────────────────────────────────────────────────────────────
+  playwright-au:
+    name: Playwright AU (shard ${{ matrix.shard }}/2)
+    needs: build-and-gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      # A red shard must never cancel its sibling: the other half is evidence
+      # about the same commit, and its report is what tells you whether the
+      # failure is local to a few tests or general.
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
+    env:
+      INTL_LAUNCHED: "true"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install
+        run: npm ci
+
+      # Only dist/ — playwright.config.ts previews it on 4321.
+      - name: Build the AU tree
+        run: npm run build
+
+      # Keyed on the RESOLVED Playwright version, not a lockfile hash: an
+      # unrelated dependency bump must not evict ~1GB of browser binaries.
+      - name: Resolve Playwright version
+        id: pw
+        run: echo "v=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+      - name: Cache browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: pw-${{ runner.os }}-${{ steps.pw.outputs.v }}
+      # On a cache hit this installs apt deps only (~15s instead of ~45s). The
+      # AU config genuinely has a firefox project (routes.spec.ts only).
       - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium webkit firefox
+
+      # The 70s `rm -rf` of preinstalled toolchains is gone. It existed because
+      # ONE runner did two builds, three browsers and a full suite, and died of
+      # "No space left on device" on 6 Sep 2026 — taking its own log with it,
+      # so the run reported a failure with no step conclusion and nothing to
+      # read (the cause was only visible in the check-run ANNOTATION). Each job
+      # now does one build and cached browsers. This sentinel keeps the margin
+      # visible; if it ever reports under ~10GB free, put back the FAST subset
+      # only (/usr/share/dotnet /opt/ghc /usr/local/share/boost) — never the
+      # android SDK, which is what cost the 70 seconds. And never
+      # /usr/local/lib/node_modules: npm itself lives there.
+      - name: Disk sentinel
         run: |
-          if [ "$BUILD_TARGET" = "global" ]; then
-            npx playwright install --with-deps chromium webkit
-          else
-            npx playwright install --with-deps chromium webkit firefox
-          fi
+          echo "free: $(df -h / | awk 'NR==2 {print $4}')"
 
       - name: Playwright E2E + axe (theme, menus, contact, routes, a11y, mobile devices)
-        if: matrix.target == 'au'
-        run: npm run test:e2e
+        run: npx playwright test --shard=${{ matrix.shard }}/2
 
-      # The international pages had NO browser coverage until this step — e2e,
-      # axe and Lighthouse all ran on the AU leg only, which is how a market
-      # tree with no mobile navigation, an off-screen region picker and a
-      # consent banner linking to a 404 reached production.
+      # upload-artifact@v4 requires a UNIQUE name per job — without the shard
+      # suffix the second uploader fails the job it was meant to diagnose.
+      - name: Upload Playwright report
+        if: failure()
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-au-${{ matrix.shard }}
+          path: playwright-report
+          retention-days: 7
+
+  # ── Tier 2b ─────────────────────────────────────────────────────────────
+  # The international pages had NO browser coverage until Jul 2026 — e2e, axe
+  # and Lighthouse all ran on the AU leg only, which is how a market tree with
+  # no mobile navigation, an off-screen region picker and a consent banner
+  # linking to a 404 reached production.
+  playwright-intl:
+    name: Playwright intl (shard ${{ matrix.shard }}/2)
+    needs: build-and-gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
+    env:
+      INTL_LAUNCHED: "true"
+      # Deliberately NO job-level BUILD_TARGET: build:global and test:intl each
+      # set it themselves. The reverse mistake — running `playwright test -c
+      # playwright.intl.config.ts` directly, without it — builds the AU route
+      # list against the global server and produces 108 phantom 404s. Always go
+      # through the npm script.
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install
+        run: npm ci
+
+      # dist-global/ + prune + llms — what playwright.intl.config previews on 4322.
+      - name: Build the global tree
+        run: npm run build:global
+
+      - name: Resolve Playwright version
+        id: pw
+        run: echo "v=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+      - name: Cache browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: pw-${{ runner.os }}-${{ steps.pw.outputs.v }}
+      # NO firefox: the intl projects are Desktop Chrome + Pixel 7 (chromium)
+      # and iPhone 14 (webkit). It was being installed and never launched, on
+      # the one leg that ran out of disk.
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium webkit
+
+      - name: Disk sentinel
+        run: |
+          echo "free: $(df -h / | awk 'NR==2 {print $4}')"
+
       - name: Playwright — global build (device widths, chrome, consent)
-        if: matrix.target == 'global'
-        run: npm run test:intl
+        run: npm run test:intl -- --shard=${{ matrix.shard }}/2
 
       - name: Upload Playwright report
         if: failure()
         continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report-${{ matrix.target }}
+          name: playwright-report-intl-${{ matrix.shard }}
           path: playwright-report
           retention-days: 7
 
-      # Lighthouse measures the MERGED tree (dist-site/), because that is what
-      # biteperk.com serves. dist/ alone can't be measured: its pages sit flat
-      # but reference /au-en/** assets, which 404 when served at the root.
-      - name: Build merged site for Lighthouse
-        if: matrix.target == 'au'
+  # ── Tier 2c ─────────────────────────────────────────────────────────────
+  lighthouse:
+    name: Lighthouse (shard ${{ matrix.shard }}/2)
+    needs: build-and-gate
+    runs-on: ubuntu-latest
+    # 25, not 20: a 6-URL × 5-run pass is ~7.6 min and the retry below doubles
+    # it. The old 40 covered a 12-URL pass plus retry on a leg that had already
+    # spent 10 minutes in Playwright.
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
+    env:
+      INTL_LAUNCHED: "true"
+      # lighthouserc.cjs slices its 12 URLs on this. Unset — i.e. locally — it
+      # measures all 12, so `npm run lhci` on a laptop is unchanged.
+      LHCI_SHARD: ${{ matrix.shard }}/2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install
+        run: npm ci
+
+      # Lighthouse measures the MERGED tree, because that is what biteperk.com
+      # serves. dist/ alone can't be measured: its pages sit flat but reference
+      # /au-en/** assets, which 404 when served at the root.
+      - name: Build merged site
         run: npm run build:site
 
-      # Belt-and-braces: `build:site` already ends with gates:merged, so this
-      # re-runs it. Kept as its own step so a merged-tree failure is legible in
-      # the CI UI rather than buried in the build step, and so the gate survives
-      # anyone later trimming it out of build:site.
-      - name: Merged tree integrity (dist-site — root-file pointers + sitemap union)
-        if: matrix.target == 'au'
-        run: npm run gates:merged
-
-      # ── Why this step retries ──────────────────────────────────────────────
+      # ── Why this step retries ────────────────────────────────────────────
       # (This header used to read "and why the budget is NOT raised". It was
-      # raised, 2500 → 2600, on 6 Sep 2026 — see lighthouserc.cjs for what was
-      # measured first and what it cost. The reasoning below about runner
-      # variance still holds and is why the retry stays.)
+      # raised, 2500 → 2600, on 6 Sep 2026 — see lighthouserc.cjs for the six
+      # levers measured first and what the change cost. The reasoning below
+      # about runner variance still holds and is why the retry stays.)
+      #
       # LCP has failed twice on pages that did not reproduce: /be-en at 3024ms
       # in CI (2118ms on the previous run, same commit range) and /fr at
-      # ~2705ms locally while CI passed it. Every locale home sits at 2.1–2.7s
-      # against a 2500ms budget, so whichever page a given runner is slowest on
-      # crosses the line.
+      # ~2705ms locally while CI passed it. Every locale home sits near the
+      # budget, so whichever page a given runner is slowest on crosses the line.
       #
-      # The diagnosis is the runner, not the code. Within one run the three
-      # samples are tight (15ms spread in CI, 75ms locally); the variance is
-      # BETWEEN machines, and the slow runner was slow for all three samples.
-      # So the fix is to land on a different runner, not to change the maths:
+      # The diagnosis is the runner, not the code. Within one run the samples
+      # are tight (15ms spread in CI, 75ms locally); the variance is BETWEEN
+      # machines, and the slow runner was slow for every sample. So the fix is
+      # to land on a different runner, not to change the maths:
       #
-      #   - median aggregation would be STRICTER, not looser. numberOfRuns is
-      #     already 3 and LHCI's default aggregationMethod is `optimistic`
-      #     (@lhci/utils/src/assertions.js) — it already reports the BEST of
-      #     the three. Median would have asserted 3031 instead of 3024.
-      #   - more runs don't help; all three were slow together.
+      #   - median aggregation would be STRICTER, not looser. LHCI's default
+      #     aggregationMethod is `optimistic` (@lhci/utils/src/assertions.js) —
+      #     it already reports the BEST of the runs.
+      #   - more runs don't help; all of them were slow together.
       #   - raising to 3000ms would not have helped either: CI measured 3024.
       #
       # A genuine regression still fails both attempts, so the budget keeps its
       # teeth. If this starts retrying often, that is signal — shorten the
       # text-LCP path rather than widening the number.
       - name: Lighthouse CI budgets (perf ≥95, LCP ≤2.6s, CLS ≤0.02, first-party JS ≤24KB)
-        if: matrix.target == 'au'
         id: lhci
         continue-on-error: true
         run: npm run lhci
 
       - name: Lighthouse CI budgets (retry — different runner conditions)
-        if: matrix.target == 'au' && steps.lhci.outcome == 'failure'
+        if: steps.lhci.outcome == 'failure'
         run: |
           echo "First Lighthouse pass failed. Retrying once: the budget fails"
           echo "intermittently on whichever locale home this runner is slowest"
           echo "on, and a real regression will fail this attempt too."
           npm run lhci
 
-      # Debug-only download; nothing deploys from it. Upload failure must not
-      # fail a green build — the artifact quota being hit turned both legs red
-      # on 29 Jul 2026 after every gate had passed. Short retention on purpose:
-      # ~160MB per push at 7 days is what filled the quota (~4.9GB stored).
-      - name: Upload build artefact
-        continue-on-error: true
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist-${{ matrix.target }}
-          path: ${{ env.DIST }}
-          retention-days: 2
-
   # The launch flag is a rollback lever as well as a launch switch, and a
   # rollback is exactly when nobody can afford to discover the flag-off build
   # is broken. This job keeps that path honest without doubling the matrix:
   # one global build with the flag off, and the gates that actually change
   # shape between the two configurations.
+  #
+  # Deliberately NO `needs`: it exercises a different configuration entirely,
+  # so gating it behind the flag-ON build would only delay the answer.
   rollback:
     name: Rollback path (INTL_LAUNCHED off)
     runs-on: ubuntu-latest
