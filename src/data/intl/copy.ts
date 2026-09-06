@@ -79,6 +79,9 @@ export type ChromeCopy = {
   footerLegal: string;
   /** Label for the social-profile row. Renders as a <p>, never a heading. */
   footerFollow: string;
+  /** Slide-over menu trigger + close, ≤720px (IntlMobileMenu). */
+  menu: string;
+  menuClose: string;
   /** Locale-suggestion chip: shown in the TARGET locale's language. */
   suggest: string;
   suggestDismiss: string;
@@ -250,6 +253,8 @@ export const chrome: Record<Lang, ChromeCopy> = {
     footerProducts: "Products",
     footerLegal: "Legal",
     footerFollow: "Follow us",
+    menu: "Menu",
+    menuClose: "Close menu",
     suggest: "There's a BitePerk site for your region.",
     suggestDismiss: "Dismiss",
     email: "hello@biteperk.com.au",
@@ -294,6 +299,10 @@ export const chrome: Record<Lang, ChromeCopy> = {
     footerProducts: "Produits",
     footerLegal: "Mentions légales",
     footerFollow: "Suivez-nous",
+    // DRAFT French (6 Sep 2026) — needs Ludovic's pass. "Menu" is the same
+    // word in French, which is why chrome.menu is in FR_SHARED_WITH_EN.
+    menu: "Menu",
+    menuClose: "Fermer le menu",
     suggest: "Un site BitePerk existe pour votre région.",
     suggestDismiss: "Fermer",
     email: "hello@biteperk.com.au",

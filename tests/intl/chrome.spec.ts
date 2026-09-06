@@ -29,25 +29,70 @@ async function horizontalOverflow(page: Page) {
   );
 }
 
+/**
+ * Wait for an element's entrance to finish before measuring it.
+ *
+ * Load-bearing for anything that slides in. The drawer animates
+ * `transform: translateX(100%) → 0`; measured mid-slide its links sit
+ * partially off-screen (571px right edge in a 390px viewport at ~60% of the
+ * transition), which reads exactly like a layout bug and is not one.
+ * `getAnimations()` covers CSSTransition as well as CSSAnimation, so this
+ * works for the drawer's transition and the picker/city sheets' keyframes.
+ */
+async function settle(page: Page, selector: string) {
+  await page.locator(selector).evaluate((el) =>
+    Promise.all(el.getAnimations({ subtree: true }).map((a) => a.finished)),
+  );
+}
+
 test.describe("intl chrome — phone", () => {
   test.use({ viewport: PHONE });
 
   for (const home of LOCALE_HOMES) {
     test(`navigation is reachable without the footer: ${home}`, async ({ page }) => {
       await page.goto(home);
-      // Was `display:none` with no replacement — the whole defect in one line.
-      // The count is DERIVED from INTL_NAV, the same list IntlLayout renders
-      // from, so adding a nav item can no longer leave this test asserting the
-      // old number. It was hardcoded at 4 and had already been stale once (the
-      // bar went 3 → 4 when the product tree shipped).
-      const links = page.locator(".intl-links a");
+      // The original defect was `display:none` with no replacement — no mobile
+      // navigation at all. From 6 Sep 2026 the replacement is a slide-over
+      // drawer (IntlMobileMenu) behind a burger, so this asserts the JOURNEY
+      // rather than the old wrapped link row: the links are legitimately
+      // hidden in the bar now, and a test that only checked `.intl-links`
+      // would pass on a page with no way to open anything.
+      const burger = page.locator("[data-mobile-menu-trigger]");
+      await expect(burger).toBeVisible();
+      await expect(burger).toHaveAttribute("aria-expanded", "false");
+
+      // The bar must stay one row. 57px = 56 min-height + its bottom border;
+      // the two-row bar this replaced was ~105px, 12% of an iPhone viewport.
+      const bar = await page.locator(".intl-nav").boundingBox();
+      expect(bar!.height, "the phone bar must stay a single row").toBeLessThanOrEqual(60);
+
+      await burger.click();
+      await expect(page.locator(".imm")).toBeVisible();
+      await expect(burger).toHaveAttribute("aria-expanded", "true");
+      await settle(page, ".imm-panel");
+
+      // Count DERIVED from INTL_NAV, the same list IntlLayout renders from, so
+      // adding a nav item cannot leave this asserting the old number. It was
+      // hardcoded at 4 once and had already gone stale (3 → 4 with products).
+      const links = page.locator(".imm-link");
       await expect(links).toHaveCount(INTL_NAV.length);
       for (const link of await links.all()) {
         await expect(link).toBeVisible();
         const box = await link.boundingBox();
-        expect(box!.height, "nav pill must be a 44px touch target").toBeGreaterThanOrEqual(44);
-        expect(box!.x + box!.width, "nav pill must not overflow").toBeLessThanOrEqual(PHONE.width);
+        expect(box!.height, "drawer link must be a 44px touch target").toBeGreaterThanOrEqual(44);
+        expect(box!.x, "drawer link must not sit off-screen").toBeGreaterThanOrEqual(0);
+        expect(box!.x + box!.width, "drawer link must not overflow").toBeLessThanOrEqual(PHONE.width);
       }
+
+      // The CTA the bar drops below 400px lives in here, so it is never lost.
+      await expect(page.locator(".imm-cta")).toBeVisible();
+
+      // Escape closes and focus returns to the trigger — the drawer is a modal
+      // dialog and a keyboard user must not be stranded inside it.
+      await page.keyboard.press("Escape");
+      await expect(page.locator(".imm")).toBeHidden();
+      await expect(burger).toBeFocused();
+      await expect(burger).toHaveAttribute("aria-expanded", "false");
     });
   }
 
@@ -84,7 +129,13 @@ test.describe("intl chrome — phone", () => {
 
   test("theme toggle is available (parity with the AU chrome)", async ({ page }) => {
     await page.goto("/fr/");
-    await expect(page.locator(".intl-actions [data-theme-toggle]")).toBeVisible();
+    // Moved into the drawer on phones (6 Sep 2026) so the 56px bar can hold
+    // brand + picker + burger. Still one tap from the top of any page — the
+    // parity this test protects is REACHABILITY, not which element holds it.
+    await expect(page.locator(".intl-actions [data-theme-toggle]")).toBeHidden();
+    await page.locator("[data-mobile-menu-trigger]").click();
+    await settle(page, ".imm-panel");
+    await expect(page.locator(".imm [data-theme-toggle]")).toBeVisible();
   });
 });
 
@@ -164,14 +215,20 @@ test.describe("intl chrome — tablet keeps the desktop layout", () => {
     );
     expect(Math.max(...tops) - Math.min(...tops), "links share one row").toBeLessThan(2);
     await expect(page.locator(".intl-cta-btn")).toBeVisible();
+    // The drawer is a PHONE affordance. Above 720px the bar shows real links,
+    // so the burger must be gone — otherwise both navigations ship at once.
+    await expect(page.locator("[data-mobile-menu-trigger]")).toBeHidden();
     expect(await horizontalOverflow(page)).toBe(0);
   });
 });
 
 test.describe("intl chrome — Cities nav dropdown", () => {
-  test.use({ viewport: PHONE });
+  // TABLET, not phone (rev. 6 Sep 2026): the bar's Cities dropdown is hidden
+  // ≤720px now that the drawer carries the city list. Asserting it on a phone
+  // would be asserting a control that is deliberately not there.
+  test.use({ viewport: TABLET });
 
-  test("opens fully inside a phone viewport with every city listed", async ({ page }) => {
+  test("opens fully inside the viewport with every city listed", async ({ page }) => {
     await page.goto("/gb-en/");
     await page.locator("[data-city-nav-trigger]").click();
     const menu = page.locator("[data-city-nav-menu]");
@@ -182,9 +239,9 @@ test.describe("intl chrome — Cities nav dropdown", () => {
     );
     const box = (await menu.boundingBox())!;
     expect(box.x).toBeGreaterThanOrEqual(0);
-    expect(box.x + box.width).toBeLessThanOrEqual(PHONE.width);
+    expect(box.x + box.width).toBeLessThanOrEqual(TABLET.width);
     expect(box.y).toBeGreaterThanOrEqual(0);
-    expect(box.y + box.height).toBeLessThanOrEqual(PHONE.height);
+    expect(box.y + box.height).toBeLessThanOrEqual(TABLET.height);
     // Derived, same rule as INTL_NAV.length above: publishing a ninth city
     // must not require a test edit.
     await expect(page.locator("[data-city-nav-item]")).toHaveCount(
@@ -195,5 +252,31 @@ test.describe("intl chrome — Cities nav dropdown", () => {
   test("absent on trees without published cities", async ({ page }) => {
     await page.goto("/fr/");
     await expect(page.locator("[data-city-nav]")).toHaveCount(0);
+  });
+});
+
+test.describe("intl chrome — cities on a phone live in the drawer", () => {
+  test.use({ viewport: PHONE });
+
+  test("every published city is reachable from the drawer on /gb-en/", async ({ page }) => {
+    await page.goto("/gb-en/");
+    await page.locator("[data-mobile-menu-trigger]").click();
+    await settle(page, ".imm-panel");
+    const chips = page.locator(".imm-city");
+    // Derived, same rule as everywhere here: a ninth city must not need a test
+    // edit. This is the assertion that keeps the bar's hidden dropdown honest —
+    // hiding CityNav on phones is only acceptable because these exist.
+    await expect(chips).toHaveCount(intlCitiesForBase("/gb-en").length);
+    for (const chip of await chips.all()) {
+      const box = (await chip.boundingBox())!;
+      expect(box.height, "city chip must be a 44px touch target").toBeGreaterThanOrEqual(44);
+      expect(box.x + box.width).toBeLessThanOrEqual(PHONE.width);
+    }
+  });
+
+  test("no city section on a tree without cities", async ({ page }) => {
+    await page.goto("/fr/");
+    await page.locator("[data-mobile-menu-trigger]").click();
+    await expect(page.locator(".imm-city")).toHaveCount(0);
   });
 });

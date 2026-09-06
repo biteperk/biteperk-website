@@ -612,7 +612,11 @@ const appJsonLd =
       <section class="cv-auto intl-band">
         <div class="wrap">
           <h2>{overview.capabilitiesHeading}</h2>
-          <div class="intl-grid">
+          {/* intl-caps-grid, not the plain intl-grid: five equal cards in an
+              auto-fit grid laid 3+2 and left an orphan. The core capability
+              spans the row and the four add-ons sit 2x2 beneath it, matching
+              the AU /products/ page. */}
+          <div class="intl-grid intl-caps-grid reveal reveal-stagger">
             {/* Catalogue ORDER and STATUS come from products.ts, so the core
                 capability leads and nothing here can drift from the AU site's
                 idea of what ships. */}
