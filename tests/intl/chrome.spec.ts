@@ -139,6 +139,23 @@ test.describe("intl chrome — phone", () => {
   });
 });
 
+test.describe("intl chrome — the 400–719px squeeze band", () => {
+  // 390 hides the header CTA and 768 leaves the wrap band, so no viewport
+  // exercised the one range where brand + picker chip + CTA + burger share a
+  // single 56px row. 412×915 is a real device (Pixel 7-class). /be-fr is the
+  // worst case: the widest chip ("BE · FR" — the only market whose chip
+  // carries a language suffix) beside the French CTA label.
+  test.use({ viewport: { width: 412, height: 915 } });
+
+  test("bar holds one row with the CTA present and nothing overflows: /be-fr", async ({ page }) => {
+    await page.goto("/be-fr/");
+    await expect(page.locator(".intl-cta-btn")).toBeVisible();
+    const bar = await page.locator(".intl-nav").boundingBox();
+    expect(bar!.height, "the bar must stay a single row with the CTA back").toBeLessThanOrEqual(60);
+    expect(await horizontalOverflow(page)).toBe(0);
+  });
+});
+
 test.describe("consent notice", () => {
   test.use({ viewport: PHONE });
 
