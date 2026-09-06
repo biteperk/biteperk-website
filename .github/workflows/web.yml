@@ -234,6 +234,30 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      # The sentinel's own instruction, enacted. Fault-injection run
+      # 34031780496 (7 Sep 2026) proved 11GB is not enough headroom for a
+      # browser job on an unlucky runner: intl shard 2/2 died of "No space
+      # left on device" mid-suite with the sentinel reading 11G free — the
+      # same failure mode the 6 Sep incident had, back on the new pipeline.
+      # FAST subset ONLY (~10s, frees several GB): never the android SDK
+      # (that is what cost the old cleanup its 70 seconds) and never
+      # /usr/local/lib/node_modules (npm itself lives there).
+      #
+      # The core_pattern line is the actual root-cause fix. WPEWebProcess
+      # (Playwright webkit-2311) SIGSEGVs repeatedly through a suite without
+      # failing a single test — WebKit just respawns it — and the runner's
+      # default core_pattern pipes every crash to systemd-coredump, which
+      # absorbs 2–3GB of deleted-open scratch PER DUMP (run 34059573771:
+      # free space bottomed at ~620MB twice on a 468/468 green run; run
+      # 34060348387's coredumpctl named the binary, 10 SEGVs in one shard).
+      # A file pattern honours RLIMIT_CORE, and the test steps set
+      # `ulimit -c 0`, so a crash costs zero bytes instead of gigabytes.
+      - name: Free disk (FAST subset) + no piped core dumps
+        run: |
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost
+          sudo sysctl -w kernel.core_pattern=core
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -261,22 +285,22 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium webkit firefox
 
-      # The 70s `rm -rf` of preinstalled toolchains is gone. It existed because
-      # ONE runner did two builds, three browsers and a full suite, and died of
-      # "No space left on device" on 6 Sep 2026 — taking its own log with it,
-      # so the run reported a failure with no step conclusion and nothing to
-      # read (the cause was only visible in the check-run ANNOTATION). Each job
-      # now does one build and cached browsers. This sentinel keeps the margin
-      # visible; if it ever reports under ~10GB free, put back the FAST subset
-      # only (/usr/share/dotnet /opt/ghc /usr/local/share/boost) — never the
-      # android SDK, which is what cost the 70 seconds. And never
-      # /usr/local/lib/node_modules: npm itself lives there.
+      # The full 70s `rm -rf` of preinstalled toolchains stays gone; the FAST
+      # subset above is back because the sentinel's own trigger fired: run
+      # 34031780496 lost intl shard 2/2 to "No space left on device" after
+      # this step had printed 11G free — a full disk takes the job's own log
+      # with it, so the cause is only visible in the check-run ANNOTATION.
+      # This sentinel keeps the post-cleanup margin visible; if it drops under
+      # ~10GB again, the next lever is shrinking the shard (the intl-a11y
+      # extraction), not deleting more of the runner.
       - name: Disk sentinel
         run: |
           echo "free: $(df -h / | awk 'NR==2 {print $4}')"
 
       - name: Playwright E2E + axe (theme, menus, contact, routes, a11y, mobile devices)
-        run: npx playwright test --shard=${{ matrix.shard }}/2
+        run: |
+          ulimit -c 0
+          npx playwright test --shard=${{ matrix.shard }}/2
 
       # upload-artifact@v4 requires a UNIQUE name per job — without the shard
       # suffix the second uploader fails the job it was meant to diagnose.
@@ -313,6 +337,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      # See the identical step in playwright-au for why (incl. the
+      # WPEWebProcess/core-dump story). This is the job type that actually
+      # died: its webkit-heavy shard is where the SEGVs concentrate.
+      - name: Free disk (FAST subset) + no piped core dumps
+        run: |
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost
+          sudo sysctl -w kernel.core_pattern=core
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -343,8 +376,15 @@ jobs:
         run: |
           echo "free: $(df -h / | awk 'NR==2 {print $4}')"
 
+      # ulimit -c 0 pairs with the core_pattern step above: with a file
+      # pattern the kernel honours it, so WPEWebProcess SEGVs cost nothing.
+      # To re-diagnose disk pressure here, the instrumented step lives at
+      # 2ea0e82^ (df + lsof +L1 monitor, coredumpctl autopsy) — that is what
+      # caught systemd-coredump eating the disk in the first place.
       - name: Playwright — global build (device widths, chrome, consent)
-        run: npm run test:intl -- --shard=${{ matrix.shard }}/2
+        run: |
+          ulimit -c 0
+          npm run test:intl -- --shard=${{ matrix.shard }}/2
 
       - name: Upload Playwright report
         if: failure()
@@ -376,6 +416,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      # See the identical step in playwright-au for why. This job builds the
+      # merged tree (all three dists), the biggest disk footprint of the tier.
+      - name: Free disk (FAST subset)
+        run: sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -389,6 +435,11 @@ jobs:
       # /au-en/** assets, which 404 when served at the root.
       - name: Build merged site
         run: npm run build:site
+
+      # Same margin visibility the Playwright jobs have; this job had none.
+      - name: Disk sentinel
+        run: |
+          echo "free: $(df -h / | awk 'NR==2 {print $4}')"
 
       # ── Why this step retries ────────────────────────────────────────────
       # (This header used to read "and why the budget is NOT raised". It was
