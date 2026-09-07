@@ -107,6 +107,14 @@ const BE_STORY = {
   storyImageAlt: "A relaxed continental café interior between services",
 } as const;
 
+// The shared French hospitality shot, same contract as UK_STORY / BE_STORY.
+// Already graded and already frFr's `media.hospitality` slug (markets.ts), so a
+// French city costs no new photography — rule 3 again.
+const FR_STORY = {
+  storyImage: "brasserie-banquette",
+  storyImageAlt: "Banquette en velours bleu et tables en marbre dressées pour le service",
+} as const;
+
 export const intlCities: readonly IntlCity[] = [
   // ── London ────────────────────────────────────────────────────────────
   {
@@ -939,6 +947,205 @@ export const intlCities: readonly IntlCity[] = [
     relatedGuides: [],
     cityscapeImage: "brussels-grand-place",
     cityscapeImageAlt: "The guild houses of the Grand-Place in Brussels",
+    ...BE_STORY,
+  },
+
+  // ── Paris (/fr) — the first French city ────────────────────────────────
+  //
+  // copyLang "fr", so check-cities scores it ONLY against other French cities
+  // (the fr + be-fr pool), i.e. against Brussels-FR below — never against the
+  // English cities. Its `intro` and `aiLocal` are built on the EVENING /
+  // no-show spine (le service du soir) so they diverge from Brussels-FR's
+  // MIDI / bilingual spine; the `shield` point names the CNIL, where the
+  // Belgian entries name the APD/GBA. Staged published:false until the French
+  // body copy has had its own native pass (the 7 Sep Ludovic batch covered the
+  // shared cityPage.fr furniture, not this per-city prose).
+  {
+    slug: "paris",
+    base: "/fr",
+    copyLang: "fr",
+    name: "Paris",
+    published: false,
+    seoTitle: "Répondeur téléphonique IA pour les restaurants parisiens — Vox par BitePerk",
+    seoDescription:
+      "Vox répond au téléphone de votre restaurant parisien d'une voix naturelle, vérifie le registre réel et enregistre la réservation — pendant que votre équipe reste en salle. Pilotes ouverts en France.",
+    heroHeadline: "Vingt heures trente, la salle est pleine, trois lignes sonnent. Vox les prend toutes.",
+    intro: [
+      "Un vendredi soir dans le Marais : la salle est complète depuis vingt heures et le téléphone continue de sonner — un quatre-couverts pour samedi, un habitué qui aura vingt minutes de retard, une tablée qui demande si la cuisine tient jusqu'à minuit. Vox répond à tout cela d'une voix posée et naturelle pendant que votre équipe reste au service.",
+      "Paris dîne tard et se réserve à l'avance. Les loyers comptent parmi les plus lourds du pays, les équipes sont comptées du Marais à Montmartre, et la personne qu'on peut le moins se permettre d'arracher à la salle en plein coup de feu, c'est celle qui se tient près du téléphone. Les appels qui restent sans réponse sont les plus chers : les anniversaires, les tablées d'affaires, les couverts du soir qui filent chez le voisin dès que personne ne décroche. Et le no-show, la plaie du dîner parisien, commence toujours par une réservation que personne n'a pu confirmer.",
+      "Vox existe pour cet écart précis. Il décroche sur-le-champ, à n'importe quelle heure, vérifie ce que le registre a réellement à offrir et confirme la table avant que l'appelant ne raccroche — en passant la main à une personne dès qu'une conversation cesse d'être ordinaire. Il tourne en production en Australie aujourd'hui ; la France est un programme pilote, et Paris en est le point de départ.",
+    ],
+    districts: [
+      "Le Marais", "Bastille", "Montmartre", "Saint-Germain-des-Prés", "Pigalle",
+      "Canal Saint-Martin", "Belleville", "Batignolles", "Oberkampf", "Bercy",
+    ],
+    scenarios: [
+      {
+        title: "20 h 30, le coup de feu du soir",
+        body: "La salle tourne à plein et le téléphone sonne au passe. Vox prend la demande pour samedi, confirme le quatre-couverts de vingt heures, et votre personnel de salle ne quitte pas son rang.",
+      },
+      {
+        title: "L'appel de 23 heures",
+        body: "Une tablée sort d'un spectacle et cherche une table pour le week-end suivant. Personne de sensé ne tient un téléphone à onze heures du soir ; Vox le fait, et lundi matin la réservation est déjà au registre, sa transcription attachée.",
+      },
+      {
+        title: "« Nous avions pourtant réservé pour huit »",
+        body: "Un appelant affirme que la réservation était pour huit, pas six. Chaque appel Vox conserve son enregistrement et sa transcription : une réservation contestée devient un fait que l'on consulte plutôt qu'une discussion que l'on perd.",
+      },
+      {
+        title: "La demande de privatisation",
+        body: "Un assistant veut la salle du haut pour dix-huit couverts, un menu unique et un budget à discuter. Vox recueille tout le brief — date, nombre, allergies — et le transmet à votre boîte événements sous forme de piste complète et chaleureuse, pas d'un bip de messagerie.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Vox fonctionne-t-il réellement à Paris aujourd'hui ?",
+        a: "Il est en production en Australie, où il répond à de vrais appels pour des établissements qui le paient. En France, nous signons des partenaires pilotes en ce moment — la description honnête, c'est : éprouvé ailleurs, en train d'arriver ici, et les conditions du pilote le reflètent.",
+      },
+      {
+        q: "Nous sommes un bistrot indépendant, pas un groupe. Est-ce pour nous ?",
+        a: "Oui — les pilotes se font établissement par établissement, par construction. Un petit indépendant du Marais apprend davantage à la version française qu'un siège ne le ferait jamais, et les conditions se conviennent par établissement, sans grille tarifaire.",
+      },
+      {
+        q: "Que se passe-t-il quand trois personnes appellent en plein service ?",
+        a: "Les trois sont prises en même temps, dès la première sonnerie. La simultanéité est tout l'intérêt d'un hôte automatisé — la tonalité « occupé » est le bruit d'une réservation parisienne qui part ailleurs.",
+      },
+      {
+        q: "Faut-il un nouveau numéro ou du nouveau matériel ?",
+        a: "Non. Vous gardez votre numéro et vous transférez les appels vers Vox — tous, ou seulement ceux qui resteraient autrement sans réponse. Ce transfert d'appel, c'est toute l'installation.",
+      },
+      {
+        q: "Combien ça coûte ?",
+        a: "Les conditions du pilote se fixent avec chaque établissement plutôt qu'à partir d'une grille, et nous convenons de ce qu'est une réussite avant le premier appel décroché. Si Vox ne justifie pas sa place, vous arrêtez.",
+      },
+    ],
+    aiLocal: {
+      lead: "Des modèles de voix réglés marché par marché, une vérification du registre en direct à chaque appel, et une règle ferme — tout ce qui sort de l'ordinaire passe directement à votre équipe. Voilà la mécanique dessous, arrangée pour la façon dont Paris dîne vraiment.",
+      points: [
+        {
+          icon: "pin",
+          title: "Il connaît le quartier",
+          body: "La transcription générique écorche les noms parisiens. La version française est réglée dessus, si bien que Ménilmontant arrive dans la note de réservation écrit Ménilmontant.",
+        },
+        {
+          icon: "calendar-tick",
+          title: "Le registre fait foi",
+          body: "Vox lit la disponibilité réelle avant de rien promettre, de sorte qu'un samedi soir complet ne peut jamais être vendu deux fois par une réponse trop empressée.",
+        },
+        {
+          icon: "phone-wave",
+          title: "Tous les accents dînent ici",
+          body: "Paris appelle avec tous les accents de la francophonie, plus ceux des visiteurs. Le modèle d'écoute est bâti pour cet éventail, et chaque appel du pilote l'affine encore.",
+        },
+        {
+          icon: "shield",
+          title: "Le RGPD comme principe",
+          body: "Les données d'appel servent à finaliser une réservation, restent consultables par l'établissement et ne servent jamais à profiler un appelant. Les obligations de transparence de l'AI Act (article 50, règlement (UE) 2024/1689) valent pour un agent vocal, et la CNIL est l'autorité qui compte ici.",
+        },
+      ],
+    },
+    relatedGuides: [],
+    cityscapeImage: "paris-skyline",
+    cityscapeImageAlt: "La tour Eiffel au-dessus de la Seine au crépuscule",
+    ...FR_STORY,
+  },
+
+  // ── Bruxelles (/be-fr) — the French alternate of the Brussels-EN page ───
+  //
+  // slug "brussels" and base "/be-fr", so it CLUSTERS with /be-en/brussels/
+  // (en-BE ↔ fr-BE) — the true pair buildHreflang was rebuilt for. copyLang
+  // "fr", so check-cities scores it against Paris only; its MIDI / bilingual
+  // spine deliberately diverges from Paris's evening spine, and it holds the
+  // same language line as /be-en: French + English on one line is what a
+  // Belgian pilot is built to PROVE, and Dutch is "not built". Staged
+  // published:false until its French body copy has had a native pass.
+  {
+    slug: "brussels",
+    base: "/be-fr",
+    copyLang: "fr",
+    name: "Bruxelles",
+    published: false,
+    seoTitle: "Répondeur téléphonique IA pour les restaurants bruxellois — Vox par BitePerk",
+    seoDescription:
+      "Vox répond au téléphone de votre restaurant bruxellois d'une voix naturelle, vérifie le registre réel et prend la réservation — pendant que votre équipe reste avec la salle. Pilotes belges en ouverture.",
+    heroHeadline: "Le déjeuner dure quatre-vingt-dix minutes. Le téléphone, lui, n'attend pas.",
+    intro: [
+      "Midi et demi dans le quartier européen : la salle se remplit d'un seul mouvement. Tous ceux qui déjeuneront aujourd'hui arrivent en vingt minutes, veulent avoir réglé pour deux heures, et le téléphone se met à sonner sous tout cela — une table de six pour jeudi, une annulation, quelqu'un qui demande si la terrasse est ouverte.",
+      "Bruxelles déjeune sur une montre qui ne laisse aucun jeu. Un service du midi ici n'est pas une longue soirée que l'on organise à l'avance ; c'est une fenêtre étroite où la personne qui pourrait décrocher porte trois assiettes, et l'appelant qui tombe sur une sonnerie essaie simplement l'adresse suivante. Les langues qui arrivent sur cette ligne posent leur propre question — c'est une ville où le même numéro prend le français et l'anglais à une minute d'intervalle.",
+      "Vox est notre réponse à cette fenêtre étroite. Il décroche dès la première sonnerie quelle que soit l'heure, lit ce que le registre a vraiment de libre, et confie l'appel à votre équipe dès qu'il cesse d'être ordinaire. Il tourne en production en Australie aujourd'hui ; la Belgique est un programme pilote, et Bruxelles en est le point de départ.",
+    ],
+    districts: [
+      "Ixelles", "Saint-Gilles", "Sablon", "Dansaert", "Châtelain",
+      "Sainte-Catherine", "Flagey", "Marolles", "Etterbeek", "Uccle",
+    ],
+    scenarios: [
+      {
+        title: "12 h 40, la salle tourne une fois",
+        body: "Le rush du midi a une seule forme, sans aucun creux. Vox prend le six-couverts de jeudi pendant que votre équipe reste sur les assiettes, et la réservation est au registre avant même que l'appelant ait raccroché.",
+      },
+      {
+        title: "Le premier vendredi de beau temps",
+        body: "La météo de terrasse arrive du jour au lendemain, et les appels avec elle. Chacun est pris au même instant plutôt que mis en file derrière une sonnerie — c'est la différence entre une terrasse pleine et une à moitié vide.",
+      },
+      {
+        title: "Un appelant qui change de langue en pleine phrase",
+        body: "Cela arrive sans cesse ici, et c'est exactement ce qu'un pilote belge existe pour éprouver. Nous préférons vous montrer Vox sur l'un de vos propres enregistrements plutôt que d'annoncer un résultat sur une page web.",
+      },
+      {
+        title: "« J'avais annulé cette table lundi »",
+        body: "Chaque appel conserve son enregistrement et sa transcription. Une annulation contestée cesse d'être la mémoire de l'un contre celle de l'autre : elle devient quelque chose que l'on retrouve en quelques secondes.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Vox fonctionne-t-il à Bruxelles aujourd'hui ?",
+        a: "Non. Il est en production en Australie, où il répond à de vrais appels pour des établissements qui le paient, et la Belgique est un programme pilote que nous ouvrons maintenant. La version honnête : éprouvé ailleurs, en train d'arriver ici — et les conditions du pilote sont écrites pour refléter exactement cela.",
+      },
+      {
+        q: "Nos appelants passent du français à l'anglais sur la même ligne. Vox suit-il ?",
+        a: "Gérer les deux sur un seul numéro est précisément ce qu'un pilote belge est bâti pour prouver ; nous préférons donc le démontrer sur vos appels plutôt que de l'affirmer ici. Les langues dont votre établissement a réellement besoin sont l'une des premières choses que nous établissons ensemble.",
+      },
+      {
+        q: "Et le néerlandais ?",
+        a: "Pas encore développé. Servir la Flandre correctement veut dire le néerlandais, et c'est un véritable engagement plutôt qu'un réglage que l'on active — il suit la demande des établissements, et non l'inverse.",
+      },
+      {
+        q: "Faut-il un numéro belge, ou du nouveau matériel ?",
+        a: "Ni l'un ni l'autre. Vous gardez le numéro que vos clients composent déjà et vous transférez les appels vers Vox — tous, ou seulement ceux qui resteraient sans réponse. Ce transfert est toute l'installation. La numérotation belge exige un dossier réglementaire approuvé, fourni dans le cadre du pilote.",
+      },
+      {
+        q: "Combien coûte un pilote ?",
+        a: "Les conditions se conviennent établissement par établissement plutôt qu'à partir d'une liste de prix, et nous fixons ce qu'est un bon résultat avant le premier appel décroché. Si Vox ne mérite pas sa place, vous arrêtez.",
+      },
+    ],
+    aiLocal: {
+      lead: "En dessous : un modèle qui écoute la façon dont cette ville parle vraiment, une vérification du registre avant toute promesse, et une règle ferme — tout ce qui sort de l'ordinaire va à votre équipe plutôt que d'être deviné.",
+      points: [
+        {
+          icon: "pin",
+          title: "Il écrit bien les noms",
+          body: "Châtelain, Sainte-Catherine, Flagey — la transcription toute faite transforme les noms de rue bruxellois en devinettes. Les reporter intacts dans une note de réservation est ingrat, et c'est ce qu'un établissement remarque en premier.",
+        },
+        {
+          icon: "calendar-tick",
+          title: "Une promesse qu'il peut tenir",
+          body: "Rien n'est proposé avant que le registre ait été lu. Un service à une seule tournée ne peut absorber un oui trop empressé, et une table inventée à 13 h 15 vous coûte toute la fenêtre.",
+        },
+        {
+          icon: "phone-wave",
+          title: "Fait pour écouter dans une salle bruyante",
+          body: "Les appels bruxellois viennent de toute l'Europe, par-dessus une terrasse à plein volume. Le modèle d'écoute est conçu pour cet éventail d'accents et ce fond sonore, et chaque appel du pilote l'affine.",
+        },
+        {
+          icon: "shield",
+          title: "Les règles européennes, dès la conception",
+          body: "Le RGPD et les obligations de transparence de l'AI Act (article 50, règlement (UE) 2024/1689) s'appliquent à un agent vocal qui parle à des clients, et l'APD/GBA est l'autorité de référence ici. Les données d'appel finalisent une réservation, vous restent consultables et ne construisent aucun profil.",
+        },
+      ],
+    },
+    relatedGuides: [],
+    cityscapeImage: "brussels-grand-place",
+    cityscapeImageAlt: "Les maisons des corporations de la Grand-Place à Bruxelles",
     ...BE_STORY,
   },
 ];
