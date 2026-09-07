@@ -85,7 +85,7 @@ regressions.
 ```
 src/            components (+sections/), data (SSOT), layouts, pages, scripts, styles, content/blog
 public/         served assets — images (committed pipeline output), og cards, brand kit
-scripts/        gates/ (CI) · build/ (merge/prune/llms) · images/ (photo pipeline) · brand/ (og + logo kit)
+scripts/        gates/ (CI) · build/ (merge/prune/llms + fr-review generators) · images/ (photo pipeline) · brand/ (og + logo kit)
 tests/          e2e/ (Playwright) · a11y/ (axe) · unit/ · helpers/routes.ts (generated route list)
 functions/      the contact-form Cloud Function (Firestore + Zoho)
 docs/           committed ops content (art direction, marketing engine, citations…)
