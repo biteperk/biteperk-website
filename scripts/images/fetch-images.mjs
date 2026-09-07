@@ -284,6 +284,32 @@ const catalogue = [
     url: "https://images.unsplash.com/photo-1750943082231-0d84cfabc4dd",
     brief: "Fine-dining plated dish in dramatic light — cutlery, wine glass (FR home band hospitality)",
   },
+  // ── French city cityscapes (Phase 2b, batch A) — restaurant/gastronomy
+  //    scenes per Ludovic's brief (no tourist landmarks). Pixel-reviewed
+  //    against docs/art-direction.md: no readable signage, no identifiable
+  //    faces, empty/near-empty seating. One unique establishing shot per city
+  //    (rule 3); the shared FR hospitality shot is brasserie-banquette (FR_STORY).
+  {
+    slug: "lyon-bistrot",
+    id: "photo-1690221123138-8d891be52401",
+    photographer: "Unsplash contributor",
+    url: "https://images.unsplash.com/photo-1690221123138-8d891be52401",
+    brief: "Empty Lyon bistrot dining room — bentwood chairs, marble tables, wine glasses set",
+  },
+  {
+    slug: "marseille-vieux-port",
+    id: "photo-1769676114381-9e6a064e7a98",
+    photographer: "Unsplash contributor",
+    url: "https://images.unsplash.com/photo-1769676114381-9e6a064e7a98",
+    brief: "Golden-hour harbourside restaurant terrace — empty tables, fishing boats, pastel Mediterranean townhouses (Marseille)",
+  },
+  {
+    slug: "nice-riviera-terrasse",
+    id: "photo-1786366747725-32d652cea9c0",
+    photographer: "Unsplash contributor",
+    url: "https://images.unsplash.com/photo-1786366747725-32d652cea9c0",
+    brief: "Covered Riviera restaurant terrace over turquoise sea, white chairs, headland beyond (Nice)",
+  },
   {
     slug: "belgium-dinant",
     id: "photo-1491557345352-5929e343eb89",
