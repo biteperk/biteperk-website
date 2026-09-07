@@ -507,18 +507,22 @@ const frFr: MarketContent = {
   },
   media: {
     cityscape: {
-      slug: "paris-skyline",
-      alt: "La tour Eiffel au-dessus de la Seine au crépuscule",
+      // Was `paris-skyline` (Eiffel Tower) until 7 Sep 2026 — Ludovic asked for
+      // restaurant over tourism on the FR tree. Shares the Paris city page's
+      // café-terrace shot, exactly as gb-en's market cityscape is london-skyline
+      // (the flagship city's establishing shot); the home hides this slot once a
+      // city is published (band goes hospitality-only), so a slug unique to this
+      // slot would render nowhere and only add weight.
+      slug: "paris-cafe-terrace",
+      alt: "Terrasse de café parisien — store rayé et chaises de bistrot en rotin vert",
     },
-    // Was `paris-street` until 6 Sep 2026: a cobbled street under the Eiffel
-    // Tower — not a hospitality scene at all — and, being a dark, high-detail
-    // portrait frame shown in a 16:10 landscape slot, 160 KB at 768w for a
-    // picture the slot cropped to its middle third. Lighthouse named it as the
-    // largest single byte cost on the one page failing its LCP budget. The
-    // banquette is the same brasserie shot the Belgian trees lead with (47 KB).
+    // Was `brasserie-banquette` until 7 Sep 2026 (still the Paris page's story
+    // shot). A plated fine-dining dish is the "gastronomy" half of Ludovic's
+    // brief. Below the fold and lazy, so its encode cost never competes with
+    // the text LCP.
     hospitality: {
-      slug: "brasserie-banquette",
-      alt: "Banquette en velours bleu et tables en marbre dressées pour le service",
+      slug: "french-gastronomy-plate",
+      alt: "Assiette gastronomique dressée dans une lumière contrastée",
     },
     eyebrow: "Pour les établissements français",
     heading: "Pensé pour le rythme des services à la française.",

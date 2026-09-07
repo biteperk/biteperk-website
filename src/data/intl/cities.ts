@@ -965,7 +965,7 @@ export const intlCities: readonly IntlCity[] = [
     base: "/fr",
     copyLang: "fr",
     name: "Paris",
-    published: false,
+    published: true,
     seoTitle: "Répondeur téléphonique IA pour les restaurants parisiens — Vox par BitePerk",
     seoDescription:
       "Vox répond au téléphone de votre restaurant parisien d'une voix naturelle, vérifie le registre réel et enregistre la réservation — pendant que votre équipe reste en salle. Pilotes ouverts en France.",
@@ -1045,8 +1045,11 @@ export const intlCities: readonly IntlCity[] = [
       ],
     },
     relatedGuides: [],
-    cityscapeImage: "paris-skyline",
-    cityscapeImageAlt: "La tour Eiffel au-dessus de la Seine au crépuscule",
+    // Was `paris-skyline` (Eiffel) until 7 Sep 2026 — Ludovic asked for a
+    // restaurant over the tourist landmark. A Parisian café terrace reads Paris
+    // just as unmistakably and keeps the page about hospitality.
+    cityscapeImage: "paris-cafe-terrace",
+    cityscapeImageAlt: "Terrasse de café parisien — store rayé et chaises de bistrot en rotin vert",
     ...FR_STORY,
   },
 
@@ -1064,7 +1067,7 @@ export const intlCities: readonly IntlCity[] = [
     base: "/be-fr",
     copyLang: "fr",
     name: "Bruxelles",
-    published: false,
+    published: true,
     seoTitle: "Répondeur téléphonique IA pour les restaurants bruxellois — Vox par BitePerk",
     seoDescription:
       "Vox répond au téléphone de votre restaurant bruxellois d'une voix naturelle, vérifie le registre réel et prend la réservation — pendant que votre équipe reste avec la salle. Pilotes belges en ouverture.",

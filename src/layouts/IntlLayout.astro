@@ -571,8 +571,16 @@ const isUk = locale.market === "gb";
      it matched "false" too — every tree wrapped at 1080px and the sentence
      above was simply untrue. Measured on /fr: 121px bar between 940 and 1080
      where 65px fits. Found while /be-en became the first tree to cross the
-     city-bearing line, which is exactly when the distinction first mattered. */
-  @media (max-width: 1080px) {
+     city-bearing line, which is exactly when the distinction first mattered.
+
+     Lower bound 721px is load-bearing (added 7 Sep 2026): this is the
+     tablet/small-laptop band, and the phone block below owns ≤720px with a
+     single non-wrapping 56px row. Without the bound, `flex-wrap: wrap` here —
+     specificity (0,2,1) — outranks the phone block's `.intl-nav-row` nowrap
+     (0,1,0) regardless of source order, so every city-bearing tree wrapped to a
+     ~91px two-row bar on phones. Latent on /gb-en and /be-en (no 412px test);
+     surfaced the day /be-fr published its first city. */
+  @media (min-width: 721px) and (max-width: 1080px) {
     .intl-nav[data-has-cities="true"] .intl-nav-row { flex-wrap: wrap; }
     .intl-nav[data-has-cities="true"] .intl-links {
       order: 3;

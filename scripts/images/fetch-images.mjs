@@ -253,11 +253,36 @@ const catalogue = [
     brief: "Aerial London — Tower Bridge and the Thames toward the City",
   },
   {
+    // Retired from the FR tree 7 Sep 2026 on Ludovic's note: the Eiffel Tower
+    // reads as tourism, not hospitality, on a page selling a restaurant tool.
+    // Replaced by the three France restaurant/gastronomy shots below. Kept in
+    // the catalogue (graded files stay in public/images) so a clean checkout
+    // still reproduces it; nothing references it after the swap.
     slug: "paris-skyline",
     id: "photo-1502602898657-3e91760cbb34",
     photographer: "Chris Karidis",
     url: "https://unsplash.com/photos/nnzkZNYWHaU",
-    brief: "Eiffel Tower over the Seine at dusk",
+    brief: "Eiffel Tower over the Seine at dusk — retired from the FR tree, see below",
+  },
+  // ── French tree restaurant & gastronomy (7 Sep 2026, Ludovic's brief) ──
+  // Replace the Eiffel imagery on /fr with restaurant/gastronomy scenes that
+  // read Paris / Riviera. Pixel-reviewed against docs/art-direction.md: no
+  // readable signage, no identifiable faces, no venue presented as a customer
+  // (empty seating). Photographer metadata absent from the CDN asset — credited
+  // as courtesy per the file's convention; Unsplash license needs no attribution.
+  {
+    slug: "paris-cafe-terrace",
+    id: "photo-1577056922428-a511301a562d",
+    photographer: "Unsplash contributor",
+    url: "https://images.unsplash.com/photo-1577056922428-a511301a562d",
+    brief: "Parisian café terrace — striped awning, green rattan bistro chairs, empty tables (FR/Paris city page)",
+  },
+  {
+    slug: "french-gastronomy-plate",
+    id: "photo-1750943082231-0d84cfabc4dd",
+    photographer: "Unsplash contributor",
+    url: "https://images.unsplash.com/photo-1750943082231-0d84cfabc4dd",
+    brief: "Fine-dining plated dish in dramatic light — cutlery, wine glass (FR home band hospitality)",
   },
   {
     slug: "belgium-dinant",
