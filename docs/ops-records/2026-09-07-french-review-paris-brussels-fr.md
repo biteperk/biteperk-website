@@ -1,7 +1,12 @@
 # French native review — Paris (/fr) & Brussels-FR (/be-fr) city pages
 
-- **Status:** ⏳ PENDING Ludovic's native pass — the two city pages are staged
-  `published: false` and must not be flipped live until this batch is signed off.
+- **Status:** ✅ PASSED — Ludovic gave a **verbal** native pass on **7 Sep 2026**
+  (relayed by Sam), happy with everything, no corrections. Verbal, matching the
+  7 Sep furniture batch. The two city pages are cleared and flipped
+  `published: true`. In the same pass Ludovic asked to drop the Eiffel-Tower
+  imagery on the French tree for restaurant/gastronomy photography — done in this
+  batch (see the `media` / `cityscapeImageAlt` rows below); the swap is imagery,
+  not prose, and rides this sign-off.
 - **Reviewer:** Ludovic (native French)
 - **Prepared:** 7 Sep 2026
 - **Scope:** the per-city French body copy in `src/data/intl/cities.ts` (Paris +
@@ -23,7 +28,7 @@ dated pass and note the medium, exactly as `2026-09-07-french-review-ludovic.md`
 records its own. Corrections, if any, are applied to the source modules first,
 then this sheet is regenerated.
 
-## Strings (76)
+## Strings (80)
 
 | Key | French |
 |---|---|
@@ -33,7 +38,7 @@ then this sheet is regenerated.
 | `/fr/paris · intro[0]` | Un vendredi soir dans le Marais : la salle est complète depuis vingt heures et le téléphone continue de sonner — un quatre-couverts pour samedi, un habitué qui aura vingt minutes de retard, une tablée qui demande si la cuisine tient jusqu'à minuit. Vox répond à tout cela d'une voix posée et naturelle pendant que votre équipe reste au service. |
 | `/fr/paris · intro[1]` | Paris dîne tard et se réserve à l'avance. Les loyers comptent parmi les plus lourds du pays, les équipes sont comptées du Marais à Montmartre, et la personne qu'on peut le moins se permettre d'arracher à la salle en plein coup de feu, c'est celle qui se tient près du téléphone. Les appels qui restent sans réponse sont les plus chers : les anniversaires, les tablées d'affaires, les couverts du soir qui filent chez le voisin dès que personne ne décroche. Et le no-show, la plaie du dîner parisien, commence toujours par une réservation que personne n'a pu confirmer. |
 | `/fr/paris · intro[2]` | Vox existe pour cet écart précis. Il décroche sur-le-champ, à n'importe quelle heure, vérifie ce que le registre a réellement à offrir et confirme la table avant que l'appelant ne raccroche — en passant la main à une personne dès qu'une conversation cesse d'être ordinaire. Il tourne en production en Australie aujourd'hui ; la France est un programme pilote, et Paris en est le point de départ. |
-| `/fr/paris · cityscapeImageAlt` | La tour Eiffel au-dessus de la Seine au crépuscule |
+| `/fr/paris · cityscapeImageAlt` | Terrasse de café parisien — store rayé et chaises de bistrot en rotin vert |
 | `/fr/paris · storyImageAlt` | Banquette en velours bleu et tables en marbre dressées pour le service |
 | `/fr/paris · scenarios[0].title` | 20 h 30, le coup de feu du soir |
 | `/fr/paris · scenarios[0].body` | La salle tourne à plein et le téléphone sonne au passe. Vox prend la demande pour samedi, confirme le quatre-couverts de vingt heures, et votre personnel de salle ne quitte pas son rang. |
@@ -100,6 +105,10 @@ then this sheet is regenerated.
 | `/fr · home cities.eyebrow` | Là où tout commence |
 | `/fr · home cities.heading` | Une ville après l'autre, sur de vraies lignes. |
 | `/fr · home cities.body` | Un pilote, c'est une conversation avec une salle précise dans une rue précise, pas un lancement. Voici les villes où ces conversations sont ouvertes. |
+| `/fr · media cityscape alt` | Terrasse de café parisien — store rayé et chaises de bistrot en rotin vert |
+| `/fr · media hospitality alt` | Assiette gastronomique dressée dans une lumière contrastée |
 | `/be-fr · home cities.eyebrow` | Nos premières adresses |
 | `/be-fr · home cities.heading` | Un établissement à la fois, sur la ligne bien réelle. |
 | `/be-fr · home cities.body` | Le pilote se joue au téléphone d'une adresse précise, jamais dans une annonce. Ces pages parlent de la vôtre en particulier. |
+| `/be-fr · media cityscape alt` | Les maisons de guilde de la Grand-Place de Bruxelles |
+| `/be-fr · media hospitality alt` | L'intérieur d'un café continental entre deux services |
