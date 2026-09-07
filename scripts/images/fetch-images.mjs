@@ -310,6 +310,28 @@ const catalogue = [
     url: "https://images.unsplash.com/photo-1786366747725-32d652cea9c0",
     brief: "Covered Riviera restaurant terrace over turquoise sea, white chairs, headland beyond (Nice)",
   },
+  // ── French city cityscapes (Phase 2b, batch B) — same rules as batch A. ──
+  {
+    slug: "bordeaux-wine-cellar",
+    id: "photo-1781181727460-ccd6962647d4",
+    photographer: "Unsplash contributor",
+    url: "https://images.unsplash.com/photo-1781181727460-ccd6962647d4",
+    brief: "Glazed wine-cellar wall in a restaurant, bottles in presentation, warm light (Bordeaux)",
+  },
+  {
+    slug: "toulouse-brasserie",
+    id: "photo-1695606393084-9c4490ccf667",
+    photographer: "Unsplash contributor",
+    url: "https://images.unsplash.com/photo-1695606393084-9c4490ccf667",
+    brief: "Empty brasserie with exposed red-brick wall, wall sconces, banquette and wooden tables (Toulouse)",
+  },
+  {
+    slug: "lille-estaminet",
+    id: "photo-1670819917685-f1040e76b9b7",
+    photographer: "Unsplash contributor",
+    url: "https://images.unsplash.com/photo-1670819917685-f1040e76b9b7",
+    brief: "Wood-panelled dining room, bentwood chairs, tables set — estaminet feel (Lille)",
+  },
   {
     slug: "belgium-dinant",
     id: "photo-1491557345352-5929e343eb89",
