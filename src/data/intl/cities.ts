@@ -1053,6 +1053,848 @@ export const intlCities: readonly IntlCity[] = [
     ...FR_STORY,
   },
 
+  // ── Lyon (/fr) — Phase 2b batch A ──────────────────────────────────────
+  // French pool, scored against Paris/Marseille/Nice/Brussels-FR on intro +
+  // aiLocal. Spine: the bouchon with no front-of-house — the patron cooks, so
+  // the phone rings into an empty room. Distinct from Paris (evening/no-show).
+  // shield theme: the call record as the source of truth (Paris = RGPD/CNIL).
+  {
+    slug: "lyon",
+    base: "/fr",
+    copyLang: "fr",
+    name: "Lyon",
+    published: true,
+    seoTitle: "Répondeur téléphonique IA pour les restaurants lyonnais — Vox par BitePerk",
+    seoDescription:
+      "Vox répond au téléphone de votre bouchon ou restaurant à Lyon d'une voix naturelle, vérifie le registre et prend la réservation pendant que la cuisine tourne. Pilotes ouverts en France.",
+    heroHeadline: "Au bouchon, le patron est au piano. Le téléphone sonne dans une salle vide.",
+    intro: [
+      "Un jeudi midi à Lyon : douze couverts attendent leur tablier, le patron est au piano, et le téléphone sonne dans une salle où personne n'est libre pour décrocher. Vox répond à sa place, d'une voix posée, et note la réservation avant que l'appelant n'aille tenter l'adresse d'à côté.",
+      "Lyon se dit capitale de la gastronomie, et cela se paie en petites maisons : le bouchon familial où le chef-patron cuisine, sert et tient la caisse, sans personne près du téléphone au moment du coup de feu. C'est là que se perdent les appels qui comptent — la tablée du samedi, le groupe qui veut un menu, l'habitué qui déplace sa réservation. Un appel sans réponse à midi, c'est un couvert vendu chez le voisin, souvent celui-là même qui vous suit dans le guide.",
+      "Vox est fait pour cette salle sans standardiste. Il décroche à la première sonnerie, à toute heure, lit ce que le registre a réellement de libre et confirme la table avant de raccrocher — et confie l'appel à une personne dès qu'une demande sort de l'ordinaire. Il tourne en production en Australie ; la France est un programme pilote, et après Paris, Lyon en est l'étape.",
+    ],
+    districts: [
+      "Vieux-Lyon", "Presqu'île", "Croix-Rousse", "Confluence", "Les Brotteaux",
+      "La Guillotière", "Terreaux", "Saint-Just", "Monplaisir", "Part-Dieu",
+    ],
+    scenarios: [
+      {
+        title: "Midi, deux services en un",
+        body: "Le service du midi se joue en deux tournées serrées, sans creux. Vox prend la tablée de jeudi pendant que la cuisine envoie, et la réservation est au registre avant que l'appelant ait raccroché.",
+      },
+      {
+        title: "L'appel qui vient du guide",
+        body: "Une adresse citée dans un guide reçoit des appels de toute l'Europe, souvent en anglais. Vox les prend au moment où ils arrivent plutôt que de les laisser sonner, et transmet la demande de groupe complète à votre équipe.",
+      },
+      {
+        title: "« C'était pourtant à mon nom »",
+        body: "Chaque appel garde son enregistrement et sa transcription. Une réservation contestée cesse d'opposer deux mémoires : elle devient une ligne que l'on relit en quelques secondes.",
+      },
+      {
+        title: "Le mâchon du samedi",
+        body: "Un groupe veut un mâchon avec un menu et un budget à caler. Vox recueille la date, le nombre et les régimes, et envoie une piste complète à votre boîte plutôt qu'un message sur le répondeur.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Vox fonctionne-t-il déjà à Lyon ?",
+        a: "Il est en production en Australie, où il répond à de vrais appels pour des établissements qui le paient. En France, nous ouvrons des pilotes en ce moment — dit honnêtement : éprouvé ailleurs, en cours d'arrivée ici, et les conditions du pilote le reflètent.",
+      },
+      {
+        q: "Nous sommes un bouchon familial, pas une chaîne. Est-ce pour nous ?",
+        a: "Oui — les pilotes se règlent maison par maison. Un petit bouchon apprend davantage à la version française qu'un siège, et les conditions se conviennent au cas par cas, sans grille tarifaire.",
+      },
+      {
+        q: "Et si plusieurs personnes appellent pendant le coup de feu ?",
+        a: "Elles sont toutes prises en même temps, dès la première sonnerie. C'est tout l'intérêt d'un hôte automatisé — une tonalité occupée, c'est une réservation lyonnaise qui file ailleurs.",
+      },
+      {
+        q: "Faut-il changer de numéro ou de matériel ?",
+        a: "Non. Vous gardez votre numéro et transférez les appels vers Vox — tous, ou seulement ceux qui resteraient sans réponse. Ce transfert, c'est toute l'installation.",
+      },
+      {
+        q: "Quel est le prix ?",
+        a: "Les conditions se fixent avec chaque maison, pas sur une grille, et nous décidons ensemble de ce qu'est une réussite avant le premier appel. Si Vox ne gagne pas sa place, vous arrêtez.",
+      },
+    ],
+    aiLocal: {
+      lead: "La mécanique tient en trois gestes : reconnaître les mots de Lyon, vérifier le registre avant d'ouvrir la bouche, et confier à une personne tout ce qui n'est pas une réservation ordinaire.",
+      points: [
+        {
+          icon: "pin",
+          title: "Il connaît les rues",
+          body: "Traboules, montées, quais de Saône — la transcription toute faite en fait de la bouillie. La version française est réglée dessus, si bien que la Croix-Rousse arrive dans la note écrite comme il faut.",
+        },
+        {
+          icon: "calendar-tick",
+          title: "Deux tournées, aucune marge",
+          body: "Un midi en deux services ne pardonne pas un oui de trop. Vox n'avance rien sans avoir lu le registre, pour qu'une table inventée ne fasse pas sauter la seconde tournée.",
+        },
+        {
+          icon: "phone-wave",
+          title: "Des appels de partout",
+          body: "Une maison citée dans les guides est appelée en français comme en anglais. Le système d'écoute est bâti pour cet éventail, et chaque appel du pilote l'affine encore.",
+        },
+        {
+          icon: "shield",
+          title: "L'appel fait foi",
+          body: "Chaque appel est conservé avec sa transcription, consultable par la maison seule et par personne d'autre, jamais réutilisé pour ficher un client. Une contestation se relit au lieu de se discuter.",
+        },
+      ],
+    },
+    relatedGuides: [],
+    cityscapeImage: "lyon-bistrot",
+    cityscapeImageAlt: "Salle d'un bistrot lyonnais, chaises en bois courbé et tables dressées près de la fenêtre",
+    ...FR_STORY,
+  },
+
+  // ── Marseille (/fr) — Phase 2b batch A ─────────────────────────────────
+  // Spine: dishes ordered a day ahead (bouillabaisse) — the advance-order call
+  // is the week's most valuable and the one that rings out mid-service. shield
+  // theme: data minimisation ("le strict nécessaire").
+  {
+    slug: "marseille",
+    base: "/fr",
+    copyLang: "fr",
+    name: "Marseille",
+    published: true,
+    seoTitle: "Répondeur téléphonique IA pour les restaurants marseillais — Vox par BitePerk",
+    seoDescription:
+      "Vox répond au téléphone de votre restaurant à Marseille d'une voix naturelle, note les commandes passées à l'avance et vérifie le registre pendant que la salle tourne. Pilotes ouverts en France.",
+    heroHeadline: "La bouillabaisse se commande la veille. Encore faut-il que quelqu'un décroche.",
+    intro: [
+      "Un vendredi sur le Vieux-Port : la salle se remplit face à l'eau, et le téléphone sonne pour la veille — une bouillabaisse pour six, un grand plateau à préparer, une table en terrasse dès qu'il fait beau. Vox répond quand la salle ne peut pas, vérifie ce qui reste et note la commande avant que l'appelant ne raccroche.",
+      "Marseille cuisine des plats qui se décident à l'avance : la bouillabaisse se commande un ou deux jours plus tôt, le temps d'acheter le poisson. L'appel qui prépare ce repas est le plus précieux de la semaine, et c'est souvent celui qui tombe en plein service, quand personne n'est libre. Ici la ligne parle aussi plusieurs langues, d'une rive à l'autre de la Méditerranée. Un appel manqué, ce n'est pas une table en moins — c'est une grande tablée partie ailleurs.",
+      "Vox existe pour cet appel-là. Il répond dès la première sonnerie, à toute heure, consulte le registre avant tout engagement et confirme — puis bascule vers une personne dès que la demande le mérite. Il tourne en production en Australie ; la France est un programme pilote, et Marseille rejoint la ligne après Paris.",
+    ],
+    districts: [
+      "Le Panier", "Vieux-Port", "Notre-Dame-du-Mont", "Cours Julien", "Endoume",
+      "Vallon des Auffes", "La Plaine", "Castellane", "La Joliette", "Le Roucas Blanc",
+    ],
+    scenarios: [
+      {
+        title: "La commande de la veille",
+        body: "Une bouillabaisse pour huit se décide avant que le poisson ne soit acheté. Vox prend la demande, la date et le nombre, et la transmet complète à la cuisine, au lieu de la laisser sur un répondeur que personne n'écoute avant le lendemain.",
+      },
+      {
+        title: "Le premier vrai jour d'été",
+        body: "La terrasse se remplit dès que le mistral tombe, et les appels avec. Chacun est pris au même moment plutôt que mis en attente derrière une sonnerie — c'est la différence entre une terrasse pleine et une terrasse à moitié.",
+      },
+      {
+        title: "Un appelant qui passe d'une langue à l'autre",
+        body: "Sur le port, la même ligne reçoit du français, de l'italien, de l'anglais. C'est exactement ce qu'un pilote sert à éprouver, et nous préférons vous le montrer sur vos appels plutôt que l'affirmer ici.",
+      },
+      {
+        title: "« J'avais pourtant réservé »",
+        body: "Chaque appel garde son enregistrement et sa transcription. Une réservation contestée devient une ligne à relire, pas une parole contre une autre.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Vox fonctionne-t-il à Marseille aujourd'hui ?",
+        a: "Non. Il est en production en Australie, où il répond à de vrais appels pour des maisons qui le paient, et la France est un programme pilote que nous ouvrons. Version honnête : éprouvé ailleurs, en train d'arriver ici — les conditions du pilote sont écrites pour cela.",
+      },
+      {
+        q: "Nous sommes une petite adresse de quartier. Est-ce pour nous ?",
+        a: "Oui — les pilotes se règlent adresse par adresse. Une petite maison apprend davantage à la version française qu'un siège, et tout se convient au cas par cas, sans grille tarifaire.",
+      },
+      {
+        q: "Que se passe-t-il quand ça sonne de partout en plein service ?",
+        a: "Tous les appels sont pris ensemble, dès la première sonnerie. La simultanéité est le cœur d'un hôte automatisé — une tonalité occupée, c'est une grande table qui s'en va.",
+      },
+      {
+        q: "Faut-il un nouveau numéro ou du matériel ?",
+        a: "Non. Vous gardez votre numéro et transférez les appels vers Vox — tous, ou seulement les débordements. Ce transfert est toute l'installation.",
+      },
+      {
+        q: "Combien ça coûte ?",
+        a: "Les conditions se fixent avec chaque maison plutôt que sur une liste de prix, et l'on convient d'un bon résultat avant le premier appel. Si Vox ne mérite pas sa place, vous arrêtez.",
+      },
+    ],
+    aiLocal: {
+      lead: "Trois principes sous la voix : entendre juste les noms d'ici, ne rien avancer que le registre ne confirme, et laisser une personne reprendre dès qu'un appel sort du cadre.",
+      points: [
+        {
+          icon: "pin",
+          title: "Il note bien les noms",
+          body: "Endoume, le Vallon des Auffes, la Joliette — la transcription générique en fait n'importe quoi. Les reporter intacts dans une note de réservation est ingrat, et c'est ce qu'une maison remarque d'abord.",
+        },
+        {
+          icon: "calendar-tick",
+          title: "Le registre d'abord",
+          body: "Rien n'est promis avant lecture du registre. Une commande de la veille suppose de savoir ce que la cuisine peut tenir ; une table inventée coûte le service entier.",
+        },
+        {
+          icon: "phone-wave",
+          title: "Plusieurs langues sur une ligne",
+          body: "Un port reçoit des appels d'un peu partout autour de la Méditerranée. Le système d'écoute est fait pour ce mélange d'accents, et le pilote l'entraîne un peu plus à chaque appel.",
+        },
+        {
+          icon: "shield",
+          title: "Le strict nécessaire",
+          body: "Vox ne retient d'un appel que ce qui sert à finaliser la réservation ; le reste n'est pas collecté. Les données restent consultables par la maison et ne construisent aucun profil d'appelant.",
+        },
+      ],
+    },
+    relatedGuides: [],
+    cityscapeImage: "marseille-vieux-port",
+    cityscapeImageAlt: "Terrasse d'un restaurant au bord d'un vieux port méditerranéen — barques et maisons colorées",
+    ...FR_STORY,
+  },
+
+  // ── Nice (/fr) — Phase 2b batch A ──────────────────────────────────────
+  // Spine: Riviera seasonality — covers double in summer, callers arrive in
+  // Italian and English. shield theme: caller transparency (AI Act art. 50).
+  {
+    slug: "nice",
+    base: "/fr",
+    copyLang: "fr",
+    name: "Nice",
+    published: true,
+    seoTitle: "Répondeur téléphonique IA pour les restaurants niçois — Vox par BitePerk",
+    seoDescription:
+      "Vox répond au téléphone de votre restaurant à Nice d'une voix naturelle, tient la ligne quand la saison déborde et vérifie le registre réel. Pilotes ouverts en France.",
+    heroHeadline: "L'été, la terrasse déborde — et le téléphone avec. Vox tient la ligne.",
+    intro: [
+      "Un soir de juillet dans le Vieux-Nice : la terrasse est pleine, la file attend, et le téléphone n'arrête pas — une table pour ce soir, une réservation pour demain, une question en italien sur les horaires. Vox répond à tout cela d'une voix calme pendant que la salle avance.",
+      "Nice vit à deux rythmes. Hors saison, le téléphone respire ; l'été venu, les couverts doublent et la ligne sature du matin au soir, portée par une clientèle qui appelle autant en italien et en anglais qu'en français. La personne qui pourrait décrocher est déjà en salle, et l'appel qui sonne dans le vide s'en va sur la Promenade, à l'adresse suivante. C'est en haute saison, quand chaque table compte double, que le téléphone coûte le plus cher.",
+      "Vox est fait pour ce pic. Il prend l'appel dès la première sonnerie, quelle que soit l'heure, s'appuie sur le registre réel puis confirme — en laissant la main à une personne quand il le faut. Il tourne en production en Australie ; la France est un programme pilote, et Nice en fait partie depuis Paris.",
+    ],
+    districts: [
+      "Vieux-Nice", "Promenade des Anglais", "Le Port", "Cimiez", "Libération",
+      "Jean-Médecin", "Le Carré d'Or", "Riquier", "Fabron", "Mont Boron",
+    ],
+    scenarios: [
+      {
+        title: "Vingt et une heures, plein été",
+        body: "La salle et la terrasse tournent ensemble, et le téléphone ne faiblit pas. Vox prend la table de demain pendant que votre équipe reste au service, et la réservation est au registre avant que l'appelant ait raccroché.",
+      },
+      {
+        title: "Un appel en italien",
+        body: "À une heure de la frontière, une bonne part des appels arrivent en italien ou en anglais. C'est précisément ce qu'un pilote sert à éprouver ; nous préférons vous le montrer sur vos appels que l'écrire ici.",
+      },
+      {
+        title: "La bascule de saison",
+        body: "Le jour où la saison démarre, le volume d'appels change du tout au tout. Vox encaisse ce pic sans embaucher un standard pour trois mois, puis se fait oublier quand la ville se vide.",
+      },
+      {
+        title: "« On avait dit en terrasse »",
+        body: "Chaque appel garde son enregistrement et sa transcription. Une demande contestée — terrasse ou salle — se relit en quelques secondes plutôt que de se discuter.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Vox fonctionne-t-il déjà à Nice ?",
+        a: "Il est en production en Australie, où il répond à de vrais appels pour des établissements qui le paient. En France, nous signons des pilotes en ce moment — honnêtement : éprouvé ailleurs, en cours d'arrivée ici, et les conditions le reflètent.",
+      },
+      {
+        q: "Nous n'ouvrons vraiment qu'en saison. Est-ce pour nous ?",
+        a: "Oui, et c'est même là que Vox se justifie le mieux : il absorbe le pic sans standard saisonnier à recruter, et les conditions du pilote se conviennent au cas par cas.",
+      },
+      {
+        q: "Et quand tout sonne en même temps un soir d'août ?",
+        a: "Tous les appels sont pris ensemble, dès la première sonnerie. La simultanéité est le cœur d'un hôte automatisé — une tonalité occupée, un soir d'été, c'est une table perdue sur la Promenade.",
+      },
+      {
+        q: "Faut-il un nouveau numéro ou du matériel ?",
+        a: "Non. Vous gardez votre numéro et transférez les appels vers Vox — tous, ou seulement les débordements. Ce transfert est toute l'installation.",
+      },
+      {
+        q: "Combien ça coûte ?",
+        a: "Les conditions se fixent avec chaque établissement, pas sur une grille, et l'on convient d'un bon résultat avant le premier appel. Si Vox ne gagne pas sa place, vous arrêtez.",
+      },
+    ],
+    aiLocal: {
+      lead: "Ce qui travaille sous la voix : une oreille réglée sur Nice et ses langues, un registre consulté avant chaque oui, et le réflexe de passer la main quand l'appel n'a rien d'ordinaire.",
+      points: [
+        {
+          icon: "pin",
+          title: "Il écrit juste les noms",
+          body: "Cimiez, Riquier, le Carré d'Or — la transcription toute faite les écorche. La version française est réglée dessus, pour qu'ils arrivent intacts dans la note de réservation.",
+        },
+        {
+          icon: "calendar-tick",
+          title: "Le registre suit la saison",
+          body: "Ce qui est libre en février ne l'est pas en août. Vox lit la disponibilité réelle avant de promettre, pour qu'un soir de pleine saison ne soit jamais vendu deux fois.",
+        },
+        {
+          icon: "phone-wave",
+          title: "Français, italien, anglais",
+          body: "À la frontière italienne et en pleine saison, les langues se mêlent sur la même ligne. Le système d'écoute est conçu pour cela, et chaque conversation du pilote l'améliore.",
+        },
+        {
+          icon: "shield",
+          title: "Il dit ce qu'il est",
+          body: "Vox se présente comme un assistant vocal, jamais comme un employé — la transparence qu'impose l'AI Act (article 50, règlement (UE) 2024/1689). Les données d'appel servent la réservation, restent consultables et ne profilent personne.",
+        },
+      ],
+    },
+    relatedGuides: [],
+    cityscapeImage: "nice-riviera-terrasse",
+    cityscapeImageAlt: "Terrasse couverte d'un restaurant face à la mer turquoise sur la Riviera, chaises blanches",
+    ...FR_STORY,
+  },
+
+  // ── Bordeaux (/fr) — Phase 2b batch B ──────────────────────────────────
+  // Spine: wine tourism — groups, tastings, set menus, the weekend influx.
+  // shield theme: retention ("gardé le temps qu'il faut").
+  {
+    slug: "bordeaux",
+    base: "/fr",
+    copyLang: "fr",
+    name: "Bordeaux",
+    published: true,
+    seoTitle: "Répondeur téléphonique IA pour les restaurants bordelais — Vox par BitePerk",
+    seoDescription:
+      "Vox répond au téléphone de votre restaurant à Bordeaux d'une voix naturelle, prend les grandes tablées et les menus accordés et vérifie le registre. Pilotes ouverts en France.",
+    heroHeadline: "Le week-end, les tablées de dégustation appellent. Vox répond à chacune.",
+    intro: [
+      "Un samedi aux Chartrons : la salle affiche complet, une cave attend derrière, et le téléphone sonne pour une tablée de huit qui veut accorder les plats aux vins. Vox répond à leur place, vérifie ce que le registre garde et fixe la réservation avant que l'appelant ne raccroche.",
+      "Bordeaux vit au rythme du vin, et cela se lit sur le téléphone : les week-ends amènent des visiteurs venus pour les crus, des groupes qui réservent longtemps à l'avance, des demandes de menus accordés et de grandes tablées. Ce sont les appels les plus rémunérateurs de la semaine, et ce sont précisément ceux qui tombent quand la salle est pleine et que personne ne peut décrocher. Un groupe qui sonne dans le vide réserve ailleurs, souvent pour le double de couverts.",
+      "Vox est fait pour ces appels-là. Il répond dès la première sonnerie, à toute heure, consulte le registre avant de rien promettre et confirme — puis transmet une demande de groupe complète à votre équipe plutôt qu'un bip de messagerie. Il tourne en production en Australie ; la France est un programme pilote, et Bordeaux s'y ajoute après Paris.",
+    ],
+    districts: [
+      "Saint-Pierre", "Les Chartrons", "Les Quinconces", "Saint-Michel", "La Bastide",
+      "Nansouty", "Caudéran", "Saint-Seurin", "Bacalan", "Les Capucins",
+    ],
+    scenarios: [
+      {
+        title: "La grande tablée du samedi",
+        body: "Un groupe de dix veut un menu accordé aux vins pour samedi soir. Vox recueille la date, le nombre, le budget et les régimes, et envoie une piste complète à votre équipe au lieu de la laisser sur un répondeur.",
+      },
+      {
+        title: "Le week-end des primeurs",
+        body: "Les fins de semaine amènent d'un coup les visiteurs venus pour le vin, et les appels avec. Chacun est pris au même moment plutôt que mis en attente — c'est la différence entre une salle pleine et des couverts partis chez le voisin.",
+      },
+      {
+        title: "« On avait réservé la table près de la cave »",
+        body: "Chaque appel garde son enregistrement et sa transcription. Une demande précise — une table, un accord, une allergie — se relit en quelques secondes plutôt que de se rejouer de mémoire.",
+      },
+      {
+        title: "L'appel qui vient de loin",
+        body: "Un visiteur prépare son passage à Bordeaux des semaines à l'avance, souvent en anglais. Vox prend la réservation quand elle arrive, à n'importe quelle heure, et la range au registre avec sa transcription.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Vox fonctionne-t-il déjà à Bordeaux ?",
+        a: "Il est en production en Australie, où il répond à de vrais appels pour des établissements qui le paient. En France, nous ouvrons des pilotes en ce moment — dit simplement : éprouvé ailleurs, en cours d'arrivée ici, et les conditions du pilote le reflètent.",
+      },
+      {
+        q: "Nous sommes une table de quartier, pas un grand nom. Est-ce pour nous ?",
+        a: "Oui — les pilotes se règlent maison par maison. Une petite table apprend davantage à la version française qu'une grande enseigne, et tout se convient au cas par cas, sans grille tarifaire.",
+      },
+      {
+        q: "Et quand plusieurs groupes appellent le même soir ?",
+        a: "Tous les appels sont pris ensemble, dès la première sonnerie. La simultanéité est le cœur d'un hôte automatisé — une tonalité occupée, un samedi, c'est une grande tablée qui s'en va.",
+      },
+      {
+        q: "Faut-il un nouveau numéro ou du matériel ?",
+        a: "Non. Vous gardez votre numéro et transférez les appels vers Vox — tous, ou seulement les débordements. Ce transfert est toute l'installation.",
+      },
+      {
+        q: "Combien ça coûte ?",
+        a: "Les conditions se fixent avec chaque maison, pas sur une grille, et l'on convient d'un bon résultat avant le premier appel. Si Vox ne gagne pas sa place, vous arrêtez.",
+      },
+    ],
+    aiLocal: {
+      lead: "Trois choses tournent sous la voix : reconnaître les noms bordelais, lire le registre avant tout engagement, et passer la main à une personne pour tout ce qui dépasse la réservation simple.",
+      points: [
+        {
+          icon: "pin",
+          title: "Il connaît les noms",
+          body: "Les Chartrons, Nansouty, la Bastide — la transcription toute faite les malmène. La version française est réglée dessus, pour qu'ils arrivent intacts dans la note de réservation.",
+        },
+        {
+          icon: "calendar-tick",
+          title: "Le registre avant la promesse",
+          body: "Une grande tablée du samedi ne s'improvise pas. Vox lit la disponibilité réelle avant de s'engager, pour qu'un service déjà plein ne soit pas vendu une fois de trop.",
+        },
+        {
+          icon: "phone-wave",
+          title: "Des appels d'ailleurs",
+          body: "Une ville de vin reçoit des appels de toute l'Europe, souvent en anglais et des semaines à l'avance. Le système d'écoute est fait pour cet éventail, et chaque appel du pilote l'affine.",
+        },
+        {
+          icon: "shield",
+          title: "Gardé le temps qu'il faut",
+          body: "Les données d'un appel servent la réservation puis ne s'éternisent pas : conservées le temps utile, elles restent consultables par la maison et ne construisent aucun profil d'appelant.",
+        },
+      ],
+    },
+    relatedGuides: [],
+    cityscapeImage: "bordeaux-wine-cellar",
+    cityscapeImageAlt: "Cave à vins vitrée d'un restaurant bordelais, bouteilles françaises en présentation",
+    ...FR_STORY,
+  },
+
+  // ── Toulouse (/fr) — Phase 2b batch B ──────────────────────────────────
+  // Spine: the one-hour weekday business lunch (aerospace) + a student
+  // evening. shield theme: access control (records stay with the venue).
+  {
+    slug: "toulouse",
+    base: "/fr",
+    copyLang: "fr",
+    name: "Toulouse",
+    published: true,
+    seoTitle: "Répondeur téléphonique IA pour les restaurants toulousains — Vox par BitePerk",
+    seoDescription:
+      "Vox répond au téléphone de votre restaurant à Toulouse d'une voix naturelle, tient la ligne au coup de feu de midi et vérifie le registre réel. Pilotes ouverts en France.",
+    heroHeadline: "Midi en semaine, la ville déjeune en une heure. Le téléphone n'attend pas.",
+    intro: [
+      "Un mardi midi près du Capitole : la salle se remplit d'un coup de tables de travail qui ont une heure, pas plus, et le téléphone sonne pour une réservation de groupe l'après-midi même. Vox répond quand la salle est débordée, vérifie ce qui reste et cale la table avant que l'appelant ne raccroche.",
+      "Toulouse déjeune vite et en nombre. Les bureaux de l'aéronautique remplissent les salles à midi en semaine, la ville étudiante prend le relais le soir, et entre les deux la ligne ne cesse pas de sonner. La personne qui pourrait répondre porte des assiettes, et l'appel resté sans réponse à midi file à l'adresse d'à côté, sous les mêmes briques roses. Un déjeuner d'affaires manqué, c'est une table de six perdue en pleine semaine.",
+      "Vox est fait pour ce midi serré. Il prend l'appel dès la première sonnerie, à toute heure, s'appuie sur le registre réel puis confirme — en laissant la main à une personne quand la demande le mérite. Il tourne en production en Australie ; la France est un programme pilote, et Toulouse s'y joint après Paris.",
+    ],
+    districts: [
+      "Le Capitole", "Saint-Cyprien", "Les Carmes", "Saint-Aubin", "Les Chalets",
+      "Compans-Caffarelli", "Le Busca", "Arnaud-Bernard", "Les Minimes", "Saint-Georges",
+    ],
+    scenarios: [
+      {
+        title: "Midi, une heure montre en main",
+        body: "Le déjeuner de semaine se joue en une heure et se remplit d'un coup. Vox prend la réservation de l'après-midi pendant que la salle envoie, et elle est au registre avant que l'appelant ait raccroché.",
+      },
+      {
+        title: "Le pot de fin de projet",
+        body: "Une équipe veut réserver pour vingt le soir même, à la dernière minute. Vox recueille le nombre, l'heure et le budget, et transmet une piste complète à votre équipe plutôt qu'un message qu'on lira trop tard.",
+      },
+      {
+        title: "« C'était pour douze, pas dix »",
+        body: "Chaque appel garde son enregistrement et sa transcription. Un nombre contesté cesse d'opposer deux souvenirs : il se relit en quelques secondes.",
+      },
+      {
+        title: "Le service du soir étudiant",
+        body: "Quand la ville étudiante sort, les appels changent de ton et d'heure. Vox les prend aussi tard qu'ils arrivent, sans standardiste de nuit, et range chaque réservation au registre.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Vox fonctionne-t-il à Toulouse aujourd'hui ?",
+        a: "Non. Il est en production en Australie, où il répond à de vrais appels pour des maisons qui le paient, et la France est un programme pilote que nous ouvrons. Version honnête : éprouvé ailleurs, en train d'arriver ici — les conditions du pilote sont écrites pour cela.",
+      },
+      {
+        q: "Nous vivons surtout du midi en semaine. Est-ce pour nous ?",
+        a: "Oui, et c'est même là que Vox se justifie le mieux : il tient la ligne quand la salle est pleine à midi, et les conditions du pilote se conviennent au cas par cas, sans grille.",
+      },
+      {
+        q: "Et quand tout sonne pendant le coup de feu de midi ?",
+        a: "Tous les appels sont pris ensemble, dès la première sonnerie. La simultanéité est le cœur d'un hôte automatisé — une tonalité occupée à midi, c'est une table de travail qui s'en va.",
+      },
+      {
+        q: "Faut-il un nouveau numéro ou du matériel ?",
+        a: "Non. Vous gardez votre numéro et transférez les appels vers Vox — tous, ou seulement les débordements. Ce transfert est toute l'installation.",
+      },
+      {
+        q: "Combien ça coûte ?",
+        a: "Les conditions se fixent avec chaque maison plutôt que sur une liste de prix, et l'on convient d'un bon résultat avant le premier appel. Si Vox ne mérite pas sa place, vous arrêtez.",
+      },
+    ],
+    aiLocal: {
+      lead: "La machine sous la voix fait trois choses : comprendre les noms d'ici, ne promettre que ce que le registre confirme, et rendre la main à l'équipe dès qu'un appel se complique.",
+      points: [
+        {
+          icon: "pin",
+          title: "Il écrit juste les noms",
+          body: "Le Capitole, Saint-Cyprien, les Carmes — la transcription générique les écorche. La version française est réglée dessus, pour qu'ils arrivent intacts dans la note.",
+        },
+        {
+          icon: "calendar-tick",
+          title: "Une heure, pas de rab",
+          body: "Un midi qui se remplit d'un coup ne pardonne pas un oui de trop. Vox ne s'engage qu'après avoir lu le registre, pour qu'une table promise existe vraiment.",
+        },
+        {
+          icon: "phone-wave",
+          title: "Le monde du travail au bout du fil",
+          body: "Les bureaux appellent en rafale à midi, la ville étudiante le soir. Le système d'écoute encaisse ce va-et-vient d'accents et d'horaires, et le pilote l'entraîne à chaque appel.",
+        },
+        {
+          icon: "shield",
+          title: "Réservé à la maison",
+          body: "Les enregistrements et les notes restent accessibles à la maison seule, jamais à des tiers, et ne servent qu'à honorer la réservation. Aucun profil d'appelant n'est constitué.",
+        },
+      ],
+    },
+    relatedGuides: [],
+    cityscapeImage: "toulouse-brasserie",
+    cityscapeImageAlt: "Salle de brasserie toulousaine, mur de brique et appliques, tables et banquette en bois",
+    ...FR_STORY,
+  },
+
+  // ── Lille (/fr) — Phase 2b batch B ─────────────────────────────────────
+  // Spine: the estaminet + the Braderie weekend that breaks the phone +
+  // cross-border Belgian trade. shield theme: the venue can review AND correct
+  // the record. NB: French+English only — never imply Dutch is handled (that
+  // caveat belongs to the Belgian trees).
+  {
+    slug: "lille",
+    base: "/fr",
+    copyLang: "fr",
+    name: "Lille",
+    published: true,
+    seoTitle: "Répondeur téléphonique IA pour les restaurants lillois — Vox par BitePerk",
+    seoDescription:
+      "Vox répond au téléphone de votre estaminet ou restaurant à Lille d'une voix naturelle, tient la ligne les week-ends chargés et vérifie le registre. Pilotes ouverts en France.",
+    heroHeadline: "Le week-end de la Braderie, la ligne explose. Vox décroche sans faiblir.",
+    intro: [
+      "Un soir dans un estaminet du Vieux-Lille : les tables sont pleines de moules et de bière du Nord, et le téléphone sonne pour une réservation de groupe le week-end suivant. Vox répond quand la salle ne peut pas, vérifie ce qui reste et note la table avant que l'appelant ne raccroche.",
+      "Lille tient de la Flandre autant que de la France, et son calendrier a un sommet : la Braderie, un week-end où la ville double et où le téléphone n'arrête plus de sonner du vendredi au dimanche. Le reste de l'année, la clientèle passe la frontière belge dans les deux sens, et la ligne suit. La personne qui décrocherait est déjà débordée en salle, et l'appel manqué, un week-end pareil, c'est une grande tablée perdue d'un seul coup.",
+      "Vox est fait pour ce pic. Il décroche dès la première sonnerie, à toute heure, lit ce que le registre a réellement de libre et confirme — en confiant à une personne ce qui sort de l'ordinaire. Il tourne en production en Australie ; la France est un programme pilote, et Lille referme la première série après Paris.",
+    ],
+    districts: [
+      "Vieux-Lille", "Wazemmes", "Moulins", "Vauban-Esquermes", "Fives",
+      "Saint-Maurice Pellevoisin", "Bois-Blancs", "Lille-Sud", "Euralille", "République",
+    ],
+    scenarios: [
+      {
+        title: "Le week-end de la Braderie",
+        body: "Trois jours où la ville double et où la ligne ne s'arrête jamais. Vox prend chaque appel à mesure qu'il arrive plutôt que de le laisser sonner, et range les réservations au registre pendant que la salle tourne.",
+      },
+      {
+        title: "La tablée qui vient de Belgique",
+        body: "Une partie des appels franchit la frontière belge. Le français et l'anglais sur une même ligne sont ce qu'un pilote sert d'abord à éprouver ; nous préférons vous le montrer sur vos appels que l'affirmer ici.",
+      },
+      {
+        title: "« J'avais réservé pour le samedi de la Braderie »",
+        body: "Chaque appel garde son enregistrement et sa transcription. Une réservation contestée, surtout un week-end chargé, se relit en quelques secondes plutôt que de se discuter.",
+      },
+      {
+        title: "Moules-frites pour vingt",
+        body: "Un groupe veut réserver pour vingt un soir de match ou de marché. Vox recueille le nombre, l'heure et les régimes et transmet une piste complète, au lieu d'un message découvert trop tard.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Vox fonctionne-t-il déjà à Lille ?",
+        a: "Il est en production en Australie, où il répond à de vrais appels pour des établissements qui le paient. En France, nous signons des pilotes en ce moment — honnêtement : éprouvé ailleurs, en cours d'arrivée ici, et les conditions le reflètent.",
+      },
+      {
+        q: "Nous sommes un estaminet, pas une grande salle. Est-ce pour nous ?",
+        a: "Oui — les pilotes se règlent maison par maison. Un petit estaminet apprend davantage à la version française qu'une grande salle, et tout se convient au cas par cas, sans grille.",
+      },
+      {
+        q: "Et le week-end de la Braderie, quand tout sonne à la fois ?",
+        a: "C'est exactement ce pour quoi Vox existe : tous les appels sont pris ensemble, dès la première sonnerie. Une tonalité occupée, ce week-end-là, c'est une grande tablée qui file ailleurs.",
+      },
+      {
+        q: "Faut-il un nouveau numéro ou du matériel ?",
+        a: "Non. Vous gardez votre numéro et transférez les appels vers Vox — tous, ou seulement les débordements. Ce transfert est toute l'installation.",
+      },
+      {
+        q: "Combien ça coûte ?",
+        a: "Les conditions se fixent avec chaque maison, pas sur une grille, et l'on convient d'un bon résultat avant le premier appel. Si Vox ne gagne pas sa place, vous arrêtez.",
+      },
+    ],
+    aiLocal: {
+      lead: "Derrière la voix, trois réflexes : écrire juste les noms du Nord, vérifier le registre avant de dire oui, et confier à une personne tout ce qui n'est pas une réservation ordinaire.",
+      points: [
+        {
+          icon: "pin",
+          title: "Il connaît le Nord",
+          body: "Wazemmes, le Vieux-Lille, Esquermes — la transcription toute faite les écorche. La version française est réglée dessus, pour qu'ils arrivent intacts dans la note de réservation.",
+        },
+        {
+          icon: "calendar-tick",
+          title: "Un pic sans standardiste",
+          body: "Un week-end de Braderie apporte en trois jours le volume d'appels d'un mois. Vox l'absorbe sans recruter un standard, et lit le registre avant chaque oui pour ne rien vendre deux fois.",
+        },
+        {
+          icon: "phone-wave",
+          title: "De part et d'autre de la frontière",
+          body: "Les appels arrivent en français et en anglais, souvent d'au-delà de la frontière belge. Le système d'écoute est fait pour ce mélange, et chaque appel du pilote l'affine.",
+        },
+        {
+          icon: "shield",
+          title: "À vous, et corrigeable",
+          body: "Chaque appel est conservé avec sa transcription, que la maison peut relire et corriger, et n'est jamais utilisé pour ficher un client. Les données servent la réservation, rien d'autre.",
+        },
+      ],
+    },
+    relatedGuides: [],
+    cityscapeImage: "lille-estaminet",
+    cityscapeImageAlt: "Salle lambrissée d'un estaminet du Nord, chaises en bois et tables dressées",
+    ...FR_STORY,
+  },
+
+  // ── Nantes (/fr) — Phase 2b batch C ────────────────────────────────────
+  // Spine: weekend brunch + families, party sizes that keep changing.
+  // shield theme: purpose limitation ("ne sert qu'à la réservation").
+  {
+    slug: "nantes",
+    base: "/fr",
+    copyLang: "fr",
+    name: "Nantes",
+    published: true,
+    seoTitle: "Répondeur téléphonique IA pour les restaurants nantais — Vox par BitePerk",
+    seoDescription:
+      "Vox répond au téléphone de votre restaurant à Nantes d'une voix naturelle, encaisse les week-ends en famille et vérifie le registre. Pilotes ouverts en France.",
+    heroHeadline: "Le dimanche, les familles appellent et le nombre change trois fois. Vox suit.",
+    intro: [
+      "Un dimanche vers le Bouffay : la salle se remplit de tablées de famille, les poussettes s'alignent près de l'entrée, et le téléphone sonne pour une réservation qui passe de six à huit puis à sept. Vox répond quand la salle déborde, tient le compte à jour et confirme avant que l'appelant ne raccroche.",
+      "Nantes reçoit en famille, surtout le week-end : brunchs, anniversaires, grandes tablées dont le nombre bouge jusqu'au dernier moment. Ces réservations-là se règlent au téléphone, par petites retouches successives, et elles tombent quand la salle est pleine et que personne ne peut noter le changement. Un appel manqué le dimanche, ce n'est pas une table en moins, c'est une famille entière qui réserve ailleurs.",
+      "Vox est fait pour ces réservations qui bougent. Il décroche dès la première sonnerie, à toute heure, relit le registre à chaque changement et confirme le nouveau compte — en confiant à une personne ce qui sort de l'ordinaire. Il tourne en production en Australie ; la France est un programme pilote, et Nantes s'y ajoute.",
+    ],
+    districts: [
+      "Le Bouffay", "Graslin", "Talensac", "Île de Nantes", "Les Hauts-Pavés",
+      "Chantenay", "Doulon", "Malakoff", "Les Dervallières", "Zola",
+    ],
+    scenarios: [
+      {
+        title: "Le brunch du dimanche",
+        body: "Les familles arrivent par vagues et le nombre change à chaque appel. Vox met la réservation à jour à mesure, relit le registre et confirme le nouveau compte sans faire attendre la salle.",
+      },
+      {
+        title: "« Finalement, on sera neuf »",
+        body: "Une tablée grossit la veille pour le lendemain. Vox reprend la réservation, vérifie que la place existe encore et confirme — ou propose un autre créneau plutôt que de promettre une table qui n'y est plus.",
+      },
+      {
+        title: "L'anniversaire à caler",
+        body: "Un parent veut réserver pour douze avec un gâteau et une chaise haute. Vox recueille le nombre, l'heure et les détails, et transmet une piste complète à votre équipe plutôt qu'un message sur le répondeur.",
+      },
+      {
+        title: "« On avait dit sans les marches »",
+        body: "Chaque appel garde son enregistrement et sa transcription. Une demande précise — une poussette, un accès, une allergie — se relit en quelques secondes plutôt que de se rejouer de mémoire.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Vox fonctionne-t-il déjà à Nantes ?",
+        a: "Il est en production en Australie, où il répond à de vrais appels pour des établissements qui le paient. En France, nous ouvrons des pilotes en ce moment — dit simplement : éprouvé ailleurs, en cours d'arrivée ici, et les conditions du pilote le reflètent.",
+      },
+      {
+        q: "Nous faisons surtout le week-end et la famille. Est-ce pour nous ?",
+        a: "Oui, et c'est là que Vox aide le plus : il tient les réservations qui changent quand la salle est pleine, et les conditions du pilote se conviennent au cas par cas, sans grille.",
+      },
+      {
+        q: "Et quand tout sonne pendant le service du dimanche ?",
+        a: "Tous les appels sont pris ensemble, dès la première sonnerie. La simultanéité est le cœur d'un hôte automatisé — une tonalité occupée, un dimanche, c'est une tablée de famille qui s'en va.",
+      },
+      {
+        q: "Faut-il un nouveau numéro ou du matériel ?",
+        a: "Non. Vous gardez votre numéro et transférez les appels vers Vox — tous, ou seulement les débordements. Ce transfert est toute l'installation.",
+      },
+      {
+        q: "Combien ça coûte ?",
+        a: "Les conditions se fixent avec chaque maison, pas sur une grille, et l'on convient d'un bon résultat avant le premier appel. Si Vox ne gagne pas sa place, vous arrêtez.",
+      },
+    ],
+    aiLocal: {
+      lead: "Sous la voix, trois choses simples : reconnaître les noms nantais, tenir le registre à jour à chaque retouche, et passer la main à une personne dès qu'une demande sort du cadre.",
+      points: [
+        {
+          icon: "pin",
+          title: "Il connaît les noms",
+          body: "Le Bouffay, Talensac, les Hauts-Pavés — la transcription toute faite les abîme. La version française est réglée dessus, pour qu'ils arrivent intacts dans la note de réservation.",
+        },
+        {
+          icon: "calendar-tick",
+          title: "Le compte reste juste",
+          body: "Une tablée qui passe de six à neuf n'existe que si le registre le dit. Vox relit la disponibilité à chaque changement, pour ne jamais confirmer une place qui n'est plus là.",
+        },
+        {
+          icon: "phone-wave",
+          title: "Le brouhaha du dimanche",
+          body: "Un service de famille est bruyant, et les appels arrivent par-dessus. Le système d'écoute est fait pour ce fond sonore, et chaque appel du pilote l'affine.",
+        },
+        {
+          icon: "shield",
+          title: "Rien de plus que la réservation",
+          body: "Ce que Vox note d'un appel ne sert qu'à honorer la réservation — pas à démarcher, pas à profiler. Les données restent consultables par la maison et à personne d'autre.",
+        },
+      ],
+    },
+    relatedGuides: [],
+    cityscapeImage: "nantes-brasserie",
+    cityscapeImageAlt: "Salle lumineuse d'une brasserie nantaise, banquettes vertes, plantes et grandes fenêtres",
+    ...FR_STORY,
+  },
+
+  // ── Strasbourg (/fr) — Phase 2b batch C ────────────────────────────────
+  // Spine: extreme calendar peaks — Parliament session weeks, the Christmas
+  // markets. shield theme: no third-party sharing / no profiling.
+  {
+    slug: "strasbourg",
+    base: "/fr",
+    copyLang: "fr",
+    name: "Strasbourg",
+    published: true,
+    seoTitle: "Répondeur téléphonique IA pour les restaurants strasbourgeois — Vox par BitePerk",
+    seoDescription:
+      "Vox répond au téléphone de votre winstub ou restaurant à Strasbourg d'une voix naturelle, encaisse les semaines de pointe et vérifie le registre. Pilotes ouverts en France.",
+    heroHeadline: "Semaine de session, marché de Noël : la ville double et le téléphone déborde.",
+    intro: [
+      "Un soir de décembre près de la Petite France : la winstub est comble, les chalets du marché brillent dehors, et le téléphone n'arrête pas — une table pour ce soir, un groupe pour demain, une question en allemand sur les horaires. Vox répond à tout cela d'une voix calme pendant que la salle tient bon.",
+      "Strasbourg a un calendrier en dents de scie. Les semaines de session parlementaire et l'Avent font doubler la ville d'un coup, la clientèle passe la frontière allemande et appelle dans les deux langues, puis le calme revient. Embaucher un standard pour ces pointes n'a aucun sens, et pourtant c'est là que chaque appel manqué coûte le plus cher — une grande table perdue un soir où tout est plein.",
+      "Vox est fait pour ces pics. Il décroche dès la première sonnerie, à toute heure, lit ce que le registre a réellement de libre et confirme — en laissant la main à une personne quand la demande le mérite. Il tourne en production en Australie ; la France est un programme pilote, et Strasbourg entre dans la série.",
+    ],
+    districts: [
+      "La Petite France", "La Krutenau", "La Neustadt", "Cathédrale", "L'Orangerie",
+      "Gare", "La Robertsau", "L'Esplanade", "Les Contades", "La Bourse",
+    ],
+    scenarios: [
+      {
+        title: "La semaine de session",
+        body: "Quand le Parlement siège, les tables de travail affluent et la ligne ne faiblit pas. Vox prend les réservations à mesure qu'elles arrivent, sans standard supplémentaire, et les range au registre pendant que la salle envoie.",
+      },
+      {
+        title: "L'Avent et ses chalets",
+        body: "Le marché de Noël amène en quelques semaines le volume d'appels d'un trimestre. Chacun est pris au même instant plutôt que mis en attente — c'est la différence entre une salle pleine et des couverts partis au chalet d'à côté.",
+      },
+      {
+        title: "Un appel en allemand",
+        body: "À un pas de la frontière, une partie des appels arrivent en allemand ou en anglais. C'est ce qu'un pilote sert d'abord à éprouver, et nous préférons vous le montrer sur vos appels plutôt que l'affirmer ici.",
+      },
+      {
+        title: "« C'était pour la winstub du fond »",
+        body: "Chaque appel garde son enregistrement et sa transcription. Une demande précise — une salle, un menu, une allergie — se relit en quelques secondes plutôt que de se rejouer de mémoire.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Vox fonctionne-t-il à Strasbourg aujourd'hui ?",
+        a: "Non. Il est en production en Australie, où il répond à de vrais appels pour des maisons qui le paient, et la France est un programme pilote que nous ouvrons. Version honnête : éprouvé ailleurs, en train d'arriver ici — les conditions du pilote sont écrites pour cela.",
+      },
+      {
+        q: "Nous ne saturons vraiment qu'à certaines périodes. Est-ce pour nous ?",
+        a: "Oui, et c'est justement là que Vox se justifie : il encaisse la pointe sans recrutement saisonnier, et les conditions du pilote se conviennent au cas par cas, sans grille.",
+      },
+      {
+        q: "Et quand tout sonne un soir d'Avent ?",
+        a: "Tous les appels sont pris ensemble, dès la première sonnerie. La simultanéité est le cœur d'un hôte automatisé — une tonalité occupée, en décembre, c'est une grande table qui s'en va.",
+      },
+      {
+        q: "Faut-il un nouveau numéro ou du matériel ?",
+        a: "Non. Vous gardez votre numéro et transférez les appels vers Vox — tous, ou seulement les débordements. Ce transfert est toute l'installation.",
+      },
+      {
+        q: "Combien ça coûte ?",
+        a: "Les conditions se fixent avec chaque maison plutôt que sur une liste de prix, et l'on convient d'un bon résultat avant le premier appel. Si Vox ne mérite pas sa place, vous arrêtez.",
+      },
+    ],
+    aiLocal: {
+      lead: "Ce qui tourne sous la voix : une oreille faite pour les noms et les langues d'ici, une lecture du registre avant chaque promesse, et le réflexe de passer la main quand l'appel se complique.",
+      points: [
+        {
+          icon: "pin",
+          title: "Il écrit juste les noms",
+          body: "La Petite France, la Krutenau, la Neustadt — la transcription générique les écorche. La version française est réglée dessus, pour qu'ils arrivent intacts dans la note.",
+        },
+        {
+          icon: "calendar-tick",
+          title: "Une pointe sans standard",
+          body: "Une semaine de session ou d'Avent apporte le volume d'appels d'un trimestre. Vox l'absorbe sans embaucher, et lit le registre avant chaque oui pour ne rien vendre deux fois.",
+        },
+        {
+          icon: "phone-wave",
+          title: "Français, allemand, anglais",
+          body: "Au bord du Rhin, les langues se croisent sur la même ligne. Le système d'écoute est conçu pour ce mélange, et chaque conversation du pilote l'améliore.",
+        },
+        {
+          icon: "shield",
+          title: "Rien ne sort de la maison",
+          body: "Les enregistrements et les notes ne sont partagés avec aucun tiers et ne servent qu'à la réservation. Ils restent consultables par la maison et ne construisent aucun profil d'appelant.",
+        },
+      ],
+    },
+    relatedGuides: [],
+    cityscapeImage: "strasbourg-winstub",
+    cityscapeImageAlt: "Coin d'une winstub alsacienne lambrissée de pin clair, table dressée et banquette",
+    ...FR_STORY,
+  },
+
+  // ── Montpellier (/fr) — Phase 2b batch C ───────────────────────────────
+  // Spine: young, late, walk-in heavy — the phone competes with the door.
+  // shield theme: the caller is told it's an assistant + short retention.
+  {
+    slug: "montpellier",
+    base: "/fr",
+    copyLang: "fr",
+    name: "Montpellier",
+    published: true,
+    seoTitle: "Répondeur téléphonique IA pour les restaurants montpelliérains — Vox par BitePerk",
+    seoDescription:
+      "Vox répond au téléphone de votre restaurant à Montpellier d'une voix naturelle, décroche tard quand la salle est pleine et vérifie le registre. Pilotes ouverts en France.",
+    heroHeadline: "Tard le soir, la salle est pleine et le téléphone sonne encore. Vox décroche.",
+    intro: [
+      "Un vendredi soir près de la Comédie : la terrasse déborde, la porte ne désemplit pas, et le téléphone sonne pour une table à dix heures passées. Vox répond quand toute l'équipe est débordée par la salle, vérifie ce qui reste et cale la table avant que l'appelant ne raccroche.",
+      "Montpellier sort tard et vit dehors. La ville est jeune, la clientèle se décide au dernier moment, et le soir la salle joue sur deux tableaux : la porte qui ne s'arrête pas et le téléphone que plus personne n'entend. C'est là que filent les réservations tardives — celles qui tentent leur chance quand le voisin affiche complet. Une table décrochée à dix heures, c'est un couvert rempli une seconde fois dans la soirée.",
+      "Vox est fait pour ce moment-là. Il décroche dès la première sonnerie, aussi tard qu'il le faut, vérifie ce que le registre garde encore et confirme — puis passe la main à une personne si la demande sort de l'ordinaire. Il tourne en production en Australie ; la France est un programme pilote, et Montpellier complète la carte.",
+    ],
+    districts: [
+      "L'Écusson", "Antigone", "Les Beaux-Arts", "Comédie", "Boutonnet",
+      "Saint-Roch", "Port Marianne", "Les Arceaux", "Figuerolles", "Gambetta",
+    ],
+    scenarios: [
+      {
+        title: "Vingt-deux heures, salle pleine",
+        body: "La porte tourne encore et le téléphone sonne pour une table de dernière minute. Vox la prend pendant que l'équipe reste sur la salle, et la réservation est au registre avant que l'appelant ait raccroché.",
+      },
+      {
+        title: "L'appel de report",
+        body: "Un groupe repoussé par l'adresse voisine tente sa chance chez vous. Vox répond au moment où l'appel arrive plutôt que de le laisser sonner, vérifie la place et confirme — c'est une table gagnée sur le concurrent d'en face.",
+      },
+      {
+        title: "La terrasse un soir de match",
+        body: "Les soirs de sortie, les appels arrivent tard et en rafale. Vox les prend tous en même temps, sans standardiste de nuit, et range chaque réservation au registre avec sa transcription.",
+      },
+      {
+        title: "« J'avais réservé en terrasse »",
+        body: "Chaque appel garde son enregistrement et sa transcription. Une demande contestée — terrasse ou salle, heure ou nombre — se relit en quelques secondes plutôt que de se discuter.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Vox fonctionne-t-il déjà à Montpellier ?",
+        a: "Il est en production en Australie, où il répond à de vrais appels pour des établissements qui le paient. En France, nous signons des pilotes en ce moment — honnêtement : éprouvé ailleurs, en cours d'arrivée ici, et les conditions le reflètent.",
+      },
+      {
+        q: "Nous marchons surtout le soir et à la dernière minute. Est-ce pour nous ?",
+        a: "Oui, et c'est là que Vox aide le plus : il décroche tard, quand la salle est pleine et que le téléphone passe après la porte, et les conditions du pilote se conviennent au cas par cas.",
+      },
+      {
+        q: "Et quand ça sonne en rafale un soir de sortie ?",
+        a: "Tous les appels sont pris ensemble, dès la première sonnerie. La simultanéité est le cœur d'un hôte automatisé — une tonalité occupée, tard le soir, c'est une table qui part chez le voisin.",
+      },
+      {
+        q: "Faut-il un nouveau numéro ou du matériel ?",
+        a: "Non. Vous gardez votre numéro et transférez les appels vers Vox — tous, ou seulement les débordements. Ce transfert est toute l'installation.",
+      },
+      {
+        q: "Combien ça coûte ?",
+        a: "Les conditions se fixent avec chaque maison, pas sur une grille, et l'on convient d'un bon résultat avant le premier appel. Si Vox ne gagne pas sa place, vous arrêtez.",
+      },
+    ],
+    aiLocal: {
+      lead: "Derrière la voix, trois gestes : saisir les noms d'ici, ne s'engager qu'après avoir lu le registre, et rendre la main à l'équipe dès qu'un appel se complique.",
+      points: [
+        {
+          icon: "pin",
+          title: "Il connaît la ville",
+          body: "L'Écusson, Figuerolles, les Arceaux — la transcription toute faite les écorche. La version française est réglée dessus, pour qu'ils arrivent intacts dans la note de réservation.",
+        },
+        {
+          icon: "calendar-tick",
+          title: "Tard, mais juste",
+          body: "Une table de dernière minute n'a de valeur que si elle existe vraiment. Vox lit le registre avant de confirmer, même à dix heures passées, pour ne pas vendre une place déjà prise.",
+        },
+        {
+          icon: "phone-wave",
+          title: "Le bruit de la nuit",
+          body: "Les appels tardifs arrivent d'une rue animée, souvent depuis une terrasse. Le système d'écoute est fait pour ce fond sonore, et chaque appel du pilote l'affine.",
+        },
+        {
+          icon: "shield",
+          title: "Annoncé, puis effacé",
+          body: "Vox se présente comme un assistant vocal, jamais comme un employé, et ce qu'il note ne sert qu'à la réservation, le temps utile. Les données restent consultables par la maison et ne profilent personne.",
+        },
+      ],
+    },
+    relatedGuides: [],
+    cityscapeImage: "montpellier-terrasse",
+    cityscapeImageAlt: "Terrasse d'un restaurant le soir dans le sud de la France, parasols et guirlandes lumineuses",
+    ...FR_STORY,
+  },
+
   // ── Bruxelles (/be-fr) — the French alternate of the Brussels-EN page ───
   //
   // slug "brussels" and base "/be-fr", so it CLUSTERS with /be-en/brussels/

@@ -284,6 +284,80 @@ const catalogue = [
     url: "https://images.unsplash.com/photo-1750943082231-0d84cfabc4dd",
     brief: "Fine-dining plated dish in dramatic light — cutlery, wine glass (FR home band hospitality)",
   },
+  // ── French city cityscapes (Phase 2b, batch A) — restaurant/gastronomy
+  //    scenes per Ludovic's brief (no tourist landmarks). Pixel-reviewed
+  //    against docs/art-direction.md: no readable signage, no identifiable
+  //    faces, empty/near-empty seating. One unique establishing shot per city
+  //    (rule 3); the shared FR hospitality shot is brasserie-banquette (FR_STORY).
+  {
+    slug: "lyon-bistrot",
+    id: "photo-1690221123138-8d891be52401",
+    photographer: "Unsplash contributor",
+    url: "https://images.unsplash.com/photo-1690221123138-8d891be52401",
+    brief: "Empty Lyon bistrot dining room — bentwood chairs, marble tables, wine glasses set",
+  },
+  {
+    slug: "marseille-vieux-port",
+    id: "photo-1769676114381-9e6a064e7a98",
+    photographer: "Unsplash contributor",
+    url: "https://images.unsplash.com/photo-1769676114381-9e6a064e7a98",
+    brief: "Golden-hour harbourside restaurant terrace — empty tables, fishing boats, pastel Mediterranean townhouses (Marseille)",
+  },
+  {
+    slug: "nice-riviera-terrasse",
+    id: "photo-1786366747725-32d652cea9c0",
+    photographer: "Unsplash contributor",
+    url: "https://images.unsplash.com/photo-1786366747725-32d652cea9c0",
+    brief: "Covered Riviera restaurant terrace over turquoise sea, white chairs, headland beyond (Nice)",
+  },
+  // ── French city cityscapes (Phase 2b, batch B) — same rules as batch A. ──
+  {
+    slug: "bordeaux-wine-cellar",
+    id: "photo-1781181727460-ccd6962647d4",
+    photographer: "Unsplash contributor",
+    url: "https://images.unsplash.com/photo-1781181727460-ccd6962647d4",
+    brief: "Glazed wine-cellar wall in a restaurant, bottles in presentation, warm light (Bordeaux)",
+  },
+  {
+    slug: "toulouse-brasserie",
+    id: "photo-1695606393084-9c4490ccf667",
+    photographer: "Unsplash contributor",
+    url: "https://images.unsplash.com/photo-1695606393084-9c4490ccf667",
+    brief: "Empty brasserie with exposed red-brick wall, wall sconces, banquette and wooden tables (Toulouse)",
+  },
+  {
+    slug: "lille-estaminet",
+    id: "photo-1670819917685-f1040e76b9b7",
+    photographer: "Unsplash contributor",
+    url: "https://images.unsplash.com/photo-1670819917685-f1040e76b9b7",
+    brief: "Wood-panelled dining room, bentwood chairs, tables set — estaminet feel (Lille)",
+  },
+  // ── French city cityscapes (Phase 2b, batch C) — same rules as A/B. ──────
+  {
+    slug: "nantes-brasserie",
+    id: "photo-1761515397109-ba896074a139",
+    photographer: "Unsplash contributor",
+    url: "https://images.unsplash.com/photo-1761515397109-ba896074a139",
+    brief: "Bright brasserie — green leather banquettes, plants, tall windows, tables set (Nantes)",
+  },
+  {
+    slug: "strasbourg-winstub",
+    id: "photo-1761470484741-badac5364858",
+    photographer: "Unsplash contributor",
+    url: "https://images.unsplash.com/photo-1761470484741-badac5364858",
+    brief: "Pale pine-panelled winstub corner, carved chairs, set table and banquette (Strasbourg)",
+  },
+  {
+    // Film-grain night shot — grain is worst-case for AVIF, so params blur=15
+    // tames the encode (same lever as cafe-terrace-flowers) while keeping the
+    // soft evening look. Below the fold and lazy, but the cap still applies.
+    slug: "montpellier-terrasse",
+    id: "photo-1761455952969-8ec513b486c0",
+    params: "blur=12",
+    photographer: "Unsplash contributor",
+    url: "https://images.unsplash.com/photo-1761455952969-8ec513b486c0",
+    brief: "Evening restaurant terrace — cream umbrellas, string lights along a railing, warm glow (Montpellier)",
+  },
   {
     slug: "belgium-dinant",
     id: "photo-1491557345352-5929e343eb89",
