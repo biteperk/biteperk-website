@@ -50,7 +50,7 @@ export async function runChecks({ offline = false } = {}) {
   for (const f of pdfs) {
     const text = execFileSync("pdftotext", ["-layout", join(OUT, f), "-"]).toString().replace(/\s+/g, " ");
     for (const re of BANNED) if (re.test(text)) fail(`${f}: banned string ${re}`);
-    const base = f.replace(/-(HomePrint|PRINT)\.pdf$/, ".pdf");
+    const base = f.replace(/-(HomePrint|PRINT-Officeworks)\.pdf$/, ".pdf");
     for (const s of REQUIRED[base] || []) if (!text.includes(s)) fail(`${f}: missing "${s}"`);
   }
   pass("copy: banned strings absent, NAP/phones/URLs present byte-exact");
@@ -76,7 +76,7 @@ export async function runChecks({ offline = false } = {}) {
   for (const f of pdfs) {
     const info = execFileSync("pdfinfo", [join(OUT, f)]).toString();
     const m = info.match(/Page size:\s+([\d.]+) x ([\d.]+)/);
-    const want = f.includes("2up") ? SIZES.a4l : f.includes("-PRINT") ? SIZES.print : SIZES.trim;
+    const want = f.includes("2up") ? SIZES.a4l : f.includes("-PRINT-") ? SIZES.print : SIZES.trim;
     if (!m || Math.abs(+m[1] - want[0]) > 0.6 || Math.abs(+m[2] - want[1]) > 0.6) fail(`${f}: page size ${m?.[1]}×${m?.[2]} pt, want ${want.join("×")}`);
     const pages = +info.match(/Pages:\s+(\d+)/)[1];
     if (pages !== 2) fail(`${f}: ${pages} pages, want 2`);
@@ -136,7 +136,7 @@ export async function runChecks({ offline = false } = {}) {
   pass(`qr: every code decodes to its intended URL${offline ? "" : " and the URL answers"}`);
 
   // 7. draft lock
-  const printFiles = pdfs.filter((f) => f.includes("-PRINT"));
+  const printFiles = pdfs.filter((f) => f.includes("-PRINT-"));
   if (!report.approved && printFiles.length) fail(`PRINT PDFs written while the testimonial is unapproved: ${printFiles.join(", ")}`);
   if (report.approved && printFiles.length !== 2) fail("testimonial approved but PRINT PDFs missing");
   pass(report.approved ? "draft: quote approved — PRINT PDFs written" : "draft: quote unapproved — PRINT PDFs withheld, previews carry the DRAFT ribbon");

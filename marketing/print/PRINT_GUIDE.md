@@ -19,10 +19,10 @@ Both are now built by `npm run collateral` from `marketing/flyer_and_broucher/v2
 |---|---|---|
 | **Home/office** — brochure | `BitePerk_Brochure_HomePrint_A4_2up.pdf` | A4, **landscape**, **double-sided, flip on SHORT edge**, colour, "Actual size" (100% — NOT "fit to page"). Cut down the dotted centre line → 2 brochures per sheet. Light-theme back, so it doesn't drink toner. |
 | **Home/office** — flyer | `voxtable-flyer-a5-HomePrint.pdf` | A5 (or A4 fit-to-page), double-sided, flip on SHORT edge, 100%. |
-| **Print shop** — brochure | `BitePerk_VoxTable_Brochure_A5-PRINT.pdf` | "A5 double-sided, 3mm bleed + crop marks included, trim to A5. **350gsm silk, soft-touch matte laminate.**" Spot-UV on the gold band is the upgrade. |
-| **Print shop** — flyer | `voxtable-flyer-a5-PRINT.pdf` | "A5 double-sided, 3mm bleed included, trim to A5. 300gsm silk." |
+| **Print shop** — brochure | `BitePerk_VoxTable_Brochure_A5-PRINT-Officeworks.pdf` | "A5 double-sided, 3mm bleed + crop marks included, trim to A5. **350gsm silk, soft-touch matte laminate.**" Spot-UV on the gold band is the upgrade. |
+| **Print shop** — flyer | `voxtable-flyer-a5-PRINT-Officeworks.pdf` | "A5 double-sided, 3mm bleed included, trim to A5. 300gsm silk." |
 
-**The Mazcina quote was approved by Camilo & Mauro on 7 Sep 2026** (`testimonial.approved` in `copy.mjs`), so the `-PRINT.pdf` files are built and the DRAFT strip is gone. If the wording ever changes, flip the flag back until they re-approve.
+**The Mazcina quote was approved by Camilo & Mauro on 7 Sep 2026** (`testimonial.approved` in `copy.mjs`), so the `-PRINT-Officeworks.pdf` files are built and the DRAFT strip is gone. If the wording ever changes, flip the flag back until they re-approve.
 
 Paper at home: the heaviest your printer takes (160–200gsm ideal). Plain 80gsm works but feels cheap — the brochure IS the brand in their hands.
 

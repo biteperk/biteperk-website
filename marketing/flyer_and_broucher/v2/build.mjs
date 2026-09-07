@@ -7,7 +7,7 @@
  *
  * HTML templates → Playwright Chromium → PDF. Three variants per piece:
  *   <name>.pdf            trim size (148×210), for screen + digital print
- *   <name>-PRINT.pdf      3 mm bleed + crop marks, for a print shop
+ *   <name>-PRINT-Officeworks.pdf   3 mm bleed + crop marks, for the print shop (Officeworks)
  *                         (only written when copy.mjs testimonial.approved === true)
  *   <name>-HomePrint.pdf  light theme, toner-safe, for a desktop printer
  * plus BitePerk_Brochure_HomePrint_A4_2up.pdf and 150-dpi previews of every page, all in pdf/.
@@ -182,7 +182,7 @@ async function main() {
     const variants = [
       { suffix: "", bleed: 0, theme: "dark" },
       { suffix: "-HomePrint", bleed: 0, theme: "light" },
-      ...(approved ? [{ suffix: "-PRINT", bleed: BLEED_MM, theme: "dark" }] : []),
+      ...(approved ? [{ suffix: "-PRINT-Officeworks", bleed: BLEED_MM, theme: "dark" }] : []),
     ];
     for (const v of variants) {
       const sheets = await p.render(copy, { bleed: v.bleed, assets });
