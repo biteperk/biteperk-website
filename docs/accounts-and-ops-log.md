@@ -10,6 +10,35 @@ existing records*), so "after = before + this entry" always holds.
 
 ---
 
+## 2026-09-07 — regulator correspondence filed in the repo (`docs/ops-records/`)
+
+Four PDFs had been sitting untracked in the working copy since August — real
+approvals with nothing recording that they existed, and nothing stopping a
+machine rebuild from losing them. They are now committed:
+
+| File | What it is |
+|---|---|
+| `2026-08-12-alphanumeric-sender-id-submission-req-28926493.pdf` | Alphanumeric Sender ID submission for BitePerk in AU (request #28926493) |
+| `2026-08-18-sms-sender-id-participate-approved.pdf` | SMS Sender ID Register — application to **participate** approved |
+| `2026-08-18-sms-sender-id-register-approved.pdf` | SMS Sender ID Register — application to **register the sender ID** approved |
+| `2026-08-18-duns-number-update-case-34761901.pdf` | DUNS number update completed (case #34761901) |
+
+**This is a deliberate exception to `.gitignore`'s "Local business documents —
+never repo content" rule**, and the exception is narrow: these are *regulator
+and registry correspondence cited as evidence*, they carry no credentials, and
+losing them means re-applying rather than re-downloading. Company registration,
+client files and anything with credentials in it stay outside the repo as
+before — the rule is unchanged, this is one scoped carve-out, noted in
+`.gitignore` itself so the next person sees the reasoning at the point of
+decision.
+
+Also in the same pass: `Expenses/`, `Opal-Transport/` and `Socials/` (personal,
+not site content) are now gitignored rather than sitting untracked at the repo
+root, and `~$*` is ignored so Office lock files stop masquerading as real files
+— one had been in `marketing/` since 31 Jul.
+
+---
+
 ## 2026-07-27 — biteperk.com.au apex moved to Cloudflare; the ACME renewal risk is closed
 
 **Why:** the apex held a Firebase GTS certificate expiring **22 Oct 2026**, and

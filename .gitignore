@@ -148,3 +148,17 @@ dist-cctld/
 asic/
 clients/
 terms-conditions/
+Expenses/
+Opal-Transport/
+Socials/
+
+# Office lock files. `~$Deck.pptx` is written beside a .pptx while it is open
+# and left behind when the app crashes; one sat in marketing/ from 31 Jul to
+# 7 Sep 2026 looking like a real file.
+~$*
+
+# NOTE on docs/ops-records/: those PDFs are a DELIBERATE exception to the rule
+# above — regulator and registry correspondence (SMS Sender ID, DUNS) that the
+# ops log cites as evidence and that must survive a machine rebuild. They carry
+# no credentials. Business documents that are not cited evidence still belong
+# outside the repo.

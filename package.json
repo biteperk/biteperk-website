@@ -4,6 +4,9 @@
   "version": "0.2.0",
   "private": true,
   "description": "Biteperk company website — biteperk.com (AU + international)",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
