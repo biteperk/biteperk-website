@@ -21,7 +21,7 @@ import assert from "node:assert/strict";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { readFileSync, existsSync } from "node:fs";
-import { buildReview, collectClusters, get } from "../../scripts/build/extract-fr-review.mjs";
+import { buildReview, collectClusters, get, frChangesSince } from "../../scripts/build/extract-fr-review.mjs";
 import { buildPage } from "../../scripts/build/build-review-page.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
@@ -92,4 +92,33 @@ test("the page renders every extracted row, with the blocker marked", async () =
   assert.equal((html.match(/class="key"/g) ?? []).length, total);
   assert.equal((html.match(/class="badge"/g) ?? []).length, 1, "exactly one blocking badge");
   assert.match(html, /class="cluster is-blocking"/);
+});
+
+/* ---------------------------------------------------------------- discovery */
+
+test("--since finds no change when diffed against the current tree", async () => {
+  // The strongest invariant available without pinning a ref: the tool must
+  // agree with itself. A non-empty result here means the historical checkout
+  // is being loaded differently from the working tree — which is exactly the
+  // bug that made every string in copy.ts and markets.ts look new, because
+  // git archive shipped src/ without the tsconfig.json their "@/" alias needs.
+  const { added, changed, now } = await frChangesSince("HEAD");
+  assert.deepEqual(added, [], "self-diff reported new French");
+  assert.deepEqual(changed, [], "self-diff reported changed French");
+  assert.ok(now.size > 400, `only ${now.size} French leaves found — a module failed to load`);
+});
+
+test("--since walks all three copy modules, not just the ones that load easily", async () => {
+  const { now } = await frChangesSince("HEAD");
+  for (const file of ["copy.ts", "products.ts", "markets.ts"]) {
+    const n = [...now.keys()].filter((k) => k.startsWith(`${file}:`)).length;
+    assert.ok(n > 0, `no French leaves collected from ${file}`);
+  }
+  // markets.ts is market-scoped: both French trees must be walked.
+  for (const base of ["/fr", "/be-fr"]) {
+    assert.ok(
+      [...now.keys()].some((k) => k.startsWith(`markets.ts:${base}.`)),
+      `markets.ts ${base} subtree not walked`,
+    );
+  }
 });

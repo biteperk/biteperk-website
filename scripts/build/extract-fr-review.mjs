@@ -18,14 +18,19 @@
  * (the summary table, row counts, the blocking callout) is derived.
  *
  * Usage: node scripts/build/extract-fr-review.mjs [--out <path>] [--check <path>]
+ *                                                  [--since <git-ref>]
  *   --out    write the document here (default: stdout)
+ *   --since  report French that is new or changed since a git ref — use this to
+ *            find what a NEW batch must cover, rather than trusting memory
  *   --check  regenerate and diff against an existing document; exit 1 if the
  *            body differs. This is how the filed 7 Sep review is regression-
  *            tested — see tests/unit/fr-review.test.mjs.
  */
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
-import { writeFileSync, readFileSync } from "node:fs";
+import { writeFileSync, readFileSync, mkdtempSync, rmSync, existsSync } from "node:fs";
+import { execSync } from "node:child_process";
+import { tmpdir } from "node:os";
 import { loadTS } from "./_load-ts.mjs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
@@ -211,6 +216,97 @@ function rowsFor(cluster, mods) {
   return cluster.keys.map((k) => ({ key: `\`${k}\``, en: get(en, k), fr: get(fr, k) }));
 }
 
+/* --------------------------------------------------------------- discovery */
+
+/**
+ * Which French a batch could possibly need to cover.
+ *
+ * The CLUSTERS above are hand-declared, which reproduces a past batch exactly
+ * but cannot NOTICE new French — that is how the AI Act citation clauses were
+ * written and shipped on the morning of 7 Sep 2026 without appearing in any
+ * cluster until someone remembered them. `--since <ref>` closes that: it diffs
+ * every French leaf string against a git ref and reports what is new or changed,
+ * which is the real definition of "needs a native pass".
+ *
+ * Language-scoped modules expose `{ en, fr }`; markets.ts is market-scoped, so
+ * the whole /fr and /be-fr subtrees are French by construction.
+ */
+const FR_ROOTS = {
+  "copy.ts": (m) =>
+    Object.entries(m)
+      .filter(([, v]) => v && typeof v === "object" && typeof v.fr === "object" && v.en)
+      .map(([name, v]) => [name, v.fr]),
+  "products.ts": (m) =>
+    Object.entries(m)
+      .filter(([, v]) => v && typeof v === "object" && typeof v.fr === "object" && v.en)
+      .map(([name, v]) => [name, v.fr]),
+  "markets.ts": (m) =>
+    ["/fr", "/be-fr"].map((base) => [base, m.marketContent?.[base] ?? {}]),
+};
+
+/** Flatten an object to Map("root.a.b[0]" → string). Non-strings are ignored. */
+function leaves(root, prefix, into = new Map()) {
+  const walk = (node, path) => {
+    if (typeof node === "string") { into.set(path, node); return; }
+    if (Array.isArray(node)) return node.forEach((v, i) => walk(v, `${path}[${i}]`));
+    if (node && typeof node === "object") {
+      for (const [k, v] of Object.entries(node)) walk(v, path ? `${path}.${k}` : k);
+    }
+  };
+  walk(root, prefix);
+  return into;
+}
+
+async function frLeavesAt(dir) {
+  const out = new Map();
+  for (const [file, pick] of Object.entries(FR_ROOTS)) {
+    const abs = resolve(dir, "src/data/intl", file);
+    // A module that genuinely did not exist at an older ref is fine — there is
+    // nothing to compare. A module that EXISTS but fails to build is a bug, and
+    // must not be swallowed: silently skipping it reports its every string as
+    // "new", which is exactly the false alarm this tool exists to avoid.
+    if (!existsSync(abs)) continue;
+    let mod;
+    try {
+      mod = await loadTS(abs);
+    } catch (err) {
+      throw new Error(
+        `extract-fr-review: could not load ${file} from ${dir}.\n` +
+          `  If this is a historical ref, the checkout is probably incomplete — ` +
+          `copy.ts and markets.ts import via the "@/" alias, which esbuild only ` +
+          `resolves with tsconfig.json alongside src/.\n  ${err.message.split("\n")[0]}`,
+        { cause: err },
+      );
+    }
+    for (const [name, root] of pick(mod)) leaves(root, `${file}:${name}`, out);
+  }
+  return out;
+}
+
+/** Materialise `src/` at a ref in a temp dir so its modules can be imported. */
+async function frLeavesAtRef(ref) {
+  const dir = mkdtempSync(resolve(tmpdir(), "fr-review-"));
+  try {
+    execSync(`git archive ${JSON.stringify(ref)} src tsconfig.json | tar -x -C ${JSON.stringify(dir)}`, {
+      cwd: ROOT, stdio: ["ignore", "ignore", "pipe"],
+    });
+    return await frLeavesAt(dir);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+/** @returns {Promise<{added: string[], changed: string[], covered: Set<string>}>} */
+export async function frChangesSince(ref) {
+  const [now, then] = await Promise.all([frLeavesAt(ROOT), frLeavesAtRef(ref)]);
+  const added = [], changed = [];
+  for (const [path, text] of now) {
+    if (!then.has(path)) added.push(path);
+    else if (then.get(path) !== text) changed.push(path);
+  }
+  return { added: added.sort(), changed: changed.sort(), now };
+}
+
 /* ------------------------------------------------------------------ render */
 
 function render(mods) {
@@ -311,6 +407,26 @@ export async function buildReview() {
 
 if (process.argv[1] && import.meta.url.endsWith(process.argv[1].split("/").pop())) {
   const arg = (f) => { const i = process.argv.indexOf(f); return i === -1 ? null : process.argv[i + 1]; };
+  const since = arg("--since");
+  if (since) {
+    const { added, changed } = await frChangesSince(since);
+    const report = (label, paths) => {
+      if (!paths.length) return;
+      console.log(`\n${label} (${paths.length}):`);
+      for (const p of paths) console.log(`  ${p}`);
+    };
+    report("NEW French since " + since, added);
+    report("CHANGED French since " + since, changed);
+    const n = added.length + changed.length;
+    console.log(
+      n
+        ? `\n${n} French string(s) written since ${since} — each needs a native pass.\n` +
+            `Add the ones in scope to CLUSTERS above, then regenerate with --out.`
+        : `\nNo French has changed since ${since}.`,
+    );
+    process.exit(0);
+  }
+
   const doc = await buildReview();
   const rows = Number(doc.match(/<!-- (\d+) rows -->/)[1]);
   const check = arg("--check");
