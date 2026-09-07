@@ -67,6 +67,11 @@ const p = (seg: string) => `${locale.base}/${seg ? `${seg}/` : ""}`;
 // footer and nav stay identical there (no locale branching, no dead links).
 const footerCities = intlCitiesForBase(locale.base);
 const hasCities = footerCities.length > 0;
+// Past ~6, a single vertical list towers over the 4–5-item sibling columns
+// (10 French cities = ~440px). Split those into two sub-columns so the footer
+// stays balanced; gb-en's 8 benefits too. Below the threshold it stays a
+// single column, unchanged.
+const manyCities = footerCities.length > 6;
 const year = new Date().getFullYear();
 // Only /gb-en carries market "gb". Biteperk Ltd is a UK company; its statutory
 // website disclosure belongs on the UK tree, not on /fr or /be-*.
@@ -221,9 +226,11 @@ const isUk = locale.market === "gb";
             {hasCities && (
               <nav class="intl-footer-links" aria-labelledby="ifc-cities">
                 <p class="intl-footer-col-title" id="ifc-cities">{c.cities}</p>
-                {footerCities.map((x) => (
-                  <a href={p(x.slug)}>{x.name}</a>
-                ))}
+                <div class="intl-footer-citylist" data-many={manyCities ? "" : undefined}>
+                  {footerCities.map((x) => (
+                    <a href={p(x.slug)}>{x.name}</a>
+                  ))}
+                </div>
               </nav>
             )}
             <nav class="intl-footer-links" aria-labelledby="ifc-regions">
@@ -526,6 +533,19 @@ const isUk = locale.market === "gb";
     font-size: var(--fs-small);
   }
   .intl-footer-links a:hover { color: var(--gold); }
+  /* City links: a plain vertical list by default (unchanged for few cities),
+     but two sub-columns once there are many (data-many, set >6) so a 10-city
+     tree doesn't tower over the 4–5-item sibling columns. Single column on
+     narrow phones where the footer is already one column per row. */
+  .intl-footer-citylist { display: flex; flex-direction: column; align-items: flex-start; }
+  @media (min-width: 561px) {
+    .intl-footer-citylist[data-many] {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: var(--space-5);
+      align-items: start;
+    }
+  }
   /* Matches .intl-footer-links a exactly — it's a control, not a link, but it
      sits in the same row and must read and tap identically. */
   .intl-footer-btn {

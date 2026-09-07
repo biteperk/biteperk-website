@@ -38,11 +38,16 @@ const { items } = Astro.props;
       <a class="intl-city-card" href={x.href}>
         {/* Lazy by default (every instance sits below the fold); aspect
             reserves the box so CLS stays 0; LQIP paints behind the load. */}
+        {/* The grid is 4-up ≥981px and 2-up at every width below it (the
+            ≤560px rule changes only the gap, not the column count), so the
+            card is ~45vw on phones — NOT 90vw. Declaring 90vw made every card
+            fetch ~2× the pixels it displays on exactly the slow-connection
+            devices this strip most needs to be light on. */}
         <ImageBlock
           slug={x.imageSlug}
           alt={x.imageAlt}
           aspect="16 / 10"
-          widths="(min-width: 981px) 25vw, (min-width: 561px) 45vw, 90vw"
+          widths="(min-width: 981px) 25vw, 45vw"
           rounded={false}
           class="intl-city-card-photo"
         />
