@@ -24,6 +24,15 @@
  * 27 Jul 2026 — DISCHARGED, cleared for prospect-facing use. The standing rule
  * is unchanged and applies to whatever is written next: French added after that
  * date needs its own native pass.
+ *
+ * The 7 Sep 2026 batch (this file's /fr about-page intro, and the EU AI Act
+ * article-50 citation clause on BOTH the /fr and /be-fr trust cards) had a
+ * VERBAL pass from Ludovic, confirmed by Sam on 7 Sep 2026 — DISCHARGED, no
+ * corrections. Unlike the two sign-offs above there is no email behind it; the
+ * review filed at docs/ops-records/2026-09-07-french-review-ludovic.md
+ * is the record of what it covered. The two citation clauses are worded
+ * differently on purpose — check-intl-similarity measures /fr against /be-fr —
+ * so do not converge them when editing. Standing rule unchanged after that date.
  */
 import type { Locale } from "@/data/locales";
 import type { CopyBundle, Override } from "./index";
@@ -552,7 +561,8 @@ const frFr: MarketContent = {
           },
           {
             title: "RGPD, et le règlement européen sur l'IA",
-            // DRAFT French (7 Sep 2026) — citation clause added, needs Ludovic's pass.
+            // French DISCHARGED — citation clause; verbal pass from Ludovic,
+            // confirmed by Sam 7 Sep 2026; see this file's header.
             body: "Un agent vocal qui parle à des clients relève des obligations de transparence du règlement européen sur l'IA (article 50 du règlement (UE) 2024/1689). Nous le traitons comme une contrainte de conception, pas comme une mention en bas de page.",
           },
           {
@@ -613,7 +623,8 @@ const frFr: MarketContent = {
     about: {
       title: "À propos de BitePerk — qui construit Vox",
       h1: "Un téléphone auquel on répond, conçu par des gens qui l'ont vu sonner dans le vide.",
-      // DRAFT French (5 Sep 2026): "aucune envie d'en avoir cinq" → suite — needs Ludovic's pass.
+      // French DISCHARGED — the "aucune envie d'en avoir cinq" → suite rewording;
+      // verbal pass from Ludovic, confirmed by Sam 7 Sep 2026; see this file's header.
       intro:
         "Nous sommes une petite maison sydneysienne avec un seul produit et aucune envie d'en faire une suite. Vox est né d'un constat sans gloire : l'appel manqué est ce qui coûte le plus cher en salle, et personne n'avait fait l'outil qui se contente de décrocher.",
       sections: [
@@ -896,7 +907,8 @@ const beFr: MarketContent = {
           },
           {
             title: "RGPD et règlement européen sur l'IA",
-            // DRAFT French (7 Sep 2026) — citation clause added, needs Ludovic's pass.
+            // French DISCHARGED — citation clause; verbal pass from Ludovic,
+            // confirmed by Sam 7 Sep 2026; see this file's header.
             body: "Un agent vocal qui s'adresse à des consommateurs relève pleinement des obligations de transparence du règlement sur l'IA — son article 50, dans le règlement (UE) 2024/1689. Nous en faisons une contrainte de conception, et les données d'appel servent la réservation, pas un profil.",
           },
           {

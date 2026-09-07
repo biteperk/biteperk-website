@@ -10,6 +10,64 @@ existing records*), so "after = before + this entry" always holds.
 
 ---
 
+## 2026-09-07 (later) — Ludovic's French pass lands; all twelve `DRAFT` markers dropped
+
+Ludovic Roux read the French batch assembled that morning — **117 lines across
+seven clusters**, every line paired with the English it came from — and passed it
+**with no corrections**.
+
+**The pass was VERBAL, on a call.** Recorded as verbal deliberately, the same way
+the 3 Sep one was: unlike the 26 and 27 Jul sign-offs there is no email or written
+approval behind it. That matters enough to have changed how the evidence is kept —
+see below.
+
+What it covered, and what was discharged:
+
+| Cluster | Where | Markers dropped |
+|---|---|---|
+| 1 — nav, footer, menu labels | `copy.ts` chrome (fr) | 3 (29 Jul, 7 Aug, 6 Sep) |
+| 2 — cookie bar & settings | `copy.ts` `chrome.consent` (fr) | 2 (6 Sep) |
+| 3 — the call transcript | `copy.ts` `callSim` (fr) | 1 (6 Sep) |
+| 4 — the trust strip | `copy.ts` `trustFacts` (fr) | (covered by cluster 2's marker) |
+| **5 — city-page furniture** | `copy.ts` `cityPage` (fr) | **1 — the gate on every FR city page** |
+| 6a/6b — VoxStay | `products.ts` | 2 (5 Sep) |
+| 7 — two market lines + AI Act citations | `markets.ts` | 3 (5 Sep, 7 Sep ×2) |
+
+Twelve markers, all removed; `git grep "DRAFT French" -- src/` is now empty. The
+per-file sign-off headers in `copy.ts`, `markets.ts` and `products.ts` each carry a
+new paragraph recording the pass. `index.ts` was deliberately **not** touched — it
+carries launch-gate records only, and the 3 Sep verbal pass was kept out of it too.
+
+**Cluster 5 is the one that unblocks work.** The French city-page furniture gated
+every `/fr` and `/be-fr` city page flipping `published: true`. That gate is now
+discharged. No French city is written yet — Paris and Brussels-FR are the next
+candidates, and remain their own piece of work.
+
+**Comment-only — no redeploy.** Verified the way the 3 Sep change was: `dist-global/`
+was built from `origin/main` before the edits and again after, and the two trees diffed
+excluding `.build-meta.json` (the only file `stamp-build.mjs` writes, and it legitimately
+differs per run). All **76 HTML pages byte-identical**. No French string moved; nothing
+to deploy.
+
+**The evidence is now committed, and that is a change of practice.** A verbal pass has
+nothing behind it, so the review document *is* the only record of which 117 lines were
+approved. It is filed at `docs/ops-records/2026-09-07-french-review-ludovic.md`,
+reproduced as sent with the correction columns empty. This also forced widening the
+`.gitignore` note on `docs/ops-records/`, which previously scoped that exception to
+regulator PDFs — the test is now "evidence this log cites", not "PDF from a regulator".
+
+Filing it was not optional housekeeping: both generator scripts (`extract-fr-review.mjs`,
+`build-review-page.mjs`) were **lost the same day** — written to a session scratchpad,
+never committed, gone when the session ended. The review could not be regenerated today.
+Anything that produces cited evidence should be committed with the evidence.
+
+The shared page Ludovic reviewed from is the artifact `7636ee79-…` ("French Copy Review").
+Working copies stay in `deliverables/2026-09-07-ludovic-french-batch/` (gitignored).
+
+Standing rule unchanged: French written **after 7 Sep 2026** needs its own native pass.
+
+---
+
 ## 2026-09-07 — regulator correspondence filed in the repo (`docs/ops-records/`)
 
 Four PDFs had been sitting untracked in the working copy since August — real
@@ -694,5 +752,6 @@ with the VoxStay demo (he is also the hotel prospect):
 3. Still open from before: `copy.ts:214,221` footer/nav labels (29 Jul, 7 Aug), `copy.ts:933` the French city-page furniture (gates every FR city), `markets.ts` about-intro clause (5 Sep), `intl/products.ts` VoxStay overview + detail (5 Sep).
 4. Coming next and to be bundled if ready: the localised call-simulation transcript (Phase 3) and the Paris / Bruxelles city copy (Phase 4).
 
-Owner: Sam sends; record the pass here when it lands and drop the `DRAFT`
-markers in the same commit.
+~~Owner: Sam sends; record the pass here when it lands and drop the `DRAFT`
+markers in the same commit.~~ — **done 7 Sep 2026**, see the entry at the top of
+this log. All twelve markers dropped, including the city-page furniture.

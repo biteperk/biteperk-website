@@ -34,6 +34,15 @@
  * two sign-offs above there is no email or document behind it, and that is the
  * provenance if the wording is ever questioned. The standing rule is unchanged
  * for French written after that date.
+ *
+ * The 7 Sep 2026 batch — 117 lines across seven clusters, filed at
+ * docs/ops-records/2026-09-07-french-review-ludovic.md — was read by Ludovic and
+ * passed with NO corrections. VERBAL again, confirmed by Sam on 7 Sep 2026 —
+ * DISCHARGED. Same caveat as the 3 Sep pass: there is no email or document from
+ * him behind it, so the filed review is the only record of which lines it
+ * covered. Cluster 5 (the cityPage `fr` furniture below) was the blocker on
+ * French city pages and is now clear. The standing rule is unchanged for French
+ * written after that date.
  */
 
 import type { Lang } from "@/data/locales";
@@ -322,29 +331,33 @@ export const chrome: Record<Lang, ChromeCopy> = {
     cookies: "Cookies",
     cookieSettings: "Paramètres des cookies",
     regionTitle: "Choisissez votre région",
-    // DRAFT French (29 Jul 2026) — needs Ludovic's pass. footerExplore and
-    // footerRegions render on /fr and /be-fr immediately; cities/citiesTitle
-    // stay dormant until a French city publishes.
+    // French DISCHARGED — verbal pass from Ludovic, confirmed by Sam 7 Sep 2026;
+    // see this file's header. footerExplore and footerRegions render on /fr and
+    // /be-fr immediately; cities/citiesTitle stay dormant until a French city
+    // publishes.
     cities: "Villes",
     citiesTitle: "Choisissez une ville",
     footerExplore: "Explorer",
     footerRegions: "Régions et langues",
-    // DRAFT French (7 Aug 2026) — needs Ludovic's pass. Column titles only;
-    // the product links themselves are brand nouns.
+    // French DISCHARGED — verbal pass from Ludovic, confirmed by Sam 7 Sep 2026;
+    // see this file's header. Column titles only; the product links themselves
+    // are brand nouns.
     footerProducts: "Produits",
     footerLegal: "Mentions légales",
     footerFollow: "Suivez-nous",
-    // DRAFT French (6 Sep 2026) — needs Ludovic's pass. "Menu" is the same
-    // word in French, which is why chrome.menu is in FR_SHARED_WITH_EN.
+    // French DISCHARGED — verbal pass from Ludovic, confirmed by Sam 7 Sep 2026;
+    // see this file's header. "Menu" is the same word in French, which is why
+    // chrome.menu is in FR_SHARED_WITH_EN.
     menu: "Menu",
     menuClose: "Fermer le menu",
     suggest: "Un site BitePerk existe pour votre région.",
     suggestDismiss: "Fermer",
     email: "hello@biteperk.com.au",
     rights: "Tous droits réservés.",
-    // DRAFT French (6 Sep 2026) — needs Ludovic's pass. The category titles
-    // match the cookies page (which had his verbal pass on 3 Sep 2026);
-    // the bar/modal sentences are new.
+    // French DISCHARGED — verbal pass from Ludovic, confirmed by Sam 7 Sep 2026;
+    // see this file's header. The category titles match the cookies page (which
+    // had his verbal pass on 3 Sep 2026); the bar/modal sentences were new then
+    // and are covered by the 7 Sep pass.
     consent: {
       region: "Consentement aux cookies",
       body: "Nous utilisons des statistiques respectueuses de la vie privée et le mode consentement de Google pour la mesure publicitaire. Google peut recevoir des signaux limités, sans cookies, tant que le consentement est refusé ; le stockage publicitaire et la personnalisation restent désactivés sauf si vous autorisez le marketing.",
@@ -393,7 +406,8 @@ export const trustFacts: Record<Lang, TrustFactsCopy> = {
       "Legitimate interests (Article 6(1)(f) GDPR) for answering the enquiry you send us; consent for optional cookies, withdrawable at any time. Your rights are listed in the privacy notice.",
     privacyLink: "Read the privacy notice",
   },
-  // DRAFT French (6 Sep 2026) — needs Ludovic's pass.
+  // French DISCHARGED — verbal pass from Ludovic, confirmed by Sam 7 Sep 2026;
+  // see this file's header.
   fr: {
     heading: "Où vous en êtes avec nous",
     entityLabel: "Votre cocontractant",
@@ -439,9 +453,9 @@ export const callSim: Record<Lang, CallSimCopy> = {
       { role: "bella", text: "Booked, Ellis. If you would rather speak to someone, I can pass you to the team at any point. A confirmation is on its way." },
     ],
   },
-  // DRAFT French (6 Sep 2026) — needs Ludovic's pass. The transcript is the
-  // most prospect-facing French on the site after the hero, so it should not
-  // be treated as reviewed until he has read it aloud.
+  // French DISCHARGED — verbal pass from Ludovic, confirmed by Sam 7 Sep 2026;
+  // see this file's header. The transcript is the most prospect-facing French on
+  // the site after the hero; it was cluster 3 of the batch he passed.
   fr: {
     eyebrow: "Le test de 20 h",
     headingLead: "Voici ce qu'un appel manqué",
@@ -1170,9 +1184,11 @@ export const cityPage: Record<Lang, CityPageCopy> = {
     closingBody:
       "Tell us how a busy service sounds at your venue and we'll show you Vox handling a call like it — live, before you commit to anything.",
   },
-  // DRAFT French — no fr/be-fr city is published, so nothing renders this yet.
-  // RULE (see markets.ts header): French written after 27 Jul 2026 needs its
-  // own native-speaker pass before any French city page flips published:true.
+  // French DISCHARGED — verbal pass from Ludovic, confirmed by Sam 7 Sep 2026;
+  // see this file's header. This was cluster 5 of that batch, the one that gated
+  // every French city page. No fr/be-fr city is published yet, so nothing renders
+  // this — but the native-speaker pass required before a French city page may
+  // flip published:true is now in hand.
   fr: {
     storyEyebrow: "Les appels manqués, version {city}",
     storyHeading: "Un téléphone qui sonne en plein service, c'est une réservation qui s'en va.",
