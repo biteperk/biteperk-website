@@ -22,7 +22,7 @@ Both are now built by `npm run collateral` from `marketing/flyer_and_broucher/v2
 | **Print shop** — brochure | `BitePerk_VoxTable_Brochure_A5-PRINT.pdf` | "A5 double-sided, 3mm bleed + crop marks included, trim to A5. **350gsm silk, soft-touch matte laminate.**" Spot-UV on the gold band is the upgrade. |
 | **Print shop** — flyer | `voxtable-flyer-a5-PRINT.pdf` | "A5 double-sided, 3mm bleed included, trim to A5. 300gsm silk." |
 
-**The `-PRINT.pdf` files only exist once the Mazcina quote is approved** (`testimonial.approved` in `copy.mjs`). Until then every preview carries a red DRAFT strip on purpose.
+**The Mazcina quote was approved by Camilo & Mauro on 7 Sep 2026** (`testimonial.approved` in `copy.mjs`), so the `-PRINT.pdf` files are built and the DRAFT strip is gone. If the wording ever changes, flip the flag back until they re-approve.
 
 Paper at home: the heaviest your printer takes (160–200gsm ideal). Plain 80gsm works but feels cheap — the brochure IS the brand in their hands.
 
