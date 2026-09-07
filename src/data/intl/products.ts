@@ -26,6 +26,14 @@
  * French: reviewed and signed off by Ludovic (26 Jul 2026) — product copy as
  * well as the copy.ts core. Any NEW French added here needs a fresh pass; this
  * sign-off covers the copy present at that date, not the file in perpetuity.
+ *
+ * The VoxStay French added 5 Sep 2026 (the products-overview entry and the full
+ * `voxstay` page below) had a VERBAL pass from Ludovic, confirmed by Sam on
+ * 7 Sep 2026 — DISCHARGED, no corrections. Verbal, so unlike the 26 Jul sign-off
+ * there is no email behind it; the review filed at
+ * docs/ops-records/2026-09-07-french-review-ludovic.md records what it covered.
+ * He was asked to read it as a hotel operator as well as a native speaker. The
+ * standing rule holds for French added after that date.
  */
 import type { Lang } from "../locales";
 
@@ -383,7 +391,8 @@ const overviewFr: IntlProductsOverviewCopy = {
       body:
         "Horaires, stationnement, allergènes, où se trouve l'entrée. Des réponses justes, à 23 h, sans réveiller personne.",
     },
-    // DRAFT French (5 Sep 2026) — needs Ludovic's pass.
+    // French DISCHARGED — verbal pass from Ludovic, confirmed by Sam 7 Sep 2026;
+    // see this file's header.
     voxstay: {
       outcome: "Une chambre réservée dans la langue de l'appelant.",
       body:
@@ -551,7 +560,8 @@ const productsFr: Record<string, IntlProductCopy> = {
       },
     ],
   },
-  // DRAFT French (5 Sep 2026) — needs Ludovic's pass.
+  // French DISCHARGED — verbal pass from Ludovic, confirmed by Sam 7 Sep 2026;
+  // see this file's header.
   voxstay: {
     ...featureFaqCtaFr,
     title: "VoxStay — réceptionniste téléphonique IA pour hôtels · BitePerk",

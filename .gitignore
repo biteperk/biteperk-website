@@ -157,8 +157,12 @@ Socials/
 # 7 Sep 2026 looking like a real file.
 ~$*
 
-# NOTE on docs/ops-records/: those PDFs are a DELIBERATE exception to the rule
-# above — regulator and registry correspondence (SMS Sender ID, DUNS) that the
-# ops log cites as evidence and that must survive a machine rebuild. They carry
-# no credentials. Business documents that are not cited evidence still belong
-# outside the repo.
+# NOTE on docs/ops-records/: its contents are a DELIBERATE exception to the rule
+# above — evidence the ops log cites and that must survive a machine rebuild.
+# Mostly regulator and registry correspondence (SMS Sender ID, DUNS), but the
+# test is "cited evidence", not "PDF from a regulator": the 7 Sep 2026 French
+# review is filed here because Ludovic's pass on it was VERBAL, so that document
+# is the only record of which 117 lines he approved — and its generator scripts
+# were lost the same day, having never been committed. Nothing here carries
+# credentials. Business documents that are NOT cited evidence still belong
+# outside the repo; deliverables/ is where working material goes.
