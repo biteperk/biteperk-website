@@ -162,6 +162,13 @@ const cities = intlCitiesForBase(locale.base);
     right: 0;
     z-index: 60; /* > --z-nav (50) */
     min-width: 19rem;
+    /* Cap + scroll so a long list (10 French cities = ~5 two-column rows)
+       can never run past a short viewport with no way to reach the lower
+       items — the ≤720px bottom sheet already does this; the desktop menu
+       had no bound. Keeps the dropdown inside the tablet-bounds assertion. */
+    max-height: min(70vh, 460px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
     padding: 6px;
     background: color-mix(in srgb, var(--ink-1) 96%, transparent);
     backdrop-filter: blur(20px) saturate(140%);
