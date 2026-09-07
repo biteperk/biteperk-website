@@ -1,0 +1,321 @@
+/* ------------------------------------------------------------------
+   BitePerk print stylesheet — v2 flyer + brochure (A5 148 × 210 mm)
+   Tokens are copied from src/styles/tokens.css (hex, with the token
+   name) so the print pieces use the same palette as the site. If a
+   token changes there, change it here — this file is the print SSOT.
+   All type is in real points. Nothing prints below 8.5 pt.
+   ------------------------------------------------------------------ */
+
+/* Static Inter (not the variable font): Chromium embeds static faces as CID TrueType,
+   which every print RIP accepts; the variable font came through as Type 3. */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  src: url("../../../../node_modules/@fontsource/inter/files/inter-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: italic;
+  font-weight: 400;
+  src: url("../../../../node_modules/@fontsource/inter/files/inter-latin-400-italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  src: url("../../../../node_modules/@fontsource/inter/files/inter-latin-500-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: italic;
+  font-weight: 500;
+  src: url("../../../../node_modules/@fontsource/inter/files/inter-latin-500-italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  src: url("../../../../node_modules/@fontsource/inter/files/inter-latin-600-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: italic;
+  font-weight: 600;
+  src: url("../../../../node_modules/@fontsource/inter/files/inter-latin-600-italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  src: url("../../../../node_modules/@fontsource/inter/files/inter-latin-700-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: italic;
+  font-weight: 700;
+  src: url("../../../../node_modules/@fontsource/inter/files/inter-latin-700-italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 800;
+  src: url("../../../../node_modules/@fontsource/inter/files/inter-latin-800-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: italic;
+  font-weight: 800;
+  src: url("../../../../node_modules/@fontsource/inter/files/inter-latin-800-italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Source Serif 4";
+  font-style: normal;
+  font-weight: 600;
+  src: url("../../../../node_modules/@fontsource/source-serif-4/files/source-serif-4-latin-600-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Source Serif 4";
+  font-style: normal;
+  font-weight: 700;
+  src: url("../../../../node_modules/@fontsource/source-serif-4/files/source-serif-4-latin-700-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Source Serif 4";
+  font-style: italic;
+  font-weight: 600;
+  src: url("../../../../node_modules/@fontsource/source-serif-4/files/source-serif-4-latin-600-italic.woff2") format("woff2");
+}
+
+:root {
+  /* dark theme (tokens.css :root[data-theme="dark"]) */
+  --page: #111317;          /* --ink-1 */
+  --card: #1d222a;          /* --ink-3 */
+  --card-2: #161a20;        /* --ink-2 */
+  --white: #f7f8fa;         /* --white */
+  --text: #d5d9e0;          /* --text  */
+  --mist: #9aa1ad;          /* --mist  */
+  --gold: #f5c418;          /* --gold (dark) — text-safe on ink */
+  --gold-fill: #f5c418;     /* --gold-fill — constant */
+  --gold-fill-text: #1a0f04;/* --gold-fill-text */
+  --line: rgba(255, 255, 255, 0.10);
+  --green: #1a4d1a;         /* --green — inside the mark only */
+  --on-image: #f7f8fa;      /* --on-image */
+
+  --trim-w: 148mm;
+  --trim-h: 210mm;
+  --bleed: 0mm;
+  --safe: 10mm;
+
+  --serif: "Source Serif 4", Georgia, serif;
+  --sans: "Inter", system-ui, sans-serif;
+}
+:root[data-theme="light"] {
+  --page: #faf9f6;          /* --ink-0 (light) */
+  --card: #ffffff;          /* --ink-1 (light) */
+  --card-2: #f2f0e9;        /* --ink-2 (light) */
+  --white: #14161a;         /* --white (light) */
+  --text: #333a44;          /* --text  (light) */
+  --mist: #5f6774;          /* --mist  (light) */
+  --gold: #7d6104;          /* --gold  (light) — text-safe */
+  --line: rgba(20, 22, 26, 0.12);
+}
+
+@page { margin: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--page); }
+body {
+  font-family: var(--sans);
+  color: var(--text);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  font-size: 12.5pt;
+  line-height: 1.4;
+}
+img { display: block; }
+
+/* ---- Sheet: trim + optional bleed, crop marks outside the trim ---- */
+.sheet {
+  position: relative;
+  width: calc(var(--trim-w) + 2 * var(--bleed));
+  height: calc(var(--trim-h) + 2 * var(--bleed));
+  overflow: hidden;
+  background: var(--page);
+  page-break-after: always;
+  break-after: page;
+}
+.sheet:last-child { page-break-after: auto; break-after: auto; }
+.page {
+  position: absolute;
+  inset: 0;
+  background: var(--page);
+}
+.safe {
+  position: absolute;
+  inset: calc(var(--bleed) + var(--safe));
+  display: flex;
+  flex-direction: column;
+}
+.crop {
+  position: absolute;
+  width: calc(var(--bleed) - 1mm);
+  height: 0;
+  border-top: 0.25pt solid #000;
+  z-index: 50;
+}
+.crop.v { width: 0; height: calc(var(--bleed) - 1mm); border-top: 0; border-left: 0.25pt solid #000; }
+/* corner positions computed in shared.mjs */
+
+/* ---- Brand lockup: exported mark + CSS wordmark (global.css .brand-name) ---- */
+.lockup { display: inline-flex; align-items: center; gap: 2.2mm; text-decoration: none; }
+.lockup svg { width: 7.5mm; height: 7.5mm; flex: none; }
+.lockup .wm {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 15pt;
+  letter-spacing: -0.01em;
+  color: var(--white);
+  line-height: 1;
+}
+.lockup .wm .perk { color: var(--gold); font-style: italic; font-weight: 700; }
+.lockup.sm svg { width: 6mm; height: 6mm; }
+.lockup.sm .wm { font-size: 12pt; }
+
+/* ---- Type scale ---- */
+.eyebrow {
+  font-size: 10.5pt;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--mist);
+  line-height: 1.2;
+}
+.eyebrow.gold { color: var(--gold); }
+.h1 {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 44pt;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  color: var(--white);
+}
+.h1 .gold { color: var(--gold); }
+.h2 {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 22pt;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: var(--white);
+}
+.lead { font-size: 13pt; line-height: 1.42; color: var(--text); }
+.body { font-size: 12.5pt; line-height: 1.4; color: var(--text); }
+.small { font-size: 10.5pt; line-height: 1.35; color: var(--mist); }
+.fine { font-size: 8.5pt; line-height: 1.35; color: var(--mist); letter-spacing: 0.01em; }
+.caps { text-transform: uppercase; letter-spacing: 0.09em; font-weight: 700; }
+.dot { opacity: 0.55; padding: 0 0.45em; }
+
+/* ---- Components ---- */
+.tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3.5mm; }
+.tile {
+  background: var(--card);
+  border: 0.5pt solid var(--line);
+  border-radius: 3.2mm;
+  padding: 4.2mm 3mm 3.8mm;
+  text-align: center;
+}
+.tile .big {
+  font-size: 29pt;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--gold);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.tile .label { margin-top: 2.4mm; font-size: 9.5pt; font-weight: 600; color: var(--text); line-height: 1.25; }
+
+.photo { position: relative; overflow: hidden; border-radius: 3.2mm; background: var(--card-2); }
+.photo img { width: 100%; height: 100%; object-fit: cover; }
+.photo .cap {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 3mm 4.5mm 3.4mm;
+  background: linear-gradient(to top, rgba(10, 11, 13, 0.92), rgba(10, 11, 13, 0));
+  color: var(--on-image);
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 13pt;
+  letter-spacing: -0.005em;
+}
+
+.band {
+  background: var(--gold-fill);
+  color: var(--gold-fill-text);
+  border-radius: 4mm;
+}
+.band .h2, .band .body, .band .small, .band .fine, .band .eyebrow, .band .lead { color: var(--gold-fill-text); }
+.band .small, .band .fine, .band .eyebrow { opacity: 0.86; }
+.band-bleed { border-radius: 0; }
+
+.steps { display: flex; flex-direction: column; gap: 3.6mm; }
+.step { display: grid; grid-template-columns: 11mm 1fr; gap: 3.6mm; align-items: start; }
+.step .num {
+  width: 11mm; height: 11mm; border-radius: 50%;
+  background: var(--gold-fill); color: var(--gold-fill-text);
+  font-weight: 800; font-size: 15pt; line-height: 11mm; text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.step .t { font-size: 17pt; font-weight: 700; color: var(--white); line-height: 1.15; letter-spacing: -0.01em; }
+.step .b { margin-top: 1.2mm; }
+.steps.compact { gap: 3mm; }
+.steps.compact .step .t { font-size: 16pt; }
+.steps.compact .step .b { font-size: 11.5pt; line-height: 1.35; }
+.steps.compact .step .num { width: 10mm; height: 10mm; line-height: 10mm; font-size: 14pt; }
+.steps.compact .step { grid-template-columns: 10mm 1fr; }
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3.2mm 4.5mm; }
+.feat { border-left: 1.6pt solid var(--gold-fill); padding-left: 3.2mm; }
+.feat .t { font-size: 13pt; font-weight: 700; color: var(--white); line-height: 1.2; }
+.feat .b { margin-top: 1mm; font-size: 10.5pt; line-height: 1.35; color: var(--text); }
+
+.ticks { list-style: none; display: flex; flex-direction: column; gap: 2.2mm; }
+.ticks li { display: flex; align-items: center; gap: 2.8mm; font-size: 14pt; font-weight: 600; color: var(--white); line-height: 1.2; }
+.tk { width: 6.4mm; height: 6.4mm; border-radius: 50%; background: var(--gold-fill); flex: none; display: grid; place-items: center; }
+.tk svg { width: 3.8mm; height: 3.8mm; }
+.tk.sm { width: 5.4mm; height: 5.4mm; }
+.tk.sm svg { width: 3.2mm; height: 3.2mm; }
+.ticks.compact li { font-size: 12pt; }
+.ticks.compact .tk { width: 5.4mm; height: 5.4mm; }
+.ticks.compact .tk svg { width: 3.2mm; height: 3.2mm; }
+
+.proof {
+  display: grid; grid-template-columns: 38mm 1fr; gap: 4.5mm;
+  background: var(--card); border: 0.5pt solid var(--line); border-radius: 3.6mm; padding: 4mm;
+}
+.proof .photo { border-radius: 2.6mm; }
+.proof .q {
+  font-family: var(--serif); font-style: italic; font-weight: 600;
+  font-size: 13pt; line-height: 1.3; color: var(--white);
+}
+.proof .q::before { content: "\201C"; color: var(--gold); }
+.proof .q::after { content: "\201D"; color: var(--gold); }
+.proof .who { margin-top: 2.2mm; font-size: 10.5pt; font-weight: 700; color: var(--text); }
+.proof .venue { font-size: 10.5pt; color: var(--mist); }
+.proof .runs {
+  display: inline-block; margin-top: 2.2mm; padding: 1mm 2.4mm; border-radius: 10mm;
+  background: var(--gold-fill); color: var(--gold-fill-text);
+  font-size: 8.5pt; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;
+}
+
+.qr { display: block; }
+.qr svg { display: block; width: 100%; height: 100%; }
+
+.rule { height: 0.5pt; background: var(--line); }
+.grow { flex: 1 1 auto; min-height: 0; }
+
+/* ---- DRAFT ribbon (previews + trim PDFs while the quote is unapproved) ---- */
+.draft {
+  position: absolute; z-index: 60; top: 0; left: 0; right: 0; height: 5mm;
+  background: #c62828; color: #fff; text-align: center; line-height: 5mm;
+  font-size: 8.5pt; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase;
+}

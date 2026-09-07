@@ -1,6 +1,6 @@
 # BitePerk visit pack — print guide
 
-Everything you need to print before walking into venues. Two routes: **home/office printer** (today) or **print shop** (nicer, for volume). Last updated 2026-07-20.
+Everything you need to print before walking into venues. Two routes: **home/office printer** (today) or **print shop** (nicer, for volume). Last updated 2026-09-07.
 
 ## The two phone numbers (deliberate — don't "fix")
 
@@ -11,12 +11,18 @@ Everything you need to print before walking into venues. Two routes: **home/offi
 
 ## What to print, per file
 
-### 1. Brochure (the leave-behind — print MANY)
+### 1. Brochure + flyer (the leave-behinds — print MANY) — **v2, Sep 2026**
 
-| Route | File | Settings |
+Both are now built by `npm run collateral` from `marketing/flyer_and_broucher/v2/` (see its README). The v1 reportlab PDFs in `flyer_and_broucher/v1/` carry a dead `vocotable.` URL and the banned AI portrait — do not print them.
+
+| Route | File (in `flyer_and_broucher/v2/pdf/`) | Settings |
 |---|---|---|
-| **Home/office** | `print/BitePerk_Brochure_HomePrint_A4_2up.pdf` | A4, **landscape**, **double-sided, flip on SHORT edge**, colour, "Actual size" (100% — NOT "fit to page"). Cut down the dotted centre line → 2 brochures per sheet. |
-| **Print shop** | `../BitePerk_VoxTable_Brochure_A5.pdf` | Tell them: "A5 double-sided, 3mm bleed included, trim to A5. Stock: 300gsm silk/matte." |
+| **Home/office** — brochure | `BitePerk_Brochure_HomePrint_A4_2up.pdf` | A4, **landscape**, **double-sided, flip on SHORT edge**, colour, "Actual size" (100% — NOT "fit to page"). Cut down the dotted centre line → 2 brochures per sheet. Light-theme back, so it doesn't drink toner. |
+| **Home/office** — flyer | `voxtable-flyer-a5-HomePrint.pdf` | A5 (or A4 fit-to-page), double-sided, flip on SHORT edge, 100%. |
+| **Print shop** — brochure | `BitePerk_VoxTable_Brochure_A5-PRINT.pdf` | "A5 double-sided, 3mm bleed + crop marks included, trim to A5. **350gsm silk, soft-touch matte laminate.**" Spot-UV on the gold band is the upgrade. |
+| **Print shop** — flyer | `voxtable-flyer-a5-PRINT.pdf` | "A5 double-sided, 3mm bleed included, trim to A5. 300gsm silk." |
+
+**The Mazcina quote was approved by Camilo & Mauro on 7 Sep 2026** (`testimonial.approved` in `copy.mjs`), so the `-PRINT.pdf` files are built and the DRAFT strip is gone. If the wording ever changes, flip the flag back until they re-approve.
 
 Paper at home: the heaviest your printer takes (160–200gsm ideal). Plain 80gsm works but feels cheap — the brochure IS the brand in their hands.
 
@@ -79,8 +85,8 @@ Front: your contact (office line + sam@). Back: the hook — Bella's demo line +
 
 ## Print-shop one-liner (copy-paste)
 
-> "Hi — I need A5 double-sided brochures, artwork has 3mm bleed, trim to 148×210. 300gsm silk stock, full colour both sides. 50 copies. And 4 × A4 single-sided on 250gsm, matte laminated."
+> "Hi — I need A5 double-sided brochures, artwork has 3mm bleed and crop marks, trim to 148×210. 350gsm silk, soft-touch matte laminate, full colour both sides, 50 copies. Plus A5 double-sided flyers, same bleed, 300gsm silk, 100 copies. And 4 × A4 single-sided on 250gsm, matte laminated."
 
 ## Colour note
 
-All artwork is RGB, designed for digital print — fine for home printers and digital print shops (99% of cases). Only if a shop insists on offset/CMYK conversion, tell them the brand gold is **#F5C418** and to keep it vivid.
+All artwork is RGB, designed for digital print — fine for home printers and digital print shops (99% of cases). Only if a shop insists on offset/CMYK conversion, tell them the brand gold is **#F5C418** and to keep it vivid, and that the dark is **#111317** (warm charcoal), not 100K black.
