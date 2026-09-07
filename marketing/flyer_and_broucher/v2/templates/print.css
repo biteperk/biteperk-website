@@ -178,6 +178,10 @@ img { display: block; }
   line-height: 1;
 }
 .lockup .wm .perk { color: var(--gold); font-style: italic; font-weight: 700; }
+/* Solid ink plate so the lockup holds on any photo (the cover's pale timber ceiling swallowed it). */
+.plate { display: inline-flex; background: #111317; border-radius: 2.6mm; padding: 2.2mm 3.6mm 2.2mm 2.8mm; box-shadow: 0 0.6mm 2.4mm rgba(0,0,0,0.35); }
+.plate .lockup .wm { color: #f7f8fa; }
+.plate .lockup .wm .perk { color: #f5c418; }
 .lockup.sm svg { width: 6mm; height: 6mm; }
 .lockup.sm .wm { font-size: 12pt; }
 
