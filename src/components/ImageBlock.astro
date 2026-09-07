@@ -86,6 +86,7 @@ const decoding = "async";
       loading={loading}
       fetchpriority={fetchpriority}
       decoding={decoding}
+      data-fade={!priority && !deprioritize ? "" : undefined}
     />
   </picture>
   {scrim && <span class="image-block-scrim" aria-hidden="true"></span>}
@@ -114,6 +115,28 @@ const decoding = "async";
     object-fit: cover;
     object-position: center;
     transition: opacity var(--dur-slow) var(--ease-out);
+  }
+  /* Fade below-the-fold catalogue images up from their LQIP blur once they
+     decode (image-fade.ts adds .is-loaded). Gated on `html.js` so a no-JS
+     visitor always sees the image; `data-fade` is set only for non-priority,
+     non-deprioritized images, so the eager LCP hero and the near-LCP
+     deprioritized heroes paint immediately (LCP untouched).
+     NB: the reveal rule carries `html.js` too (specificity 0,4,2) so it
+     out-ranks the hidden rule (0,3,2) — otherwise .is-loaded would lose and
+     the image would stay invisible. */
+  html.js .image-block img[data-fade] {
+    opacity: 0;
+  }
+  html.js .image-block img[data-fade].is-loaded {
+    opacity: 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html.js .image-block img[data-fade] {
+      opacity: 1;
+    }
+    .image-block img {
+      transition: none;
+    }
   }
   .image-block-scrim {
     position: absolute;
