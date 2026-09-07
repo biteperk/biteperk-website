@@ -143,7 +143,17 @@ london-skyline
 paris-skyline
   Photographer: Chris Karidis
   Original:     https://unsplash.com/photos/nnzkZNYWHaU
-  Brief:        Eiffel Tower over the Seine at dusk
+  Brief:        Eiffel Tower over the Seine at dusk — retired from the FR tree, see below
+
+paris-cafe-terrace
+  Photographer: Unsplash contributor
+  Original:     https://images.unsplash.com/photo-1577056922428-a511301a562d
+  Brief:        Parisian café terrace — striped awning, green rattan bistro chairs, empty tables (FR/Paris city page)
+
+french-gastronomy-plate
+  Photographer: Unsplash contributor
+  Original:     https://images.unsplash.com/photo-1750943082231-0d84cfabc4dd
+  Brief:        Fine-dining plated dish in dramatic light — cutlery, wine glass (FR home band hospitality)
 
 belgium-dinant
   Photographer: Unsplash contributor
