@@ -7,6 +7,15 @@ interface Props {
   size?: number;
 }
 const { size = 48 } = Astro.props;
+// Unique def ids PER INSTANCE. This mark renders several times on a page (nav
+// brand, hero, footer), and hardcoded ids gave 3× duplicate "bp-star"/
+// "bp-shadow" — invalid HTML that makes the accessibility tree "not
+// well-formed" (PSI agentic audit) AND lets the browser resolve every
+// `url(#bp-shadow)` to the FIRST instance's def. A random suffix scopes each
+// SVG's gradient + filter to itself.
+const uid = globalThis.crypto.randomUUID().slice(0, 8);
+const starId = `bp-star-${uid}`;
+const shadowId = `bp-shadow-${uid}`;
 ---
 <svg
   xmlns="http://www.w3.org/2000/svg"
@@ -16,19 +25,19 @@ const { size = 48 } = Astro.props;
   aria-hidden="true"
 >
   <defs>
-    <radialGradient id="bp-star" cx="35%" cy="30%" r="80%">
+    <radialGradient id={starId} cx="35%" cy="30%" r="80%">
       <stop offset="0%" stop-color="#fff7c4" />
       <stop offset="30%" stop-color="#f5c418" />
       <stop offset="100%" stop-color="#9a7a0a" />
     </radialGradient>
-    <filter id="bp-shadow" x="-30%" y="-30%" width="160%" height="160%">
+    <filter id={shadowId} x="-30%" y="-30%" width="160%" height="160%">
       <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.4" />
     </filter>
   </defs>
-  <g filter="url(#bp-shadow)">
+  <g filter={`url(#${shadowId})`}>
     <polygon
       points="32,4 39,24 60,24 43,37 49,58 32,46 15,58 21,37 4,24 25,24"
-      fill="url(#bp-star)"
+      fill={`url(#${starId})`}
       stroke="#1a4d1a"
       stroke-width="1.2"
     />
