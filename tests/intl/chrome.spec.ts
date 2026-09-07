@@ -267,7 +267,10 @@ test.describe("intl chrome — Cities nav dropdown", () => {
   });
 
   test("absent on trees without published cities", async ({ page }) => {
-    await page.goto("/fr/");
+    // /en is the x-default and never emits city pages, so it is the stable
+    // city-less tree. Was /fr until 7 Sep 2026, when Paris published and made
+    // /fr city-bearing — every tree but /en now carries the Cities trigger.
+    await page.goto("/en/");
     await expect(page.locator("[data-city-nav]")).toHaveCount(0);
   });
 
@@ -312,7 +315,9 @@ test.describe("intl chrome — cities on a phone live in the drawer", () => {
   });
 
   test("no city section on a tree without cities", async ({ page }) => {
-    await page.goto("/fr/");
+    // /en, the x-default, is the only tree with no city pages (was /fr until
+    // Paris published on 7 Sep 2026).
+    await page.goto("/en/");
     await page.locator("[data-mobile-menu-trigger]").click();
     await expect(page.locator(".imm-city")).toHaveCount(0);
   });
