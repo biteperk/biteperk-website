@@ -104,6 +104,10 @@ if (!alternates && INTL_LAUNCHED && currentTarget() === "au") {
         Storage contract shared with src/scripts/theme.ts. */}
     <script is:inline>
       (function () {
+        // Pre-paint: mark that JS is running so the image fade-in can start
+        // below-the-fold photos hidden. No JS → no `.js` → images render fully
+        // visible (see ImageBlock.astro / image-fade.ts).
+        document.documentElement.classList.add("js");
         try {
           var t = localStorage.getItem("bp-theme");
           if (t !== "light" && t !== "dark") {
@@ -212,6 +216,10 @@ if (!alternates && INTL_LAUNCHED && currentTarget() === "au") {
     <script>
       import "@/scripts/theme.ts";
       import "@/scripts/reveal.ts";
+      // Fades below-the-fold catalogue images up from their LQIP blur as they
+      // decode (ImageBlock marks them data-fade). Eager + deprioritized heroes
+      // are excluded, so LCP is untouched.
+      import "@/scripts/image-fade.ts";
       // Shared since 6 Sep 2026: the international trees have a slide-over
       // drawer too (IntlMobileMenu), driven by exactly this script. ~4.5KB.
       import "@/scripts/mobile-menu.ts";
