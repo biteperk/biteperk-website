@@ -1,9 +1,8 @@
 # French native review — /fr cities batch B (Bordeaux, Toulouse, Lille)
 
-- **Status:** ⏳ PENDING Ludovic's native pass — cities are staged `published: false`
-  and must not flip live until this batch is signed off. When he passes it, change
-  this line to the dated pass and note the medium (verbal/email), exactly as the
-  other `docs/ops-records/…-french-review-*` sheets do.
+- **Status:** ✅ PASSED — Ludovic gave a verbal native pass on 7 Sep 2026 (relayed
+  by Sam), happy with everything, green light to go ahead. The cities in this
+  batch are flipped `published: true` and shipped.
 - **Reviewer:** Ludovic (native French)
 - **Pages:** /fr/bordeaux, /fr/toulouse, /fr/lille
 - **Scope:** hand-written per-city French in `src/data/intl/cities.ts` plus the

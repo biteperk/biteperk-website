@@ -111,6 +111,12 @@ const ALL_URLS = [
   // seven-card cross-link grid. London stands in for all eight cities.
   "http://localhost:4173/gb-en/london/",
   "http://localhost:4173/fr/",
+  // A French city page — the template is now built out to ten French cities.
+  // Lyon carries the deprioritized hero, the lazy story shot and a nine-card
+  // cross-link grid: the heaviest image page on the FR tree, so it anchors the
+  // perf contract for the whole /fr city build-out. One representative city is
+  // enough — adding all ten would balloon the Lighthouse run for no new signal.
+  "http://localhost:4173/fr/lyon/",
   // /en is the x-default and had the largest perf delta of any tree when
   // heroes landed (0 images → a priority-loaded LCP hero), so it is the
   // one most worth measuring. /be-en covers the second French/Flemish
