@@ -1063,7 +1063,7 @@ export const intlCities: readonly IntlCity[] = [
     base: "/fr",
     copyLang: "fr",
     name: "Lyon",
-    published: false,
+    published: true,
     seoTitle: "Répondeur téléphonique IA pour les restaurants lyonnais — Vox par BitePerk",
     seoDescription:
       "Vox répond au téléphone de votre bouchon ou restaurant à Lyon d'une voix naturelle, vérifie le registre et prend la réservation pendant que la cuisine tourne. Pilotes ouverts en France.",
@@ -1157,7 +1157,7 @@ export const intlCities: readonly IntlCity[] = [
     base: "/fr",
     copyLang: "fr",
     name: "Marseille",
-    published: false,
+    published: true,
     seoTitle: "Répondeur téléphonique IA pour les restaurants marseillais — Vox par BitePerk",
     seoDescription:
       "Vox répond au téléphone de votre restaurant à Marseille d'une voix naturelle, note les commandes passées à l'avance et vérifie le registre pendant que la salle tourne. Pilotes ouverts en France.",
@@ -1250,7 +1250,7 @@ export const intlCities: readonly IntlCity[] = [
     base: "/fr",
     copyLang: "fr",
     name: "Nice",
-    published: false,
+    published: true,
     seoTitle: "Répondeur téléphonique IA pour les restaurants niçois — Vox par BitePerk",
     seoDescription:
       "Vox répond au téléphone de votre restaurant à Nice d'une voix naturelle, tient la ligne quand la saison déborde et vérifie le registre réel. Pilotes ouverts en France.",
@@ -1343,7 +1343,7 @@ export const intlCities: readonly IntlCity[] = [
     base: "/fr",
     copyLang: "fr",
     name: "Bordeaux",
-    published: false,
+    published: true,
     seoTitle: "Répondeur téléphonique IA pour les restaurants bordelais — Vox par BitePerk",
     seoDescription:
       "Vox répond au téléphone de votre restaurant à Bordeaux d'une voix naturelle, prend les grandes tablées et les menus accordés et vérifie le registre. Pilotes ouverts en France.",
@@ -1436,7 +1436,7 @@ export const intlCities: readonly IntlCity[] = [
     base: "/fr",
     copyLang: "fr",
     name: "Toulouse",
-    published: false,
+    published: true,
     seoTitle: "Répondeur téléphonique IA pour les restaurants toulousains — Vox par BitePerk",
     seoDescription:
       "Vox répond au téléphone de votre restaurant à Toulouse d'une voix naturelle, tient la ligne au coup de feu de midi et vérifie le registre réel. Pilotes ouverts en France.",
@@ -1531,7 +1531,7 @@ export const intlCities: readonly IntlCity[] = [
     base: "/fr",
     copyLang: "fr",
     name: "Lille",
-    published: false,
+    published: true,
     seoTitle: "Répondeur téléphonique IA pour les restaurants lillois — Vox par BitePerk",
     seoDescription:
       "Vox répond au téléphone de votre estaminet ou restaurant à Lille d'une voix naturelle, tient la ligne les week-ends chargés et vérifie le registre. Pilotes ouverts en France.",
@@ -1624,7 +1624,7 @@ export const intlCities: readonly IntlCity[] = [
     base: "/fr",
     copyLang: "fr",
     name: "Nantes",
-    published: false,
+    published: true,
     seoTitle: "Répondeur téléphonique IA pour les restaurants nantais — Vox par BitePerk",
     seoDescription:
       "Vox répond au téléphone de votre restaurant à Nantes d'une voix naturelle, encaisse les week-ends en famille et vérifie le registre. Pilotes ouverts en France.",
@@ -1717,7 +1717,7 @@ export const intlCities: readonly IntlCity[] = [
     base: "/fr",
     copyLang: "fr",
     name: "Strasbourg",
-    published: false,
+    published: true,
     seoTitle: "Répondeur téléphonique IA pour les restaurants strasbourgeois — Vox par BitePerk",
     seoDescription:
       "Vox répond au téléphone de votre winstub ou restaurant à Strasbourg d'une voix naturelle, encaisse les semaines de pointe et vérifie le registre. Pilotes ouverts en France.",
@@ -1810,7 +1810,7 @@ export const intlCities: readonly IntlCity[] = [
     base: "/fr",
     copyLang: "fr",
     name: "Montpellier",
-    published: false,
+    published: true,
     seoTitle: "Répondeur téléphonique IA pour les restaurants montpelliérains — Vox par BitePerk",
     seoDescription:
       "Vox répond au téléphone de votre restaurant à Montpellier d'une voix naturelle, décroche tard quand la salle est pleine et vérifie le registre. Pilotes ouverts en France.",

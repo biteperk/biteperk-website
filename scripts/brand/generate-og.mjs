@@ -184,7 +184,17 @@ function card({ eyebrow, headline, accent = "#f5c418", showBella = true }) {
                       type: "div",
                       props: {
                         style: {
-                          fontSize: showBella ? "64px" : "80px",
+                          // Fit-to-box: long headlines (the French city pages
+                          // run to ~75+ chars — "Au bouchon, le patron est au
+                          // piano…") wrap to 6 lines and overflowed the 630px
+                          // card at 80px. Step long headlines down so they fit;
+                          // short ones keep the large size. Text-only cards
+                          // (showBella:false) start at 80, image cards at 64.
+                          fontSize: showBella
+                            ? "64px"
+                            : headline.length > 62
+                              ? "62px"
+                              : "80px",
                           fontWeight: 800,
                           lineHeight: "1.05",
                           letterSpacing: "-2.5px",
