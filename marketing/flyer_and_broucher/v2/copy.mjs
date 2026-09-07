@@ -25,7 +25,7 @@ export const SAM_EMAIL = "sam@biteperk.com.au";
  * have OK'd these exact words.
  */
 export const testimonial = {
-  approved: false,
+  approved: true, // Camilo & Mauro approved the wording, 7 Sep 2026 (via Sam)
   quote:
     "Bella picks up the calls we used to miss. Bookings and takeaway orders just land on our screen.",
   by: "Camilo & Mauro, owners",
