@@ -524,6 +524,17 @@ const frFr: MarketContent = {
     heading: "Pensé pour le rythme des services à la française.",
     body: "Du bistrot de quartier à la grande table, le téléphone sonne en plein coup de feu. Vox décroche — à chaque fois — pour que votre équipe reste en salle.",
   },
+  // La bande de liens vers les villes. Texte propre, jamais une paraphrase de
+  // beFr.cities : le pool français (/fr vs /be-fr) est déjà proche du plafond
+  // de check-intl-similarity, et deux accueils qui récitent la même bande, c'est
+  // ce qui grignote la marge. L'ajout déplace aussi le cityscape de la bande
+  // marché dans les cartes ([...intl].astro) — la bande passe en mode
+  // hospitalité seule, comme sur /gb-en.
+  cities: {
+    eyebrow: "Là où tout commence",
+    heading: "Une ville après l'autre, sur de vraies lignes.",
+    body: "Un pilote, c'est une conversation avec une salle précise dans une rue précise, pas un lancement. Voici les villes où ces conversations sont ouvertes.",
+  },
   copy: {
     home: {
       title: "BitePerk — Vox, l'hôte téléphonique IA pour les restaurants en France",
@@ -869,6 +880,14 @@ const beFr: MarketContent = {
     eyebrow: "Pour les établissements belges",
     heading: "Pensé pour la culture de table belge.",
     body: "De la brasserie bruxelloise au café de quartier, le téléphone sonne en plein service. Vox décroche — en français comme en anglais — pour que votre équipe reste auprès de ses clients.",
+  },
+  // Texte propre, distinct de frFr.cities : les deux accueils français
+  // ( /fr et /be-fr ) sont comparés ensemble par check-intl-similarity, donc
+  // cette bande ne doit pas reprendre les mots de la version française.
+  cities: {
+    eyebrow: "Nos premières adresses",
+    heading: "Un établissement à la fois, sur la ligne bien réelle.",
+    body: "Le pilote se joue au téléphone d'une adresse précise, jamais dans une annonce. Ces pages parlent de la vôtre en particulier.",
   },
   copy: {
     home: {
