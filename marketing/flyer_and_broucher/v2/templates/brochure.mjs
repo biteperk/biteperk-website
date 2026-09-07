@@ -14,10 +14,10 @@ export async function brochureSheets(c, { bleed, assets }) {
     ${ribbon}
     <div class="photo" style="position:absolute;inset:0;border-radius:0">
       <img src="${assets.cover}" alt="">
-      <div style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(17,19,23,0.55) 0%, rgba(17,19,23,0.35) 30%, rgba(17,19,23,0.88) 62%, rgba(17,19,23,0.98) 100%)"></div>
+      <div style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(17,19,23,0.82) 0%, rgba(17,19,23,0.45) 22%, rgba(17,19,23,0.35) 34%, rgba(17,19,23,0.88) 62%, rgba(17,19,23,0.98) 100%)"></div>
     </div>
     <div class="safe on-photo">
-      <header>${lockup()}</header>
+      <header><span class="plate">${lockup()}</span></header>
       <div class="grow"></div>
       <div class="eyebrow gold on-photo">${esc(b.eyebrow)}</div>
       <h1 class="h1 on-photo" style="margin-top:2.5mm;color:#f7f8fa">${esc(b.headline[0])}<br><span class="gold" style="color:#f5c418">${esc(b.headline[1])}</span></h1>
