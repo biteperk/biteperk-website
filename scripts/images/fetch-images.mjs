@@ -332,6 +332,32 @@ const catalogue = [
     url: "https://images.unsplash.com/photo-1670819917685-f1040e76b9b7",
     brief: "Wood-panelled dining room, bentwood chairs, tables set — estaminet feel (Lille)",
   },
+  // ── French city cityscapes (Phase 2b, batch C) — same rules as A/B. ──────
+  {
+    slug: "nantes-brasserie",
+    id: "photo-1761515397109-ba896074a139",
+    photographer: "Unsplash contributor",
+    url: "https://images.unsplash.com/photo-1761515397109-ba896074a139",
+    brief: "Bright brasserie — green leather banquettes, plants, tall windows, tables set (Nantes)",
+  },
+  {
+    slug: "strasbourg-winstub",
+    id: "photo-1761470484741-badac5364858",
+    photographer: "Unsplash contributor",
+    url: "https://images.unsplash.com/photo-1761470484741-badac5364858",
+    brief: "Pale pine-panelled winstub corner, carved chairs, set table and banquette (Strasbourg)",
+  },
+  {
+    // Film-grain night shot — grain is worst-case for AVIF, so params blur=15
+    // tames the encode (same lever as cafe-terrace-flowers) while keeping the
+    // soft evening look. Below the fold and lazy, but the cap still applies.
+    slug: "montpellier-terrasse",
+    id: "photo-1761455952969-8ec513b486c0",
+    params: "blur=12",
+    photographer: "Unsplash contributor",
+    url: "https://images.unsplash.com/photo-1761455952969-8ec513b486c0",
+    brief: "Evening restaurant terrace — cream umbrellas, string lights along a railing, warm glow (Montpellier)",
+  },
   {
     slug: "belgium-dinant",
     id: "photo-1491557345352-5929e343eb89",
