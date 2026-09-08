@@ -146,6 +146,17 @@ const description =
               it. First-party; travels only with the enquiry the user sends. */}
           <input type="hidden" name="attribution" value="" data-attribution />
 
+          {/* Proof-of-interaction + dedupe key, filled at submit time by the
+              JS handler. formToken = btoa(pageInitMs + ":" + submitMs) — its
+              presence tells the function a browser ran our script (leads
+              without it classify "unverified" and skip CRM/ad-conversion
+              export; they are still stored and emailed). leadRef is a random
+              UUID sent as the gtag conversion's transaction_id so offline
+              conversion uploads can dedupe against the pixel. Neither field
+              carries anything about the visitor. */}
+          <input type="hidden" name="formToken" value="" data-form-token />
+          <input type="hidden" name="leadRef" value="" data-lead-ref />
+
 
           <div class="contact-row">
             <div class="contact-field">
@@ -558,9 +569,20 @@ const description =
       const btnLabel = btn ? btn.textContent : "Send message →";
       let busy = false;
 
+      // Captured per init() (View-Transitions-safe: per page visit, not per
+      // module eval) — the formToken proves to the function that a browser
+      // ran this script; leads without it classify "unverified".
+      const loadedAt = Date.now();
+      // Dedupe key shared between the stored lead and the gtag conversion's
+      // transaction_id, so offline conversion uploads can dedupe the pixel.
+      const leadRef =
+        typeof crypto !== "undefined" && "randomUUID" in crypto
+          ? crypto.randomUUID()
+          : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+
       function reportDemoConversion(): void {
         if (params.get("intent") !== "demo" || googleAdsDemoContactConversionId == null) return;
-        reportGoogleAdsConversion(googleAdsDemoContactConversionId);
+        reportGoogleAdsConversion(googleAdsDemoContactConversionId, leadRef);
       }
 
       function showError(msg: string) {
@@ -608,6 +630,13 @@ const description =
           btn.disabled = true;
           btn.textContent = "Sending…";
         }
+
+        // Filled at submit time (not init) so the token carries the real
+        // dwell interval; the server only checks presence + shape.
+        const tokenField = form.querySelector<HTMLInputElement>("[data-form-token]");
+        if (tokenField) tokenField.value = btoa(`${loadedAt}:${Date.now()}`);
+        const refField = form.querySelector<HTMLInputElement>("[data-lead-ref]");
+        if (refField) refField.value = leadRef;
 
         const fd = new FormData(form);
         const payload: Record<string, string> = {};

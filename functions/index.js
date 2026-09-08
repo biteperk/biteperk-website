@@ -139,6 +139,35 @@ exports.contactForm = onRequest(
     // each lead; never parsed/executed, purely a record on the enquiry.
     const attribution = str(b.attribution, 1000);
     const crmForm = str(b.crmForm, 40);
+    // Client-generated dedupe key: the same value is sent as the gtag
+    // conversion's transaction_id, so an offline conversion upload can
+    // dedupe against the web pixel. Random UUID, no meaning beyond that.
+    const leadRef = str(b.leadRef, 64);
+
+    // ── Lead quality classification (first-party, no CAPTCHA by design) ──
+    // `formToken` is btoa("<pageLoadMs>:<submitMs>"), filled by the forms'
+    // JS submit handlers. Its PRESENCE proves a browser ran our script —
+    // which the observed spam (direct curl-shaped POSTs) never does. The
+    // elapsed time is stored for tuning but deliberately does NOT downgrade:
+    // browser autofill lets real humans submit in seconds, and suppressing
+    // their CRM lead is the worse error. Classification only — an
+    // "unverified"/"suspect" lead is still stored and emailed; it just
+    // doesn't reach Zoho CRM or the offline Ads conversion export.
+    let quality = "unverified";
+    let elapsedMs = null;
+    try {
+      const raw = Buffer.from(str(b.formToken, 100), "base64").toString("utf8");
+      const [loadedAt, submittedAt] = raw.split(":").map(Number);
+      if (Number.isFinite(loadedAt) && Number.isFinite(submittedAt) && submittedAt >= loadedAt) {
+        quality = "ok";
+        elapsedMs = Math.min(submittedAt - loadedAt, 86400000);
+      }
+    } catch {
+      /* malformed token → stays unverified */
+    }
+    // Link-dropping messages are the one concrete signature every observed
+    // spam submission shares; genuine venue enquiries don't paste URLs.
+    if (/https?:\/\/|t\.me\/|wa\.me\//i.test(b.message || "")) quality = "suspect";
 
     const zohoGlobal = crmForm === "zoho-global";
     if (
@@ -167,6 +196,9 @@ exports.contactForm = onRequest(
         message,
         attribution: attribution || null,
         crmForm: crmForm || null,
+        leadRef: leadRef || null,
+        quality,
+        elapsedMs,
         createdAt: FieldValue.serverTimestamp(),
         expireAt: Timestamp.fromMillis(Date.now() + LEAD_RETENTION_MS),
       });
@@ -179,7 +211,11 @@ exports.contactForm = onRequest(
     // The international form (every biteperk.com locale) is connected to Zoho
     // CRM. Firestore remains the source of truth, so a temporary Zoho outage
     // never loses the enquiry or tells the visitor their saved message failed.
-    if (zohoGlobal) {
+    // Quality-gated: `crmForm` is a client-supplied field, so before this
+    // gate any scripted POST could write itself straight into the CRM — the
+    // observed spam did exactly that. Unverified/suspect leads stay in
+    // Firestore and the notification email; a human can promote them.
+    if (zohoGlobal && quality === "ok") {
       try {
         await submitZohoLead({ name, email, venue, product, message });
       } catch (e) {
@@ -189,7 +225,7 @@ exports.contactForm = onRequest(
 
     // Best-effort notification. Never fail the request on email trouble.
     try {
-      await sendNotification({ name, email, venue, product, message, docId });
+      await sendNotification({ name, email, venue, product, message, docId, quality });
     } catch (e) {
       logger.error("contactForm: email failed (best-effort, lead is saved)", { docId, msg: e.message });
     }
@@ -217,7 +253,11 @@ const ZOHO_PRODUCT_LABELS = {
  * same TTL policy that expires leads, so nothing here outlives its window.
  */
 async function rateLimited(ip) {
-  if (!ip) return false;
+  // No X-Forwarded-For means the caller bypassed Firebase Hosting (which
+  // always sets it) and hit the function URL directly — there is no
+  // legitimate path that does that, and letting it through meant a caller
+  // with no XFF was entirely unlimited. Treat as limited.
+  if (!ip) return true;
   const id = createHash("sha256").update(ip).digest("hex");
   const ref = db.collection("rateLimits").doc(id);
   const now = Date.now();
@@ -274,7 +314,7 @@ async function submitZohoLead({ name, email, venue, product, message }) {
 
 /** Send the lead notification via Zoho SMTP with tight timeouts so a broken
  *  mail server can never stall the (already-saved) request for long. */
-async function sendNotification({ name, email, venue, product, message, docId }) {
+async function sendNotification({ name, email, venue, product, message, docId, quality }) {
   const transporter = nodemailer.createTransport({
     host: SMTP.host,
     port: SMTP.port,
@@ -285,7 +325,10 @@ async function sendNotification({ name, email, venue, product, message, docId })
     socketTimeout: 8000,
   });
 
-  const subject = `New website enquiry — ${name}${product ? ` · ${product}` : ""}`;
+  // Quality prefix so a flagged lead is visible at a glance, never silently
+  // lost — "unverified"/"suspect" leads reach this email but not Zoho.
+  const flag = quality && quality !== "ok" ? `[${quality}] ` : "";
+  const subject = `${flag}New website enquiry — ${name}${product ? ` · ${product}` : ""}`;
   const text = [
     `New enquiry from the BitePerk website.`,
     ``,
