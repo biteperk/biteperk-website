@@ -147,13 +147,25 @@ that keep them fixed:
 
 ## Deploy
 
-Site is one Firebase project (id `vocotable` — a legacy id, do **not** "fix" it; project ids are immutable) with hosting targets `biteperk` (AU) and `biteperk-global` (biteperk.com):
+Site is one Firebase project (id `vocotable` — a legacy id, do **not** "fix" it; project ids are immutable) with two hosting targets. **Mind which target serves what — it is not what the names suggest:**
+
+- **`biteperk-global` serves `dist-site` — this is the ENTIRE live site**, both the AU tree (`biteperk.com/au-en/**`) *and* the five international locales. It is the target you deploy for almost every content, page, form or copy change. Build it with **`build:site`** (which produces `dist-site`), not `build:global` (which only produces the `dist-global` half that `merge-dist.mjs` folds in).
+- **`biteperk` serves `dist-cctld` — the `biteperk.com.au` → `biteperk.com` redirect-only host** (a single file). It changes almost never. Deploying it does **not** touch any page or form — a `hosting:biteperk` deploy that reports "found 1 files in dist-cctld" is the redirect host, not the site.
 
 ```bash
+# The Cloud Function (contact form) — deploy FIRST when a change touches both
+# the form fields and the function (e.g. a new hidden input the function reads),
+# so the function accepts the new shape before any page starts sending it.
+firebase deploy --only functions:biteperk-website
+
+# The live site (AU + all five intl locales). This is the usual hosting deploy.
+INTL_LAUNCHED=true npm run build:site && firebase deploy --only hosting:biteperk-global
+
+# The redirect-only host (biteperk.com.au → biteperk.com). Rarely needed.
 firebase deploy --only hosting:biteperk
-firebase deploy --only functions:biteperk-website   # contact form
-npm run build:global && firebase deploy --only hosting:biteperk-global   # international
 ```
+
+Deploy order for a coupled form+function change is **functions first, then hosting** — for ≤5 min after the hosting deploy (HTML `max-age=300`) cached pages post the *old* shape, which the new function must still accept gracefully. (This exact split cost a confused deploy on 8 Sep 2026: `hosting:biteperk` was run expecting to publish the site and only updated the 1-file redirect host — the forms live on `hosting:biteperk-global`.)
 
 `firebase.json` defines the rewrite `/api/contact → contactForm` (region `australia-southeast1`), the CSP, and immutable cache headers for static assets. HTML is `max-age=300`.
 
