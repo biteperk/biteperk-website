@@ -32,8 +32,21 @@ export const plausibleReady = false;
 /** Marketing: LinkedIn Partner ID, e.g. "1234567". null = dormant. */
 export const linkedInPartnerId: string | null = null;
 
-/** Marketing: Google Ads tag ID. null = dormant. */
-export const googleAdsId: string | null = "AW-18397306929";
+/**
+ * Marketing: Google Ads tag ID. null = dormant.
+ *
+ * DISABLED 8 Sep 2026 — deliberately null. `AW-18397306929` belonged to an
+ * OLD/foreign Ads account, not BitePerk's real account (142-390-3850, under
+ * biteperk@gmail.com, created 8 Sep). That account is run OFFLINE-ONLY: the
+ * only conversion is the "Qualified lead (offline)" click-import, fed by
+ * scripts/ops/export-ad-conversions.mjs from qualified, gclid-carrying leads.
+ * There is intentionally no web conversion pixel — a pixel fires for spam too,
+ * which is what wasted the earlier spend. The site still CAPTURES gclid/utm
+ * (the `attribution` hidden field, independent of this tag) so the offline
+ * export keeps working. To re-enable a web pixel, set this to the NEW account's
+ * AW id and replace the two conversion labels below with that account's labels.
+ */
+export const googleAdsId: string | null = null;
 
 /** Google Ads conversion destination for a confirmed AU demo-form submission. */
 export const googleAdsDemoContactConversionId: string | null = googleAdsId
