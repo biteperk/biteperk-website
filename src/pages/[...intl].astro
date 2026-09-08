@@ -465,6 +465,19 @@ const appJsonLd =
                 sent visitor IPs to Google. The honeypot plus the function's
                 per-connection rate limit do that job now. */}
             <input type="hidden" name="crmForm" value="zoho-global" />
+            {/* First-touch campaign attribution (utm fields + gclid), mirrored
+                from the AU form: without it no UK/EU ad click can ever be
+                joined to a lead. Filled from sessionStorage by the submit
+                handler; first-party, travels only with the enquiry sent. */}
+            <input type="hidden" name="attribution" value="" data-attribution />
+            {/* Proof-of-interaction + dedupe key — same contract as the AU
+                form (see contact.astro): formToken presence classifies the
+                lead "ok" server-side; without it (direct scripted POSTs, the
+                observed spam) the lead stores as "unverified" and never
+                reaches Zoho or the ads-conversion export. leadRef doubles as
+                the gtag conversion's transaction_id. */}
+            <input type="hidden" name="formToken" value="" data-form-token />
+            <input type="hidden" name="leadRef" value="" data-lead-ref />
             <div class="field">
               <label for="if-name">{ct.form.name}</label>
               <input id="if-name" name="name" type="text" required maxlength="200" autocomplete="name" />
@@ -872,10 +885,35 @@ const appJsonLd =
       const buttonLabel = button?.textContent ?? "Request a pilot";
       let busy = false;
 
+      // First-touch attribution (utm_*/gclid) captured by scripts/attribution.ts
+      // into sessionStorage on every tree — the AU form has read it since the
+      // consent work; this form never did, so UK ad clicks were unjoinable.
+      try {
+        const attrField = form.querySelector<HTMLInputElement>("[data-attribution]");
+        const attr = sessionStorage.getItem("bp-attr");
+        if (attrField && attr) attrField.value = attr.slice(0, 1000);
+      } catch {
+        /* no storage — attribution simply stays empty */
+      }
+
+      // Same proof-of-interaction + dedupe contract as contact.astro.
+      const loadedAt = Date.now();
+      const leadRef =
+        typeof crypto !== "undefined" && "randomUUID" in crypto
+          ? crypto.randomUUID()
+          : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
         if (busy) return;
         busy = true;
+
+        // Filled at submit time (not init) so the token carries the real
+        // dwell interval; the server only checks presence + shape.
+        const tokenField = form.querySelector<HTMLInputElement>("[data-form-token]");
+        if (tokenField) tokenField.value = btoa(`${loadedAt}:${Date.now()}`);
+        const refField = form.querySelector<HTMLInputElement>("[data-lead-ref]");
+        if (refField) refField.value = leadRef;
 
         if (status) {
           status.hidden = true;
@@ -901,7 +939,7 @@ const appJsonLd =
           const body = await response.json().catch(() => ({})) as { ok?: boolean; error?: string };
 
           if (response.ok && body.ok) {
-            reportGoogleAdsConversion(googleAdsGlobalDemoContactConversionId);
+            reportGoogleAdsConversion(googleAdsGlobalDemoContactConversionId, leadRef);
             document.dispatchEvent(new CustomEvent("bp:event", { detail: { name: "form-success" } }));
             form.innerHTML =
               '<div class="intl-form-success">' +

@@ -755,3 +755,55 @@ with the VoxStay demo (he is also the hotel prospect):
 ~~Owner: Sam sends; record the pass here when it lands and drop the `DRAFT`
 markers in the same commit.~~ — **done 7 Sep 2026**, see the entry at the top of
 this log. All twelve markers dropped, including the city-page furniture.
+
+## 6 Sep 2026 — Ads conversion integrity: lead quality classification + offline conversion export
+
+£45 of Google Ads (London + Sydney) produced zero leads. Investigation of the
+live leads DB found zero ad-attributed submissions ever (no gclid on any
+lead), heavy bot spam reaching Zoho CRM through the client-supplied
+`crmForm=zoho-global` field, and — the acute risk — the web conversion pixel
+(3 Sep) firing for anything driving a real browser, spam included, teaching
+Google's bidding that bots convert.
+
+**Shipped (first-party, no CAPTCHA — the 3 Sep privacy decision stands):**
+
+- `formToken` proof-of-interaction on both forms: presence of the JS-filled
+  token classifies a lead `quality:"ok"`; direct scripted POSTs (the observed
+  spam signature) classify `"unverified"`. Link-dropping messages
+  (`http(s)://`, `t.me/`, `wa.me/`) classify `"suspect"`. Classification
+  only: flagged leads are still stored and emailed (subject prefixed
+  `[unverified]`/`[suspect]`) but never reach Zoho CRM or the ads export.
+  Elapsed dwell time is stored (`elapsedMs`) for tuning, deliberately not
+  used to downgrade — browser autofill lets real humans submit in seconds.
+- Rate-limiter hole closed: a request with no `X-Forwarded-For` (only
+  possible by bypassing Hosting and calling the function URL directly) was
+  entirely unlimited; now 429.
+- Intl form now captures first-touch `attribution` (utm_*/gclid) like the AU
+  form always did — without it no UK/EU ad click could ever join to a lead.
+- `leadRef` (random UUID) rides both the stored lead and the gtag
+  conversion's `transaction_id`, giving offline uploads a dedupe key.
+- `scripts/ops/export-ad-conversions.mjs` (+ scripts/ops/README.md — first
+  ops script; ADC + named-DB auth model documented there): exports
+  `quality:"ok"`, gclid-carrying leads as a Google Ads click-import CSV
+  (`Parameters:TimeZone=Australia/Sydney`, naive local times) to
+  deliverables/ads/. Internal identities and pre-quality spam filtered.
+
+**Open — owner Sam (Google Ads console, ~20 min):**
+
+1. Create conversion action **"Qualified lead (offline)"** — Import → Clicks
+   (name must match the script's constant exactly). Once uploads flow, set it
+   **Primary** and demote both pixel actions to Secondary — that is the
+   anti-poisoning keystone.
+2. Campaign hygiene agreed 6 Sep: plain Search only (no Smart/PMax at this
+   budget); exact/phrase commercial-intent keywords; location setting
+   "Presence: people IN the location" (not the default presence-or-interest);
+   final URLs `/gb-en/london/` and `/au-en/sydney/` (not homepages);
+   negative keywords: jobs, career, salary, free, course, software, API,
+   developer, open source, how to code; one city at a time until there is
+   signal; auto-tagging stays ON.
+3. Cadence: after each batch of real enquiries, run the export and upload
+   the CSV (Ads → Goals → Conversions → Uploads).
+
+Rollout note: for ≤5 min after the hosting deploy (HTML cache max-age 300),
+cached pages post without `formToken` → those leads land `"unverified"`
+(stored + emailed; only the CRM push is deferred). Expected, harmless.
