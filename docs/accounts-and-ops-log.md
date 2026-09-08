@@ -10,6 +10,40 @@ existing records*), so "after = before + this entry" always holds.
 
 ---
 
+## 2026-09-08 — Google Ads account map + AU campaign keyword build-out
+
+**Two Google Ads accounts exist under the `biteperk@gmail.com` login — do not confuse them:**
+
+| Customer ID | Name | Currency / zone | What it is |
+|---|---|---|---|
+| **142-390-3850** | "Google Ads account" | AUD, Sydney | **BitePerk's real account.** The live `Search - Vox (AU)` Search campaign (id 24221462592) lives here. Permanent (currency/timezone are immutable). Offline-conversion only — no web pixel (see `consent.ts` `googleAdsId` = null). |
+| **673-957-9521** | "Biteperk" | GBP | **Abhishek's** account — `abhishekyadav01@gmail.com` invited biteperk@gmail.com (Administrative). Holds a Performance Max campaign "AI Phone Host for Restaurants", now **Paused**. |
+
+**The "£45 that produced 0 leads" is resolved.** It was **not** BitePerk's AU account. Account
+673-957-9521's billing summary shows **August 2026 net cost £45.10**, billed to **Mastercard ••0260**
+(not BitePerk's Visa ••8947 — likely Abhishek's personal card). A small September balance (~£13) was
+still showing at check time, so the account should be confirmed *fully* stopped, not just the campaign
+toggled Paused. Keep-vs-close is Sam + Abhishek's call; nothing for BitePerk to recover.
+
+**AU campaign hygiene done today (142-390-3850 → "Search - Vox (AU)", VoxTable ad group):** this
+campaign sells **VoxTable (bookings) only**; VoxOrder (takeaway/ordering) is a deliberately separate
+next-phase campaign.
+
+- **Positive keywords → 18** (all phrase match, bookings/reservations/phone-answering intent). Added
+  today: `restaurant reservation system`, `table booking system`, plus the earlier batch (`restaurant
+  phone answering`, `virtual receptionist restaurant`, `restaurant booking system`, `restaurant
+  reservation software`, `automated phone answering`, `ai answering service`, `restaurant call
+  answering service`, `never miss a booking`, `phone answering for hospitality`, `voice ai for
+  restaurants`). A few niche ones read "Low search volume" — harmless, they auto-activate.
+- **Negative keywords → 17** (campaign level, broad). Three groups: job-seekers (`jobs, career,
+  careers, salary, internship, resume`), DIY builders (`software developer, developer, api, open
+  source, how to code, template`), and **VoxOrder-domain reserved for the next campaign** (`takeaway,
+  online ordering, food delivery, order online, pos system`). Removed `free`/`course`/`training`
+  (they collided with our own "free week" offer / could block real venues).
+- **Location targeting tightened** to "Presence: people in Australia" (was the loose "Presence or
+  interest" default) so budget isn't spent on overseas people merely interested in AU. AI Max off,
+  budget A$20 total, A$3 CPC cap, 8–15 Sept — unchanged.
+
 ## 2026-09-07 (later) — Ludovic's French pass lands; all twelve `DRAFT` markers dropped
 
 Ludovic Roux read the French batch assembled that morning — **117 lines across

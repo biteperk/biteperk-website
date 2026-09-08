@@ -241,6 +241,8 @@ For **AI-generated photography** there's a separate intake pipeline (`scripts/im
 - `docs/review-requests.md` — Google review request templates (post-GBP verification).
 - `docs/v1-baseline/` — pre-rebuild sitemap/schema snapshot + the contact-form contract (`contact-contract.md`); the diff target the CI schema/route gates protect against.
 
+**Google Ads** (marketing, not the codebase): BitePerk's real account is **142-390-3850** (AUD/Sydney, under `biteperk@gmail.com`), running **offline-conversion only** — no web pixel (`src/data/consent.ts` `googleAdsId` is deliberately `null`; the pipeline + cadence are `scripts/ops/export-ad-conversions.mjs` and `deliverables/2026-09-08-google-ads-offline-conversion/RUNBOOK.md`). A **second** account **673-957-9521** (GBP, Performance Max, Paused) belongs to Abhishek and is where the earlier ~£45 spend went — not BitePerk's. The full account map, campaign keyword/negative build-out and £45 resolution are in `docs/accounts-and-ops-log.md` (2026-09-08 entry).
+
 ## Claude-generated deliverables
 
 One-off documents Claude produces for this project — pitch decks, proposals, exported reports, and similar working material — are saved to `deliverables/` at the repo root, not `docs/`. `docs/` is committed source content (site copy, ops docs, art direction); `deliverables/` is local-only working material and is **gitignored**. Save future generated docs there by default, in a dated, descriptive subfolder per deliverable with its source assets alongside (e.g. `deliverables/2026-07-ludovic-wiziu-pitch/` containing the .pptx + `assets/`).
