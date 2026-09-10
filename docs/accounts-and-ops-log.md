@@ -43,16 +43,27 @@ and no broad B2B SaaS terms eating the budget.
 | Callouts | **6** at campaign level, all "Pending / Under review": No Cover Fees · Setup in 5 Minutes · Answers Calls 24/7 · Australian Voice · No Double Bookings · Flat $80/Month. (Campaign previously had none.) |
 | Sitelinks | Six already live at campaign level (VoxOrder: Takeaway, Book a Free Demo, For Sydney Venues, How It Works, About BitePerk, All Vox Products). Left as is. Note "VoxOrder: Takeaway" sits on a VoxTable-only campaign — candidate for removal or replacement with a Pricing sitelink. |
 
-**NOT applied — blocked by Google identity re-verification ("Confirm it's you"):**
+**"Missed Call" ad group — applied on the third attempt (after Sam confirmed identity):**
 
-The new ad group **"Missed Call"** (10 keywords, RSA with 10 headlines / 4 descriptions, pins
-H1+H7→pos 1, H3→pos 2, display path `restaurants/voxtable`, final URL above, *search term matching
-unchecked* so the exact/phrase keywords are not silently expanded to broad) was fully built **twice**
-and the save was intercepted both times by Google's "Confirm it's you" dialog. That step is account
-authentication, so Claude stops there; "Skip" discards the pending action. The prompt says skipping
-is no longer possible after 22 Sept 2026. **To finish:** in the open Chrome tab, click *Confirm*,
-complete Google's verification, then click *Save and continue* — the form is still filled. Two
-lengths were corrected on the way: descriptions 2 and 3 exceeded 90 chars in the brief and were
+The first two saves were intercepted by Google's **"Confirm it's you"** identity re-verification
+(authentication → Claude stops; "Skip" discards the pending save, verified via change history).
+Sam clicked Confirm and completed verification in the same Chrome session; the form was reloaded
+by that step, so the ad group was rebuilt a third time and saved. Result, verified in-console:
+
+- Ad group **Missed Call** — Eligible, Standard.
+- RSA in Missed Call — Eligible, review **Pending**; 10 headlines / 4 descriptions, pins H1+H7→pos 1,
+  H3→pos 2, final URL `https://biteperk.com/au-en/products/voxtable/`, display path
+  `restaurants/voxtable`. *Search term matching* for the ad group is **off**.
+- **The ad-group builder silently dropped the keywords on save** (the summary bar showed them, the
+  saved ad group had none). They were added a second way — Keywords → + → pick "Missed Call" → paste
+  → Save — and now show: campaign total **30** keywords (20 in Ad group 1, 10 in Missed Call).
+- Status caveat: 9 of the 10 new keywords read **"Not eligible — Low search volume, Under review"**
+  ([missed calls restaurant] is "Pending"). That is Google's normal state for long-tail terms with no
+  history: they auto-activate the moment volume appears, cost nothing meanwhile, and are not a
+  policy problem. It does mean the Missed Call group will deliver little until volume shows —
+  Ad group 1's 15 live phrase keywords remain the volume engine.
+
+Two lengths were corrected on the way: descriptions 2 and 3 exceeded 90 chars in the brief and were
 shortened to 85 and 87.
 
 Payload for the record (so it can be re-keyed if the tab is lost):
