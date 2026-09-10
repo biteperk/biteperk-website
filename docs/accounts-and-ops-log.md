@@ -10,6 +10,97 @@ existing records*), so "after = before + this entry" always holds.
 
 ---
 
+## 2026-09-10 — Google Ads: "Missed Call" restructure of `Search - Vox (AU)` (account 142-390-3850)
+
+Executed via Claude in Chrome against campaign id 24221462592, session `biteperk@gmail.com`,
+account 142-390-3850 verified before any write. Objective: a pain-point ad group
+(missed Friday-night calls) with exact/phrase keywords only, tighter negatives, callouts,
+and no broad B2B SaaS terms eating the budget.
+
+**Pre-flight findings (worth knowing next time):**
+
+- `biteperk.com/restaurants/voxtable` — the text shown in the live ad — is a **display path**, not a URL;
+  it 404s. The ad's real final URL is `https://biteperk.com/au-en/products/voxtable/` (200). Use that.
+- The campaign runs on a **campaign-TOTAL budget** (not average daily). It was A$40 for 8–22 Sept,
+  i.e. ~A$2.70/day under a A$3 CPC cap — under one click a day, which explains zero impressions more
+  than the keywords do. Google cannot convert total→daily in place. Sam's call: **raised to A$50
+  total, same 8–22 Sept window**, campaign kept as is.
+- **Drift since the 8 Sep entry:** that entry recorded "AI Max off, A$20 total, 8–15 Sept". Live
+  today: **AI Max ON** with *Text customisation* and *Final URL expansion* both on, A$40 total,
+  8–22 Sept. Nobody in the repo changed this — either Google auto-applied a recommendation or it was
+  toggled in-console. Final URL expansion matters: Google warns pinned headlines are ignored when a
+  "more relevant landing page" is chosen. **Recommend turning AI Max off** (Campaign settings →
+  AI Max) — not done today because it was outside the agreed spec.
+- Location targeting confirmed: Australia, **Presence** (people in or regularly in). No change.
+
+**Applied and verified in-console:**
+
+| Step | Result |
+|---|---|
+| Budget | Campaign total A$40 → **A$50**, 8–22 Sept 2026 (saved; header shows "A$50.00 (total)") |
+| Pruning (PAUSE, never remove) | In "Ad group 1": `"restaurant reservation system"`, `"restaurant booking system"`, `"restaurant reservation software"` and the two **broad-match** keywords `restaurant answering service`, `telephone answering service for restaurants` → **Paused**. 15 of 20 remain Enabled. |
+| Negatives | 17 → **32** campaign-level. Added: `hiring, recruitment, diy, tutorial, script, "phone system", pbx, voip, "call centre", "call center", chatgpt, "what is ai", opentable, resy, sevenrooms` (quoted = phrase). Skipped as already present: jobs, careers, salary, resume, template. `free/course/training` deliberately still absent (8 Sep decision). VoxOrder-domain negatives untouched. |
+| Callouts | **6** at campaign level, all "Pending / Under review": No Cover Fees · Setup in 5 Minutes · Answers Calls 24/7 · Australian Voice · No Double Bookings · Flat $80/Month. (Campaign previously had none.) |
+| Sitelinks | Six already live at campaign level (VoxOrder: Takeaway, Book a Free Demo, For Sydney Venues, How It Works, About BitePerk, All Vox Products). Left as is. Note "VoxOrder: Takeaway" sits on a VoxTable-only campaign — candidate for removal or replacement with a Pricing sitelink. |
+
+**"Missed Call" ad group — applied on the third attempt (after Sam confirmed identity):**
+
+The first two saves were intercepted by Google's **"Confirm it's you"** identity re-verification
+(authentication → Claude stops; "Skip" discards the pending save, verified via change history).
+Sam clicked Confirm and completed verification in the same Chrome session; the form was reloaded
+by that step, so the ad group was rebuilt a third time and saved. Result, verified in-console:
+
+- Ad group **Missed Call** — Eligible, Standard.
+- RSA in Missed Call — Eligible, review **Pending**; 10 headlines / 4 descriptions, pins H1+H7→pos 1,
+  H3→pos 2, final URL `https://biteperk.com/au-en/products/voxtable/`, display path
+  `restaurants/voxtable`. *Search term matching* for the ad group is **off**.
+- **The ad-group builder silently dropped the keywords on save** (the summary bar showed them, the
+  saved ad group had none). They were added a second way — Keywords → + → pick "Missed Call" → paste
+  → Save — and now show: campaign total **30** keywords (20 in Ad group 1, 10 in Missed Call).
+- Status caveat: 9 of the 10 new keywords read **"Not eligible — Low search volume, Under review"**
+  ([missed calls restaurant] is "Pending"). That is Google's normal state for long-tail terms with no
+  history: they auto-activate the moment volume appears, cost nothing meanwhile, and are not a
+  policy problem. It does mean the Missed Call group will deliver little until volume shows —
+  Ad group 1's 15 live phrase keywords remain the volume engine.
+
+Two lengths were corrected on the way: descriptions 2 and 3 exceeded 90 chars in the brief and were
+shortened to 85 and 87.
+
+Payload for the record (so it can be re-keyed if the tab is lost):
+
+```
+[missed calls restaurant]
+[restaurant missing phone calls]
+[restaurant phone rings out]
+"answer restaurant phone after hours"
+"restaurant not answering phone bookings"
+"phone bookings during service"
+"restaurant voicemail bookings"
+"ai phone host for restaurants"
+"restaurant virtual receptionist australia"
+"restaurant phone booking assistant"
+```
+
+Headlines: Never Miss a Booking Again (pin 1) · AI Phone Host for Restaurants · Flat $80/Month, No
+Cover Fees (pin 2) · Answers Every Call, 24/7 · Natural Australian Voice · Books Straight Into Your
+Diary · Stop Losing Friday Night Calls (pin 1) · No Double Bookings, Ever · Made in Sydney for
+Venues · Set Up in Minutes, Not Weeks.
+
+Descriptions: "Bella answers every call in a warm Aussie voice and books the table while you run
+service." · "Checks live availability and books into your diary. No double bookings, no voicemail."
+· "Flat $80 a month, no per-cover fees. Every missed call is a lost table. Stop the bleed." · "Built
+in Sydney for Australian restaurants. Answers 24/7, even at 8pm on a Friday. Try it."
+
+Ad strength read **"Poor"** in the builder — Google's own suggestions were to include its
+delivery-related keyword ideas ("order food", "restaurant that deliver") in the headlines, which
+would be wrong for this campaign. Ignore that signal; it is not a ranking input.
+
+**Gotchas for whoever drives this UI next:** the ad-group builder *pre-fills* the keyword box and the
+product/service chips with Google's suggestions (delivery/ordering terms) and appends your paste to
+the last line — clear the box first and remove the "online food ordering" chip. "Use search term
+matching for this ad group" defaults to **checked** and expands everything to broad match. The
+15 headline fields come pre-filled too — use *Clear all prefills* before typing.
+
 ## 2026-09-08 — Google Ads account map + AU campaign keyword build-out
 
 **Two Google Ads accounts exist under the `biteperk@gmail.com` login — do not confuse them:**

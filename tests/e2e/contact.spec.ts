@@ -1,5 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 import { p } from "../helpers/routes";
+import { googleAdsDemoContactConversionId } from "../../src/data/consent";
 
 /**
  * Contact form states against a MOCKED /api/contact — the real contract is
@@ -54,14 +55,21 @@ test.describe("contact form", () => {
       const calls = (window as unknown as { __gtagCalls: unknown[][] }).__gtagCalls;
       return calls.filter((call) => call[0] === "event" && call[1] === "conversion");
     });
-    // transaction_id is the lead's random dedupe key (leadRef) — asserted by
-    // shape, not value: it lets offline conversion uploads dedupe the pixel.
+    // Offline-only Ads (PR #57): no web pixel while the conversion id is null.
+    // The pixel contract is kept for the day it is re-armed, derived from
+    // consent.ts so test and config cannot drift. transaction_id is the lead's
+    // random dedupe key (leadRef) — asserted by shape, not value: it lets
+    // offline conversion uploads dedupe the pixel.
+    if (googleAdsDemoContactConversionId === null) {
+      expect(conversions).toEqual([]);
+      return;
+    }
     expect(conversions).toEqual([
       [
         "event",
         "conversion",
         {
-          send_to: "AW-18397306929/m_x8COqW9OYcELHAwsRE",
+          send_to: googleAdsDemoContactConversionId,
           transaction_id: expect.stringMatching(/^[\w-]{8,64}$/),
         },
       ],
