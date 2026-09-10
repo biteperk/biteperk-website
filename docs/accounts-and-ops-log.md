@@ -10,6 +10,86 @@ existing records*), so "after = before + this entry" always holds.
 
 ---
 
+## 2026-09-10 — Google Ads: "Missed Call" restructure of `Search - Vox (AU)` (account 142-390-3850)
+
+Executed via Claude in Chrome against campaign id 24221462592, session `biteperk@gmail.com`,
+account 142-390-3850 verified before any write. Objective: a pain-point ad group
+(missed Friday-night calls) with exact/phrase keywords only, tighter negatives, callouts,
+and no broad B2B SaaS terms eating the budget.
+
+**Pre-flight findings (worth knowing next time):**
+
+- `biteperk.com/restaurants/voxtable` — the text shown in the live ad — is a **display path**, not a URL;
+  it 404s. The ad's real final URL is `https://biteperk.com/au-en/products/voxtable/` (200). Use that.
+- The campaign runs on a **campaign-TOTAL budget** (not average daily). It was A$40 for 8–22 Sept,
+  i.e. ~A$2.70/day under a A$3 CPC cap — under one click a day, which explains zero impressions more
+  than the keywords do. Google cannot convert total→daily in place. Sam's call: **raised to A$50
+  total, same 8–22 Sept window**, campaign kept as is.
+- **Drift since the 8 Sep entry:** that entry recorded "AI Max off, A$20 total, 8–15 Sept". Live
+  today: **AI Max ON** with *Text customisation* and *Final URL expansion* both on, A$40 total,
+  8–22 Sept. Nobody in the repo changed this — either Google auto-applied a recommendation or it was
+  toggled in-console. Final URL expansion matters: Google warns pinned headlines are ignored when a
+  "more relevant landing page" is chosen. **Recommend turning AI Max off** (Campaign settings →
+  AI Max) — not done today because it was outside the agreed spec.
+- Location targeting confirmed: Australia, **Presence** (people in or regularly in). No change.
+
+**Applied and verified in-console:**
+
+| Step | Result |
+|---|---|
+| Budget | Campaign total A$40 → **A$50**, 8–22 Sept 2026 (saved; header shows "A$50.00 (total)") |
+| Pruning (PAUSE, never remove) | In "Ad group 1": `"restaurant reservation system"`, `"restaurant booking system"`, `"restaurant reservation software"` and the two **broad-match** keywords `restaurant answering service`, `telephone answering service for restaurants` → **Paused**. 15 of 20 remain Enabled. |
+| Negatives | 17 → **32** campaign-level. Added: `hiring, recruitment, diy, tutorial, script, "phone system", pbx, voip, "call centre", "call center", chatgpt, "what is ai", opentable, resy, sevenrooms` (quoted = phrase). Skipped as already present: jobs, careers, salary, resume, template. `free/course/training` deliberately still absent (8 Sep decision). VoxOrder-domain negatives untouched. |
+| Callouts | **6** at campaign level, all "Pending / Under review": No Cover Fees · Setup in 5 Minutes · Answers Calls 24/7 · Australian Voice · No Double Bookings · Flat $80/Month. (Campaign previously had none.) |
+| Sitelinks | Six already live at campaign level (VoxOrder: Takeaway, Book a Free Demo, For Sydney Venues, How It Works, About BitePerk, All Vox Products). Left as is. Note "VoxOrder: Takeaway" sits on a VoxTable-only campaign — candidate for removal or replacement with a Pricing sitelink. |
+
+**NOT applied — blocked by Google identity re-verification ("Confirm it's you"):**
+
+The new ad group **"Missed Call"** (10 keywords, RSA with 10 headlines / 4 descriptions, pins
+H1+H7→pos 1, H3→pos 2, display path `restaurants/voxtable`, final URL above, *search term matching
+unchecked* so the exact/phrase keywords are not silently expanded to broad) was fully built **twice**
+and the save was intercepted both times by Google's "Confirm it's you" dialog. That step is account
+authentication, so Claude stops there; "Skip" discards the pending action. The prompt says skipping
+is no longer possible after 22 Sept 2026. **To finish:** in the open Chrome tab, click *Confirm*,
+complete Google's verification, then click *Save and continue* — the form is still filled. Two
+lengths were corrected on the way: descriptions 2 and 3 exceeded 90 chars in the brief and were
+shortened to 85 and 87.
+
+Payload for the record (so it can be re-keyed if the tab is lost):
+
+```
+[missed calls restaurant]
+[restaurant missing phone calls]
+[restaurant phone rings out]
+"answer restaurant phone after hours"
+"restaurant not answering phone bookings"
+"phone bookings during service"
+"restaurant voicemail bookings"
+"ai phone host for restaurants"
+"restaurant virtual receptionist australia"
+"restaurant phone booking assistant"
+```
+
+Headlines: Never Miss a Booking Again (pin 1) · AI Phone Host for Restaurants · Flat $80/Month, No
+Cover Fees (pin 2) · Answers Every Call, 24/7 · Natural Australian Voice · Books Straight Into Your
+Diary · Stop Losing Friday Night Calls (pin 1) · No Double Bookings, Ever · Made in Sydney for
+Venues · Set Up in Minutes, Not Weeks.
+
+Descriptions: "Bella answers every call in a warm Aussie voice and books the table while you run
+service." · "Checks live availability and books into your diary. No double bookings, no voicemail."
+· "Flat $80 a month, no per-cover fees. Every missed call is a lost table. Stop the bleed." · "Built
+in Sydney for Australian restaurants. Answers 24/7, even at 8pm on a Friday. Try it."
+
+Ad strength read **"Poor"** in the builder — Google's own suggestions were to include its
+delivery-related keyword ideas ("order food", "restaurant that deliver") in the headlines, which
+would be wrong for this campaign. Ignore that signal; it is not a ranking input.
+
+**Gotchas for whoever drives this UI next:** the ad-group builder *pre-fills* the keyword box and the
+product/service chips with Google's suggestions (delivery/ordering terms) and appends your paste to
+the last line — clear the box first and remove the "online food ordering" chip. "Use search term
+matching for this ad group" defaults to **checked** and expands everything to broad match. The
+15 headline fields come pre-filled too — use *Clear all prefills* before typing.
+
 ## 2026-09-08 — Google Ads account map + AU campaign keyword build-out
 
 **Two Google Ads accounts exist under the `biteperk@gmail.com` login — do not confuse them:**
