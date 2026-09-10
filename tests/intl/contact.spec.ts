@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { googleAdsGlobalDemoContactConversionId } from "../../src/data/consent";
 
 /**
  * The Zoho CRM + conversion-tracking flow used to be /en-only; it now applies
@@ -88,14 +89,21 @@ for (const { base, venue } of LOCALES) {
       const calls = (window as unknown as { __gtagCalls: unknown[][] }).__gtagCalls;
       return calls.filter((call) => call[0] === "event" && call[1] === "conversion");
     });
-    // transaction_id is the lead's random dedupe key (leadRef) — asserted by
-    // shape, not value: it lets offline conversion uploads dedupe the pixel.
+    // Offline-only Ads (PR #57): no web pixel while the conversion id is null.
+    // The pixel contract is kept for the day it is re-armed, derived from
+    // consent.ts so test and config cannot drift. transaction_id is the lead's
+    // random dedupe key (leadRef) — asserted by shape, not value: it lets
+    // offline conversion uploads dedupe the pixel.
+    if (googleAdsGlobalDemoContactConversionId === null) {
+      expect(conversions).toEqual([]);
+      return;
+    }
     expect(conversions).toEqual([
       [
         "event",
         "conversion",
         {
-          send_to: "AW-18397306929/bn2iCLeH5-YcELHAwsRE",
+          send_to: googleAdsGlobalDemoContactConversionId,
           transaction_id: expect.stringMatching(/^[\w-]{8,64}$/),
         },
       ],
