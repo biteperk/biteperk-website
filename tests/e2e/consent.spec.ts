@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { p } from "../helpers/routes";
+import { googleAdsId } from "../../src/data/consent";
 
 /**
  * Cookie consent — banner + settings modal.
@@ -27,6 +28,23 @@ test.describe("cookie consent", () => {
 
     await page.goto(PREVIEW);
 
+    // Offline-only Ads (8 Sep 2026, PR #57): with googleAdsId null the site
+    // must load NO Google tag and push NO consent/config commands. The pixel
+    // contract below is kept verbatim for the day the id is re-armed — the
+    // expectation is derived from consent.ts so the two cannot drift again.
+    if (googleAdsId === null) {
+      const adsCalls = await page.evaluate(() =>
+        ((window as unknown as { dataLayer?: ArrayLike<unknown>[] }).dataLayer ?? [])
+          .map((entry) => Array.from(entry))
+          .filter((call) => call[0] === "config" || call[0] === "consent"),
+      );
+      expect(tagRequests).toBe(0);
+      expect(adsCalls).toEqual([]);
+      await page.locator("[data-consent-accept]").click();
+      await expect(page.locator("[data-consent-bar]")).toBeHidden();
+      return;
+    }
+
     const beforeChoice = await page.evaluate(() => {
       const entries = (window as unknown as { dataLayer?: ArrayLike<unknown>[] }).dataLayer ?? [];
       return {
@@ -41,7 +59,7 @@ test.describe("cookie consent", () => {
       (call) => call[0] === "consent" && call[1] === "default"
     );
     const configIndex = beforeChoice.calls.findIndex(
-      (call) => call[0] === "config" && call[1] === "AW-18397306929"
+      (call) => call[0] === "config" && call[1] === googleAdsId
     );
 
     expect(tagRequests).toBe(1);
