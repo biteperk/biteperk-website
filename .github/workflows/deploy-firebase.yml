@@ -12,6 +12,20 @@ permissions:
   id-token: write
 
 jobs:
+  # workflow_dispatch uses the selected ref. After integration becomes default,
+  # a UI "Run workflow" click often lands on integration and used to skip the
+  # deploy job silently. Fail loudly instead.
+  refuse-non-main:
+    name: Refuse deploy from non-main
+    runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/main'
+    steps:
+      - name: Explain how to deploy production
+        run: |
+          set -euo pipefail
+          echo "::error title=Wrong ref for production deploy::Deploy Firebase Hosting must be dispatched with ref main (this run is ${{ github.ref }}). Use: gh workflow run \"Deploy Firebase Hosting\" --ref main"
+          exit 1
+
   deploy:
     name: Deploy latest main to Firebase Hosting
     runs-on: ubuntu-latest
