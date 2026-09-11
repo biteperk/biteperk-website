@@ -2,9 +2,9 @@ name: web
 
 on:
   push:
-    branches: [main]
+    branches: [integration, main]
   pull_request:
-    branches: [main]
+    branches: [integration, main]
 
 # Cancel any in-flight runs on the same ref when a new push lands. Doubly right
 # for a fan-out: a superseded push would otherwise leave six Tier-2 jobs
@@ -600,3 +600,34 @@ jobs:
           node scripts/gates/check-routes.mjs
           node scripts/gates/check-hreflang.mjs
           node scripts/gates/check-links.mjs
+
+  # Single required-check name for branch rulesets. Matrix job display names
+  # (shard 1/2, …) are brittle to require directly; this job is the stable gate.
+  # `if: always()` so the check is failed rather than skipped when a dependency
+  # fails — skipped required checks are easy to misread in the PR UI.
+  ci-ok:
+    name: CI OK
+    runs-on: ubuntu-latest
+    if: ${{ always() && !cancelled() }}
+    needs:
+      - preflight
+      - build-and-gate
+      - playwright-au
+      - playwright-intl
+      - playwright-intl-a11y
+      - lighthouse
+      - rollback
+    steps:
+      - name: Confirm every web CI job succeeded
+        env:
+          RESULTS: ${{ join(needs.*.result, ',') }}
+        run: |
+          set -euo pipefail
+          echo "Dependency results: $RESULTS"
+          for result in ${RESULTS//,/ }; do
+            if [ "$result" != "success" ]; then
+              echo "::error::CI OK requires every web job to succeed; got: $RESULTS"
+              exit 1
+            fi
+          done
+          echo "All web CI jobs passed."
