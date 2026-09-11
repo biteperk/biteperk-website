@@ -93,10 +93,21 @@ marketing/      print collateral + generators
 deliverables/   gitignored working material (decks, plans, local archive)
 ```
 
+## Branch model
+
+- **`integration`** — default working branch. Feature PRs land here; CI must be green.
+- **`main`** — production only. Promote with a PR from `integration` → `main` after soak/testing.
+- **Deploy** — manual only from `main` (never from `integration`):
+
+```bash
+gh workflow run "Deploy Firebase Hosting" --ref main
+```
+
 ## Deploy
 
 `.github/workflows/deploy-firebase.yml` manually deploys Firebase Hosting from
-`main` only. It checks out the latest `main`, builds the merged production tree
+`main` only — always dispatch with `--ref main` (a run from any other ref fails
+loudly). It checks out the latest `main`, builds the merged production tree
 with `INTL_LAUNCHED=true npm run build:site`, then deploys both Hosting targets:
 
 - `biteperk-global` — the site at `biteperk.com`.

@@ -145,6 +145,14 @@ that keep them fixed:
   BE · FR only — everywhere else the suffix is redundant width the AU desktop
   bar cannot afford).
 
+## Branch model
+
+Same shape as `biteperk/voxtable`:
+
+- **`integration`** is the default working branch — open feature PRs against it.
+- **`main`** is production-only. Promote with PR `integration` → `main` after CI is green and the change has been soaked/tested.
+- Production Firebase deploys are **manual** and must run from `main`: `gh workflow run "Deploy Firebase Hosting" --ref main`. Do not treat `main` as the day-to-day working branch.
+
 ## Deploy
 
 Site is one Firebase project (id `vocotable` — a legacy id, do **not** "fix" it; project ids are immutable) with two hosting targets. **Mind which target serves what — it is not what the names suggest:**
