@@ -6,12 +6,14 @@
 import Base from "@/layouts/AuBase.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import Cta from "@/components/Cta.astro";
+import ConversionTrust from "@/components/conversion/ConversionTrust.astro";
 import { getCollection } from "astro:content";
 import { resourceTypes, type ResourceType } from "@/data/resources";
-import { site } from "@/data/site";
 import { u, abs } from "@/data/locales";
+import { defaultCtaActions } from "@/data/conversion";
 
 const path = "/resources/";
+const cta = defaultCtaActions();
 const title = "Resources — guides, comparisons & proof · Biteperk";
 const description =
   "The BitePerk resources library: guides, comparisons, case studies, FAQs, product updates and industry reports on AI phone automation for hospitality.";
@@ -109,12 +111,17 @@ const collectionJsonLd = {
     );
   })}
 
+  <section class="res-conv">
+    <div class="wrap">
+      <ConversionTrust />
+    </div>
+  </section>
   <Cta
-    eyebrow="Want this on your line?"
-    headline="Book a demo after you’ve read enough."
-    lede="Bring the guide that matched your problem — we’ll put Vox on a real call and map the overflow."
-    primary={{ label: "Book Demo", href: u("/contact/?intent=demo") }}
-    secondary={{ label: `Call ${site.phone.display}`, href: site.phone.href }}
+    eyebrow="Book a demo"
+    headline="Done reading — hear it on a real line."
+    lede="Bring the guide that matched your problem. We'll put Vox on a call and map the overflow."
+    primary={cta.primary}
+    secondary={cta.secondary}
   />
 </Base>
 
@@ -227,4 +234,5 @@ const collectionJsonLd = {
   .res-list-desc {
     color: var(--text);
   }
+  .res-conv { padding-bottom: clamp(8px, 2vw, 16px); }
 </style>

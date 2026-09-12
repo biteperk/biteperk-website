@@ -6,7 +6,9 @@
 import Base from "@/layouts/AuBase.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import Cta from "@/components/Cta.astro";
+import ConversionTrust from "@/components/conversion/ConversionTrust.astro";
 import type { Solution } from "@/data/solutions";
+import { bookDemoHref, CTA_LABELS, defaultCtaActions } from "@/data/conversion";
 import { site } from "@/data/site";
 import { u, abs } from "@/data/locales";
 
@@ -15,6 +17,8 @@ interface Props {
 }
 const { solution } = Astro.props;
 const path = `/solutions/${solution.slug}/`;
+const demoHref = bookDemoHref({ product: solution.primaryProduct });
+const cta = defaultCtaActions({ product: solution.primaryProduct });
 
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",
@@ -75,16 +79,10 @@ const webPageJsonLd = {
       <h1 class="sol-h">{solution.page.hero.headline}</h1>
       <p class="sol-sub">{solution.page.hero.sub}</p>
       <div class="sol-cta">
-        <a class="btn" href={u(`/contact/?intent=demo&product=${solution.primaryProduct}`)} data-cta="book-demo">
-          Book Demo
-        </a>
-        <a class="btn-ghost" href={u(`/products/${solution.primaryProduct}/`)}>See How It Works</a>
+        <a class="btn" href={demoHref} data-cta="book-demo">{CTA_LABELS.bookDemo}</a>
+        <a class="btn-ghost" href={u(`/products/${solution.primaryProduct}/`)}>{CTA_LABELS.howItWorks}</a>
       </div>
-      <p class="sol-trust">
-        <a href={site.phone.href}>{site.phone.display}</a>
-        <span aria-hidden="true">·</span>
-        <span>Australian-built voice AI for hospitality</span>
-      </p>
+      <ConversionTrust />
     </div>
   </header>
 
@@ -94,8 +92,8 @@ const webPageJsonLd = {
     eyebrow="Book a demo"
     headline={`Talk through ${solution.name.toLowerCase()} on your line.`}
     lede="Fifteen minutes is enough to hear Vox, map your overflow, and decide if BitePerk fits — no slide deck required."
-    primary={{ label: "Book Demo", href: u(`/contact/?intent=demo&product=${solution.primaryProduct}`) }}
-    secondary={{ label: `Call ${site.phone.display}`, href: site.phone.href }}
+    primary={cta.primary}
+    secondary={cta.secondary}
   />
 </Base>
 

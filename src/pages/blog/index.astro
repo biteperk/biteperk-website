@@ -8,6 +8,7 @@
 import Base from "@/layouts/AuBase.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import Cta from "@/components/Cta.astro";
+import ConversionTrust from "@/components/conversion/ConversionTrust.astro";
 import { getCollection } from "astro:content";
 import { u, abs } from "@/data/locales";
 import { WEBSITE_ID } from "@/data/schema";
@@ -104,10 +105,15 @@ const breadcrumbJsonLd = {
     </div>
   </section>
 
+  <section class="blog-conv">
+    <div class="wrap">
+      <ConversionTrust />
+    </div>
+  </section>
   <Cta
     eyebrow="Have a venue?"
     headline="Rather skip the reading and just hear it?"
-    lede="VoxTable answers a real restaurant phone in a warm Australian voice. Call us and listen, or book a 15-minute walkthrough."
+    lede="VoxTable answers a real restaurant phone in a warm Australian voice. Book a 15-minute walkthrough — or see how it works first."
   />
 </Base>
 
@@ -230,4 +236,5 @@ const breadcrumbJsonLd = {
     color: var(--gold);
     letter-spacing: 0.3px;
   }
+  .blog-conv { padding: 0 var(--wrap-pad, 0) clamp(8px, 2vw, 16px); }
 </style>

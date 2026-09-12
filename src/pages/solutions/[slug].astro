@@ -3,6 +3,7 @@ import SolutionLayout from "@/layouts/SolutionLayout.astro";
 import FAQ from "@/components/FAQ.astro";
 import { solutions, type Solution } from "@/data/solutions";
 import { u } from "@/data/locales";
+import { bookDemoHref, CTA_LABELS } from "@/data/conversion";
 
 export async function getStaticPaths() {
   return solutions
@@ -98,7 +99,7 @@ const { page } = solution;
       <p class="sol-more">
         Looking for the product detail?
         <a href={u(`/products/${solution.primaryProduct}/`)}>See {solution.primaryProduct}</a>
-        or <a href={u("/contact/?intent=demo")} data-cta="book-demo">Book Demo</a>.
+        or <a href={bookDemoHref({ product: solution.primaryProduct })} data-cta="book-demo">{CTA_LABELS.bookDemo}</a>.
       </p>
     </div>
   </section>
