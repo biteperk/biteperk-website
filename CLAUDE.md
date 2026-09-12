@@ -145,6 +145,14 @@ that keep them fixed:
   BE · FR only — everywhere else the suffix is redundant width the AU desktop
   bar cannot afford).
 
+## Phase 1 (Australia authority)
+
+Active programme: **Australia Authority & Global Foundation**. The locked plan,
+locale alias map, solutions registry, and target nav IA live under
+`docs/phase1/PLAN.md` plus `src/data/locale-plan.ts`, `solutions.ts`, `nav-ia.ts`.
+Do **not** rename live bases (`/gb-en`, `/fr`, `/en`, `/be-en`) to match brief
+aliases. Feature work branches from `integration`.
+
 ## Branch model
 
 Same shape as `biteperk/voxtable`:
