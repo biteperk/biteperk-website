@@ -53,8 +53,9 @@ const breadcrumbJsonLd = {
   "@type": "BreadcrumbList",
   itemListElement: [
     { "@type": "ListItem", position: 1, name: "Home", item: abs("/") },
-    { "@type": "ListItem", position: 2, name: "Guides", item: abs("/blog/") },
-    { "@type": "ListItem", position: 3, name: post.data.title, item: abs(path) },
+    { "@type": "ListItem", position: 2, name: "Resources", item: abs("/resources/") },
+    { "@type": "ListItem", position: 3, name: "Guides", item: abs("/blog/") },
+    { "@type": "ListItem", position: 4, name: post.data.title, item: abs(path) },
   ],
 };
 ---
@@ -72,6 +73,7 @@ const breadcrumbJsonLd = {
         <div class="post-top">
           <Breadcrumbs items={[
             { label: "Home", href: u("/") },
+            { label: "Resources", href: u("/resources/") },
             { label: "Guides", href: u("/blog/") },
             { label: post.data.title },
           ]} />

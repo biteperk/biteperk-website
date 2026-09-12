@@ -1,0 +1,230 @@
+---
+/**
+ * /resources/ — Phase 1D authority library hub.
+ * Individual articles stay at /blog/{slug}/; this hub organises by type.
+ */
+import Base from "@/layouts/AuBase.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import Cta from "@/components/Cta.astro";
+import { getCollection } from "astro:content";
+import { resourceTypes, type ResourceType } from "@/data/resources";
+import { site } from "@/data/site";
+import { u, abs } from "@/data/locales";
+
+const path = "/resources/";
+const title = "Resources — guides, comparisons & proof · Biteperk";
+const description =
+  "The BitePerk resources library: guides, comparisons, case studies, FAQs, product updates and industry reports on AI phone automation for hospitality.";
+
+const posts = await getCollection("blog", ({ data }) => !data.draft);
+const byType = (t: ResourceType) =>
+  posts
+    .filter((p) => p.data.type === t)
+    .sort(
+      (a, b) =>
+        b.data.publishDate.getTime() - a.data.publishDate.getTime() || a.id.localeCompare(b.id),
+    );
+
+const fmt = (d: Date) =>
+  new Intl.DateTimeFormat("en-AU", { day: "numeric", month: "short", year: "numeric" }).format(d);
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: abs("/") },
+    { "@type": "ListItem", position: 2, name: "Resources", item: abs(path) },
+  ],
+};
+
+const collectionJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: title,
+  description,
+  url: abs(path),
+};
+---
+
+<Base title={title} description={description} path={path} ogImage="/og/blog.png">
+  <Fragment slot="jsonld">
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(collectionJsonLd)} />
+  </Fragment>
+
+  <header class="res-hero">
+    <div class="wrap">
+      <Breadcrumbs items={[{ label: "Home", href: u("/") }, { label: "Resources" }]} />
+      <span class="eyebrow">Resources</span>
+      <h1 class="res-h1">Authority library for phone automation.</h1>
+      <p class="lede res-lede">
+        Guides, comparisons and proof — written so operators (and search engines) can trust what we say about the phone.
+        Articles keep their stable <a href={u("/blog/")}>/blog/</a> URLs.
+      </p>
+    </div>
+  </header>
+
+  <section class="res-types">
+    <div class="wrap">
+      <div class="res-type-grid">
+        {resourceTypes.map((t) => {
+          const count = byType(t.id).length;
+          return (
+            <a class="res-type-card" href={u(t.path)}>
+              <h2>{t.plural}</h2>
+              <p>{t.description}</p>
+              <span class="res-type-meta">{count === 0 ? "Coming soon" : `${count} published`} →</span>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  {resourceTypes.map((t) => {
+    const list = byType(t.id).slice(0, 4);
+    if (list.length === 0) return null;
+    return (
+      <section class="res-section">
+        <div class="wrap">
+          <div class="res-section-head">
+            <h2 class="res-h2">{t.plural}</h2>
+            <a class="res-all" href={u(t.path)}>View all {t.plural.toLowerCase()} →</a>
+          </div>
+          <ul class="res-list">
+            {list.map((post) => (
+              <li>
+                <a href={u(`/blog/${post.id}/`)}>
+                  <span class="res-list-title">{post.data.title}</span>
+                  <span class="res-list-meta">
+                    <time datetime={post.data.publishDate.toISOString().slice(0, 10)}>{fmt(post.data.publishDate)}</time>
+                  </span>
+                  <span class="res-list-desc">{post.data.description}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    );
+  })}
+
+  <Cta
+    eyebrow="Want this on your line?"
+    headline="Book a demo after you’ve read enough."
+    lede="Bring the guide that matched your problem — we’ll put Vox on a real call and map the overflow."
+    primary={{ label: "Book Demo", href: u("/contact/?intent=demo") }}
+    secondary={{ label: `Call ${site.phone.display}`, href: site.phone.href }}
+  />
+</Base>
+
+<style>
+  .res-hero {
+    padding: clamp(120px, 16vw, 180px) 0 clamp(48px, 6vw, 72px);
+    border-bottom: 1px solid var(--line);
+  }
+  .res-h1 {
+    margin-top: 16px;
+    font-size: var(--fs-h2);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: var(--white);
+    max-width: 16ch;
+  }
+  .res-lede {
+    margin-top: 18px;
+    max-width: 62ch;
+  }
+  .res-lede a {
+    color: var(--white);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .res-types {
+    padding-block: var(--space-section);
+    border-bottom: 1px solid var(--line);
+  }
+  .res-type-grid {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+  .res-type-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    text-decoration: none;
+    color: inherit;
+    min-height: 100%;
+  }
+  .res-type-card:hover {
+    border-color: color-mix(in srgb, var(--white) 35%, var(--line));
+  }
+  .res-type-card h2 {
+    color: var(--white);
+    font-size: var(--fs-body);
+    font-weight: 700;
+  }
+  .res-type-card p {
+    color: var(--text);
+    flex: 1;
+  }
+  .res-type-meta {
+    color: var(--mist);
+    font-size: var(--fs-small);
+  }
+  .res-section {
+    padding-block: var(--space-section);
+    border-bottom: 1px solid var(--line);
+  }
+  .res-section-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: baseline;
+    flex-wrap: wrap;
+  }
+  .res-h2 {
+    color: var(--white);
+    font-size: var(--fs-h3);
+    font-weight: 800;
+  }
+  .res-all {
+    color: var(--mist);
+    text-decoration: none;
+  }
+  .res-all:hover { color: var(--white); }
+  .res-list {
+    margin-top: 24px;
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+  }
+  .res-list a {
+    display: grid;
+    gap: 6px;
+    padding: 18px 20px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+  }
+  .res-list a:hover {
+    border-color: color-mix(in srgb, var(--white) 35%, var(--line));
+  }
+  .res-list-title {
+    color: var(--white);
+    font-weight: 700;
+  }
+  .res-list-meta {
+    color: var(--mist);
+    font-size: var(--fs-small);
+  }
+  .res-list-desc {
+    color: var(--text);
+  }
+</style>

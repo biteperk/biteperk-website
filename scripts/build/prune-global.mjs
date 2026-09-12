@@ -3,7 +3,7 @@
  * Tailor the GLOBAL build's dist-global/ down to the biteperk.com pages only.
  *
  * The global pass builds from the same src/pages, so the AU pages (home, cities,
- * products, solutions, blog, about, contact, technology, platform, legal,
+ * products, solutions, resources, blog, about, contact, technology, platform, legal,
  * kitchen-sink) also emit at the root. biteperk.com must NOT serve them — that's the exact
  * cross-domain duplication the whole architecture avoids — so we remove them,
  * leaving /en/, /fr/, the 404 and shared assets. The apex (/) 301s to /en/ via
@@ -27,7 +27,7 @@ if (!existsSync(DIST)) {
 // AU static-page outputs (top-level) that must not appear on biteperk.com.
 const STATIC = [
   "index.html", "about", "contact", "technology", "platform",
-  "blog", "legal", "products", "solutions", "kitchen-sink",
+  "blog", "legal", "products", "solutions", "resources", "kitchen-sink",
 ];
 
 // AU city outputs — derived from cities.ts so the list can't drift.

@@ -1,16 +1,21 @@
 /**
  * Content collections (Astro 5 Content Layer).
  *
- * `blog` powers the Guides hub — restaurant-owner-facing articles that
- * give Google (and AI answer engines) something to rank beyond the brand
- * name. Each post is a Markdown file in src/content/blog/.
- *
- * Adding a post: drop a new .md file in src/content/blog/ with the
- * frontmatter below. It appears on /blog/ and gets its own page, sitemap
- * entry, and Article structured data automatically.
+ * `blog` powers the Resources library. Each Markdown file in
+ * src/content/blog/ keeps its stable /blog/{slug}/ URL. The Resources hub
+ * at /resources/ filters the same collection by `type`.
  */
 import { defineCollection, z } from "astro:content";
 import { glob } from "astro/loaders";
+
+const resourceType = z.enum([
+  "guide",
+  "comparison",
+  "case-study",
+  "faq",
+  "product-update",
+  "industry-report",
+]);
 
 const blog = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./src/content/blog" }),
@@ -19,8 +24,7 @@ const blog = defineCollection({
     title: z.string(),
     /**
      * Optional shorter <title> for search results (kept ≤ ~60 chars before
-     * the " · Biteperk" suffix). Falls back to `title` when omitted. Use it
-     * when the on-page H1 reads better long but would truncate in SERPs.
+     * the " · Biteperk" suffix). Falls back to `title` when omitted.
      */
     seoTitle: z.string().optional(),
     /** Meta description + card excerpt. ~150–160 chars. */
@@ -29,6 +33,11 @@ const blog = defineCollection({
     updatedDate: z.coerce.date().optional(),
     author: z.string().default("The Biteperk team"),
     tags: z.array(z.string()).default([]),
+    /**
+     * Resources taxonomy (Phase 1D). Defaults to `guide` so older posts
+     * without frontmatter still classify cleanly.
+     */
+    type: resourceType.default("guide"),
     /** Optional per-post Open Graph image; falls back to /og/blog.png. */
     ogImage: z.string().optional(),
     /** Hide from the index + noindex while drafting. */
