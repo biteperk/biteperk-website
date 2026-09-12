@@ -9,6 +9,7 @@
 import Base from "@/layouts/AuBase.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import Cta from "@/components/Cta.astro";
+import ConversionTrust from "@/components/conversion/ConversionTrust.astro";
 import { getCollection, render } from "astro:content";
 import { u, abs } from "@/data/locales";
 import { ORG_ID, WEBSITE_ID } from "@/data/schema";
@@ -112,7 +113,16 @@ const breadcrumbJsonLd = {
     </div>
   </article>
 
-  <Cta />
+  <section class="post-conv">
+    <div class="wrap narrow">
+      <ConversionTrust />
+    </div>
+  </section>
+  <Cta
+    eyebrow="Ready when you are"
+    headline="Skip the reading — put Vox on a real call."
+    lede="Book a short demo, or see how the phone stack works end to end."
+  />
 </Base>
 
 <style>
@@ -286,4 +296,8 @@ const breadcrumbJsonLd = {
     font-weight: 600;
   }
   .post-back:hover { color: var(--white); }
+  .post-conv {
+    padding-block: 0 clamp(24px, 4vw, 40px);
+  }
+  .post-conv .narrow { max-width: 720px; }
 </style>

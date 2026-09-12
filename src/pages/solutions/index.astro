@@ -5,6 +5,7 @@ import Cta from "@/components/Cta.astro";
 import { solutions } from "@/data/solutions";
 import { site } from "@/data/site";
 import { u, abs } from "@/data/locales";
+import { bookDemoHref, CTA_LABELS, defaultCtaActions } from "@/data/conversion";
 
 const path = "/solutions/";
 const live = solutions.filter((s) => s.status === "live" || s.status === "draft");
@@ -25,6 +26,7 @@ const breadcrumbJsonLd = {
   ],
 };
 
+const cta = defaultCtaActions();
 ---
 
 <Base title={title} description={description} path={path}>
@@ -41,7 +43,7 @@ const breadcrumbJsonLd = {
         takeaway ordering — not product codenames. Start with your vertical.
       </p>
       <div class="sol-index-cta">
-        <a class="btn" href={u("/contact/?intent=demo")} data-cta="book-demo">Book Demo</a>
+        <a class="btn" href={bookDemoHref()} data-cta="book-demo">{CTA_LABELS.bookDemo}</a>
         <a class="btn-ghost" href={u("/products/")}>See products</a>
       </div>
     </div>
@@ -96,7 +98,7 @@ const breadcrumbJsonLd = {
     eyebrow="Not sure which vertical?"
     headline="Book a demo and we will map your calls."
     lede="Bring a real overflow story — dinner rush, after-hours hotel line, multi-site group — and we will put the right Vox product on the conversation."
-    primary={{ label: "Book Demo", href: u("/contact/?intent=demo") }}
+    primary={cta.primary}
     secondary={{ label: `Call ${site.phone.display}`, href: site.phone.href }}
   />
 </Base>

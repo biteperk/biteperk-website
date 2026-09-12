@@ -53,7 +53,7 @@ describe("phase1 foundation registries", () => {
   it("solutions pages and layout exist", () => {
     assert.equal(read("src/pages/solutions/index.astro").includes("Industry solutions"), true);
     assert.equal(read("src/pages/solutions/[slug].astro").includes("business-problem"), true);
-    assert.equal(read("src/layouts/SolutionLayout.astro").includes("Book Demo"), true);
+    assert.equal(read("src/layouts/SolutionLayout.astro").includes("CTA_LABELS.bookDemo"), true);
   });
 
   it("phase1 plan doc exists and locks locale rename decision", () => {
@@ -96,5 +96,28 @@ describe("phase1 resources hub", () => {
       read("src/content/blog/ai-receptionist-vs-answering-service-vs-voicemail.md"),
       /type: comparison/,
     );
+  });
+});
+
+describe("phase1 conversion system", () => {
+  it("conversion SSOT exports Book Demo hierarchy", () => {
+    const src = read("src/data/conversion.ts");
+    assert.match(src, /intent: "demo"/);
+    assert.match(src, /bookDemo: "Book Demo"/);
+    assert.match(src, /howItWorks: "See How It Works"/);
+    assert.match(src, /function bookDemoHref/);
+    assert.match(src, /function defaultCtaActions/);
+  });
+
+  it("Cta defaults use conversion SSOT", () => {
+    const src = read("src/components/Cta.astro");
+    assert.match(src, /defaultCtaActions/);
+    assert.match(src, /Book a demo/);
+  });
+
+  it("SolutionLayout and ProductLayout wire conversion helpers", () => {
+    assert.match(read("src/layouts/SolutionLayout.astro"), /bookDemoHref/);
+    assert.match(read("src/layouts/SolutionLayout.astro"), /ConversionTrust/);
+    assert.match(read("src/layouts/ProductLayout.astro"), /defaultCtaActions/);
   });
 });

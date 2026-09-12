@@ -21,6 +21,7 @@ import Illustration from "@/components/Illustration.astro";
 import { site } from "@/data/site";
 import { ORG_ID, WEBSITE_ID } from "@/data/schema";
 import { publishedCities, cityUrl, type City } from "@/data/cities";
+import { defaultCtaActions } from "@/data/conversion";
 import { u, abs } from "@/data/locales";
 import { getCollection } from "astro:content";
 
@@ -35,6 +36,8 @@ interface Props {
   city: City;
 }
 const { city } = Astro.props;
+const cta = defaultCtaActions({ product: "voxtable" });
+
 
 const path = cityUrl(city);
 const others = publishedCities.filter((c) => c.slug !== city.slug);
@@ -340,8 +343,8 @@ const [headStart, headAccent] = (() => {
   <Cta
     eyebrow={city.isHQ ? "Talk to a Sydney team" : "Talk to an Australian team"}
     headline={`Stop losing ${city.name} bookings to a busy line.`}
-    lede="Most venues are live within 48 hours. Talk to us about a 15-minute walkthrough, or just call the number and hear Bella for yourself."
-    primary={{ label: `Call us · ${site.phone.display}`, href: site.phone.href }}
+    lede="Most venues are live within 48 hours. Book a 15-minute walkthrough — or see how VoxTable works end to end."
+    primary={cta.primary}
     secondary={{ label: "See VoxTable", href: u("/products/voxtable/") }}
   />
 </Base>

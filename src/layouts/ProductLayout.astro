@@ -17,6 +17,7 @@ import Base from "@/layouts/AuBase.astro";
 import StatusPill from "@/components/StatusPill.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import Cta from "@/components/Cta.astro";
+import { bookDemoHref, defaultCtaActions, CTA_LABELS } from "@/data/conversion";
 import type { Product } from "@/data/products";
 import { site } from "@/data/site";
 import { VOX_ID, voxEditionId } from "@/data/schema";
@@ -143,17 +144,25 @@ const faqJsonLd = product.faq && product.faq.length > 0
   <slot />
 
   <Cta
-    eyebrow={`Try ${product.name}`}
+    eyebrow={product.status === "live" ? "Book a demo" : `Try ${product.name}`}
     headline={product.status === "live"
       ? `Bring ${product.name} to your venue.`
       : `Want to be first to use ${product.name}?`}
     lede={product.status === "live"
-      ? "Most venues are live within a week. Talk to us about a 15-minute walkthrough or just call the number and hear it for yourself."
+      ? "Most venues are live within a week. Book a 15-minute walkthrough — or open the product if you already know you want it."
       : "Join the waitlist and we'll bring you in early. We'd rather start with a small group of venues that genuinely need the product than open the gates."}
-    primary={product.status === "live" && product.externalUrl
-      ? { label: `Open ${product.name} →`, href: product.externalUrl }
-      : { label: `Call us · ${site.phone.display}`, href: site.phone.href }}
-    secondary={{ label: `Email ${site.email.display}`, href: site.email.href }}
+    primary={
+      product.status === "live" && product.externalUrl
+        ? { label: `Open ${product.name} →`, href: product.externalUrl }
+        : product.status === "live"
+          ? defaultCtaActions({ product: product.slug }).primary
+          : { label: "Join the waitlist", href: bookDemoHref({ product: product.slug }) }
+    }
+    secondary={
+      product.status === "live" && product.externalUrl
+        ? { label: CTA_LABELS.bookDemo, href: bookDemoHref({ product: product.slug }) }
+        : defaultCtaActions({ product: product.slug }).secondary
+    }
   />
 </Base>
 
