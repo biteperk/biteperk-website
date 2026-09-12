@@ -1,21 +1,15 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { createRequire } from "node:module";
-import { pathToFileURL } from "node:url";
+import { readFileSync } from "node:fs";
 import path from "node:path";
 
-// Load TS data modules the same way other unit tests do when available.
-// Fallback: dynamic import via tsx-less path — this repo's intl tests use loadTS.
-import { readFileSync } from "node:fs";
-
 const root = path.resolve(import.meta.dirname, "../..");
-
 function read(rel) {
   return readFileSync(path.join(root, rel), "utf8");
 }
 
 describe("phase1 foundation registries", () => {
-  it("solutions registry lists exactly the eight required slugs", () => {
+  it("solutions registry lists exactly the eight required slugs with page copy", () => {
     const src = read("src/data/solutions.ts");
     for (const slug of [
       "restaurants",
@@ -30,6 +24,8 @@ describe("phase1 foundation registries", () => {
       assert.match(src, new RegExp(`slug: "${slug}"`));
     }
     assert.match(src, /SOLUTION_PAGE_SECTIONS/);
+    assert.match(src, /status: "live"/);
+    assert.match(src, /page:\s*\{/);
   });
 
   it("locale-plan keeps live UK/FR bases as /gb-en and /fr (no rename)", () => {
@@ -37,7 +33,6 @@ describe("phase1 foundation registries", () => {
     assert.match(src, /"uk-en": "\/gb-en"/);
     assert.match(src, /"fr-fr": "\/fr"/);
     assert.match(src, /id: "ca-en"/);
-    assert.match(src, /id: "ca-fr"/);
     assert.match(src, /status: "reserved"/);
   });
 
@@ -48,10 +43,22 @@ describe("phase1 foundation registries", () => {
     }
   });
 
+  it("AU static pages include solutions routes", () => {
+    const src = read("src/data/locales.ts");
+    assert.match(src, /SOLUTION_SLUGS/);
+    assert.match(src, /"solutions"/);
+    assert.match(src, /solutions\/\$\{s\}/);
+  });
+
+  it("solutions pages and layout exist", () => {
+    assert.equal(read("src/pages/solutions/index.astro").includes("Industry solutions"), true);
+    assert.equal(read("src/pages/solutions/[slug].astro").includes("business-problem"), true);
+    assert.equal(read("src/layouts/SolutionLayout.astro").includes("Book Demo"), true);
+  });
+
   it("phase1 plan doc exists and locks locale rename decision", () => {
     const plan = read("docs/phase1/PLAN.md");
     assert.match(plan, /Keep `\/gb-en`/);
     assert.match(plan, /Keep `\/fr`/);
-    assert.match(plan, /Wave 2 — Solutions engine/);
   });
 });

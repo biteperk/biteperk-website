@@ -42,10 +42,10 @@ The brief’s *order* is right (architecture → nav → solutions → resources
 - Document Canada readiness checklist in this folder
 
 ### Wave 2 — Solutions engine (1C) — **AU first commercial intent**
-- `/au-en/solutions/` index + `/au-en/solutions/{slug}/` for the eight required verticals
-- Shared layout: Hero → Problem → Lost revenue → How we solve → Features → Benefits → Story → FAQ → Book demo
-- Wire Products mega-menu / footer only after ≥1 solution page is live
-- Intl: reuse same registry via `[...intl].astro` page registry once AU template is green
+- [x] `/au-en/solutions/` index + `/au-en/solutions/{slug}/` for the eight required verticals
+- [x] Shared layout: Hero → Problem → Lost revenue → How we solve → Features → Benefits → Story → FAQ → Book demo
+- [ ] Wire Products mega-menu / footer only after ≥1 solution page is live *(Wave 3)*
+- [ ] Intl: reuse same registry via `[...intl].astro` page registry once AU template is green
 
 ### Wave 3 — Navigation (1B)
 - Header becomes: Products · Solutions · Resources · Pricing · Platform · About · Book Demo

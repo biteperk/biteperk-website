@@ -1,0 +1,217 @@
+---
+import SolutionLayout from "@/layouts/SolutionLayout.astro";
+import FAQ from "@/components/FAQ.astro";
+import { solutions, type Solution } from "@/data/solutions";
+import { u } from "@/data/locales";
+
+export async function getStaticPaths() {
+  return solutions
+    .filter((s) => s.status === "live" || s.status === "draft")
+    .map((s) => ({ params: { slug: s.slug }, props: { solution: s } }));
+}
+
+interface Props {
+  solution: Solution;
+}
+const { solution } = Astro.props;
+const { page } = solution;
+---
+
+<SolutionLayout solution={solution}>
+  <section class="sol-section" id="business-problem">
+    <div class="wrap narrow">
+      <span class="eyebrow">Business problem</span>
+      <h2 class="sol-h2">{page.problem.title}</h2>
+      <p class="sol-body">{page.problem.body}</p>
+    </div>
+  </section>
+
+  <section class="sol-section sol-band" id="lost-revenue">
+    <div class="wrap">
+      <span class="eyebrow">Lost revenue</span>
+      <h2 class="sol-h2">{page.lostRevenue.title}</h2>
+      <p class="sol-body">{page.lostRevenue.body}</p>
+      <ul class="sol-points reveal">
+        {page.lostRevenue.points.map((p) => <li>{p}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="sol-section" id="how-we-solve">
+    <div class="wrap">
+      <span class="eyebrow">How BitePerk solves it</span>
+      <h2 class="sol-h2">{page.howWeSolve.title}</h2>
+      <p class="sol-body">{page.howWeSolve.body}</p>
+      <ol class="sol-steps reveal reveal-stagger">
+        {page.howWeSolve.steps.map((step, i) => (
+          <li>
+            <div class="sol-step-n" aria-hidden="true">{i + 1}</div>
+            <div>
+              <h3>{step.title}</h3>
+              <p>{step.body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="sol-section sol-band" id="features">
+    <div class="wrap">
+      <span class="eyebrow">Features</span>
+      <h2 class="sol-h2 sr-only">Features</h2>
+      <div class="sol-feats reveal">
+        {page.features.map((f) => (
+          <article>
+            <h3>{f.title}</h3>
+            <p>{f.body}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="sol-section" id="benefits">
+    <div class="wrap narrow">
+      <span class="eyebrow">Benefits</span>
+      <h2 class="sol-h2">What changes when the phone is covered</h2>
+      <ul class="sol-benefits">
+        {page.benefits.map((b) => <li>{b}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="sol-section sol-band" id="customer-story">
+    <div class="wrap narrow">
+      <span class="eyebrow">Customer story</span>
+      <h2 class="sol-h2">{page.story.title}</h2>
+      <p class="sol-body">{page.story.body}</p>
+      {page.story.attribution && <p class="sol-attr">{page.story.attribution}</p>}
+    </div>
+  </section>
+
+  <section class="sol-section" id="faq">
+    <div class="wrap narrow">
+      <span class="eyebrow">FAQ</span>
+      <h2 class="sol-h2">Questions operators ask</h2>
+      <FAQ items={page.faq} stagger />
+      <p class="sol-more">
+        Looking for the product detail?
+        <a href={u(`/products/${solution.primaryProduct}/`)}>See {solution.primaryProduct}</a>
+        or <a href={u("/contact/?intent=demo")} data-cta="book-demo">Book Demo</a>.
+      </p>
+    </div>
+  </section>
+</SolutionLayout>
+
+<style>
+  .sol-section {
+    padding-block: var(--space-section);
+    border-bottom: 1px solid var(--line);
+  }
+  .sol-band {
+    background: color-mix(in srgb, var(--ink) 92%, var(--white));
+  }
+  .narrow {
+    max-width: 720px;
+  }
+  .sol-h2 {
+    margin-top: 14px;
+    font-size: var(--fs-h3);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--white);
+    max-width: 22ch;
+  }
+  .sol-body {
+    margin-top: 18px;
+    color: var(--text);
+    font-size: var(--fs-lede);
+    line-height: var(--lh-lede);
+  }
+  .sol-points {
+    margin-top: 28px;
+    display: grid;
+    gap: 12px;
+    padding: 0;
+    list-style: none;
+  }
+  .sol-points li {
+    padding: 16px 18px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    color: var(--text);
+  }
+  .sol-steps {
+    margin-top: 36px;
+    display: grid;
+    gap: 18px;
+    padding: 0;
+    list-style: none;
+  }
+  .sol-steps li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  .sol-step-n {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    background: var(--white);
+    color: var(--ink);
+  }
+  .sol-steps h3 {
+    color: var(--white);
+    font-size: var(--fs-body);
+    font-weight: 700;
+  }
+  .sol-steps p {
+    margin-top: 6px;
+    color: var(--text);
+  }
+  .sol-feats {
+    margin-top: 28px;
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+  .sol-feats article {
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+  }
+  .sol-feats h3 {
+    color: var(--white);
+    font-weight: 700;
+  }
+  .sol-feats p {
+    margin-top: 8px;
+    color: var(--text);
+  }
+  .sol-benefits {
+    margin-top: 24px;
+    display: grid;
+    gap: 10px;
+    padding-left: 1.1em;
+    color: var(--text);
+  }
+  .sol-attr {
+    margin-top: 18px;
+    color: var(--mist);
+    font-size: var(--fs-small);
+  }
+  .sol-more {
+    margin-top: 28px;
+    color: var(--mist);
+  }
+  .sol-more a {
+    color: var(--white);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>
