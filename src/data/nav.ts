@@ -7,6 +7,7 @@
 
 import { site } from "./site";
 import { products, productUrl } from "./products";
+import { liveSolutions, solutionPath } from "./solutions";
 import { publishedCities, cityUrl } from "./cities";
 import { u, stripBase } from "./locales";
 
@@ -24,7 +25,7 @@ export interface NavColumn {
 /**
  * Header navigation — the single source for the desktop centre links AND
  * the mobile menu's Company section (Products is separate: megamenu on
- * desktop, its own section on mobile).
+ * desktop + Solutions megamenu, their own sections on mobile).
  *
  * `activeMatch: "never"` is for hash links (the server can't see the
  * fragment, and lighting them by base path causes double-active states —
@@ -41,7 +42,7 @@ export interface HeaderNavLink extends NavLink {
 export const headerNav: ReadonlyArray<HeaderNavLink> = [
   { label: "Pricing", href: u("/products/voxtable/#pricing"), activeMatch: "never" },
   { label: "Platform", href: u("/platform/") },
-  { label: "How it works", href: u("/technology/") },
+  { label: "How it works", href: u("/technology/"), desktop: false },
   { label: "Guides", href: u("/blog/") },
   { label: "About", href: u("/about/") },
   // Desktop-hidden: Contact is already reachable from the visible phone
@@ -72,6 +73,13 @@ export const footerColumns: ReadonlyArray<NavColumn> = [
   {
     heading: "Products",
     links: products.map((p) => ({ label: p.name, href: productUrl(p) })),
+  },
+  {
+    heading: "Solutions",
+    links: [
+      { label: "All solutions", href: u("/solutions/") },
+      ...liveSolutions().map((s) => ({ label: s.name, href: u(solutionPath(s.slug)) })),
+    ],
   },
   {
     heading: "Locations",
