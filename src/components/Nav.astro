@@ -7,7 +7,7 @@
  *   └────────────────────────────────────────────────────────────────┘
  *
  * Left: logo + wordmark.
- * Centre: primary links (Products is a mega-menu via NavDropdown).
+ * Centre: Products + Solutions mega-menus, then headerNav centre links.
  * Right: a discreet phone link + a small filled "Book a demo" CTA.
  *
  * Glassy translucent backdrop, gold hairline on scroll. Active link
@@ -15,7 +15,7 @@
  *
  * Mobile (<= 1180px): logo + hamburger only; MobileMenu handles the
  * overlay. The threshold is set by what actually fits: the bar carries 11
- * controls (6 centre links + region picker + theme + phone + Sign in + CTA),
+ * controls (Products + Solutions megamenus + centre links + region picker + theme + phone + Sign in + CTA),
  * and below ~1180px they cannot coexist without the centre cluster
  * overflowing its track and painting over the wordmark. Everything in the bar
  * also lives in MobileMenu, so nothing is lost by handing over earlier.
@@ -24,6 +24,7 @@ import StarMark from "@/components/StarMark.astro";
 import ThemeToggle from "@/components/ThemeToggle.astro";
 import LocalePicker from "@/components/LocalePicker.astro";
 import NavDropdown from "@/components/NavDropdown.astro";
+import SolutionsNavDropdown from "@/components/SolutionsNavDropdown.astro";
 import MobileMenu from "@/components/MobileMenu.astro";
 import { site } from "@/data/site";
 import { headerNav, isNavActive } from "@/data/nav";
@@ -45,6 +46,7 @@ const centreLinks = headerNav.filter((l) => l.desktop !== false);
 
     <div class="nav-centre">
       <NavDropdown />
+      <SolutionsNavDropdown />
       {centreLinks.map((link) => (
         <a
           class:list={["lnk", { active: isNavActive(pathname, link) }]}

@@ -48,9 +48,13 @@ The brief’s *order* is right (architecture → nav → solutions → resources
 - [ ] Intl: reuse same registry via `[...intl].astro` page registry once AU template is green
 
 ### Wave 3 — Navigation (1B)
-- Header becomes: Products · Solutions · Resources · Pricing · Platform · About · Book Demo
-- Map old “Guides” → Resources; “How it works” stays reachable from Platform/Technology or footer
-- Update mobile menu + active-match rules + e2e nav coverage
+- [x] Desktop: Solutions mega-menu beside Products (eight verticals + hub)
+- [x] Mobile: Solutions section
+- [x] Footer: Solutions column
+- [x] “How it works” desktop-hidden (still mobile + footer) to fit the second megamenu
+- [ ] Header becomes full Phase 1 IA including Resources *(Wave 4 — after /resources hub)*
+- [ ] Map old “Guides” → Resources
+- [ ] e2e nav coverage refresh if selectors drift
 
 ### Wave 4 — Resources authority hub (1D)
 - `/resources/` hub page (library IA)

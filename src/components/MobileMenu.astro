@@ -8,6 +8,7 @@
 import StarMark from "@/components/StarMark.astro";
 import ThemeToggle from "@/components/ThemeToggle.astro";
 import { products, statusLabel, productUrl } from "@/data/products";
+import { liveSolutions, solutionPath } from "@/data/solutions";
 import { headerNav, isNavActive } from "@/data/nav";
 import { publishedCities, cityUrl } from "@/data/cities";
 import { site } from "@/data/site";
@@ -70,6 +71,27 @@ const companyLinks = headerNav.filter((l) => l.mobile !== false);
           href={u("/products/")}
         >
           See the Vox overview →
+        </a>
+      </div>
+
+
+      <div class="mm-section">
+        <div class="mm-heading">Solutions</div>
+        <p class="mm-subheading">Industry pages for commercial intent — restaurants, hotels, takeaway, and more.</p>
+        {liveSolutions().map((s) => (
+          <a
+            class:list={["mm-link", "mm-product", { active: isActive(u(solutionPath(s.slug))) }]}
+            href={u(solutionPath(s.slug))}
+          >
+            <span class="mm-product-name">{s.name}</span>
+            <span class="mm-product-pill is-live">{s.sector}</span>
+          </a>
+        ))}
+        <a
+          class:list={["mm-link", "mm-all", { active: isNavActive(pathname, { label: "", href: "/solutions/", activeMatch: "exact" }) }]}
+          href={u("/solutions/")}
+        >
+          All solutions →
         </a>
       </div>
 

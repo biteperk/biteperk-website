@@ -2,18 +2,38 @@ import { test, expect, devices } from "@playwright/test";
 import { p } from "../helpers/routes";
 
 /**
- * Keyboard flows for the Products mega-menu (desktop) and the mobile
- * menu (focus trap, Esc, backdrop). Contracts live in
+ * Keyboard flows for the Products + Solutions mega-menus (desktop) and the
+ * mobile menu (focus trap, Esc, backdrop). Contracts live in
  * src/scripts/megamenu.ts and src/scripts/mobile-menu.ts.
+ *
+ * There are two [data-megamenu] roots after Phase 1 Wave 3 — always scope
+ * locators to one menu or Playwright strict-mode fails.
  */
+
+function productsMenu(page: import("@playwright/test").Page) {
+  const root = page.locator('[data-megamenu]:has([aria-controls="megamenu-products-panel"])');
+  return {
+    root,
+    trigger: root.locator("[data-megamenu-trigger]"),
+    panel: root.locator("[data-megamenu-panel]"),
+  };
+}
+
+function solutionsMenu(page: import("@playwright/test").Page) {
+  const root = page.locator('[data-megamenu]:has([aria-controls="megamenu-solutions-panel"])');
+  return {
+    root,
+    trigger: root.locator("[data-megamenu-trigger]"),
+    panel: root.locator("[data-megamenu-panel]"),
+  };
+}
 
 test.describe("mega-menu (desktop keyboard)", () => {
   test.use({ viewport: { width: 1280, height: 800 } });
 
   test("Enter opens + focuses first item, Esc closes + returns focus", async ({ page }) => {
     await page.goto(p());
-    const trigger = page.locator("[data-megamenu-trigger]");
-    const panel = page.locator("[data-megamenu-panel]");
+    const { trigger, panel } = productsMenu(page);
 
     await trigger.focus();
     await expect(trigger).toHaveAttribute("aria-expanded", "false");
@@ -31,8 +51,7 @@ test.describe("mega-menu (desktop keyboard)", () => {
 
   test("arrow keys cycle menu items, Home/End jump", async ({ page }) => {
     await page.goto(p());
-    const trigger = page.locator("[data-megamenu-trigger]");
-    const panel = page.locator("[data-megamenu-panel]");
+    const { trigger, panel } = productsMenu(page);
     const items = panel.locator('a[role="menuitem"]');
 
     await trigger.focus();
@@ -54,15 +73,32 @@ test.describe("mega-menu (desktop keyboard)", () => {
 
   test("mega-menu is closed after client-side navigation", async ({ page }) => {
     await page.goto(p());
-    const trigger = page.locator("[data-megamenu-trigger]");
+    const { trigger, panel } = productsMenu(page);
     await trigger.focus();
     await page.keyboard.press("Enter");
-    const firstItem = page.locator('[data-megamenu-panel] a[role="menuitem"]').first();
+    const firstItem = panel.locator('a[role="menuitem"]').first();
     await expect(firstItem).toBeFocused();
     await page.keyboard.press("Enter"); // navigate to the product page
     await page.waitForURL("**/products/**");
-    await expect(page.locator("[data-megamenu-trigger]")).toHaveAttribute("aria-expanded", "false");
-    await expect(page.locator("[data-megamenu-panel]")).toBeHidden();
+    await expect(productsMenu(page).trigger).toHaveAttribute("aria-expanded", "false");
+    await expect(productsMenu(page).panel).toBeHidden();
+  });
+
+  test("Solutions mega-menu opens, lists verticals, Esc closes", async ({ page }) => {
+    await page.goto(p());
+    const { trigger, panel } = solutionsMenu(page);
+
+    await expect(trigger).toBeVisible();
+    await trigger.focus();
+    await page.keyboard.press("Enter");
+    await expect(trigger).toHaveAttribute("aria-expanded", "true");
+    await expect(panel).toBeVisible();
+    await expect(panel.getByRole("menuitem", { name: /Restaurants/i })).toBeVisible();
+    await expect(panel.getByRole("menuitem", { name: /All solutions/i })).toBeVisible();
+
+    await page.keyboard.press("Escape");
+    await expect(trigger).toHaveAttribute("aria-expanded", "false");
+    await expect(panel).toBeHidden();
   });
 });
 
@@ -133,6 +169,15 @@ test.describe("mobile menu", () => {
     // Book-a-demo parity with desktop + a tappable phone action.
     await expect(panel.locator('a[data-cta="book-demo"]')).toBeVisible();
     await expect(panel.locator('a[data-cta="call-menu"]')).toBeVisible();
+  });
+
+  test("lists Solutions verticals", async ({ page }) => {
+    await page.goto(p());
+    await page.locator("[data-mobile-menu-trigger]").click();
+    const panel = page.locator("[data-mobile-menu]");
+    await expect(panel.getByText("Solutions", { exact: true }).first()).toBeVisible();
+    await expect(panel.locator(`a[href="${p("/solutions/restaurants/")}"]`)).toBeVisible();
+    await expect(panel.locator(`a[href="${p("/solutions/")}"]`)).toBeVisible();
   });
 });
 
