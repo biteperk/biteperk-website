@@ -66,9 +66,11 @@ The brief’s *order* is right (architecture → nav → solutions → resources
 - [ ] Optional later: 301 `/blog/` → `/resources/guides/` once analytics clear
 
 ### Wave 5 — Conversion system (1E)
-- Shared CTA module (Book Demo primary, See How It Works secondary)
-- Page-level checklist gate or component contract: CTA + phone + trust + story + FAQ
-- Contact/`product=` query continuity for solutions and resources
+- [x] Shared conversion SSOT (`src/data/conversion.ts`) — Book Demo primary, See How It Works secondary
+- [x] `Cta.astro` Phase 1E defaults + `ConversionTrust` phone/trust line
+- [x] Wired on solutions, products, city, blog, resources commercial surfaces
+- [x] Contact `intent=demo` + optional `product=` continuity via `bookDemoHref()`
+- [x] Soft checklist documented in `CONVERSION_PAGE_REQUIREMENTS` (unit-tested imports)
 
 ### Wave 6 — SEO foundation (1F)
 - Audit existing `schema.ts` / SEO component against Organization · FAQ · Article · Breadcrumb · SoftwareApplication

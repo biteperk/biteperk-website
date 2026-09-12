@@ -11,6 +11,7 @@ import { coreProduct, addonProducts, voxProof, voxBundle, voxFaq, foundingVenues
 import { buildFaqPage, buildVoxApplication, voxEditionId } from "@/data/schema";
 import { site } from "@/data/site";
 import { u, abs } from "@/data/locales";
+import { bookDemoHref, CTA_LABELS, defaultCtaActions } from "@/data/conversion";
 
 const title = "Vox — AI phone host for restaurants and hotels · Biteperk";
 const description =
@@ -61,6 +62,8 @@ const collage = [
   { slug: "pizza-pass", alt: "A fresh pizza on the kitchen pass during service." },
   { slug: "hands-headset", alt: "A restaurant host taking a booking call on a headset." },
 ] as const;
+
+const cta = defaultCtaActions();
 ---
 
 <Base title={title} description={description} path="/products/" ogImage="/og/products.png">
@@ -106,7 +109,7 @@ const collage = [
       {/* Proof-forward: a voice product earns trust by being heard. Demo sits
           high, right under the lede, next to the primary CTA. */}
       <div class="vx-hero-cta reveal">
-        <a class="btn" href={u("/contact/?intent=demo")}>Book a demo</a>
+        <a class="btn" href={bookDemoHref()}>{CTA_LABELS.bookDemo}</a>
         {voxProof.demo && (
           <a
             class="btn-ghost vx-demo"
@@ -207,7 +210,7 @@ const collage = [
           </ul>
           <p class="vx-founding-note">
             Early venues are live now — the founding cohort is still open.
-            <a href={u("/contact/?intent=demo")}>Put your venue on the line →</a>
+            <a href={bookDemoHref()}>Put your venue on the line →</a>
           </p>
         </div>
       )}
@@ -254,8 +257,8 @@ const collage = [
     eyebrow="Have a venue?"
     headline="Book a demo and hear Vox on your line."
     lede="We work with a small number of venues at a time. Tell us about your phone and we'll show you what Vox can take off your team's plate."
-    primary={{ label: "Book a demo", href: u("/contact/?intent=demo") }}
-    secondary={{ label: `Call us · ${site.phone.display}`, href: site.phone.href }}
+    primary={cta.primary}
+    secondary={cta.secondary}
   />
 </Base>
 
