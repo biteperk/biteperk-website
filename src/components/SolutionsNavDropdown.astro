@@ -1,0 +1,127 @@
+---
+/**
+ * Solutions mega-menu — industry verticals (Phase 1C / Wave 3).
+ * Same WAI-ARIA + data-megamenu contract as NavDropdown (Products);
+ * megamenu.ts binds every [data-megamenu] root.
+ */
+import { liveSolutions, solutionPath } from "@/data/solutions";
+import { site } from "@/data/site";
+import { u, stripBase } from "@/data/locales";
+
+const pathname = stripBase(Astro.url.pathname).replace(/\/$/, "") || "/";
+function isActive(path: string): boolean {
+  const n = path.replace(/\/$/, "") || "/";
+  return pathname === n || pathname.startsWith(n + "/");
+}
+const onSolutions = pathname === "/solutions" || pathname.startsWith("/solutions/");
+const items = liveSolutions();
+---
+
+<div class="megamenu" data-megamenu>
+  <button
+    type="button"
+    class:list={["lnk", "megamenu-trigger", { active: onSolutions }]}
+    aria-haspopup="menu"
+    aria-expanded="false"
+    aria-controls="megamenu-solutions-panel"
+    data-megamenu-trigger
+    data-nav-active-prefix="/solutions/"
+  >
+    Solutions
+    <svg class="megamenu-chev" viewBox="0 0 12 12" width="10" height="10" aria-hidden="true">
+      <path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+
+  <div
+    id="megamenu-solutions-panel"
+    class="megamenu-panel"
+    role="menu"
+    aria-label="Solutions"
+    hidden
+    data-megamenu-panel
+  >
+    <div class="megamenu-head">
+      <span class="megamenu-eyebrow">By industry</span>
+      <p class="megamenu-head-lede">
+        Searchers look for the job — AI receptionist for restaurants, hotel overflow, takeaway ordering — not product codenames.
+      </p>
+    </div>
+
+    <div class="megamenu-grid megamenu-grid-solutions">
+      {items.map((s) => (
+        <a
+          class:list={["megamenu-card", { active: isActive(solutionPath(s.slug)) }]}
+          href={u(solutionPath(s.slug))}
+          role="menuitem"
+          tabindex="-1"
+          aria-current={isActive(solutionPath(s.slug)) ? "page" : undefined}
+        >
+          <div class="megamenu-card-head">
+            <span class="megamenu-card-name">
+              <span class="cap">{s.name}</span>
+            </span>
+            <span class="megamenu-pill is-live">{s.sector}</span>
+          </div>
+          <p class="megamenu-card-tag">{s.shortDescription}</p>
+          <span class="megamenu-card-arrow" aria-hidden="true">→</span>
+        </a>
+      ))}
+    </div>
+
+    <footer class="megamenu-foot">
+      <a class="megamenu-foot-link" href={u("/solutions/")} role="menuitem" tabindex="-1">
+        <span>All solutions</span>
+        <span aria-hidden="true">→</span>
+      </a>
+      <a class="megamenu-foot-link" href={u("/contact/?intent=demo")} role="menuitem" tabindex="-1" data-cta="book-demo">
+        <span>Book a demo</span>
+        <span aria-hidden="true">→</span>
+      </a>
+      <a class="megamenu-foot-link" href={site.phone.href} role="menuitem" tabindex="-1">
+        <span>Call · {site.phone.display}</span>
+      </a>
+    </footer>
+  </div>
+</div>
+
+<style>
+  .megamenu-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+  }
+  .megamenu-trigger:hover,
+  .megamenu-trigger.active {
+    color: var(--white);
+  }
+  .megamenu-trigger[aria-expanded="true"] {
+    color: var(--white);
+  }
+  .megamenu-chev {
+    transition: transform var(--dur-fast) var(--ease-out);
+    opacity: 0.7;
+  }
+  .megamenu-trigger:hover .megamenu-chev,
+  .megamenu-trigger[aria-expanded="true"] .megamenu-chev {
+    opacity: 1;
+  }
+  .megamenu.is-open .megamenu-chev { transform: rotate(180deg); }
+
+  .megamenu-panel {
+    /* Layer 2 polish — position/display from megamenu.css */
+  }
+  .megamenu-grid-solutions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  @media (min-width: 900px) {
+    .megamenu-grid-solutions {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+</style>
