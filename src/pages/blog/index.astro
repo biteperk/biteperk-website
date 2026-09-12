@@ -51,7 +51,8 @@ const breadcrumbJsonLd = {
   "@type": "BreadcrumbList",
   itemListElement: [
     { "@type": "ListItem", position: 1, name: "Home", item: abs("/") },
-    { "@type": "ListItem", position: 2, name: "Guides", item: abs(path) },
+    { "@type": "ListItem", position: 2, name: "Resources", item: abs("/resources/") },
+    { "@type": "ListItem", position: 3, name: "Guides", item: abs(path) },
   ],
 };
 ---
@@ -66,13 +67,14 @@ const breadcrumbJsonLd = {
     <div class="blog-hero-glow" aria-hidden="true"></div>
     <div class="wrap">
       <div class="blog-top">
-        <Breadcrumbs items={[{ label: "Home", href: u("/") }, { label: "Guides" }]} />
+        <Breadcrumbs items={[{ label: "Home", href: u("/") }, { label: "Resources", href: u("/resources/") }, { label: "Guides" }]} />
       </div>
       <span class="eyebrow">Guides</span>
       <h1 class="blog-h1">Field notes for a <span class="gold">busier, calmer floor.</span></h1>
       <p class="lede blog-lede">
         Practical, no-jargon guides on the unglamorous bits — the phone, the missed calls,
         the bookings — written for Australian restaurants by the team behind VoxTable.
+        Part of the <a href={u("/resources/")}>Resources</a> library.
       </p>
     </div>
   </section>
@@ -136,6 +138,7 @@ const breadcrumbJsonLd = {
   }
   .blog-h1 .gold { color: var(--gold); }
   .blog-lede { margin-top: 24px; }
+  .blog-lede a { color: var(--white); text-decoration: underline; text-underline-offset: 3px; }
 
   .blog-list-wrap { padding-block: var(--space-section); background: var(--ink-0); }
   .blog-empty { color: var(--mist); }

@@ -32,6 +32,7 @@
 
 import { PRODUCT_SLUGS } from "./product-slugs";
 import { SOLUTION_SLUGS } from "./solutions";
+import { RESOURCE_SEGMENTS } from "./resources";
 import { intlCityPaths } from "./intl/cities";
 
 export type BuildTarget = "au" | "global";
@@ -287,6 +288,8 @@ export const AU_STATIC_PAGES: readonly string[] = [
   ...PRODUCT_SLUGS.map((s) => `products/${s}`),
   "solutions",
   ...SOLUTION_SLUGS.map((s) => `solutions/${s}`),
+  "resources",
+  ...RESOURCE_SEGMENTS.map((s) => `resources/${s}`),
   "contact",
   "about",
   "technology",

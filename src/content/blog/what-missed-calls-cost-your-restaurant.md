@@ -2,6 +2,7 @@
 title: "What missed phone calls really cost your restaurant"
 description: "Every unanswered call during service is a booking that walks next door. Here's a simple way to put a dollar figure on your restaurant's missed calls — and what to do about it."
 publishDate: 2026-05-12
+type: guide
 tags: ["Missed calls", "Bookings", "Revenue"]
 featured: true
 ---

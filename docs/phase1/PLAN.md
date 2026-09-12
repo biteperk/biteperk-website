@@ -52,15 +52,18 @@ The brief’s *order* is right (architecture → nav → solutions → resources
 - [x] Mobile: Solutions section
 - [x] Footer: Solutions column
 - [x] “How it works” desktop-hidden (still mobile + footer) to fit the second megamenu
-- [ ] Header becomes full Phase 1 IA including Resources *(Wave 4 — after /resources hub)*
-- [ ] Map old “Guides” → Resources
+- [x] Header becomes full Phase 1 IA including Resources *(Wave 4)*
+- [x] Map old “Guides” → Resources
 - [ ] e2e nav coverage refresh if selectors drift
 
 ### Wave 4 — Resources authority hub (1D)
-- `/resources/` hub page (library IA)
-- Content types as collection schema: guide · comparison · case-study · faq · product-update · industry-report
-- Migrate existing `src/content/blog/*` into typed categories (URLs stable initially)
-- Internal links from solutions ↔ resources
+- [x] `/resources/` hub page (library IA)
+- [x] Content `type` on blog schema: guide · comparison · case-study · faq · product-update · industry-report
+- [x] Existing posts classified (12 guides + 1 comparison); URLs stay `/blog/{slug}/`
+- [x] Category indexes under `/resources/{segment}/`
+- [x] Header/footer “Guides” → “Resources”
+- [ ] Deeper internal links from solutions ↔ resources (ongoing with content)
+- [ ] Optional later: 301 `/blog/` → `/resources/guides/` once analytics clear
 
 ### Wave 5 — Conversion system (1E)
 - Shared CTA module (Book Demo primary, See How It Works secondary)
