@@ -43,7 +43,7 @@ export const headerNav: ReadonlyArray<HeaderNavLink> = [
   { label: "Pricing", href: u("/products/voxtable/#pricing"), activeMatch: "never" },
   { label: "Platform", href: u("/platform/") },
   { label: "How it works", href: u("/technology/"), desktop: false },
-  { label: "Guides", href: u("/blog/") },
+  { label: "Resources", href: u("/resources/") },
   { label: "About", href: u("/about/") },
   // Desktop-hidden: Contact is already reachable from the visible phone
   // number, the "Book a demo" CTA (→ /contact/), and the footer. Keeping it
@@ -94,7 +94,7 @@ export const footerColumns: ReadonlyArray<NavColumn> = [
       { label: "About", href: u("/about/") },
       { label: "Platform", href: u("/platform/") },
       { label: "How it works", href: u("/technology/") },
-      { label: "Guides", href: u("/blog/") },
+      { label: "Resources", href: u("/resources/") },
       { label: "Contact", href: u("/contact/") },
       { label: "Careers", href: site.email.href },
     ],

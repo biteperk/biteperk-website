@@ -62,3 +62,39 @@ describe("phase1 foundation registries", () => {
     assert.match(plan, /Keep `\/fr`/);
   });
 });
+
+describe("phase1 resources hub", () => {
+  it("resource types and segments are defined", () => {
+    const src = read("src/data/resources.ts");
+    for (const path of [
+      "/resources/guides/",
+      "/resources/comparisons/",
+      "/resources/case-studies/",
+      "/resources/faq/",
+      "/resources/product-updates/",
+      "/resources/industry-reports/",
+    ]) {
+      assert.match(src, new RegExp(path.replaceAll("/", "\/")));
+    }
+    assert.match(src, /id: "guide"/);
+    assert.match(src, /id: "comparison"/);
+    assert.match(src, /RESOURCE_SEGMENTS/);
+  });
+
+  it("AU static pages include resources routes", () => {
+    const src = read("src/data/locales.ts");
+    assert.match(src, /RESOURCE_SEGMENTS/);
+    assert.match(src, /"resources"/);
+  });
+
+  it("prune-global removes resources from global dist", () => {
+    assert.match(read("scripts/build/prune-global.mjs"), /"resources"/);
+  });
+
+  it("comparison post is typed", () => {
+    assert.match(
+      read("src/content/blog/ai-receptionist-vs-answering-service-vs-voicemail.md"),
+      /type: comparison/,
+    );
+  });
+});

@@ -1,0 +1,165 @@
+---
+import Base from "@/layouts/AuBase.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import Cta from "@/components/Cta.astro";
+import { getCollection } from "astro:content";
+import {
+  RESOURCE_SEGMENTS,
+  resourceTypeFromSegment,
+  type ResourceTypeMeta,
+} from "@/data/resources";
+import { site } from "@/data/site";
+import { u, abs } from "@/data/locales";
+
+export async function getStaticPaths() {
+  return RESOURCE_SEGMENTS.map((type) => ({ params: { type } }));
+}
+
+const segment = Astro.params.type!;
+const meta = resourceTypeFromSegment(segment);
+if (!meta) {
+  throw new Error(`Unknown resources segment: ${segment}`);
+}
+const typedMeta: ResourceTypeMeta = meta;
+
+const path = typedMeta.path;
+const title = `${typedMeta.plural} · Biteperk Resources`;
+const description = typedMeta.description;
+
+const posts = (
+  await getCollection("blog", ({ data }) => !data.draft && data.type === typedMeta.id)
+).sort(
+  (a, b) =>
+    (b.data.featured ? 1 : 0) - (a.data.featured ? 1 : 0) ||
+    b.data.publishDate.getTime() - a.data.publishDate.getTime() ||
+    a.id.localeCompare(b.id),
+);
+
+const fmt = (d: Date) =>
+  new Intl.DateTimeFormat("en-AU", { day: "numeric", month: "long", year: "numeric" }).format(d);
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: abs("/") },
+    { "@type": "ListItem", position: 2, name: "Resources", item: abs("/resources/") },
+    { "@type": "ListItem", position: 3, name: typedMeta.plural, item: abs(path) },
+  ],
+};
+---
+
+<Base title={title} description={description} path={path} ogImage="/og/blog.png">
+  <Fragment slot="jsonld">
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
+  </Fragment>
+
+  <header class="res-hero">
+    <div class="wrap">
+      <Breadcrumbs
+        items={[
+          { label: "Home", href: u("/") },
+          { label: "Resources", href: u("/resources/") },
+          { label: typedMeta.plural },
+        ]}
+      />
+      <span class="eyebrow">{typedMeta.plural}</span>
+      <h1 class="res-h1">{typedMeta.plural}</h1>
+      <p class="lede res-lede">{typedMeta.description}</p>
+    </div>
+  </header>
+
+  <section class="res-section">
+    <div class="wrap">
+      {posts.length === 0 ? (
+        <p class="res-empty">
+          Nothing published in this category yet — the hub is ready for the content cadence.
+          Meanwhile, browse <a href={u("/resources/")}>all resources</a> or the
+          <a href={u("/blog/")}>guides index</a>.
+        </p>
+      ) : (
+        <ul class="res-list">
+          {posts.map((post) => (
+            <li>
+              <a href={u(`/blog/${post.id}/`)}>
+                <span class="res-list-title">{post.data.title}</span>
+                <span class="res-list-meta">
+                  <time datetime={post.data.publishDate.toISOString().slice(0, 10)}>{fmt(post.data.publishDate)}</time>
+                  {post.data.featured && <span>· Cornerstone</span>}
+                </span>
+                <span class="res-list-desc">{post.data.description}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </section>
+
+  <Cta
+    eyebrow="Ready to talk?"
+    headline="Book a demo when the reading is done."
+    primary={{ label: "Book Demo", href: u("/contact/?intent=demo") }}
+    secondary={{ label: `Call ${site.phone.display}`, href: site.phone.href }}
+  />
+</Base>
+
+<style>
+  .res-hero {
+    padding: clamp(120px, 16vw, 180px) 0 clamp(48px, 6vw, 72px);
+    border-bottom: 1px solid var(--line);
+  }
+  .res-h1 {
+    margin-top: 16px;
+    font-size: var(--fs-h2);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: var(--white);
+  }
+  .res-lede {
+    margin-top: 18px;
+    max-width: 62ch;
+  }
+  .res-section {
+    padding-block: var(--space-section);
+    border-bottom: 1px solid var(--line);
+  }
+  .res-empty {
+    color: var(--text);
+    max-width: 60ch;
+  }
+  .res-empty a {
+    color: var(--white);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .res-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+  }
+  .res-list a {
+    display: grid;
+    gap: 6px;
+    padding: 18px 20px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+  }
+  .res-list a:hover {
+    border-color: color-mix(in srgb, var(--white) 35%, var(--line));
+  }
+  .res-list-title {
+    color: var(--white);
+    font-weight: 700;
+  }
+  .res-list-meta {
+    color: var(--mist);
+    font-size: var(--fs-small);
+  }
+  .res-list-desc {
+    color: var(--text);
+  }
+</style>

@@ -3,6 +3,7 @@ title: "AI receptionist vs answering service vs voicemail: what's best for a res
 seoTitle: "AI receptionist vs answering service vs voicemail"
 description: "Voicemail, a human answering service, or an AI host? A clear comparison of the four ways restaurants handle phone calls — what each costs, where each fails, and which fits your venue."
 publishDate: 2026-05-30
+type: comparison
 tags: ["Comparison", "AI receptionist", "Buying guide"]
 ---
 
