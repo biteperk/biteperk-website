@@ -515,6 +515,7 @@ export const home: Record<Lang, HomeCopy> = {
         "Books against real availability — no double-bookings",
         "Every call logged with transcript and recording",
         "Live operations dashboard: bookings, calls, analytics",
+        "Books inside the rules you already run — service windows, party sizes, deposit thresholds",
       ],
     },
     steps: {
@@ -618,6 +619,7 @@ export const home: Record<Lang, HomeCopy> = {
         "Réserve sur les disponibilités réelles — aucun surbooking",
         "Chaque appel journalisé, avec transcription et enregistrement",
         "Tableau de bord en temps réel : réservations, appels, statistiques",
+        "Réserve dans les règles que vous appliquez déjà : créneaux de service, taille des tablées, seuils d'acompte",
       ],
     },
     steps: {
