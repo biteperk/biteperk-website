@@ -4,6 +4,7 @@ seoTitle: "AI phone answering for Melbourne restaurants"
 description: "How AI phone answering works for a Melbourne venue — the laneway maths, the amendment culture, what it costs, and how to pick a good one. No jargon."
 publishDate: 2026-07-08
 type: guide
+relatedSolutions: ["restaurants"]
 tags: ["AI receptionist", "Melbourne", "How it works"]
 ---
 

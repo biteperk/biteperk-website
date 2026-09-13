@@ -4,6 +4,7 @@ seoTitle: "AI phone answering for Adelaide restaurants"
 description: "How AI phone answering works for an Adelaide venue — small-room trust, the Mad March surge, wine-country weekenders, and what it costs. No jargon."
 publishDate: 2026-07-14
 type: guide
+relatedSolutions: ["restaurants"]
 tags: ["AI receptionist", "Adelaide", "How it works"]
 ---
 

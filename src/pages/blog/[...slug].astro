@@ -12,6 +12,8 @@ import Cta from "@/components/Cta.astro";
 import ConversionTrust from "@/components/conversion/ConversionTrust.astro";
 import { getCollection, render } from "astro:content";
 import { u, abs } from "@/data/locales";
+import { solutions, solutionPath, type Solution } from "@/data/solutions";
+import { bookDemoHref } from "@/data/conversion";
 import { ORG_ID, WEBSITE_ID } from "@/data/schema";
 
 export async function getStaticPaths() {
@@ -23,6 +25,11 @@ const { post } = Astro.props;
 const { Content } = await render(post);
 
 const path = `/blog/${post.id}/`;
+// "Built for" — the verticals this guide supports; every guide links into
+// the commercial-intent pages (validated against the registry by unit tests).
+const relatedSolutions = post.data.relatedSolutions
+  .map((slug) => solutions.find((s) => s.slug === slug))
+  .filter((s): s is Solution => Boolean(s) && s!.status === "live");
 const ogImage = post.data.ogImage ?? "/og/blog.png";
 
 const fmt = (d: Date) =>
@@ -94,10 +101,18 @@ const articleJsonLd = {
           </p>
           <div class="post-foot-cta">
             <a class="btn" href={u("/products/voxtable/")}>Explore VoxTable →</a>
-            <a class="btn-ghost" href={u("/contact/")}>Talk to us</a>
+            <a class="btn-ghost" href={bookDemoHref()} data-cta="book-demo">Book a demo</a>
           </div>
         </div>
-        <a class="post-back" href={u("/blog/")}>← All guides</a>
+        {relatedSolutions.length > 0 && (
+          <p class="post-built-for">
+            <span>Built for:</span>
+            {relatedSolutions.map((s) => (
+              <a href={u(solutionPath(s.slug))}>{s.name}</a>
+            ))}
+          </p>
+        )}
+        <a class="post-back" href={u("/resources/guides/")}>← All guides</a>
       </div>
     </div>
   </article>
@@ -115,6 +130,9 @@ const articleJsonLd = {
 </Base>
 
 <style>
+  .post-built-for { margin: 18px 0 0; display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; color: var(--mist); font-size: var(--fs-small); }
+  .post-built-for a { color: var(--white); text-decoration: underline; text-underline-offset: 3px; }
+
   .post-hero {
     position: relative;
     padding: clamp(120px, 14vw, 176px) 0 clamp(32px, 4vw, 48px);

@@ -3,6 +3,7 @@ title: "How to reduce no-shows at your restaurant"
 description: "No-shows quietly cost more than most owners think. Here are the tactics that actually work — confirmations, easy rebooking, deposits — and how answering every call helps."
 publishDate: 2026-05-30
 type: guide
+relatedSolutions: ["restaurants"]
 tags: ["No-shows", "Bookings", "Operations"]
 ---
 

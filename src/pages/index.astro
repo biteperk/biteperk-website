@@ -15,6 +15,7 @@ import FooterMood from "@/components/sections/FooterMood.astro";
 import FAQ from "@/components/FAQ.astro";
 import { getCollection } from "astro:content";
 import { buildFaqPage } from "@/data/schema";
+import SolutionStrip from "@/components/sections/SolutionStrip.astro";
 import { u } from "@/data/locales";
 
 // Latest guides — surfaces the content engine from the homepage (internal
@@ -79,6 +80,7 @@ const faqJsonLd = buildFaqPage(homeFaqs, "en-AU");
   <Hero />
   <TrustRow />
   <ProductGrid />
+  <SolutionStrip />
   <CallSim />
   <PlatformPeek />
   <InTheWild />

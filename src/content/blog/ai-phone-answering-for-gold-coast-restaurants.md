@@ -4,6 +4,7 @@ seoTitle: "AI phone answering for Gold Coast restaurants"
 description: "How AI phone answering works for a Gold Coast venue — tourist callers, holiday-peak volume, same-day bookings, and what it costs. Plain English."
 publishDate: 2026-07-16
 type: guide
+relatedSolutions: ["restaurants"]
 tags: ["AI receptionist", "Gold Coast", "How it works"]
 ---
 
