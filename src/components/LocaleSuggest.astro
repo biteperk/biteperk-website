@@ -24,7 +24,7 @@
  * Matching derives from each locale's `hreflang` codes in locales.ts, so a
  * new market is offered the day it ships, with no mapping table to maintain.
  */
-import { localesForTarget, localeFromPath, ORIGIN } from "@/data/locales";
+import { localesForTarget, localeFromPath } from "@/data/locales";
 import { resolveCopy } from "@/data/intl";
 
 const current = localeFromPath(Astro.url.pathname);
@@ -47,7 +47,7 @@ const candidates = localesForTarget("global").map((l) => {
 
 <div class="ls" id="locale-suggest" data-locale-suggest data-current={current.base} hidden>
   <p class="ls-text" data-ls-text></p>
-  <a class="ls-go" data-ls-go href={`${ORIGIN}/`}>
+  <a class="ls-go" data-ls-go href="/">
     <span class="ls-chip" data-ls-chip aria-hidden="true"></span>
     <span data-ls-label></span>
     <span aria-hidden="true">→</span>
