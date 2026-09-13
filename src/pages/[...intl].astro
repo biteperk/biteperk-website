@@ -25,6 +25,7 @@ import { ukEmail } from "@/data/site";
 import { intlProducts, intlProductsOverview } from "@/data/intl/products";
 import { intlSolutions, intlSolutionsOverview } from "@/data/intl/solutions";
 import { intlResources } from "@/data/intl/resources";
+import { complianceFor } from "@/data/intl/compliance";
 import { resourceTypeFromSegment, RESOURCE_TYPE_BY_SEGMENT } from "@/data/resources";
 import { getCollection, render } from "astro:content";
 import { pageImageFor, productImageFor, solutionImageFor } from "@/data/intl/page-images";
@@ -542,6 +543,9 @@ const appJsonLd =
           <p class="eyebrow">{ct.eyebrow}</p>
           <h1>{ct.h1}</h1>
           <p class="lede">{ct.intro}</p>
+          {/* Where the team is — honest, from the compliance registry; "within
+              a business day" meant nothing without saying whose day. */}
+          <p class="muted" data-market-team>{complianceFor(locale.market).timeZoneNote[locale.copyLang]}</p>
 
           <form class="intl-form" method="post" action="/api/contact" data-astro-reload>
             {/* Honeypot — same contract as the AU form / Cloud Function. */}

@@ -181,6 +181,11 @@ export type TrustFactsCopy = {
   basisLabel: string;
   basis: string;
   privacyLink: string;
+  /** Supervisory authority row — the NAME and link come from intl/compliance.ts. */
+  authorityLabel: string;
+  authorityBody: string;
+  /** Where the team is — the sentence comes from intl/compliance.ts (timeZoneNote). */
+  teamLabel: string;
 };
 
 export type HomeCopy = {
@@ -301,7 +306,7 @@ export const chrome: Record<Lang, ChromeCopy> = {
     menuClose: "Close menu",
     suggest: "There's a BitePerk site for your region.",
     suggestDismiss: "Dismiss",
-    email: "hello@biteperk.com.au",
+    email: "sales@biteperk.com",
     rights: "All rights reserved.",
     consent: {
       region: "Cookie consent",
@@ -352,7 +357,7 @@ export const chrome: Record<Lang, ChromeCopy> = {
     menuClose: "Fermer le menu",
     suggest: "Un site BitePerk existe pour votre région.",
     suggestDismiss: "Fermer",
-    email: "hello@biteperk.com.au",
+    email: "sales@biteperk.com",
     rights: "Tous droits réservés.",
     // French DISCHARGED — verbal pass from Ludovic, confirmed by Sam 7 Sep 2026;
     // see this file's header. The category titles match the cookies page (which
@@ -405,9 +410,13 @@ export const trustFacts: Record<Lang, TrustFactsCopy> = {
     basis:
       "Legitimate interests (Article 6(1)(f) GDPR) for answering the enquiry you send us; consent for optional cookies, withdrawable at any time. Your rights are listed in the privacy notice.",
     privacyLink: "Read the privacy notice",
+    authorityLabel: "Supervisory authority",
+    authorityBody: "You can complain to",
+    teamLabel: "Where the team is",
   },
   // French DISCHARGED — verbal pass from Ludovic, confirmed by Sam 7 Sep 2026;
-  // see this file's header.
+  // see this file's header. authorityLabel/authorityBody/teamLabel written
+  // 13 Sep 2026 — NOT yet reviewed (next batch).
   fr: {
     heading: "Où vous en êtes avec nous",
     entityLabel: "Votre cocontractant",
@@ -423,6 +432,9 @@ export const trustFacts: Record<Lang, TrustFactsCopy> = {
     basis:
       "L'intérêt légitime (article 6(1)(f) du RGPD) pour répondre à la demande que vous nous adressez ; le consentement pour les cookies facultatifs, retirable à tout moment. Vos droits sont détaillés dans la politique de confidentialité.",
     privacyLink: "Lire la politique de confidentialité",
+    authorityLabel: "Autorité de contrôle",
+    authorityBody: "Vous pouvez introduire une réclamation auprès de",
+    teamLabel: "Où se trouve l'équipe",
   },
 };
 

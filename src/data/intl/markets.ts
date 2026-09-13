@@ -305,7 +305,7 @@ const gbEn: MarketContent = {
             a: "Not today. No UK booking integration is built, and which one comes first is decided by the venues who join early. Tell us what you run.",
           },
           {
-            q: "Is this UK GDPR compliant?",
+            q: "How do you handle the UK GDPR?",
             a: "That is a live piece of work, not a checkbox we have already ticked. The UK regime is separate from the EU one and we are treating it separately.",
           },
           {
