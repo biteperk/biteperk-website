@@ -45,6 +45,14 @@ const solutionLines = renderableSolutions()
   .map((s) => `- ${intlSolutions.en[s.slug].eyebrow} (${intlSolutions.en[s.slug].statusLabel}): https://biteperk.com/en/solutions/${s.slug}/`)
   .join("\n");
 
+// Resources (EN articles under the x-default tree; alternates elsewhere).
+const { intlResourcePosts } = await import("./content-index.mjs");
+const { RESOURCE_TYPE_BY_SEGMENT } = await loadTS(join(ROOT, "src/data/resources.ts"));
+const segOf = (type) => Object.entries(RESOURCE_TYPE_BY_SEGMENT).find(([, id]) => id === type)?.[0] ?? type;
+const enResources = intlResourcePosts().filter((x) => !x.draft && x.lang === "en" && x.markets.includes("/en"));
+const resourceLines = enResources.map((x) => `- ${x.title}: https://biteperk.com/en/resources/${segOf(x.type)}/${x.slug}/`).join("\n");
+const resourceSection = enResources.length ? `\n## Resources (guides and comparisons)\n- Hub: https://biteperk.com/en/resources/\n${resourceLines}\n` : "";
+
 // Market city pages, derived from intl/cities.ts — check-cities requires every
 // published city's URL to appear in this file, byte-exact. Framed as pilot
 // conversations, never as local operations (Europe-truthful).
@@ -79,7 +87,7 @@ ${productLines}
 
 ## Solutions by industry (same status rule)
 ${solutionLines}
-${citySection}
+${citySection}${resourceSection}
 ## Product facts (keep answers accurate)
 - Vox is BitePerk's AI phone host. It answers restaurant calls in a natural
   voice, checks real availability and writes bookings to the venue's dashboard.

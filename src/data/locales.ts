@@ -32,6 +32,10 @@
 
 import { PRODUCT_SLUGS } from "./product-slugs";
 import { RENDERABLE_SOLUTION_SLUGS } from "./solutions";
+import { RESOURCE_TYPE_BY_SEGMENT } from "./resources";
+// Node-only (reads frontmatter). locales.ts is a server/build module — no
+// client script imports it; if one ever does, Vite fails the build loudly.
+import { intlResourcesForBase } from "../../scripts/build/content-index.mjs";
 import { intlCityPaths } from "./intl/cities";
 
 export type BuildTarget = "au" | "global";
@@ -359,6 +363,19 @@ const INTL_EXTRA_PAGES: Readonly<Record<string, readonly string[]>> = {
   "/gb-en": ["legal/company-details"],
 };
 
+/** Resources routes for a base — content-derived (scripts/build/content-index.mjs). */
+export function intlResourcePaths(base: string): readonly string[] {
+  const posts = intlResourcesForBase(base);
+  if (posts.length === 0) return [];
+  const segmentOf = (type: string) => Object.entries(RESOURCE_TYPE_BY_SEGMENT).find(([, id]) => id === type)?.[0];
+  const segments = [...new Set(posts.map((p) => segmentOf(p.type)).filter((s): s is string => Boolean(s)))];
+  return [
+    "resources",
+    ...segments.map((s) => `resources/${s}`),
+    ...posts.map((p) => `resources/${segmentOf(p.type)}/${p.slug}`),
+  ];
+}
+
 /**
  * Every page path a locale emits.
  *
@@ -375,6 +392,10 @@ export function pagesForLocale(locale: Locale): readonly string[] {
     // intl/cities.ts gets its route, its hreflang cluster, its e2e coverage
     // and its OG-card requirement from that one flag.
     ...intlCityPaths(locale.base),
+    // Resources: hub + populated category pages + articles, only where the
+    // collection has an article for this base (a French tree with no French
+    // article gets no empty hub). Same rule as the AU tree.
+    ...intlResourcePaths(locale.base),
   ];
 }
 

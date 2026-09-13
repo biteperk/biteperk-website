@@ -53,4 +53,35 @@ const blog = defineCollection({
   }),
 });
 
-export const collections = { blog };
+/**
+ * International resources (Phase 1 / M2). Language-scoped articles under
+ * src/content/intl-resources/<lang>/, emitted at
+ * /<base>/resources/<segment>/<slug>/ for every base in `markets`. The same
+ * slug in another language is the same article (hreflang alternates cluster
+ * by path). Europe-truthful like every global surface: no AU price, NAP or
+ * phone; live means live in Australia; Europe is the pilot programme
+ * (check-truthful sweeps the built pages).
+ */
+const intlResources = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/intl-resources" }),
+  schema: z.object({
+    title: z.string(),
+    seoTitle: z.string().optional(),
+    description: z.string(),
+    publishDate: z.coerce.date(),
+    updatedDate: z.coerce.date().optional(),
+    author: z.string().default("The BitePerk team"),
+    tags: z.array(z.string()).default([]),
+    type: resourceType,
+    /** Language of the prose — must match the directory. */
+    lang: z.enum(["en", "fr"]),
+    /** Locale bases that emit this article (e.g. "/gb-en"). */
+    markets: z.array(z.string()).min(1),
+    relatedSolutions: z.array(z.string()).default([]),
+    ogImage: z.string().optional(),
+    draft: z.boolean().default(false),
+    featured: z.boolean().default(false),
+  }),
+});
+
+export const collections = { blog, intlResources };

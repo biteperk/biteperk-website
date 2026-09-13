@@ -24,6 +24,7 @@ export type IntlNavItem = {
 export const INTL_NAV: readonly IntlNavItem[] = [
   { key: "products", path: "products" },
   { key: "solutions", path: "solutions" },
+  { key: "resources", path: "resources" },
   { key: "howItWorks", path: "how-it-works" },
   { key: "about", path: "about" },
   { key: "contact", path: "contact" },

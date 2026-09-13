@@ -348,6 +348,21 @@ async function buildGlobalCards() {
     }
   }
 
+  // Resources cards (hub + populated categories), per language; articles use
+  // their category's card.
+  const { intlResources: rcAll } = await loadTS(join(ROOT, "src/data/intl/resources.ts"));
+  const { RESOURCE_TYPE_BY_SEGMENT } = await loadTS(join(ROOT, "src/data/resources.ts"));
+  const { intlResourcePosts } = await import("../build/content-index.mjs");
+  for (const lang of ["en", "fr"]) {
+    const posts = intlResourcePosts().filter((x) => !x.draft && x.lang === lang);
+    if (posts.length === 0) continue;
+    cards.push({ file: `resources-index-${lang}.png`, eyebrow: rcAll[lang].eyebrow, headline: rcAll[lang].h1, showBella: false });
+    for (const [seg, id] of Object.entries(RESOURCE_TYPE_BY_SEGMENT)) {
+      if (!posts.some((x) => x.type === id)) continue;
+      cards.push({ file: `resources-${seg}-${lang}.png`, eyebrow: rcAll[lang].eyebrow, headline: rcAll[lang].types[id].plural, showBella: false });
+    }
+  }
+
   // Market city cards, derived from intl/cities.ts — check-cities.mjs requires
   // public/og/intl/<slug><suffix>.png on disk for every published city, same
   // suffix rule as the core pages above. The eyebrow is the market hero pill
