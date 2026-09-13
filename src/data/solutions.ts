@@ -39,11 +39,24 @@ export type SolutionPageCopy = {
   };
   readonly features: readonly { readonly title: string; readonly body: string }[];
   readonly benefits: readonly string[];
+  /**
+   * "Why we built this" — BitePerk's own account of the vertical. It is NOT a
+   * customer story and the template never labels it as one: until 13 Sep 2026
+   * this rendered under a "Customer story" eyebrow with no customer in it,
+   * which is exactly the kind of framing the truthfulness gates exist to stop.
+   */
   readonly story: {
     readonly title: string;
     readonly body: string;
     readonly attribution?: string;
   };
+  /**
+   * Real, approved proof — a quote from a named venue that has agreed to it.
+   * Optional; only three verticals have one today (the two founding venues).
+   * Never fabricate: the wording must be the venue's own, on record
+   * (products.ts voxProof / marketing collateral approvals).
+   */
+  readonly proof?: { readonly quote: string; readonly author: string; readonly role: string };
   readonly faq: readonly FaqItem[];
 };
 
@@ -71,25 +84,11 @@ export const SOLUTION_SLUGS = [
 
 export type SolutionSlug = (typeof SOLUTION_SLUGS)[number];
 
-/** Layout contract for every solution page (Phase 1C standard). */
-export const SOLUTION_PAGE_SECTIONS = [
-  "hero",
-  "business-problem",
-  "lost-revenue",
-  "how-we-solve",
-  "features",
-  "benefits",
-  "customer-story",
-  "faq",
-  "book-demo",
-] as const;
-
-export type SolutionPageSection = (typeof SOLUTION_PAGE_SECTIONS)[number];
-
-const demoPrimary = "Book Demo" as const;
-const seeHow = "See How It Works" as const;
-void demoPrimary;
-void seeHow;
+// The section order (hero → problem → lost revenue → how we solve → features
+// → benefits → why we built this → FAQ → book demo) lives in ONE place:
+// src/pages/solutions/[slug].astro. A parallel SOLUTION_PAGE_SECTIONS constant
+// used to sit here, imported by nothing and asserted only as a string in a
+// unit test — a contract that could not be broken because nothing read it.
 
 export const solutions: readonly Solution[] = [
   {
@@ -151,6 +150,13 @@ export const solutions: readonly Solution[] = [
         body: "BitePerk started by watching Sydney and Melbourne venues lose covers to a ringing phone. Vox exists to take that call without taking a human off the floor — narrow on purpose, measured on bookings taken.",
         attribution: "BitePerk · Sydney",
       },
+      // On record: products.ts voxProof (the same quote the product pages carry).
+      proof: {
+        quote:
+          "We used to lose tables every Friday night just because nobody could reach the phone. Bella picks up every single call — and the bookings just appear on our screen. It paid for itself in the first week.",
+        author: "Natalia",
+        role: "Owner · Natalia's Bistro, Sydney",
+      },
       faq: [
         {
           q: "Will guests know they are talking to AI?",
@@ -158,7 +164,7 @@ export const solutions: readonly Solution[] = [
         },
         {
           q: "How fast can a restaurant go live?",
-          a: "Most venues are live within a week after a short walkthrough. Book a demo and we will put Vox on a test call to your line.",
+          a: "Setup takes about 48 hours after a short walkthrough. Book a demo and we will put Vox on a test call to your line.",
         },
         {
           q: "Does this replace my booking system?",
@@ -299,6 +305,12 @@ export const solutions: readonly Solution[] = [
         title: "Neighbourhood hospitality first",
         body: "BitePerk’s product sense comes from Australian service venues — including the cafes where the phone is always an afterthought until it costs a regular.",
       },
+      // Approved wording, Camilo & Mauro, 7 Sep 2026 (marketing/flyer_and_broucher/v2/copy.mjs).
+      proof: {
+        quote: "Bella picks up the calls we used to miss. Bookings and takeaway orders just land on our screen.",
+        author: "Camilo & Mauro",
+        role: "Owners · Mazcina Resto-Bar, Darlinghurst",
+      },
       faq: [
         {
           q: "Can Vox handle pickup orders?",
@@ -368,6 +380,12 @@ export const solutions: readonly Solution[] = [
       story: {
         title: "Direct relationships still matter",
         body: "Marketplaces are useful. They should not be the only way a guest can reach you by phone. VoxOrder is how BitePerk brings the takeaway line back under your control.",
+      },
+      // Approved wording, Camilo & Mauro, 7 Sep 2026 (marketing/flyer_and_broucher/v2/copy.mjs).
+      proof: {
+        quote: "Bella picks up the calls we used to miss. Bookings and takeaway orders just land on our screen.",
+        author: "Camilo & Mauro",
+        role: "Owners · Mazcina Resto-Bar, Darlinghurst",
       },
       faq: [
         {
@@ -616,7 +634,7 @@ export const solutions: readonly Solution[] = [
       },
       lostRevenue: {
         title: "Network-level leakage",
-        body: "A 2% miss rate across twenty venues is not a local anecdote — it is a budget line.",
+        body: "Run the arithmetic: a 2% miss rate across twenty venues is not a local anecdote — it is a budget line.",
         points: [
           "Inconsistent guest experience by site",
           "No single view of call outcomes",

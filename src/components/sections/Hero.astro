@@ -1,4 +1,5 @@
 ---
+import { bookDemoHref } from "@/data/conversion";
 /**
  * Home hero — preserved cinematic dark + gold treatment.
  *
@@ -36,7 +37,7 @@ import { u } from "@/data/locales";
         answering calls Australia-wide.
       </p>
       <div class="hero-cta">
-        <a class="btn" href={u("/contact/?intent=demo")} data-cta="book-demo">Book a demo →</a>
+        <a class="btn" href={bookDemoHref()} data-cta="book-demo">Book a demo →</a>
         <a class="btn-ghost" href={u("/technology/")}>See how it works</a>
       </div>
       <p class="hero-phone">

@@ -35,6 +35,8 @@ export function howItWorksHref(): string {
 export const CTA_LABELS = {
   bookDemo: "Book Demo",
   howItWorks: "See How It Works",
+  /** Product-page link from a solution hero — named, so it is never "See voxtable". */
+  seeProduct: (productName: string) => `See ${productName}`,
 } as const;
 
 /** Default bottom-of-page CTA actions for commercial AU pages. */

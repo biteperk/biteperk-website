@@ -23,7 +23,7 @@ describe("phase1 foundation registries", () => {
     ]) {
       assert.match(src, new RegExp(`slug: "${slug}"`));
     }
-    assert.match(src, /SOLUTION_PAGE_SECTIONS/);
+    assert.match(src, /readonly proof\?:/); // approved-quote slot; the dead SOLUTION_PAGE_SECTIONS constant is gone
     assert.match(src, /status: "live"/);
     assert.match(src, /page:\s*\{/);
   });

@@ -2,6 +2,7 @@
 import SolutionLayout from "@/layouts/SolutionLayout.astro";
 import FAQ from "@/components/FAQ.astro";
 import { solutions, type Solution } from "@/data/solutions";
+import { getProduct } from "@/data/products";
 import { u } from "@/data/locales";
 import { bookDemoHref, CTA_LABELS } from "@/data/conversion";
 
@@ -16,6 +17,7 @@ interface Props {
 }
 const { solution } = Astro.props;
 const { page } = solution;
+const product = getProduct(solution.primaryProduct)!;
 ---
 
 <SolutionLayout solution={solution}>
@@ -82,9 +84,23 @@ const { page } = solution;
     </div>
   </section>
 
-  <section class="sol-section sol-band" id="customer-story">
+  {page.proof && (
+    <section class="sol-section" id="proof">
+      <div class="wrap narrow">
+        <span class="eyebrow">From a venue running Vox</span>
+        <blockquote class="sol-quote">
+          <p>“{page.proof.quote}”</p>
+          <footer>
+            <strong>{page.proof.author}</strong> · {page.proof.role}
+          </footer>
+        </blockquote>
+      </div>
+    </section>
+  )}
+
+  <section class="sol-section sol-band" id="why-we-built-this">
     <div class="wrap narrow">
-      <span class="eyebrow">Customer story</span>
+      <span class="eyebrow">Why we built this</span>
       <h2 class="sol-h2">{page.story.title}</h2>
       <p class="sol-body">{page.story.body}</p>
       {page.story.attribution && <p class="sol-attr">{page.story.attribution}</p>}
@@ -98,7 +114,7 @@ const { page } = solution;
       <FAQ items={page.faq} stagger />
       <p class="sol-more">
         Looking for the product detail?
-        <a href={u(`/products/${solution.primaryProduct}/`)}>See {solution.primaryProduct}</a>
+        <a href={u(`/products/${product.slug}/`)}>See {product.name}</a>
         or <a href={bookDemoHref({ product: solution.primaryProduct })} data-cta="book-demo">{CTA_LABELS.bookDemo}</a>.
       </p>
     </div>
@@ -106,6 +122,24 @@ const { page } = solution;
 </SolutionLayout>
 
 <style>
+  .sol-quote {
+    margin: 18px 0 0;
+    padding: 22px 26px;
+    border-left: 3px solid var(--gold-fill);
+    background: color-mix(in srgb, var(--ink) 94%, var(--white));
+    border-radius: 0 12px 12px 0;
+  }
+  .sol-quote p {
+    margin: 0;
+    font-size: var(--fs-lede);
+    line-height: var(--lh-lede);
+    color: var(--white);
+  }
+  .sol-quote footer {
+    margin-top: 12px;
+    color: var(--mist);
+    font-size: var(--fs-small);
+  }
   .sol-section {
     padding-block: var(--space-section);
     border-bottom: 1px solid var(--line);
