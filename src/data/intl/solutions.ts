@@ -100,7 +100,7 @@ export const intlSolutions: Record<Lang, Record<SolutionSlug, IntlSolutionCopy>>
     restaurants: {
       title: "AI receptionist for restaurants",
       description:
-        "Vox answers your restaurant's phone in a natural voice, checks real availability and writes the booking to the diary — during service, after close, on the days nobody can reach the handset. Pilots in Europe.",
+        "Vox answers your restaurant's phone in a natural voice, checks real availability and writes the booking to the diary — during service and after close. Pilots in Europe.",
       eyebrow: "Restaurants",
       h1: "Every booking call answered, even mid-service.",
       lede: "A ringing phone at eight on a Friday is a table trying to give you money. Vox picks up on the first ring, books against what is actually free, and hands over to a person the moment a call stops being ordinary.",
@@ -140,7 +140,7 @@ export const intlSolutions: Record<Lang, Record<SolutionSlug, IntlSolutionCopy>>
     hotels: {
       title: "AI phone receptionist for hotels",
       description:
-        "VoxStay is Bella as a hotel receptionist for independent hotels — answers the room-booking call in eight languages, quotes the real price with taxes, texts a secure payment link. In development; pilot partners in Europe.",
+        "VoxStay is Bella as a hotel receptionist — answers the room-booking call in eight languages, quotes the real price with taxes, texts a secure payment link. In development; pilots in Europe.",
       eyebrow: "Hotels",
       h1: "The room-booking call, answered in the guest's language.",
       lede: "Reception has a queue at the desk and a phone that will not stop. VoxStay is designed to take the booking call — eight languages, the real rate with taxes, a secure payment link by text — and to ring the front desk the moment anything falls outside that.",
@@ -415,7 +415,7 @@ export const intlSolutions: Record<Lang, Record<SolutionSlug, IntlSolutionCopy>>
     restaurants: {
       title: "Réceptionniste IA pour restaurants",
       description:
-        "Vox répond au téléphone de votre restaurant d'une voix naturelle, vérifie les disponibilités réelles et inscrit la réservation au registre — en plein service, après la fermeture, les jours où personne ne peut décrocher. Pilotes en Europe.",
+        "Vox répond au téléphone de votre restaurant d'une voix naturelle, vérifie les disponibilités réelles et inscrit la réservation au registre — en plein service comme après la fermeture. Pilotes en Europe.",
       eyebrow: "Restaurants",
       h1: "Chaque appel de réservation décroché, même en plein service.",
       lede: "Un téléphone qui sonne à vingt heures un vendredi, c'est une table qui essaie de vous donner de l'argent. Vox décroche à la première sonnerie, réserve sur ce qui est réellement libre, et passe la main à une personne dès qu'un appel sort de l'ordinaire.",
@@ -455,7 +455,7 @@ export const intlSolutions: Record<Lang, Record<SolutionSlug, IntlSolutionCopy>>
     hotels: {
       title: "Réceptionniste téléphonique IA pour hôtels",
       description:
-        "VoxStay, c'est Bella en réceptionniste pour hôtels indépendants — répond à l'appel de réservation en huit langues, annonce le vrai prix taxes comprises, envoie un lien de paiement sécurisé par SMS. En développement ; partenaires pilotes en Europe.",
+        "VoxStay, c'est Bella en réceptionniste d'hôtel — répond à l'appel de réservation en huit langues, annonce le vrai prix taxes comprises, envoie un lien de paiement sécurisé par SMS. En développement ; pilotes en Europe.",
       eyebrow: "Hôtels",
       h1: "L'appel de réservation, décroché dans la langue du client.",
       lede: "La réception a une file au comptoir et un téléphone qui ne s'arrête pas. VoxStay est conçu pour prendre l'appel de réservation — huit langues, le vrai tarif taxes comprises, un lien de paiement sécurisé par SMS — et pour faire sonner la réception dès que quelque chose sort de ce cadre.",
@@ -494,7 +494,7 @@ export const intlSolutions: Record<Lang, Record<SolutionSlug, IntlSolutionCopy>>
     cafes: {
       title: "Réponse téléphonique IA pour cafés",
       description:
-        "Vox répond au téléphone du café qui passe toujours après le reste — réservations, horaires, l'habitué qui demande si la terrasse est ouverte — d'une voix naturelle, pendant que l'équipe reste à la machine. Pilotes en Europe.",
+        "Vox répond au téléphone du café qui passe toujours après le reste — réservations, horaires, la terrasse — d'une voix naturelle, pendant que l'équipe reste à la machine. Pilotes en Europe.",
       eyebrow: "Cafés",
       h1: "Le téléphone du café, décroché pendant que vous êtes à la machine.",
       lede: "Un café tourne avec une petite équipe et un téléphone que personne ne peut atteindre à neuf heures du matin. Vox prend la réservation, répond à la question ordinaire et transmet ce qui demande une personne.",
