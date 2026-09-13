@@ -250,6 +250,7 @@ const FR_SHARED_WITH_EN = new Set([
   "callSim.whoBella",         // the persona is named Bella in every language
   "callSim.lines[5].text",    // "Ellis." — the caller's name, same in both
   "contact.eyebrow",          // "Contact"
+  "chrome.notFound.contact",  // "Contact"
   "terms.sections[3].heading",
   "cookies.sections[2].heading", // "Marketing"
 ]);

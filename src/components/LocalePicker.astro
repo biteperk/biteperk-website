@@ -23,8 +23,16 @@ import { locales, localeFromPath, localeSwitchUrl } from "@/data/locales";
 interface Props {
   /** Menu heading, localised. Defaults to English for the AU chrome. */
   title?: string;
+  /** Screen-reader text on the trigger; "{label}" → the current locale's label. */
+  currentLabel?: string;
+  /** Close button accessible name. */
+  closeLabel?: string;
 }
-const { title = "Choose your region" } = Astro.props;
+const {
+  title = "Choose your region",
+  currentLabel = "Region and language — currently {label}",
+  closeLabel = "Close region picker",
+} = Astro.props;
 
 const path = Astro.url.pathname;
 const current = localeFromPath(path);
@@ -47,7 +55,7 @@ const chip = shortIsShared ? `${current.short} · ${current.copyLang.toUpperCase
     </svg>
     <span class="lp-chip">{chip}</span>
     <svg class="lp-caret" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
-    <span class="sr-only">Region and language — currently {current.label}</span>
+    <span class="sr-only">{currentLabel.replace("{label}", current.label)}</span>
   </summary>
 
   <div class="lp-scrim" data-locale-picker-scrim aria-hidden="true"></div>
@@ -56,7 +64,7 @@ const chip = shortIsShared ? `${current.short} · ${current.copyLang.toUpperCase
     <span class="lp-grabber" aria-hidden="true"></span>
     <div class="lp-menu-header">
       <p class="lp-menu-title">{title}</p>
-      <button type="button" class="lp-menu-close" data-locale-picker-close aria-label="Close region picker">
+      <button type="button" class="lp-menu-close" data-locale-picker-close aria-label={closeLabel}>
         <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
       </button>
     </div>
