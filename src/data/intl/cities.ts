@@ -964,9 +964,10 @@ export const intlCities: readonly IntlCity[] = [
   // English cities. Its `intro` and `aiLocal` are built on the EVENING /
   // no-show spine (le service du soir) so they diverge from Brussels-FR's
   // MIDI / bilingual spine; the `shield` point names the CNIL, where the
-  // Belgian entries name the APD/GBA. Staged published:false until the French
-  // body copy has had its own native pass (the 7 Sep Ludovic batch covered the
-  // shared cityPage.fr furniture, not this per-city prose).
+  // Belgian entries name the APD/GBA. Published 7 Sep 2026 after Ludovic's
+  // verbal pass on this per-city prose (docs/ops-records/2026-09-07-french-
+  // review-paris-brussels-fr.md); the cityPage.fr furniture had its own pass
+  // in the same batch.
   {
     slug: "paris",
     base: "/fr",
@@ -1909,8 +1910,9 @@ export const intlCities: readonly IntlCity[] = [
   // "fr", so check-cities scores it against Paris only; its MIDI / bilingual
   // spine deliberately diverges from Paris's evening spine, and it holds the
   // same language line as /be-en: French + English on one line is what a
-  // Belgian pilot is built to PROVE, and Dutch is "not built". Staged
-  // published:false until its French body copy has had a native pass.
+  // Belgian pilot is built to PROVE, and Dutch is "not built". Published
+  // 7 Sep 2026 after Ludovic's verbal pass (docs/ops-records/2026-09-07-
+  // french-review-paris-brussels-fr.md).
   {
     slug: "brussels",
     base: "/be-fr",
@@ -1920,10 +1922,10 @@ export const intlCities: readonly IntlCity[] = [
     seoTitle: "Vox, l'hôte téléphonique IA bilingue des restaurants bruxellois",
     seoDescription:
       "Vox répond au téléphone de votre restaurant bruxellois d'une voix naturelle, vérifie le registre réel et prend la réservation — pendant que votre équipe reste avec la salle. Pilotes belges en ouverture.",
-    heroHeadline: "Le déjeuner dure quatre-vingt-dix minutes. Le téléphone, lui, n'attend pas.",
+    heroHeadline: "Le service du midi dure quatre-vingt-dix minutes. Le téléphone, lui, n'attend pas.",
     intro: [
       "Midi et demi dans le quartier européen : la salle se remplit d'un seul mouvement. Tous ceux qui déjeuneront aujourd'hui arrivent en vingt minutes, veulent avoir réglé pour deux heures, et le téléphone se met à sonner sous tout cela — une table de six pour jeudi, une annulation, quelqu'un qui demande si la terrasse est ouverte.",
-      "Bruxelles déjeune sur une montre qui ne laisse aucun jeu. Un service du midi ici n'est pas une longue soirée que l'on organise à l'avance ; c'est une fenêtre étroite où la personne qui pourrait décrocher porte trois assiettes, et l'appelant qui tombe sur une sonnerie essaie simplement l'adresse suivante. Les langues qui arrivent sur cette ligne posent leur propre question — c'est une ville où le même numéro prend le français et l'anglais à une minute d'intervalle.",
+      "Bruxelles mange à midi sur une montre qui ne laisse aucun jeu. Un service du midi ici n'est pas une longue soirée que l'on organise à l'avance ; c'est une fenêtre étroite où la personne qui pourrait décrocher porte trois assiettes, et l'appelant qui tombe sur une sonnerie essaie simplement l'adresse suivante. Les langues qui arrivent sur cette ligne posent leur propre question — c'est une ville où le même numéro prend le français et l'anglais à une minute d'intervalle.",
       "Vox est notre réponse à cette fenêtre étroite. Il décroche dès la première sonnerie quelle que soit l'heure, lit ce que le registre a vraiment de libre, et confie l'appel à votre équipe dès qu'il cesse d'être ordinaire. Il tourne en production en Australie aujourd'hui ; la Belgique est un programme pilote, et Bruxelles en est le point de départ.",
     ],
     districts: [

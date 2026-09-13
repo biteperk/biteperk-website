@@ -256,19 +256,20 @@ const breadcrumbJsonLd = buildBreadcrumb(
 // city, never located in it (PLAN.md §8, enforced by check-truthful +
 // check-schema). provider @id keeps the entity merge with the AU-anchored org.
 const cityUrl = city ? `${ORIGIN}${locale.base}/${city.slug}/` : "";
+// Every string in the language of the document (c.cityPage) — these were
+// English template literals on the French trees until 13 Sep 2026.
+const withCity = (s: string) => s.replace("{city}", city?.name ?? "");
 const cityServiceJsonLd = city && {
   "@context": "https://schema.org",
   "@type": "Service",
   "@id": `${cityUrl}#service`,
-  name: `AI phone answering for ${city.name} restaurants`,
-  alternateName: `AI receptionist for ${city.name} restaurants`,
-  serviceType: [
-    "AI phone answering and reservation booking",
-    "AI receptionist for restaurants",
-  ],
+  inLanguage: locale.lang,
+  name: withCity(c.cityPage.serviceName),
+  alternateName: withCity(c.cityPage.serviceAltName),
+  serviceType: [...c.cityPage.serviceTypes],
   description: city.seoDescription,
   provider: { "@id": ORG_ID },
-  audience: { "@type": "BusinessAudience", name: "Restaurants, cafés and venues" },
+  audience: { "@type": "BusinessAudience", name: c.cityPage.audienceName },
   url: cityUrl,
 };
 const cityBreadcrumbJsonLd =
@@ -285,13 +286,13 @@ const cityBreadcrumbJsonLd =
 // Note Google restricted FAQ rich results to government/health sites in 2023,
 // so this earns no SERP snippet — it is here for answer engines and on-page UX.
 const faqJsonLd = product
-  ? buildFaqPage(product.faqs)
+  ? buildFaqPage(product.faqs, locale.lang)
   : solution
-    ? buildFaqPage(solution.faqs)
+    ? buildFaqPage(solution.faqs, locale.lang)
   : city
-    ? buildFaqPage([...city.faqs])
+    ? buildFaqPage([...city.faqs], locale.lang)
     : page === ""
-      ? buildFaqPage(h.faq.items)
+      ? buildFaqPage(h.faq.items, locale.lang)
       : null;
 // Resources structured data: CollectionPage+ItemList on hub/category, BlogPosting on articles.
 const resListJsonLd = (resHub || resCategory)
@@ -574,7 +575,17 @@ const appJsonLd =
               a business day" meant nothing without saying whose day. */}
           <p class="muted" data-market-team>{complianceFor(locale.market).timeZoneNote[locale.copyLang]}</p>
 
-          <form class="intl-form" method="post" action="/api/contact" data-astro-reload>
+          <form
+            class="intl-form"
+            method="post"
+            action="/api/contact"
+            data-astro-reload
+            data-i18n-sending={ct.form.runtime.sending}
+            data-i18n-success-title={ct.form.runtime.successTitle}
+            data-i18n-success-body={ct.form.runtime.successBody}
+            data-i18n-error={ct.form.runtime.error}
+            data-i18n-network-error={ct.form.runtime.networkError.replace("{email}", isUk ? ukEmail.display : c.chrome.email)}
+          >
             {/* Honeypot — same contract as the AU form / Cloud Function. */}
             <p class="hp" aria-hidden="true">
               <label>Leave this field empty<input type="text" name="_gotcha" tabindex="-1" autocomplete="off" /></label>
@@ -588,6 +599,11 @@ const appJsonLd =
                 sent visitor IPs to Google. The honeypot plus the function's
                 per-connection rate limit do that job now. */}
             <input type="hidden" name="crmForm" value="zoho-global" />
+            {/* Which tree the lead came from. Without it a /fr/ enquiry and a
+                /gb-en/ enquiry were indistinguishable in Firestore and Zoho;
+                sales could not route by market. The function allowlists the
+                value against locales.ts bases. */}
+            <input type="hidden" name="locale" value={locale.base} />
             {/* First-touch campaign attribution (utm fields + gclid), mirrored
                 from the AU form: without it no UK/EU ad click can ever be
                 joined to a lead. Filled from sessionStorage by the submit
@@ -854,7 +870,7 @@ const appJsonLd =
     <>
       <section class="intl-hero">
         <div class="wrap">
-          <nav class="intl-crumbs" aria-label="Breadcrumb">
+          <nav class="intl-crumbs" aria-label={c.chrome.a11y.breadcrumb}>
             <a href={p("")}>{c.chrome.nav.home}</a>
             <span aria-hidden="true">/</span>
             <a href={p("solutions")}>{c.chrome.nav.solutions}</a>
@@ -995,7 +1011,7 @@ const appJsonLd =
     <>
       <section class="intl-hero">
         <div class="wrap">
-          <nav class="intl-crumbs" aria-label="Breadcrumb">
+          <nav class="intl-crumbs" aria-label={c.chrome.a11y.breadcrumb}>
             <a href={p("")}>{c.chrome.nav.home}</a>
             <span aria-hidden="true">/</span>
             <a href={p("resources")}>{c.chrome.nav.resources}</a>
@@ -1026,7 +1042,7 @@ const appJsonLd =
     <article>
       <section class="intl-hero">
         <div class="wrap intl-prose">
-          <nav class="intl-crumbs" aria-label="Breadcrumb">
+          <nav class="intl-crumbs" aria-label={c.chrome.a11y.breadcrumb}>
             <a href={p("")}>{c.chrome.nav.home}</a>
             <span aria-hidden="true">/</span>
             <a href={p("resources")}>{c.chrome.nav.resources}</a>
@@ -1064,7 +1080,7 @@ const appJsonLd =
     <>
       <section class="intl-hero">
         <div class="wrap">
-          <nav class="intl-crumbs" aria-label="Breadcrumb">
+          <nav class="intl-crumbs" aria-label={c.chrome.a11y.breadcrumb}>
             <a href={p("")}>{c.chrome.nav.home}</a>
             <span aria-hidden="true">/</span>
             <a href={p("products")}>{c.chrome.nav.products}</a>
@@ -1300,7 +1316,16 @@ const appJsonLd =
 
       const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
       const status = form.querySelector<HTMLParagraphElement>(".intl-form-status");
-      const buttonLabel = button?.textContent ?? "Request a pilot";
+      const buttonLabel = button?.textContent ?? "";
+      // In-language runtime strings, handed over by the template (copy.ts
+      // contact.form.runtime). No literal user-facing English lives here.
+      const t = {
+        sending: form.dataset.i18nSending ?? "",
+        successTitle: form.dataset.i18nSuccessTitle ?? "",
+        successBody: form.dataset.i18nSuccessBody ?? "",
+        error: form.dataset.i18nError ?? "",
+        networkError: form.dataset.i18nNetworkError ?? "",
+      };
       let busy = false;
 
       // First-touch attribution (utm_*/gclid) captured by scripts/attribution.ts
@@ -1340,7 +1365,7 @@ const appJsonLd =
         if (button) {
           button.disabled = true;
           button.setAttribute("aria-busy", "true");
-          button.textContent = "Sending…";
+          button.textContent = t.sending;
         }
 
         const payload: Record<string, string> = {};
@@ -1359,22 +1384,37 @@ const appJsonLd =
           if (response.ok && body.ok) {
             reportGoogleAdsConversion(googleAdsGlobalDemoContactConversionId, leadRef);
             document.dispatchEvent(new CustomEvent("bp:event", { detail: { name: "form-success" } }));
-            form.innerHTML =
-              '<div class="intl-form-success">' +
-              "<h2>Thanks — we'll be in touch.</h2>" +
-              "<p>Your request has reached the BitePerk team. We'll reply within a business day.</p>" +
-              "</div>";
+            // Keep the live region (it is INSIDE the form — replacing innerHTML
+            // destroyed it, so nothing was announced) and move focus onto the
+            // confirmation, since the submit button that held focus is gone.
+            for (const child of Array.from(form.children)) {
+              if (child !== status) (child as HTMLElement).hidden = true;
+            }
+            const done = document.createElement("div");
+            done.className = "intl-form-success";
+            done.tabIndex = -1;
+            const h2 = document.createElement("h2");
+            h2.textContent = t.successTitle;
+            const p = document.createElement("p");
+            p.textContent = t.successBody;
+            done.append(h2, p);
+            form.prepend(done);
+            if (status) {
+              status.textContent = t.successBody;
+              status.hidden = false;
+            }
+            done.focus();
             return;
           }
 
           if (status) {
-            status.textContent = body.error || "Sorry — something went wrong. Please try again.";
+            status.textContent = body.error || t.error;
             status.classList.add("is-error");
             status.hidden = false;
           }
         } catch {
           if (status) {
-            status.textContent = "Network error — please try again or email hello@biteperk.com.au.";
+            status.textContent = t.networkError;
             status.classList.add("is-error");
             status.hidden = false;
           }

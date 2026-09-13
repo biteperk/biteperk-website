@@ -12,7 +12,7 @@
 import Base from "@/layouts/Base.astro";
 import { resolveCopy } from "@/data/intl";
 import {
-  localesForTarget, buildHreflang, localeSwitchUrl, INTL_LAUNCHED, AU_HOME,
+  localesForTarget, buildHreflang, localeSwitchUrl, INTL_LAUNCHED, AU_HOME, pageExistsInLocale,
   type BuildTarget, type Locale,
 } from "@/data/locales";
 import LocalePicker from "@/components/LocalePicker.astro";
@@ -23,7 +23,6 @@ import LocaleSuggest from "@/components/LocaleSuggest.astro";
 import CityNav from "@/components/intl/CityNav.astro";
 import IntlMobileMenu from "@/components/intl/IntlMobileMenu.astro";
 import { INTL_NAV } from "@/data/intl/nav";
-import { pageExistsInLocale } from "@/data/locales";
 import { products } from "@/data/products";
 import { entities, ukEmail } from "@/data/site";
 import { ukEntityGraph } from "@/data/schema";
@@ -45,10 +44,6 @@ interface Props {
 
 const { locale, page, title, description, ogImage, noindex = !INTL_LAUNCHED, preloadSlug } = Astro.props;
 const c = resolveCopy(locale).chrome;
-// Only the pages THIS locale emits: the Resources hub exists only where the
-// collection has an article for the tree, so a French tree without French
-// articles must not link a 404. Derived from the same predicate as the routes.
-const navItems = INTL_NAV.filter((item) => pageExistsInLocale(item.path, locale));
 
 const pagePath = page ? `${page}/` : "";
 // Paths come from the BASE ("/gb-en/…"), never from lang ("en-GB" → 404).
@@ -71,6 +66,7 @@ const p = (seg: string) => `${locale.base}/${seg ? `${seg}/` : ""}`;
 // This locale's published city pages — empty on trees without cities, so the
 // footer and nav stay identical there (no locale branching, no dead links).
 const footerCities = intlCitiesForBase(locale.base);
+const navItems = INTL_NAV.filter((item) => pageExistsInLocale(item.path, locale));
 const hasCities = footerCities.length > 0;
 // Past ~6, a single vertical list towers over the 4–5-item sibling columns
 // (10 French cities = ~440px). Split those into two sub-columns so the footer
@@ -94,6 +90,8 @@ const isUk = locale.market === "gb";
   alternates={alternates}
   xDefaultHref={xDefault}
   preloadSlug={preloadSlug}
+  skipLabel={c.a11y.skipToContent}
+  orgDescription={c.orgDescription}
 >
   {/* Forward page-level structured data through to Base's <head>. Without
       this the intl pages could only ever carry the sitewide graph — which is
@@ -113,14 +111,23 @@ const isUk = locale.market === "gb";
     />
   )}
 
-  <div class="intl">
+  {/* The header and footer go into Base's `nav` / `footer` NAMED slots, the
+      way AuBase fills them — never into the default slot. Base wraps the
+      default slot in <main id="main">, and a <header>/<footer> inside <main>
+      is not a banner/contentinfo landmark (ARIA in HTML): until 13 Sep 2026
+      every international page had exactly one landmark and its skip link
+      landed BEFORE the site nav, i.e. skipped nothing. axe cannot see this
+      (landmark-one-main and region both pass); tests/intl/a11y.spec.ts's
+      landmark sweep does. `.intl` is repeated on each wrapper because the
+      global styles below are namespaced under it. */}
+  <div class="intl" slot="nav">
     <header class="intl-nav" data-has-cities={hasCities}>
       <div class="wrap intl-nav-row">
-        <a class="brand" href={p("")} aria-label="BitePerk home">
+        <a class="brand" href={p("")} aria-label={c.a11y.brandHome}>
           <StarMark size={30} />
           <span class="brand-name">bite<span class="perk">perk</span></span>
         </a>
-        <nav class="intl-links" aria-label="Site">
+        <nav class="intl-links" aria-label={c.a11y.siteNav}>
           {navItems.map((item) => (
             <a href={p(item.path)}>{c.nav[item.key]}</a>
           ))}
@@ -134,10 +141,10 @@ const isUk = locale.market === "gb";
               `.intl-links a` against INTL_NAV.length, and this menu's 8
               anchors would break it. */}
           {hasCities && (
-            <CityNav locale={locale} page={page} label={c.cities} title={c.citiesTitle} />
+            <CityNav locale={locale} page={page} label={c.cities} title={c.citiesTitle} closeLabel={c.a11y.closeCities} />
           )}
-          <LocalePicker title={c.regionTitle} />
-          <ThemeToggle />
+          <LocalePicker title={c.regionTitle} currentLabel={c.a11y.regionCurrent} closeLabel={c.a11y.closeRegion} />
+          <ThemeToggle label={c.a11y.themeToggle} labelToLight={c.a11y.themeToLight} labelToDark={c.a11y.themeToDark} />
           <a class="btn intl-cta-btn" href={p("contact")}>{c.cta}</a>
           {/* ≤720px only. Placed after the picker so the tab order in the bar
               reads brand → picker → menu, and OUTSIDE the drawer so the
@@ -163,9 +170,13 @@ const isUk = locale.market === "gb";
     {/* Sibling of the header, not a child: the panel is position:fixed and a
         future filter/transform on the bar would otherwise trap it. */}
     <IntlMobileMenu locale={locale} page={page} chrome={c} nav={navItems} cities={footerCities} />
+  </div>
 
+  <div class="intl">
     <slot />
+  </div>
 
+  <div class="intl" slot="footer">
     <footer class="intl-footer">
       <div class="wrap">
         <div class="intl-footer-grid">
@@ -247,6 +258,7 @@ const isUk = locale.market === "gb";
                   rel="alternate"
                   hreflang={l.hreflang[0]}
                   lang={l.lang}
+                  data-astro-reload
                 >
                   {l.label}
                 </a>
