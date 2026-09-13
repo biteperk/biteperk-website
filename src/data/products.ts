@@ -416,7 +416,7 @@ const voxstay: Product = {
   seo: {
     title: "VoxStay — AI phone receptionist for hotels",
     description:
-      "VoxStay is Biteperk's AI voice receptionist for independent hotels — answers the booking call in eight languages, quotes real prices with taxes, and texts a secure payment link. In development — join the waitlist.",
+      "BitePerk's AI voice receptionist for independent hotels — answers booking calls in eight languages, quotes real prices with taxes, texts a secure payment link.",
   },
 };
 
