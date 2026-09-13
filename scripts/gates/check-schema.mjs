@@ -171,6 +171,32 @@ if (TARGET === "global") {
     }
   }
 } else {
+  // Every AU page except the home carries EXACTLY ONE BreadcrumbList, and its
+  // length equals the rendered trail. Added 13 Sep 2026 after a truncated
+  // Breadcrumbs.astro shipped a build with no breadcrumbs — visual or
+  // structured — on any page, and nothing noticed: check-routes saw pages,
+  // axe saw no violation, and this gate asserted six @ids on four pages.
+  {
+    const { readdirSync, statSync } = await import("node:fs");
+    const walk = (dir) => readdirSync(dir).flatMap((n) => {
+      const p = join(dir, n);
+      return statSync(p).isDirectory() ? walk(p) : n === "index.html" ? [p] : [];
+    });
+    let crumbPages = 0;
+    for (const file of walk(join(ROOT, DIST))) {
+      const rel = file.slice(join(ROOT, DIST).length + 1);
+      if (rel === "index.html" || rel.startsWith("kitchen-sink") || rel.startsWith("404")) continue;
+      const html = readFileSync(file, "utf8");
+      const lists = graphOf(rel).filter((n) => n["@type"] === "BreadcrumbList");
+      const rendered = (html.match(/<nav class="crumbs"[\s\S]*?<\/nav>/)?.[0].match(/<li>/g) ?? []).length;
+      if (lists.length !== 1) { console.error(`FAIL  ${rel}: ${lists.length} BreadcrumbList nodes (expected 1)`); failed++; continue; }
+      if (lists[0].itemListElement.length !== rendered) {
+        console.error(`FAIL  ${rel}: BreadcrumbList has ${lists[0].itemListElement.length} items, the rendered trail has ${rendered}`);
+        failed++;
+      } else crumbPages++;
+    }
+    console.log(`PASS  ${crumbPages} pages carry one BreadcrumbList matching the rendered trail`);
+  }
   // Anchors that must never drift (v1 baseline: docs/v1-baseline/schema/).
   expect("index.html", `${AU}/#organization`);
   expect("index.html", `${AU}/#website`);
