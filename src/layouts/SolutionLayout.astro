@@ -10,6 +10,7 @@ import ConversionTrust from "@/components/conversion/ConversionTrust.astro";
 import type { Solution } from "@/data/solutions";
 import { bookDemoHref, CTA_LABELS, defaultCtaActions } from "@/data/conversion";
 import { site } from "@/data/site";
+import { getProduct } from "@/data/products";
 import { u, abs } from "@/data/locales";
 
 interface Props {
@@ -19,6 +20,8 @@ const { solution } = Astro.props;
 const path = `/solutions/${solution.slug}/`;
 const demoHref = bookDemoHref({ product: solution.primaryProduct });
 const cta = defaultCtaActions({ product: solution.primaryProduct });
+const product = getProduct(solution.primaryProduct);
+if (!product) throw new Error(`SolutionLayout: ${solution.slug} names unknown product ${solution.primaryProduct}`);
 
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",
@@ -80,7 +83,10 @@ const webPageJsonLd = {
       <p class="sol-sub">{solution.page.hero.sub}</p>
       <div class="sol-cta">
         <a class="btn" href={demoHref} data-cta="book-demo">{CTA_LABELS.bookDemo}</a>
-        <a class="btn-ghost" href={u(`/products/${solution.primaryProduct}/`)}>{CTA_LABELS.howItWorks}</a>
+        {/* Named product link — the bottom Cta keeps "See How It Works" (→ /technology/),
+            so the two secondary CTAs on this page no longer share a label with
+            different destinations. */}
+        <a class="btn-ghost" href={u(`/products/${product.slug}/`)}>{CTA_LABELS.seeProduct(product.name)}</a>
       </div>
       <ConversionTrust />
     </div>
@@ -127,19 +133,5 @@ const webPageJsonLd = {
     display: flex;
     gap: 14px;
     flex-wrap: wrap;
-  }
-  .sol-trust {
-    margin-top: 22px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    align-items: center;
-    color: var(--mist);
-    font-size: var(--fs-small);
-  }
-  .sol-trust a {
-    color: var(--white);
-    text-decoration: underline;
-    text-underline-offset: 3px;
   }
 </style>

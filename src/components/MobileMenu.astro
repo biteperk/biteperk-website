@@ -7,12 +7,13 @@
  */
 import StarMark from "@/components/StarMark.astro";
 import ThemeToggle from "@/components/ThemeToggle.astro";
-import { products, statusLabel, productUrl } from "@/data/products";
+import { products, statusLabel, productUrl, getProduct } from "@/data/products";
 import { liveSolutions, solutionPath } from "@/data/solutions";
 import { headerNav, isNavActive } from "@/data/nav";
 import { publishedCities, cityUrl } from "@/data/cities";
 import { site } from "@/data/site";
 import { u, locales, localeFromPath, localeSwitchUrl } from "@/data/locales";
+import { bookDemoHref } from "@/data/conversion";
 
 const pathname = Astro.url.pathname;
 // The desktop picker lives in .nav-right, which is display:none under 980px —
@@ -84,7 +85,7 @@ const companyLinks = headerNav.filter((l) => l.mobile !== false);
             href={u(solutionPath(s.slug))}
           >
             <span class="mm-product-name">{s.name}</span>
-            <span class="mm-product-pill is-live">{s.sector}</span>
+            <span class:list={["mm-product-pill", `is-${getProduct(s.primaryProduct)!.status}`]}>{statusLabel(getProduct(s.primaryProduct)!.status)}</span>
           </a>
         ))}
         <a
@@ -145,7 +146,7 @@ const companyLinks = headerNav.filter((l) => l.mobile !== false);
       </div>
 
       <div class="mm-cta">
-        <a class="btn" href={u("/contact/?intent=demo")} data-cta="book-demo">
+        <a class="btn" href={bookDemoHref()} data-cta="book-demo">
           Book a demo
           <span aria-hidden="true">→</span>
         </a>
