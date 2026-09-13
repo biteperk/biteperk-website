@@ -59,7 +59,7 @@ type Principle = { title: string; body: string };
 
 export type ChromeCopy = {
   tagline: string;
-  nav: { home: string; products: string; howItWorks: string; about: string; contact: string };
+  nav: { home: string; products: string; solutions: string; howItWorks: string; about: string; contact: string };
   cta: string;
   auSite: string;
   footerBlurb: string;
@@ -280,7 +280,7 @@ export type CityPageCopy = {
 export const chrome: Record<Lang, ChromeCopy> = {
   en: {
     tagline: "Voice & AI for hospitality",
-    nav: { home: "Home", products: "Product", howItWorks: "How it works", about: "About", contact: "Contact" },
+    nav: { home: "Home", products: "Product", solutions: "Solutions", howItWorks: "How it works", about: "About", contact: "Contact" },
     cta: "Book a pilot",
     auSite: "Australia site",
     footerBlurb:
@@ -321,7 +321,7 @@ export const chrome: Record<Lang, ChromeCopy> = {
   },
   fr: {
     tagline: "La voix et l'IA pour l'hôtellerie-restauration",
-    nav: { home: "Accueil", products: "Le produit", howItWorks: "Comment ça marche", about: "À propos", contact: "Contact" },
+    nav: { home: "Accueil", products: "Le produit", solutions: "Solutions", howItWorks: "Comment ça marche", about: "À propos", contact: "Contact" },
     cta: "Réserver un pilote",
     auSite: "Site Australie",
     footerBlurb:

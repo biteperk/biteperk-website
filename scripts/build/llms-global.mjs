@@ -37,6 +37,14 @@ const productLines = PRODUCT_SLUGS.map(
   (s) => `- ${intlProducts.en[s].eyebrow} (${intlProducts.en[s].statusLabel}): https://biteperk.com/en/products/${s}/`,
 ).join("\n");
 
+// Solution verticals, derived from solutions.ts + intl/solutions.ts (EN, under
+// the x-default tree — hreflang alternates elsewhere, like the products).
+const { renderableSolutions } = await loadTS(join(ROOT, "src/data/solutions.ts"));
+const { intlSolutions } = await loadTS(join(ROOT, "src/data/intl/solutions.ts"));
+const solutionLines = renderableSolutions()
+  .map((s) => `- ${intlSolutions.en[s.slug].eyebrow} (${intlSolutions.en[s.slug].statusLabel}): https://biteperk.com/en/solutions/${s.slug}/`)
+  .join("\n");
+
 // Market city pages, derived from intl/cities.ts — check-cities requires every
 // published city's URL to appear in this file, byte-exact. Framed as pilot
 // conversations, never as local operations (Europe-truthful).
@@ -68,6 +76,9 @@ ${localeLines}
 
 ## Capabilities (status matters — do not describe unshipped work as available)
 ${productLines}
+
+## Solutions by industry (same status rule)
+${solutionLines}
 ${citySection}
 ## Product facts (keep answers accurate)
 - Vox is BitePerk's AI phone host. It answers restaurant calls in a natural

@@ -23,8 +23,10 @@ import { intlCitiesForBase } from "@/data/intl/cities";
 import { companyDetails } from "@/data/intl/company-details";
 import { ukEmail } from "@/data/site";
 import { intlProducts, intlProductsOverview } from "@/data/intl/products";
-import { pageImageFor, productImageFor } from "@/data/intl/page-images";
-import { products } from "@/data/products";
+import { intlSolutions, intlSolutionsOverview } from "@/data/intl/solutions";
+import { pageImageFor, productImageFor, solutionImageFor } from "@/data/intl/page-images";
+import { products, getProduct } from "@/data/products";
+import { renderableSolutions, type SolutionSlug } from "@/data/solutions";
 import { buildFaqPage, buildVoxApplication, buildBreadcrumb, voxEditionId, ORG_ID } from "@/data/schema";
 import ImageBlock from "@/components/ImageBlock.astro";
 import FAQ from "@/components/FAQ.astro";
@@ -110,6 +112,15 @@ const product = productSlug ? intlProducts[locale.copyLang][productSlug] : null;
 const productImage = productSlug ? productImageFor(productSlug) : undefined;
 const catalogue = productSlug ? products.find((x) => x.slug === productSlug) : null;
 
+// Solution pages: STRUCTURE (slug, sector, primaryProduct, status) from
+// solutions.ts, PROSE from intl/solutions.ts — the product-page contract.
+const solutionSlug = page.startsWith("solutions/") ? page.slice("solutions/".length) : null;
+const solutionsOverview = intlSolutionsOverview[locale.copyLang];
+const solutionEntry = solutionSlug ? renderableSolutions().find((x) => x.slug === solutionSlug) ?? null : null;
+const solution = solutionEntry ? intlSolutions[locale.copyLang][solutionEntry.slug as SolutionSlug] : null;
+const solutionImage = solutionSlug ? solutionImageFor(solutionSlug) : undefined;
+const solutionProduct = solutionEntry ? getProduct(solutionEntry.primaryProduct) : null;
+
 // City pages: every text field hand-written per city (intl/cities.ts), the
 // section furniture around them from the language core (c.cityPage). The
 // route exists because pagesForLocale() appended the slug, so a lookup miss
@@ -127,8 +138,8 @@ const homeCities = page === "" ? intlCitiesForBase(locale.base) : [];
 // `simple!.title` and die on a null dereference — an unreadable crash from a
 // data edit made in a different file. Fail with the path that caused it.
 const RENDERABLE =
-  page === "" || page === "contact" || page === "products" || !!simple ||
-  (!!product && !!catalogue) || !!city;
+  page === "" || page === "contact" || page === "products" || page === "solutions" || !!simple ||
+  (!!product && !!catalogue) || (!!solution && !!solutionEntry) || !!city;
 if (!RENDERABLE)
   throw new Error(
     `[...intl].astro: no renderer for page "${page}" (locale ${locale.base}). ` +
@@ -145,6 +156,10 @@ const meta =
       ? { title: ct.title, description: ct.description }
       : page === "products"
         ? { title: overview.title, description: overview.description }
+        : page === "solutions"
+          ? { title: solutionsOverview.title, description: solutionsOverview.description }
+          : solution
+            ? { title: solution.title, description: solution.description }
         : product
           ? { title: product.title, description: product.description }
           : city
@@ -164,17 +179,25 @@ const ogSuffix = locale.base === "/en" ? "" : `-${locale.base.slice(1)}`;
 const ogImage =
   page === "products" || product
     ? `/og/intl/${page === "products" ? "products" : productSlug}-${locale.copyLang}.png`
+    : page === "solutions" || solution
+      ? `/og/intl/solutions-${page === "solutions" ? "index" : solutionSlug}-${locale.copyLang}.png`
     : city
       ? `/og/intl/${city.slug}${ogSuffix}.png`
       : `/og/intl/${page === "contact" ? "contact" : "home"}${ogSuffix}.png`;
 
 // Page-level structured data — the market trees' first. Europe-truthful:
 // SoftwareApplication carries NO offers (no price anywhere on these pages).
-const crumbs = [
-  { name: c.chrome.nav.home, item: `${ORIGIN}${locale.base}/` },
-  { name: overview.eyebrow, item: `${ORIGIN}${p("products")}` },
-  ...(product ? [{ name: catalogue!.name, item: `${ORIGIN}${p(page)}` }] : []),
-];
+const crumbs = solution || page === "solutions"
+  ? [
+      { name: c.chrome.nav.home, item: `${ORIGIN}${locale.base}/` },
+      { name: c.chrome.nav.solutions, item: `${ORIGIN}${p("solutions")}` },
+      ...(solutionEntry ? [{ name: solutionEntry.name, item: `${ORIGIN}${p(page)}` }] : []),
+    ]
+  : [
+      { name: c.chrome.nav.home, item: `${ORIGIN}${locale.base}/` },
+      { name: overview.eyebrow, item: `${ORIGIN}${p("products")}` },
+      ...(product ? [{ name: catalogue!.name, item: `${ORIGIN}${p(page)}` }] : []),
+    ];
 const breadcrumbJsonLd = buildBreadcrumb(
   crumbs.map((x) => ({ name: x.name, path: x.item.replace(ORIGIN, "") })),
   locale.lang,
@@ -215,6 +238,8 @@ const cityBreadcrumbJsonLd =
 // so this earns no SERP snippet — it is here for answer engines and on-page UX.
 const faqJsonLd = product
   ? buildFaqPage(product.faqs)
+  : solution
+    ? buildFaqPage(solution.faqs)
   : city
     ? buildFaqPage([...city.faqs])
     : page === ""
@@ -667,6 +692,145 @@ const appJsonLd =
           <p>{overview.pilotBody}</p>
           <div class="intl-ctas">
             <a class="btn" href={p("contact")}>{overview.ctaLabel}</a>
+          </div>
+        </div>
+      </section>
+    </>
+  )}
+
+  {page === "solutions" && (
+    <>
+      <section class="intl-hero">
+        <div class="wrap">
+          <p class="eyebrow">{solutionsOverview.eyebrow}</p>
+          <h1>{solutionsOverview.h1}</h1>
+          <p class="lede">{solutionsOverview.lede}</p>
+          {pageImage && (
+            <div class="intl-page-image">
+              <ImageBlock slug={pageImage.slug} alt={pageImage.alt[locale.copyLang]} aspect={pageImage.aspect} widths="(min-width: 981px) 1120px, 100vw" rounded />
+            </div>
+          )}
+          <div class="intl-ctas">
+            <a class="btn" href={p("contact")}>{solutionsOverview.ctaLabel}</a>
+          </div>
+        </div>
+      </section>
+      {(["hospitality", "services", "enterprise"] as const).map((sector) => {
+        const list = renderableSolutions().filter((x) => x.sector === sector);
+        return list.length > 0 ? (
+          <section class="cv-auto intl-band">
+            <div class="wrap">
+              <h2>{solutionsOverview.sectors[sector]}</h2>
+              <div class="intl-grid reveal reveal-stagger">
+                {list.map((x) => {
+                  const copy = intlSolutions[locale.copyLang][x.slug as SolutionSlug];
+                  const prod = getProduct(x.primaryProduct)!;
+                  return (
+                    <a class="intl-card intl-card-link" href={p(`solutions/${x.slug}`)}>
+                      <p class="status-pill" data-status={prod.status}>{copy.statusLabel}</p>
+                      <h3>{copy.eyebrow}</h3>
+                      <p>{copy.h1}</p>
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        ) : null;
+      })}
+    </>
+  )}
+
+  {solution && solutionEntry && solutionProduct && (
+    <>
+      <section class="intl-hero">
+        <div class="wrap">
+          <nav class="intl-crumbs" aria-label="Breadcrumb">
+            <a href={p("")}>{c.chrome.nav.home}</a>
+            <span aria-hidden="true">/</span>
+            <a href={p("solutions")}>{c.chrome.nav.solutions}</a>
+          </nav>
+          <p class="eyebrow">{solution.eyebrow}</p>
+          <h1>{solution.h1}</h1>
+          <p class="lede">{solution.lede}</p>
+          <p class="status-pill" data-status={solutionProduct.status}>{solution.statusLabel}</p>
+          <p class="muted status-note">{solution.statusNote}</p>
+          <div class="intl-ctas">
+            <a class="btn" href={p("contact")}>{solution.ctaLabel}</a>
+            <a class="btn-ghost" href={p(`products/${solutionProduct.slug}`)}>{solutionProduct.name}</a>
+          </div>
+          {solutionImage && (
+            <div class="intl-page-image">
+              <ImageBlock slug={solutionImage.slug} alt={solutionImage.alt[locale.copyLang]} aspect={solutionImage.aspect} widths="(min-width: 981px) 1120px, 100vw" rounded />
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section class="cv-auto">
+        <div class="wrap intl-prose">
+          <h2>{solution.problemHeading}</h2>
+          <p>{solution.problem}</p>
+          <h2>{solution.lostHeading}</h2>
+          <p>{solution.lost}</p>
+          <ul>{solution.lostPoints.map((x) => <li>{x}</li>)}</ul>
+        </div>
+      </section>
+
+      <section class="cv-auto intl-band">
+        <div class="wrap">
+          <h2>{solution.howHeading}</h2>
+          <p class="lede">{solution.how}</p>
+          <div class="intl-grid">
+            {solution.steps.map((st, i) => (
+              <div class="intl-card">
+                <p class="status-pill" aria-hidden="true">{i + 1}</p>
+                <h3>{st.title}</h3>
+                <p>{st.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section class="cv-auto">
+        <div class="wrap">
+          <h2>{solution.featuresHeading}</h2>
+          <div class="intl-grid">
+            {solution.features.map((f) => (
+              <div class="intl-card">
+                <h3>{f.title}</h3>
+                <p>{f.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section class="cv-auto intl-band">
+        <div class="wrap intl-prose">
+          <h2>{solution.benefitsHeading}</h2>
+          <ul>{solution.benefits.map((b) => <li>{b}</li>)}</ul>
+        </div>
+      </section>
+
+      <section class="cv-auto">
+        <div class="wrap intl-prose">
+          <h2>{solution.faqHeading}</h2>
+          {solution.faqs.map((f) => (
+            <section>
+              <h3>{f.q}</h3>
+              <p>{f.a}</p>
+            </section>
+          ))}
+        </div>
+      </section>
+
+      <section class="cv-auto intl-band">
+        <div class="wrap intl-prose">
+          <h2>{solution.ctaHeading}</h2>
+          <div class="intl-ctas">
+            <a class="btn" href={p("contact")}>{solution.ctaLabel}</a>
           </div>
         </div>
       </section>
