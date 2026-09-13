@@ -9,7 +9,8 @@ import {
   resourceTypeFromSegment,
   type ResourceTypeMeta,
 } from "@/data/resources";
-import { u, abs } from "@/data/locales";
+import { buildCollectionPage } from "@/data/schema";
+import { u } from "@/data/locales";
 import { defaultCtaActions } from "@/data/conversion";
 
 export async function getStaticPaths() {
@@ -46,20 +47,19 @@ const posts = (
 const fmt = (d: Date) =>
   new Intl.DateTimeFormat("en-AU", { day: "numeric", month: "long", year: "numeric" }).format(d);
 
-const breadcrumbJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: abs("/") },
-    { "@type": "ListItem", position: 2, name: "Resources", item: abs("/resources/") },
-    { "@type": "ListItem", position: 3, name: typedMeta.plural, item: abs(path) },
-  ],
-};
+// CollectionPage + ItemList of the posts (breadcrumbs via <Breadcrumbs>).
+const collectionJsonLd = buildCollectionPage({
+  path,
+  name: title,
+  description,
+  items: posts.map((p) => ({ name: p.data.title, path: `/blog/${p.id}/` })),
+  inLanguage: "en-AU",
+});
 ---
 
 <Base title={title} description={description} path={path} ogImage="/og/blog.png">
   <Fragment slot="jsonld">
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(collectionJsonLd)} />
   </Fragment>
 
   <header class="res-hero">

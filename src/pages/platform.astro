@@ -23,8 +23,8 @@ import FAQ from "@/components/FAQ.astro";
 import Cta from "@/components/Cta.astro";
 import { site } from "@/data/site";
 import { voxProof } from "@/data/products";
-import { ORG_ID, WEBSITE_ID, VOX_ID } from "@/data/schema";
-import { u, abs } from "@/data/locales";
+import { VOX_ID, buildWebPage, buildFaqPage } from "@/data/schema";
+import { u } from "@/data/locales";
 
 const title = "The Vox dashboard — see every call, booking and order · Biteperk";
 const description =
@@ -100,35 +100,9 @@ const platformFaqs = [
   },
 ];
 
-const webpageJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "@id": `${abs(path)}#webpage`,
-  url: abs(path),
-  name: title,
-  description,
-  isPartOf: { "@id": WEBSITE_ID },
-  about: { "@id": VOX_ID },
-  publisher: { "@id": ORG_ID },
-};
-const breadcrumbJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: abs("/") },
-    { "@type": "ListItem", position: 2, name: "Platform", item: abs(path) },
-  ],
-};
-const faqJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  isPartOf: { "@id": WEBSITE_ID },
-  mainEntity: platformFaqs.map((item) => ({
-    "@type": "Question",
-    name: item.q,
-    acceptedAnswer: { "@type": "Answer", text: item.a },
-  })),
-};
+const webpageJsonLd = buildWebPage({ path, name: title, description, about: VOX_ID, inLanguage: "en-AU" });
+// Breadcrumb JSON-LD comes from <Breadcrumbs>.
+const faqJsonLd = buildFaqPage(platformFaqs, "en-AU");
 
 const heroTestimonial = voxProof.testimonials[0];
 ---
@@ -136,7 +110,6 @@ const heroTestimonial = voxProof.testimonials[0];
 <Base title={title} description={description} path={path} ogImage="/og/platform.png">
   <Fragment slot="jsonld">
     <script is:inline type="application/ld+json" set:html={JSON.stringify(webpageJsonLd)} />
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
   </Fragment>
 
