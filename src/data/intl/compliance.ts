@@ -46,9 +46,9 @@ export type MarketCompliance = {
 // similarity (check-intl-similarity, 35% ceiling) and one identical sentence
 // on all of them cost three points of headroom.
 const note = (en: string, fr: string): Record<Lang, string> => ({ en, fr });
-const SYDNEY_NOTE = note(
-  "The team is in Sydney, Australia. Replies to European enquiries usually arrive overnight, within one business day.",
-  "L'équipe est à Sydney, en Australie. Les réponses aux demandes européennes arrivent généralement dans la nuit, sous un jour ouvré.",
+const INT_NOTE = note(
+  "The team is in Sydney, Australia. Wherever you are writing from, a reply usually arrives within one business day — often overnight, your time.",
+  "L'équipe est à Sydney, en Australie. D'où que vous écriviez, la réponse arrive généralement sous un jour ouvré — souvent pendant votre nuit.",
 );
 const UK_NOTE = note(
   "BitePerk's team works from Sydney. A UK enquiry sent in the afternoon is usually answered by the next morning, within one business day.",
@@ -82,7 +82,7 @@ export const compliance: Readonly<Record<Market, MarketCompliance>> = {
     consentRegime: "gdpr-eprivacy",
     disclosures: [],
     contactEmail: ukEmail.display,
-    timeZoneNote: SYDNEY_NOTE,
+    timeZoneNote: INT_NOTE,
   },
   gb: {
     controller: "uk",

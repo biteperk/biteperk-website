@@ -39,4 +39,4 @@ Every restaurant eventually hits the same wall: the phone rings during service a
 - **You only care about office hours and have someone dedicated?** A human service can work, if you accept the per-call pricing and the call-centre feel.
 - **You are losing calls during service, after close or on days off — and want every caller to get a warm, on-brand answer without growing the wage bill?** An AI host is now the strongest all-round option for most restaurants.
 
-The reason AI has pulled ahead is simple: it is the only option that is always on and always on-brand. That is what Vox is built to be — a natural voice that answers every call and books the table. It is live for restaurants in Australia today; in Europe it runs as a pilot, and you can hear it on a test line before deciding anything.
+The reason AI has pulled ahead is simple: it is the only option that is always on and always on-brand. That is what Vox is built to be — a natural voice that answers every call and books the table. It is live for restaurants in Australia today; elsewhere it runs as a pilot, and you can hear it on a test line before deciding anything.

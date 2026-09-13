@@ -86,7 +86,7 @@ export type IntlProductsOverviewCopy = {
 const overviewEn: IntlProductsOverviewCopy = {
   title: "Vox — one AI phone host, five capabilities · BitePerk",
   description:
-    "Vox answers your restaurant's phone in a natural voice, checks real availability and writes the booking down. Live in Australia today; opening pilot partnerships in Europe.",
+    "Vox answers your restaurant's phone in a natural voice, checks real availability and writes the booking down. Live in Australia today; opening pilot partnerships in new markets.",
   eyebrow: "The product",
   h1: "One AI phone host. Five things it can do.",
   lede:
@@ -125,7 +125,7 @@ const overviewEn: IntlProductsOverviewCopy = {
   },
   pilotHeading: "How this works outside Australia",
   pilotBody:
-    "Vox is in production in Australia and answers real calls for real venues every day. In Europe we are running it as a pilot programme with a small number of partner venues — local language, local phone numbers and local integrations are built with those partners rather than promised in advance. If that is the sort of thing you would rather shape than inherit, talk to us.",
+    "Vox is in production in Australia and answers real calls for real venues every day. Outside Australia we are running it as a pilot programme with a small number of partner venues — local language, local phone numbers and local integrations are built with those partners rather than promised in advance. If that is the sort of thing you would rather shape than inherit, talk to us.",
   ctaLabel: "Book a pilot conversation",
 };
 
@@ -141,14 +141,14 @@ const productsEn: Record<string, IntlProductCopy> = {
     ...featureFaqCtaEn,
     title: "VoxTable — AI phone bookings for restaurants · BitePerk",
     description:
-      "VoxTable answers your restaurant's phone and takes the booking against real availability. Live in production in Australia; opening pilot partnerships in Europe.",
+      "VoxTable answers your restaurant's phone and takes the booking against real availability. Live in production in Australia; opening pilot partnerships in new markets.",
     eyebrow: "Bookings",
     h1: "The call gets answered. The table gets booked.",
     lede:
       "VoxTable is the part of Vox that handles reservations — the one most venues switch on first, because it is where the lost money is easiest to count.",
     statusLabel: "Live in Australia",
     statusNote:
-      "In production today, answering real calls for Australian venues. European venues join through the pilot programme.",
+      "In production today, answering real calls for Australian venues. Venues elsewhere join through the pilot programme.",
     features: [
       {
         title: "Books against availability that is actually real",
@@ -194,14 +194,14 @@ const productsEn: Record<string, IntlProductCopy> = {
     ...featureFaqCtaEn,
     title: "VoxOrder — AI phone ordering for takeaway · BitePerk",
     description:
-      "VoxOrder takes takeaway and pickup orders over the phone, reads them back and sends a clean ticket. Live in production in Australia; European venues join via the pilot programme.",
+      "VoxOrder takes takeaway and pickup orders over the phone, reads them back and sends a clean ticket. Live in production in Australia; venues elsewhere join via the pilot programme.",
     eyebrow: "Takeaway & pickup",
     h1: "Takeaway orders that don't hold up the pass.",
     lede:
       "The phone order is the one nobody wants: it takes four minutes, it pulls someone off the floor, and it is the order most likely to be wrong.",
     statusLabel: "Live in Australia",
     statusNote:
-      "In production today for Australian venues. Menu structure and ticket format for European kitchens are built with pilot partners.",
+      "In production today for Australian venues. Menu structure and ticket format for kitchens outside Australia are built with pilot partners.",
     features: [
       {
         title: "Knows your menu, including the awkward parts",

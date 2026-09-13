@@ -165,6 +165,26 @@ const FORBIDDEN_CLAIMS = [
     re: /human\s+(?:oversight|supervision|monitoring)|supervision\s+humaine|surveillance\s+humaine|humain\s+en\s+permanence/i,
   },
   {
+    // /en is the x-default: it serves the United States and every region no
+    // market tree claims, so it must read as neither European nor Australian.
+    // Until 13 Sep 2026 its core said "European pilots", "France and Belgium"
+    // and GDPR as *the* lawful basis — a worldwide tree that told a Toronto
+    // or Singapore reader it was somewhere else. European colour belongs in
+    // the gb-en/be-en/fr/be-fr overrides; the legal pages may still name the
+    // GDPR (they must), and the region router names the market sites by label.
+    label: "European framing on the x-default (/en is worldwide — market colour lives in the market overrides)",
+    re: /\bEurop(?:e|ean)\b|\bFrance and Belgium\b|\bthe UK\b/,
+    only: /^en\//, // rel is "en/index.html" — no leading slash
+    // Legal pages must name the GDPR/EU. VoxStay's own page states its EU-first
+    // design — a product fact, not a claim about where the READER is.
+    unless: /\/legal\/|\/products\/voxstay\//,
+    // The one VoxStay sentence the products overview renders. It is a fact
+    // about that product (its first pilot hotels are being sought in the EU)
+    // and it is pinned by the filed 7 Sep French review, so it is allowed
+    // verbatim rather than reworded — a reworded copy would fail fr-review.test.
+    allow: [/Built for hotels; in development, with the first pilots in Europe\./],
+  },
+  {
     label: "certification / accreditation claim (none exists)",
     re: /\b(?:certified|certification|accredited|certifié(?:e|s|es)?|accrédité(?:e|s|es)?)\b/i,
   },
@@ -257,9 +277,11 @@ for (const file of pages) {
       console.error(`FAIL  ${rel}: contains ${label} — "…${m[0]}…"`);
     }
   }
-  for (const { label, re, unless } of FORBIDDEN_CLAIMS) {
+  for (const { label, re, only, unless, allow } of FORBIDDEN_CLAIMS) {
+    if (only && !only.test(rel)) continue;
     if (unless && unless.test(rel)) continue;
-    const m = text.match(re);
+    const scanned = (allow ?? []).reduce((t, a) => t.replace(a, ""), text);
+    const m = scanned.match(re);
     if (m) {
       failed++;
       console.error(`FAIL  ${rel}: contains ${label} — "…${m[0]}…"`);

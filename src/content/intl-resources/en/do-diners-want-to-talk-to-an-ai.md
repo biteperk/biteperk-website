@@ -41,4 +41,4 @@ Clear that bar and the "robot" worry evaporates — because it no longer feels l
 
 Ask to hear it on a real call before you commit to anything. Ask what happens when it is unsure. Ask where the booking lands and whether your team can see the transcript afterwards. A vendor who cannot answer those plainly is telling you something.
 
-That is how Vox is built: a natural voice that answers every call, books the table and hands off gracefully when it should. It is live for restaurants in Australia today and available as a pilot in Europe — judge it the way your guests would, on a test line to your own venue.
+That is how Vox is built: a natural voice that answers every call, books the table and hands off gracefully when it should. It is live for restaurants in Australia today and available as a pilot outside Australia — judge it the way your guests would, on a test line to your own venue.
