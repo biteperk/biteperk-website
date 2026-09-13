@@ -4,6 +4,8 @@
 
 User-agent: *
 Allow: /
+# POST-only form/analytics endpoints — nothing to index, a GET answers 405.
+Disallow: /api/
 
 # Explicitly welcome major AI / answer-engine crawlers (covered by * above,
 # named here to make intent unambiguous).
