@@ -1,6 +1,6 @@
 ---
 title: "AI phone answering for Sydney restaurants: a plain-English guide"
-seoTitle: "AI phone answering for Sydney restaurants"
+seoTitle: "AI phone answering for Sydney restaurants (guide)"
 description: "What AI phone answering actually is, how it works for a Sydney restaurant, what it costs, and how to tell a good one from a gimmick — explained without the jargon."
 publishDate: 2026-05-20
 type: guide

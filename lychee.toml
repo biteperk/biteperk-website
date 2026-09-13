@@ -1,0 +1,11 @@
+# lychee link-checker config — read by every link step in .github/workflows/web.yml.
+# Internal passes add --offline (local files only) and fail the build;
+# the external pass reports only.
+no_progress = true
+exclude_mail = true
+# The product app / legacy subdomains and the form backend are not part of the marketing tree.
+exclude = [
+  '^https://((voco|vox)table\.biteperk|formspree)',
+  # Social hosts bot-block CI runners (LinkedIn 999, Instagram 403).
+  '^https://(www\.)?(linkedin|instagram|facebook|youtube)\.com',
+]

@@ -1,6 +1,6 @@
 ---
 title: "AI phone answering for Brisbane restaurants: a plain-English guide"
-seoTitle: "AI phone answering for Brisbane restaurants"
+seoTitle: "AI phone answering for Brisbane restaurants (guide)"
 description: "How AI phone answering works for a Brisbane venue — the weather calls, the early booking peak, what it costs, and how to set it up. Plain English."
 publishDate: 2026-07-10
 type: guide

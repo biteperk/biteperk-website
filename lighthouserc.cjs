@@ -251,6 +251,11 @@ module.exports = {
         // measured 16950 worst case. This is the one budget the compression
         // change actually altered the meaning of — see issue #32.
         "resource-summary:script:size": ["error", { maxNumericValue: 24576 }],
+        // Document (HTML) transfer size — the one budget this file's own notes
+        // name as the core liability (261 KB raw / 133 KB inline CSS on the AU
+        // home, issue #32) and never asserted. A CEILING to ratchet down once
+        // CI has measured a few runs, not a target: compressed transfer.
+        "resource-summary:document:size": ["error", { maxNumericValue: 81920 }],
       },
     },
     upload: {

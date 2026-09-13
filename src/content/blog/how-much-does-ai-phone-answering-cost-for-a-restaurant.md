@@ -1,7 +1,7 @@
 ---
 title: "How much does AI phone answering cost for a restaurant?"
 seoTitle: "How much does AI phone answering cost?"
-description: "A straight-talking guide to what AI phone answering costs an Australian restaurant in 2026 — the pricing models, the per-call fees to watch for, and how to work out your payback."
+description: "What AI phone answering costs an Australian restaurant in 2026 — the pricing models, the per-call fees to watch for, and how to work out your payback."
 publishDate: 2026-05-30
 type: guide
 relatedSolutions: ["restaurants", "cafes", "takeaway"]
