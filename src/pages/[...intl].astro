@@ -24,10 +24,13 @@ import { companyDetails } from "@/data/intl/company-details";
 import { ukEmail } from "@/data/site";
 import { intlProducts, intlProductsOverview } from "@/data/intl/products";
 import { intlSolutions, intlSolutionsOverview } from "@/data/intl/solutions";
+import { intlResources } from "@/data/intl/resources";
+import { resourceTypeFromSegment, RESOURCE_TYPE_BY_SEGMENT } from "@/data/resources";
+import { getCollection, render } from "astro:content";
 import { pageImageFor, productImageFor, solutionImageFor } from "@/data/intl/page-images";
 import { products, getProduct } from "@/data/products";
 import { renderableSolutions, type SolutionSlug } from "@/data/solutions";
-import { buildFaqPage, buildVoxApplication, buildBreadcrumb, voxEditionId, ORG_ID } from "@/data/schema";
+import { buildFaqPage, buildVoxApplication, buildBreadcrumb, voxEditionId, ORG_ID, WEBSITE_ID } from "@/data/schema";
 import ImageBlock from "@/components/ImageBlock.astro";
 import FAQ from "@/components/FAQ.astro";
 import SocialLinks from "@/components/SocialLinks.astro";
@@ -121,6 +124,23 @@ const solution = solutionEntry ? intlSolutions[locale.copyLang][solutionEntry.sl
 const solutionImage = solutionSlug ? solutionImageFor(solutionSlug) : undefined;
 const solutionProduct = solutionEntry ? getProduct(solutionEntry.primaryProduct) : null;
 
+// Resources: hub, category, article — language-scoped articles from the
+// intlResources collection, shipped under every base in their `markets`.
+const rc = intlResources[locale.copyLang];
+const resSeg = page.startsWith("resources/") ? page.slice("resources/".length).split("/")[0] : null;
+const resSlug = page.startsWith("resources/") && page.split("/").length === 3 ? page.split("/")[2] : null;
+const resType = resSeg ? resourceTypeFromSegment(resSeg) ?? null : null;
+const resPosts = (await getCollection("intlResources", ({ data }) => !data.draft && data.lang === locale.copyLang && data.markets.includes(locale.base)))
+  .sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime() || a.id.localeCompare(b.id));
+const resSegmentOf = (type: string) => Object.entries(RESOURCE_TYPE_BY_SEGMENT).find(([, id]) => id === type)?.[0] ?? type;
+const resPost = resSlug ? resPosts.find((x) => x.id === `${locale.copyLang}/${resSlug}` && resSegmentOf(x.data.type) === resSeg) ?? null : null;
+const resCategoryPosts = resType && !resSlug ? resPosts.filter((x) => x.data.type === resType.id) : [];
+const resHub = page === "resources" && resPosts.length > 0;
+const resCategory = !!resType && !resSlug && resCategoryPosts.length > 0;
+const resContent = resPost ? await render(resPost) : null;
+const resFmt = (d: Date) => new Intl.DateTimeFormat(locale.lang, { day: "numeric", month: "long", year: "numeric" }).format(d);
+const resBuiltFor = resPost ? resPost.data.relatedSolutions.map((s) => renderableSolutions().find((x) => x.slug === s)).filter((x): x is NonNullable<typeof x> => Boolean(x)) : [];
+
 // City pages: every text field hand-written per city (intl/cities.ts), the
 // section furniture around them from the language core (c.cityPage). The
 // route exists because pagesForLocale() appended the slug, so a lookup miss
@@ -139,7 +159,7 @@ const homeCities = page === "" ? intlCitiesForBase(locale.base) : [];
 // data edit made in a different file. Fail with the path that caused it.
 const RENDERABLE =
   page === "" || page === "contact" || page === "products" || page === "solutions" || !!simple ||
-  (!!product && !!catalogue) || (!!solution && !!solutionEntry) || !!city;
+  (!!product && !!catalogue) || (!!solution && !!solutionEntry) || !!city || resHub || resCategory || !!resPost;
 if (!RENDERABLE)
   throw new Error(
     `[...intl].astro: no renderer for page "${page}" (locale ${locale.base}). ` +
@@ -156,6 +176,12 @@ const meta =
       ? { title: ct.title, description: ct.description }
       : page === "products"
         ? { title: overview.title, description: overview.description }
+        : resPost
+          ? { title: resPost.data.seoTitle ?? resPost.data.title, description: resPost.data.description }
+          : resCategory
+            ? { title: `${rc.types[resType!.id].plural} — ${rc.eyebrow}`, description: rc.types[resType!.id].description }
+            : resHub
+              ? { title: rc.title, description: rc.description }
         : page === "solutions"
           ? { title: solutionsOverview.title, description: solutionsOverview.description }
           : solution
@@ -181,13 +207,22 @@ const ogImage =
     ? `/og/intl/${page === "products" ? "products" : productSlug}-${locale.copyLang}.png`
     : page === "solutions" || solution
       ? `/og/intl/solutions-${page === "solutions" ? "index" : solutionSlug}-${locale.copyLang}.png`
+      : resHub || resCategory || resPost
+        ? `/og/intl/resources-${resSeg ?? "index"}-${locale.copyLang}.png`
     : city
       ? `/og/intl/${city.slug}${ogSuffix}.png`
       : `/og/intl/${page === "contact" ? "contact" : "home"}${ogSuffix}.png`;
 
 // Page-level structured data — the market trees' first. Europe-truthful:
 // SoftwareApplication carries NO offers (no price anywhere on these pages).
-const crumbs = solution || page === "solutions"
+const crumbs = resHub || resCategory || resPost
+  ? [
+      { name: c.chrome.nav.home, item: `${ORIGIN}${locale.base}/` },
+      { name: c.chrome.nav.resources, item: `${ORIGIN}${p("resources")}` },
+      ...(resType ? [{ name: rc.types[resType.id].plural, item: `${ORIGIN}${p(`resources/${resSeg}`)}` }] : []),
+      ...(resPost ? [{ name: resPost.data.title, item: `${ORIGIN}${p(page)}` }] : []),
+    ]
+  : solution || page === "solutions"
   ? [
       { name: c.chrome.nav.home, item: `${ORIGIN}${locale.base}/` },
       { name: c.chrome.nav.solutions, item: `${ORIGIN}${p("solutions")}` },
@@ -245,6 +280,43 @@ const faqJsonLd = product
     : page === ""
       ? buildFaqPage(h.faq.items)
       : null;
+// Resources structured data: CollectionPage+ItemList on hub/category, BlogPosting on articles.
+const resListJsonLd = (resHub || resCategory)
+  ? {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "@id": `${ORIGIN}${p(page)}#webpage`,
+      url: `${ORIGIN}${p(page)}`,
+      name: resCategory ? rc.types[resType!.id].plural : rc.h1,
+      inLanguage: locale.lang,
+      isPartOf: { "@id": WEBSITE_ID },
+      publisher: { "@id": ORG_ID },
+      mainEntity: {
+        "@type": "ItemList",
+        numberOfItems: (resCategory ? resCategoryPosts : resPosts).length,
+        itemListElement: (resCategory ? resCategoryPosts : resPosts).map((x, i) => ({
+          "@type": "ListItem", position: i + 1, name: x.data.title, url: `${ORIGIN}${p(`resources/${resSegmentOf(x.data.type)}/${x.id.split("/")[1]}`)}`,
+        })),
+      },
+    }
+  : null;
+const resArticleJsonLd = resPost
+  ? {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "@id": `${ORIGIN}${p(page)}#article`,
+      headline: resPost.data.title,
+      description: resPost.data.description,
+      inLanguage: locale.lang,
+      datePublished: resPost.data.publishDate.toISOString().slice(0, 10),
+      dateModified: (resPost.data.updatedDate ?? resPost.data.publishDate).toISOString().slice(0, 10),
+      author: { "@id": ORG_ID },
+      publisher: { "@id": ORG_ID },
+      mainEntityOfPage: { "@type": "WebPage", "@id": `${ORIGIN}${p(page)}` },
+      isPartOf: { "@id": WEBSITE_ID },
+      keywords: resPost.data.tags.join(", "),
+    }
+  : null;
 const appJsonLd =
   page === "products"
     ? buildVoxApplication({
@@ -613,7 +685,7 @@ const appJsonLd =
     </section>
   )}
 
-  {(page === "products" || product) && (
+  {(page === "products" || product || page === "solutions" || solution || resHub || resCategory || resPost) && (
     <script is:inline type="application/ld+json" slot="jsonld" set:html={JSON.stringify(breadcrumbJsonLd)} />
   )}
   {cityServiceJsonLd && (
@@ -627,6 +699,12 @@ const appJsonLd =
   )}
   {appJsonLd && (
     <script is:inline type="application/ld+json" slot="jsonld" set:html={JSON.stringify(appJsonLd)} />
+  )}
+  {resListJsonLd && (
+    <script is:inline type="application/ld+json" slot="jsonld" set:html={JSON.stringify(resListJsonLd)} />
+  )}
+  {resArticleJsonLd && (
+    <script is:inline type="application/ld+json" slot="jsonld" set:html={JSON.stringify(resArticleJsonLd)} />
   )}
 
   {page === "products" && (
@@ -837,6 +915,106 @@ const appJsonLd =
     </>
   )}
 
+  {resHub && (
+    <>
+      <section class="intl-hero">
+        <div class="wrap">
+          <p class="eyebrow">{rc.eyebrow}</p>
+          <h1>{rc.h1}</h1>
+          <p class="lede">{rc.lede}</p>
+        </div>
+      </section>
+      {(Object.keys(RESOURCE_TYPE_BY_SEGMENT)).map((seg) => {
+        const t = resourceTypeFromSegment(seg)!;
+        const list = resPosts.filter((x) => x.data.type === t.id);
+        return list.length > 0 ? (
+          <section class="cv-auto intl-band">
+            <div class="wrap">
+              <h2>{rc.types[t.id].plural}</h2>
+              <div class="intl-grid">
+                {list.map((x) => (
+                  <a class="intl-card intl-card-link" href={p(`resources/${seg}/${x.id.split("/")[1]}`)}>
+                    <p class="status-pill">{resFmt(x.data.publishDate)}</p>
+                    <h3>{x.data.title}</h3>
+                    <p>{x.data.description}</p>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </section>
+        ) : null;
+      })}
+    </>
+  )}
+
+  {resCategory && resType && (
+    <>
+      <section class="intl-hero">
+        <div class="wrap">
+          <nav class="intl-crumbs" aria-label="Breadcrumb">
+            <a href={p("")}>{c.chrome.nav.home}</a>
+            <span aria-hidden="true">/</span>
+            <a href={p("resources")}>{c.chrome.nav.resources}</a>
+          </nav>
+          <p class="eyebrow">{rc.eyebrow}</p>
+          <h1>{rc.types[resType.id].plural}</h1>
+          <p class="lede">{rc.types[resType.id].description}</p>
+        </div>
+      </section>
+      <section class="cv-auto intl-band">
+        <div class="wrap">
+          <div class="intl-grid">
+            {resCategoryPosts.map((x) => (
+              <a class="intl-card intl-card-link" href={p(`resources/${resSeg}/${x.id.split("/")[1]}`)}>
+                <p class="status-pill">{resFmt(x.data.publishDate)}</p>
+                <h3>{x.data.title}</h3>
+                <p>{x.data.description}</p>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
+  )}
+
+  {resPost && resContent && (
+    <article>
+      <section class="intl-hero">
+        <div class="wrap intl-prose">
+          <nav class="intl-crumbs" aria-label="Breadcrumb">
+            <a href={p("")}>{c.chrome.nav.home}</a>
+            <span aria-hidden="true">/</span>
+            <a href={p("resources")}>{c.chrome.nav.resources}</a>
+            <span aria-hidden="true">/</span>
+            <a href={p(`resources/${resSeg}`)}>{rc.types[resPost.data.type].plural}</a>
+          </nav>
+          <p class="eyebrow">{rc.types[resPost.data.type].label}</p>
+          <h1>{resPost.data.title}</h1>
+          <p class="muted">{rc.publishedLabel} <time datetime={resPost.data.publishDate.toISOString().slice(0, 10)}>{resFmt(resPost.data.publishDate)}</time></p>
+        </div>
+      </section>
+      <section class="cv-auto">
+        <div class="wrap intl-prose intl-article">
+          <resContent.Content />
+        </div>
+      </section>
+      {resBuiltFor.length > 0 && (
+        <section class="cv-auto intl-band">
+          <div class="wrap intl-prose">
+            <h2>{rc.builtFor}</h2>
+            <div class="intl-ctas">
+              {resBuiltFor.map((x) => (
+                <a class="btn-ghost" href={p(`solutions/${x.slug}`)}>{intlSolutions[locale.copyLang][x.slug as SolutionSlug].eyebrow}</a>
+              ))}
+              <a class="btn" href={p("contact")}>{rc.ctaLabel}</a>
+            </div>
+            <p><a href={p("resources")}>← {rc.backLabel}</a></p>
+          </div>
+        </section>
+      )}
+    </article>
+  )}
+
   {product && catalogue && (
     <>
       <section class="intl-hero">
@@ -1014,6 +1192,8 @@ const appJsonLd =
   }
   .intl-city-links { list-style: none; padding: 0; margin: 18px 0 0; display: flex; flex-wrap: wrap; gap: 10px; }
   .intl-city-links a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border: 1px solid var(--line); border-radius: 999px; text-decoration: none; color: var(--white); font-weight: 600; }
+  .intl-article table { display: block; overflow-x: auto; }
+  .intl-article h2 { margin-top: 1.6em; }
   .status-pill[data-status="live"] { color: var(--success); }
   .status-pill[data-status="in-development"] { color: var(--gold); }
   .status-note { max-width: 60ch; margin: 0 0 1.5rem; }
