@@ -110,6 +110,7 @@ const companyLinks = headerNav.filter((l) => l.mobile !== false);
                 class:list={["mm-region", { active: l.base === currentLocale.base }]}
                 href={localeSwitchUrl(pathname, l)}
                 hreflang={l.hreflang[0]}
+                data-astro-reload
                 lang={l.lang}
                 aria-current={l.base === currentLocale.base ? "true" : undefined}
               >
