@@ -9,25 +9,17 @@ import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import ImageBlock from "@/components/ImageBlock.astro";
 import { coreProduct, addonProducts, voxProof, voxBundle, voxFaq, foundingVenues } from "@/data/products";
 import { buildFaqPage, buildVoxApplication, voxEditionId } from "@/data/schema";
-import { site } from "@/data/site";
+import { site, pageTitle } from "@/data/site";
 import { u, abs } from "@/data/locales";
 import { bookDemoHref, CTA_LABELS, defaultCtaActions } from "@/data/conversion";
+import SolutionStrip from "@/components/sections/SolutionStrip.astro";
 
-const title = "Vox — AI phone host for restaurants and hotels · Biteperk";
+const title = pageTitle("Vox — AI phone host for restaurants and hotels");
 const description =
-  "Vox is one AI phone host for your venue — a warm voice that answers every call and books the table, day or night. Start with bookings; add takeaway, concierge, hotel stays and drive-thru as you grow.";
+  "Vox is one AI phone host for your venue — a warm voice that answers every call and books the table, day or night. Start with bookings; add takeaway, concierge and more.";
 
 // One product, five capabilities — core first, then add-ons (from products.ts).
 const capabilities = [coreProduct, ...addonProducts];
-
-const breadcrumbJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: abs("/") },
-    { "@type": "ListItem", position: 2, name: "Products", item: abs("/products/") },
-  ],
-};
 
 // Page-level FAQPage, linked into the sitewide entity graph by @id.
 const faqJsonLd = buildFaqPage(voxFaq);
@@ -67,12 +59,6 @@ const cta = defaultCtaActions();
 ---
 
 <Base title={title} description={description} path="/products/" ogImage="/og/products.png">
-  <script
-    is:inline
-    type="application/ld+json"
-    slot="jsonld"
-    set:html={JSON.stringify(breadcrumbJsonLd)}
-  />
   <script
     is:inline
     type="application/ld+json"
@@ -146,6 +132,8 @@ const cta = defaultCtaActions();
       </div>
     </div>
   </section>
+
+  <SolutionStrip lede="Vox is one agent; the verticals describe the phone it is answering. Pick yours." />
 
   {/* ── Trust / human-in-the-loop ────────────────────────────────── */}
   <section class="vx-section vx-trust">

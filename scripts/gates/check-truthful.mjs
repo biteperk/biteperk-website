@@ -89,7 +89,7 @@ const FORBIDDEN = [
     // The city alternation must cover every city with a market page — "our
     // Manchester team" is the same lie as "our London team". Extend it when
     // intl/cities.ts gains a market's cities.
-    re: /\bour\s+(?:London|Manchester|Birmingham|Edinburgh|Glasgow|Leeds|Bristol|Liverpool|Paris|Brussels|Bruxelles|UK|British|French|Belgian|European)\s+(?:team|office|staff|crew)\b|notre\s+(?:bureau|équipe)\s+(?:à|de|en)\s+(?:Londres|Paris|Bruxelles|Belgique|France)/i,
+    re: /\bour\s+(?:London|Manchester|Birmingham|Edinburgh|Glasgow|Leeds|Bristol|Liverpool|Paris|Brussels|Bruxelles|Antwerp|Antwerpen|Liège|Liege|Toronto|Vancouver|Calgary|Montreal|Montréal|Québec|Quebec|Laval|Longueuil|Canadian|Lyon|Marseille|Nice|Bordeaux|Toulouse|Lille|Nantes|Strasbourg|Montpellier|UK|British|French|Belgian|Flemish|European)\s+(?:team|office|staff|crew)\b|notre\s+(?:bureau|équipe)\s+(?:à|de|d'|en)\s+(?:Londres|Paris|Bruxelles|Anvers|Liège|Toronto|Vancouver|Calgary|Montréal|Québec|Laval|Longueuil|Lyon|Marseille|Nice|Bordeaux|Toulouse|Lille|Nantes|Strasbourg|Montpellier|Belgique|France|Canada)/i,
   },
   {
     // No booking or POS integration ships in Europe. Naming one implies it
@@ -122,6 +122,19 @@ const FORBIDDEN = [
     re: /\+\s?(?:44|33|32)(?:[\s.\-()]*\d){7,}/,
   },
   {
+    // Canada is a PLANNED market (locales.ts) and there is no North American
+    // line either. NANP: +1 then ten digits in any punctuation.
+    label: "fabricated North American phone number",
+    re: /\+\s?1(?:[\s.\-()]*\d){10}\b/,
+  },
+  {
+    // No rate card exists outside Australia, in any currency. $80 is caught
+    // above as an AU fact; this catches the shapes a Canadian page would
+    // reach for. Case-sensitive on purpose: "cad" is a French word.
+    label: "currency amount on a global page (no international rate card exists)",
+    re: /\bCA\$\s?\d|\bC\$\s?\d|\bCAD\s?\d|\d\s?CAD\b|\bUS\$\s?\d/,
+  },
+  {
     // AU chrome leaking through the import graph (see header). Selector-shaped
     // on purpose: `.megamenu{`, `.mm-panel{`, `.nav-inner{`, `.foot-abn{` are
     // what Astro emits; the intl tree's own classes are all `.intl-*`. The
@@ -141,6 +154,15 @@ const FORBIDDEN = [
  */
 const FORBIDDEN_CLAIMS = [
   {
+    // Facts about which law applies belong on the legal pages; "we are GDPR
+    // compliant" is a claim, not a fact, and nowhere else may make it. The
+    // compliance registry (intl/compliance.ts) names authorities and laws —
+    // it never asserts compliance.
+    label: "compliance claim outside a legal page",
+    re: /\b(?:GDPR|RGPD|PECR|UK GDPR)[- ]?(?:compliant|compliance)\b|\bcompliant with (?:the )?(?:GDPR|RGPD|UK GDPR|PECR)|\bconforme (?:au|à la|aux) (?:RGPD|loi)/i,
+    unless: /\/legal\//,
+  },
+  {
     // Records are in Australia and live calls are processed in the United
     // States — the privacy notice says so. A "regional cloud boundary" badge
     // for the restaurant products would be exactly the false claim this repo's
@@ -154,6 +176,26 @@ const FORBIDDEN_CLAIMS = [
     // that, never "human oversight" / "supervision humaine".
     label: "human-oversight claim (no European staff exists; the hand-off is to the venue)",
     re: /human\s+(?:oversight|supervision|monitoring)|supervision\s+humaine|surveillance\s+humaine|humain\s+en\s+permanence/i,
+  },
+  {
+    // /en is the x-default: it serves the United States and every region no
+    // market tree claims, so it must read as neither European nor Australian.
+    // Until 13 Sep 2026 its core said "European pilots", "France and Belgium"
+    // and GDPR as *the* lawful basis — a worldwide tree that told a Toronto
+    // or Singapore reader it was somewhere else. European colour belongs in
+    // the gb-en/be-en/fr/be-fr overrides; the legal pages may still name the
+    // GDPR (they must), and the region router names the market sites by label.
+    label: "European framing on the x-default (/en is worldwide — market colour lives in the market overrides)",
+    re: /\bEurop(?:e|ean)\b|\bFrance and Belgium\b|\bthe UK\b/,
+    only: /^en\//, // rel is "en/index.html" — no leading slash
+    // Legal pages must name the GDPR/EU. VoxStay's own page states its EU-first
+    // design — a product fact, not a claim about where the READER is.
+    unless: /\/legal\/|\/products\/voxstay\//,
+    // The one VoxStay sentence the products overview renders. It is a fact
+    // about that product (its first pilot hotels are being sought in the EU)
+    // and it is pinned by the filed 7 Sep French review, so it is allowed
+    // verbatim rather than reworded — a reworded copy would fail fr-review.test.
+    allow: [/Built for hotels; in development, with the first pilots in Europe\./],
   },
   {
     label: "certification / accreditation claim (none exists)",
@@ -248,9 +290,11 @@ for (const file of pages) {
       console.error(`FAIL  ${rel}: contains ${label} — "…${m[0]}…"`);
     }
   }
-  for (const { label, re, unless } of FORBIDDEN_CLAIMS) {
+  for (const { label, re, only, unless, allow } of FORBIDDEN_CLAIMS) {
+    if (only && !only.test(rel)) continue;
     if (unless && unless.test(rel)) continue;
-    const m = text.match(re);
+    const scanned = (allow ?? []).reduce((t, a) => t.replace(a, ""), text);
+    const m = scanned.match(re);
     if (m) {
       failed++;
       console.error(`FAIL  ${rel}: contains ${label} — "…${m[0]}…"`);

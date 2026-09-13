@@ -39,11 +39,15 @@ export interface HeaderNavLink extends NavLink {
   readonly activeMatch?: "prefix" | "exact" | "never";
 }
 
+// Order is the Phase 1 IA — Products · Solutions (the two mega-menus, rendered
+// before this list) · Resources · Pricing · Platform · About. This array is the
+// ONLY definition: a parallel `nav-ia.ts` used to carry the target order,
+// imported by nothing, and disagreed with what rendered.
 export const headerNav: ReadonlyArray<HeaderNavLink> = [
+  { label: "Resources", href: u("/resources/") },
   { label: "Pricing", href: u("/products/voxtable/#pricing"), activeMatch: "never" },
   { label: "Platform", href: u("/platform/") },
   { label: "How it works", href: u("/technology/"), desktop: false },
-  { label: "Resources", href: u("/resources/") },
   { label: "About", href: u("/about/") },
   // Desktop-hidden: Contact is already reachable from the visible phone
   // number, the "Book a demo" CTA (→ /contact/), and the footer. Keeping it

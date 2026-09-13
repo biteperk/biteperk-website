@@ -4,16 +4,18 @@ import SectionHeader from "@/components/SectionHeader.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import ImageBlock from "@/components/ImageBlock.astro";
 import SocialLinks from "@/components/SocialLinks.astro";
-import { site } from "@/data/site";
+import { site, pageTitle } from "@/data/site";
 import { products, voxProof } from "@/data/products";
 import { u } from "@/data/locales";
+import { buildContactPage } from "@/data/schema";
 
-const title = "Contact Biteperk — Restaurant voice AI, Sydney & Australia-wide";
+const title = pageTitle("Contact — Sydney & Australia-wide");
 const description =
-  "Talk to Biteperk at Level 1/457-459 Elizabeth Street, Surry Hills NSW. Call +61 2 5504 1140 (Mon–Fri, 9am–5pm AEST) or email hello@biteperk.com.au. We answer every message — usually within a few hours.";
+  "Talk to BitePerk: Level 1/457-459 Elizabeth Street, Surry Hills NSW. Call +61 2 5504 1140 (Mon–Fri, 9am–5pm AEST) or email hello@biteperk.com.au.";
 ---
 
 <Base title={title} description={description} path="/contact/" ogImage="/og/contact.png">
+  <script is:inline type="application/ld+json" slot="jsonld" set:html={JSON.stringify(buildContactPage({ path: "/contact/", name: title, description }))} />
   <section class="contact-hero">
     <div class="contact-glow" aria-hidden="true"></div>
     <div class="wrap">

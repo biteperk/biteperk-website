@@ -3,6 +3,11 @@ import { defineConfig } from "astro/config";
 import sitemap, { ChangeFreqEnum } from "@astrojs/sitemap";
 import { visit } from "unist-util-visit";
 import { localesForTarget } from "./src/data/locales";
+import { publishedCities } from "./src/data/cities";
+import { blogPosts } from "./scripts/build/content-index.mjs";
+
+// slug → lastmod (updatedDate ?? publishDate) for the sitemap.
+const blogDates = new Map(blogPosts().map((p) => [p.slug, p.updatedDate ?? p.publishDate]));
 import { intlCities } from "./src/data/intl/cities";
 
 // Single-domain international architecture (Option B, rev.3) — see
@@ -81,6 +86,9 @@ export default defineConfig({
     sitemap({
       filter: (page) => {
         if (page.includes("/kitchen-sink") || page.includes("/404")) return false;
+        // /blog/ (the index) canonicalises to /resources/guides/ — one listing
+        // of the twelve guides in the sitemap, not two.
+        if (page === `${HOME}/blog/`) return false;
         // Global build: only the locale trees from locales.ts ship on
         // biteperk.com (the AU pages built alongside are pruned post-build by
         // prune-global.mjs). Derived, NOT a regex literal: a hardcoded (en|fr)
@@ -116,17 +124,21 @@ export default defineConfig({
         else if (item.url === `${HOME}/technology/`) item.priority = 0.8;
         else if (item.url === `${HOME}/platform/`) item.priority = 0.8;
         else if (item.url.includes("/products/")) item.priority = 0.9;
-        else if (
-          // City landing pages — keep in sync with src/data/cities.ts
-          // (CI's route list is generated from cities.ts, which catches drift).
-          /\/(sydney|melbourne|brisbane|perth|adelaide|gold-coast)\/$/.test(item.url)
-        )
-          item.priority = 0.9;
-        else if (item.url === `${HOME}/blog/`) item.priority = 0.8;
+        // Commercial-intent verticals: the highest-intent pages on the tree,
+        // level with products (they sat at the 0.7 fallback until Sep 2026).
+        else if (item.url === `${HOME}/solutions/`) item.priority = 0.8;
+        else if (item.url.includes("/solutions/")) item.priority = 0.9;
+        else if (item.url === `${HOME}/resources/`) item.priority = 0.8;
+        // City landing pages — derived from cities.ts (was a hardcoded regex,
+        // the last hand-maintained list in this file).
+        else if (publishedCities.some((c) => item.url === `${HOME}/${c.slug}/`)) item.priority = 0.9;
         else if (item.url.includes("/blog/")) {
-          // Individual guides: fresher content, crawl more often.
+          // Individual guides: fresher content, crawl more often, dated.
           item.priority = 0.7;
           item.changefreq = ChangeFreqEnum.WEEKLY;
+          const slug = item.url.replace(/\/$/, "").split("/").pop() ?? "";
+          const post = blogDates.get(slug);
+          if (post) item.lastmod = post;
         } else if (item.url.includes("/legal/")) item.priority = 0.4;
         else item.priority = 0.7;
         return item;

@@ -393,6 +393,27 @@ const catalogue = [
       "establishing shot. Replaces belgium-dinant, a town 90 min away that stood " +
       "in while every Belgian string said Brussels.",
   },
+  // Second Belgian cities (13 Sep 2026). Establishing shots only — no faces,
+  // no readable signage, no venue presented as a customer; both reviewed at
+  // full size against docs/art-direction.md before selection. Antwerp is the
+  // cathedral tower over the old-centre rooftops (misty, mid-tone — light to
+  // encode); Liège is the view from the citadel over the Meuse at dusk. A
+  // night shot of the Pont de Fragnée was rejected on encode weight alone:
+  // dark frames full of small bright highlights run 3–4× heavier in AVIF.
+  {
+    slug: "antwerp-cathedral-skyline",
+    id: "photo-1541966890190-cde82668a4fb",
+    photographer: "Zoë Gayah Jonker",
+    url: "https://unsplash.com/@zoegayah",
+    brief: "Antwerp rooftops with the Cathedral of Our Lady's tower in soft haze — the Antwerp establishing shot (/be-en/antwerp)",
+  },
+  {
+    slug: "liege-meuse-skyline",
+    id: "photo-1582584238513-a6d9c0eb9079",
+    photographer: "Albert Dehon",
+    url: "https://unsplash.com/@sinout",
+    brief: "Liège from the citadel: the Meuse, its bridges and the centre under a dusk sky — the Liège establishing shot (/be-fr/liege, staged)",
+  },
   {
     slug: "brasserie-banquette",
     id: "photo-1583354608715-177553a4035e",

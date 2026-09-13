@@ -35,6 +35,8 @@ export function howItWorksHref(): string {
 export const CTA_LABELS = {
   bookDemo: "Book Demo",
   howItWorks: "See How It Works",
+  /** Product-page link from a solution hero — named, so it is never "See voxtable". */
+  seeProduct: (productName: string) => `See ${productName}`,
 } as const;
 
 /** Default bottom-of-page CTA actions for commercial AU pages. */
@@ -55,8 +57,12 @@ export const CONVERSION_TRUST = {
 } as const;
 
 /**
- * Soft checklist for tests / docs — what a commercial page should expose.
- * Not enforced at runtime; unit tests assert key templates import the SSOT.
+ * What every commercial AU page must expose. ENFORCED by
+ * scripts/gates/check-conversion.mjs (gates:au), which reads this list and
+ * asserts each entry against the built HTML of every solutions, products,
+ * city and resources page. Adding an entry here without a matching check in
+ * the gate fails the gate. (It was documented as "unit-tested" for a week
+ * while nothing imported it.)
  */
 export const CONVERSION_PAGE_REQUIREMENTS = [
   "book-demo-cta",

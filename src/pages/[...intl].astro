@@ -14,18 +14,24 @@
  * (no AU price/phone/NAP) are enforced by scripts/gates/check-truthful.mjs.
  */
 import IntlLayout from "@/layouts/IntlLayout.astro";
-import { localesForTarget, pagesForLocale, currentTarget, ORIGIN, type Locale } from "@/data/locales";
+import { localesForTarget, pagesForLocale, currentTarget, localeHome, ORIGIN, type Locale } from "@/data/locales";
 import {
-  resolveCopy, resolveMedia, resolveHero, resolveSupport, resolveCityStrip, resolveShowCallSim,
+  resolveCopy, resolveMedia, resolveHero, resolveSupport, resolveCityStrip, resolveShowCallSim, resolveRegions,
   type CopyBundle, type SimplePageCopy,
 } from "@/data/intl";
 import { intlCitiesForBase } from "@/data/intl/cities";
 import { companyDetails } from "@/data/intl/company-details";
 import { ukEmail } from "@/data/site";
 import { intlProducts, intlProductsOverview } from "@/data/intl/products";
-import { pageImageFor, productImageFor } from "@/data/intl/page-images";
-import { products } from "@/data/products";
-import { buildFaqPage, buildVoxApplication, voxEditionId, ORG_ID } from "@/data/schema";
+import { intlSolutions, intlSolutionsOverview } from "@/data/intl/solutions";
+import { intlResources } from "@/data/intl/resources";
+import { complianceFor } from "@/data/intl/compliance";
+import { resourceTypeFromSegment, RESOURCE_TYPE_BY_SEGMENT } from "@/data/resources";
+import { getCollection, render } from "astro:content";
+import { pageImageFor, productImageFor, solutionImageFor } from "@/data/intl/page-images";
+import { products, getProduct } from "@/data/products";
+import { renderableSolutions, solutionsForProduct, type SolutionSlug } from "@/data/solutions";
+import { buildFaqPage, buildVoxApplication, buildBreadcrumb, voxEditionId, ORG_ID, WEBSITE_ID } from "@/data/schema";
 import ImageBlock from "@/components/ImageBlock.astro";
 import FAQ from "@/components/FAQ.astro";
 import SocialLinks from "@/components/SocialLinks.astro";
@@ -84,6 +90,15 @@ const media = resolveMedia(locale);
 // Mutually exclusive with `media` in practice: a tree gets the two-up band OR
 // this single photo, never both. See MarketSupport in markets.ts.
 const support = resolveSupport(locale);
+// Region router (x-default only): every launched tree, AU included, labelled in
+// its own language. The AU link is absolute like the footer's — dist-global
+// has no /au-en/, the merged site does.
+const regions = resolveRegions(locale);
+const regionLinks = regions
+  ? [...localesForTarget("au"), ...localesForTarget("global")]
+      .filter((l) => l.base !== locale.base)
+      .map((l) => ({ l, href: l.market === "au" ? localeHome(l) : new URL(localeHome(l)).pathname }))
+  : [];
 const hero = resolveHero(locale);
 const { home: h, contact: ct } = c;
 // Only /gb-en carries market "gb" — the tree Biteperk Ltd's UK disclosures
@@ -110,6 +125,35 @@ const product = productSlug ? intlProducts[locale.copyLang][productSlug] : null;
 const productImage = productSlug ? productImageFor(productSlug) : undefined;
 const catalogue = productSlug ? products.find((x) => x.slug === productSlug) : null;
 
+// Solution pages: STRUCTURE (slug, sector, primaryProduct, status) from
+// solutions.ts, PROSE from intl/solutions.ts — the product-page contract.
+const solutionSlug = page.startsWith("solutions/") ? page.slice("solutions/".length) : null;
+const solutionsOverview = intlSolutionsOverview[locale.copyLang];
+const solutionEntry = solutionSlug ? renderableSolutions().find((x) => x.slug === solutionSlug) ?? null : null;
+const solution = solutionEntry ? intlSolutions[locale.copyLang][solutionEntry.slug as SolutionSlug] : null;
+const solutionImage = solutionSlug ? solutionImageFor(solutionSlug) : undefined;
+const solutionProduct = solutionEntry ? getProduct(solutionEntry.primaryProduct) : null;
+const solutionSiblings = (solutionEntry?.relatedSolutions ?? [])
+  .map((slug) => renderableSolutions().find((x) => x.slug === slug))
+  .filter((x): x is NonNullable<typeof x> => Boolean(x));
+
+// Resources: hub, category, article — language-scoped articles from the
+// intlResources collection, shipped under every base in their `markets`.
+const rc = intlResources[locale.copyLang];
+const resSeg = page.startsWith("resources/") ? page.slice("resources/".length).split("/")[0] : null;
+const resSlug = page.startsWith("resources/") && page.split("/").length === 3 ? page.split("/")[2] : null;
+const resType = resSeg ? resourceTypeFromSegment(resSeg) ?? null : null;
+const resPosts = (await getCollection("intlResources", ({ data }) => !data.draft && data.lang === locale.copyLang && data.markets.includes(locale.base)))
+  .sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime() || a.id.localeCompare(b.id));
+const resSegmentOf = (type: string) => Object.entries(RESOURCE_TYPE_BY_SEGMENT).find(([, id]) => id === type)?.[0] ?? type;
+const resPost = resSlug ? resPosts.find((x) => x.id === `${locale.copyLang}/${resSlug}` && resSegmentOf(x.data.type) === resSeg) ?? null : null;
+const resCategoryPosts = resType && !resSlug ? resPosts.filter((x) => x.data.type === resType.id) : [];
+const resHub = page === "resources" && resPosts.length > 0;
+const resCategory = !!resType && !resSlug && resCategoryPosts.length > 0;
+const resContent = resPost ? await render(resPost) : null;
+const resFmt = (d: Date) => new Intl.DateTimeFormat(locale.lang, { day: "numeric", month: "long", year: "numeric" }).format(d);
+const resBuiltFor = resPost ? resPost.data.relatedSolutions.map((s) => renderableSolutions().find((x) => x.slug === s)).filter((x): x is NonNullable<typeof x> => Boolean(x)) : [];
+
 // City pages: every text field hand-written per city (intl/cities.ts), the
 // section furniture around them from the language core (c.cityPage). The
 // route exists because pagesForLocale() appended the slug, so a lookup miss
@@ -127,8 +171,8 @@ const homeCities = page === "" ? intlCitiesForBase(locale.base) : [];
 // `simple!.title` and die on a null dereference — an unreadable crash from a
 // data edit made in a different file. Fail with the path that caused it.
 const RENDERABLE =
-  page === "" || page === "contact" || page === "products" || !!simple ||
-  (!!product && !!catalogue) || !!city;
+  page === "" || page === "contact" || page === "products" || page === "solutions" || !!simple ||
+  (!!product && !!catalogue) || (!!solution && !!solutionEntry) || !!city || resHub || resCategory || !!resPost;
 if (!RENDERABLE)
   throw new Error(
     `[...intl].astro: no renderer for page "${page}" (locale ${locale.base}). ` +
@@ -145,6 +189,16 @@ const meta =
       ? { title: ct.title, description: ct.description }
       : page === "products"
         ? { title: overview.title, description: overview.description }
+        : resPost
+          ? { title: resPost.data.seoTitle ?? resPost.data.title, description: resPost.data.description }
+          : resCategory
+            ? { title: `${rc.types[resType!.id].plural} — ${rc.eyebrow}`, description: rc.types[resType!.id].description }
+            : resHub
+              ? { title: rc.title, description: rc.description }
+        : page === "solutions"
+          ? { title: solutionsOverview.title, description: solutionsOverview.description }
+          : solution
+            ? { title: solution.title, description: solution.description }
         : product
           ? { title: product.title, description: product.description }
           : city
@@ -164,27 +218,38 @@ const ogSuffix = locale.base === "/en" ? "" : `-${locale.base.slice(1)}`;
 const ogImage =
   page === "products" || product
     ? `/og/intl/${page === "products" ? "products" : productSlug}-${locale.copyLang}.png`
+    : page === "solutions" || solution
+      ? `/og/intl/solutions-${page === "solutions" ? "index" : solutionSlug}-${locale.copyLang}.png`
+      : resHub || resCategory || resPost
+        ? `/og/intl/resources-${resSeg ?? "index"}-${locale.copyLang}.png`
     : city
       ? `/og/intl/${city.slug}${ogSuffix}.png`
       : `/og/intl/${page === "contact" ? "contact" : "home"}${ogSuffix}.png`;
 
 // Page-level structured data — the market trees' first. Europe-truthful:
 // SoftwareApplication carries NO offers (no price anywhere on these pages).
-const crumbs = [
-  { name: c.chrome.nav.home, item: `${ORIGIN}${locale.base}/` },
-  { name: overview.eyebrow, item: `${ORIGIN}${p("products")}` },
-  ...(product ? [{ name: catalogue!.name, item: `${ORIGIN}${p(page)}` }] : []),
-];
-const breadcrumbJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: crumbs.map((x, i) => ({
-    "@type": "ListItem",
-    position: i + 1,
-    name: x.name,
-    item: x.item,
-  })),
-};
+const crumbs = resHub || resCategory || resPost
+  ? [
+      { name: c.chrome.nav.home, item: `${ORIGIN}${locale.base}/` },
+      { name: c.chrome.nav.resources, item: `${ORIGIN}${p("resources")}` },
+      ...(resType ? [{ name: rc.types[resType.id].plural, item: `${ORIGIN}${p(`resources/${resSeg}`)}` }] : []),
+      ...(resPost ? [{ name: resPost.data.title, item: `${ORIGIN}${p(page)}` }] : []),
+    ]
+  : solution || page === "solutions"
+  ? [
+      { name: c.chrome.nav.home, item: `${ORIGIN}${locale.base}/` },
+      { name: c.chrome.nav.solutions, item: `${ORIGIN}${p("solutions")}` },
+      ...(solutionEntry ? [{ name: solutionEntry.name, item: `${ORIGIN}${p(page)}` }] : []),
+    ]
+  : [
+      { name: c.chrome.nav.home, item: `${ORIGIN}${locale.base}/` },
+      { name: overview.eyebrow, item: `${ORIGIN}${p("products")}` },
+      ...(product ? [{ name: catalogue!.name, item: `${ORIGIN}${p(page)}` }] : []),
+    ];
+const breadcrumbJsonLd = buildBreadcrumb(
+  crumbs.map((x) => ({ name: x.name, path: x.item.replace(ORIGIN, "") })),
+  locale.lang,
+);
 // City pages: Service + BreadcrumbList. The Service node mirrors the AU
 // [city].astro one MINUS areaServed/geo/address/offers — deliberately. There
 // is no European premises and no European price; the service is NAMED for the
@@ -206,25 +271,65 @@ const cityServiceJsonLd = city && {
   audience: { "@type": "BusinessAudience", name: "Restaurants, cafés and venues" },
   url: cityUrl,
 };
-const cityBreadcrumbJsonLd = city && {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: c.chrome.nav.home, item: `${ORIGIN}${locale.base}/` },
-    { "@type": "ListItem", position: 2, name: city.name, item: cityUrl },
-  ],
-};
+const cityBreadcrumbJsonLd =
+  city &&
+  buildBreadcrumb(
+    [
+      { name: c.chrome.nav.home, path: `${locale.base}/` },
+      { name: city.name, path: `${locale.base}/${city.slug}/` },
+    ],
+    locale.lang,
+  );
 
 // Product pages carry their own FAQ; the home now carries the market FAQ.
 // Note Google restricted FAQ rich results to government/health sites in 2023,
 // so this earns no SERP snippet — it is here for answer engines and on-page UX.
 const faqJsonLd = product
   ? buildFaqPage(product.faqs)
+  : solution
+    ? buildFaqPage(solution.faqs)
   : city
     ? buildFaqPage([...city.faqs])
     : page === ""
       ? buildFaqPage(h.faq.items)
       : null;
+// Resources structured data: CollectionPage+ItemList on hub/category, BlogPosting on articles.
+const resListJsonLd = (resHub || resCategory)
+  ? {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "@id": `${ORIGIN}${p(page)}#webpage`,
+      url: `${ORIGIN}${p(page)}`,
+      name: resCategory ? rc.types[resType!.id].plural : rc.h1,
+      inLanguage: locale.lang,
+      isPartOf: { "@id": WEBSITE_ID },
+      publisher: { "@id": ORG_ID },
+      mainEntity: {
+        "@type": "ItemList",
+        numberOfItems: (resCategory ? resCategoryPosts : resPosts).length,
+        itemListElement: (resCategory ? resCategoryPosts : resPosts).map((x, i) => ({
+          "@type": "ListItem", position: i + 1, name: x.data.title, url: `${ORIGIN}${p(`resources/${resSegmentOf(x.data.type)}/${x.id.split("/")[1]}`)}`,
+        })),
+      },
+    }
+  : null;
+const resArticleJsonLd = resPost
+  ? {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "@id": `${ORIGIN}${p(page)}#article`,
+      headline: resPost.data.title,
+      description: resPost.data.description,
+      inLanguage: locale.lang,
+      datePublished: resPost.data.publishDate.toISOString().slice(0, 10),
+      dateModified: (resPost.data.updatedDate ?? resPost.data.publishDate).toISOString().slice(0, 10),
+      author: { "@id": ORG_ID },
+      publisher: { "@id": ORG_ID },
+      mainEntityOfPage: { "@type": "WebPage", "@id": `${ORIGIN}${p(page)}` },
+      isPartOf: { "@id": WEBSITE_ID },
+      keywords: resPost.data.tags.join(", "),
+    }
+  : null;
 const appJsonLd =
   page === "products"
     ? buildVoxApplication({
@@ -430,6 +535,21 @@ const appJsonLd =
         </div>
       </section>
 
+      {regions && (
+        <section class="cv-auto intl-regions">
+          <div class="wrap">
+            <p class="eyebrow">{regions.eyebrow}</p>
+            <h2>{regions.heading}</h2>
+            <p class="lede">{regions.body}</p>
+            <ul class="intl-city-links" role="list">
+              {regionLinks.map(({ l, href }) => (
+                <li><a href={href} lang={l.lang} hreflang={l.hreflang[0]} data-astro-reload>{l.label}</a></li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
+
       <section class="cv-auto intl-closing">
         <div class="wrap">
           <h2>{h.closing.heading}</h2>
@@ -450,6 +570,9 @@ const appJsonLd =
           <p class="eyebrow">{ct.eyebrow}</p>
           <h1>{ct.h1}</h1>
           <p class="lede">{ct.intro}</p>
+          {/* Where the team is — honest, from the compliance registry; "within
+              a business day" meant nothing without saying whose day. */}
+          <p class="muted" data-market-team>{complianceFor(locale.market).timeZoneNote[locale.copyLang]}</p>
 
           <form class="intl-form" method="post" action="/api/contact" data-astro-reload>
             {/* Honeypot — same contract as the AU form / Cloud Function. */}
@@ -593,7 +716,7 @@ const appJsonLd =
     </section>
   )}
 
-  {(page === "products" || product) && (
+  {(page === "products" || product || page === "solutions" || solution || resHub || resCategory || resPost) && (
     <script is:inline type="application/ld+json" slot="jsonld" set:html={JSON.stringify(breadcrumbJsonLd)} />
   )}
   {cityServiceJsonLd && (
@@ -607,6 +730,12 @@ const appJsonLd =
   )}
   {appJsonLd && (
     <script is:inline type="application/ld+json" slot="jsonld" set:html={JSON.stringify(appJsonLd)} />
+  )}
+  {resListJsonLd && (
+    <script is:inline type="application/ld+json" slot="jsonld" set:html={JSON.stringify(resListJsonLd)} />
+  )}
+  {resArticleJsonLd && (
+    <script is:inline type="application/ld+json" slot="jsonld" set:html={JSON.stringify(resArticleJsonLd)} />
   )}
 
   {page === "products" && (
@@ -678,6 +807,259 @@ const appJsonLd =
     </>
   )}
 
+  {page === "solutions" && (
+    <>
+      <section class="intl-hero">
+        <div class="wrap">
+          <p class="eyebrow">{solutionsOverview.eyebrow}</p>
+          <h1>{solutionsOverview.h1}</h1>
+          <p class="lede">{solutionsOverview.lede}</p>
+          {pageImage && (
+            <div class="intl-page-image">
+              <ImageBlock slug={pageImage.slug} alt={pageImage.alt[locale.copyLang]} aspect={pageImage.aspect} widths="(min-width: 981px) 1120px, 100vw" rounded />
+            </div>
+          )}
+          <div class="intl-ctas">
+            <a class="btn" href={p("contact")}>{solutionsOverview.ctaLabel}</a>
+          </div>
+        </div>
+      </section>
+      {(["hospitality", "services", "enterprise"] as const).map((sector) => {
+        const list = renderableSolutions().filter((x) => x.sector === sector);
+        return list.length > 0 ? (
+          <section class="cv-auto intl-band">
+            <div class="wrap">
+              <h2>{solutionsOverview.sectors[sector]}</h2>
+              <div class="intl-grid reveal reveal-stagger">
+                {list.map((x) => {
+                  const copy = intlSolutions[locale.copyLang][x.slug as SolutionSlug];
+                  const prod = getProduct(x.primaryProduct)!;
+                  return (
+                    <a class="intl-card intl-card-link" href={p(`solutions/${x.slug}`)}>
+                      <p class="status-pill" data-status={prod.status}>{copy.statusLabel}</p>
+                      <h3>{copy.eyebrow}</h3>
+                      <p>{copy.h1}</p>
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        ) : null;
+      })}
+    </>
+  )}
+
+  {solution && solutionEntry && solutionProduct && (
+    <>
+      <section class="intl-hero">
+        <div class="wrap">
+          <nav class="intl-crumbs" aria-label="Breadcrumb">
+            <a href={p("")}>{c.chrome.nav.home}</a>
+            <span aria-hidden="true">/</span>
+            <a href={p("solutions")}>{c.chrome.nav.solutions}</a>
+          </nav>
+          <p class="eyebrow">{solution.eyebrow}</p>
+          <h1>{solution.h1}</h1>
+          <p class="lede">{solution.lede}</p>
+          <p class="status-pill" data-status={solutionProduct.status}>{solution.statusLabel}</p>
+          <p class="muted status-note">{solution.statusNote}</p>
+          <div class="intl-ctas">
+            <a class="btn" href={p("contact")}>{solution.ctaLabel}</a>
+            <a class="btn-ghost" href={p(`products/${solutionProduct.slug}`)}>{solutionProduct.name}</a>
+          </div>
+          {solutionImage && (
+            <div class="intl-page-image">
+              <ImageBlock slug={solutionImage.slug} alt={solutionImage.alt[locale.copyLang]} aspect={solutionImage.aspect} widths="(min-width: 981px) 1120px, 100vw" rounded />
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section class="cv-auto">
+        <div class="wrap intl-prose">
+          <h2>{solution.problemHeading}</h2>
+          <p>{solution.problem}</p>
+          <h2>{solution.lostHeading}</h2>
+          <p>{solution.lost}</p>
+          <ul>{solution.lostPoints.map((x) => <li>{x}</li>)}</ul>
+        </div>
+      </section>
+
+      <section class="cv-auto intl-band">
+        <div class="wrap">
+          <h2>{solution.howHeading}</h2>
+          <p class="lede">{solution.how}</p>
+          <div class="intl-grid">
+            {solution.steps.map((st, i) => (
+              <div class="intl-card">
+                <p class="status-pill" aria-hidden="true">{i + 1}</p>
+                <h3>{st.title}</h3>
+                <p>{st.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section class="cv-auto">
+        <div class="wrap">
+          <h2>{solution.featuresHeading}</h2>
+          <div class="intl-grid">
+            {solution.features.map((f) => (
+              <div class="intl-card">
+                <h3>{f.title}</h3>
+                <p>{f.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section class="cv-auto intl-band">
+        <div class="wrap intl-prose">
+          <h2>{solution.benefitsHeading}</h2>
+          <ul>{solution.benefits.map((b) => <li>{b}</li>)}</ul>
+        </div>
+      </section>
+
+      {solutionEntry.relatedSolutions.length > 0 && (
+        <section class="cv-auto">
+          <div class="wrap">
+            <h2>{solutionsOverview.alsoBuiltFor}</h2>
+            <ul class="intl-city-links" role="list">
+              {solutionSiblings.map((x) => (
+                <li><a href={p(`solutions/${x.slug}`)}>{intlSolutions[locale.copyLang][x.slug as SolutionSlug].eyebrow}</a></li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
+
+      <section class="cv-auto">
+        <div class="wrap intl-prose">
+          <h2>{solution.faqHeading}</h2>
+          {solution.faqs.map((f) => (
+            <section>
+              <h3>{f.q}</h3>
+              <p>{f.a}</p>
+            </section>
+          ))}
+        </div>
+      </section>
+
+      <section class="cv-auto intl-band">
+        <div class="wrap intl-prose">
+          <h2>{solution.ctaHeading}</h2>
+          <div class="intl-ctas">
+            <a class="btn" href={p("contact")}>{solution.ctaLabel}</a>
+          </div>
+        </div>
+      </section>
+    </>
+  )}
+
+  {resHub && (
+    <>
+      <section class="intl-hero">
+        <div class="wrap">
+          <p class="eyebrow">{rc.eyebrow}</p>
+          <h1>{rc.h1}</h1>
+          <p class="lede">{rc.lede}</p>
+        </div>
+      </section>
+      {(Object.keys(RESOURCE_TYPE_BY_SEGMENT)).map((seg) => {
+        const t = resourceTypeFromSegment(seg)!;
+        const list = resPosts.filter((x) => x.data.type === t.id);
+        return list.length > 0 ? (
+          <section class="cv-auto intl-band">
+            <div class="wrap">
+              <h2>{rc.types[t.id].plural}</h2>
+              <div class="intl-grid">
+                {list.map((x) => (
+                  <a class="intl-card intl-card-link" href={p(`resources/${seg}/${x.id.split("/")[1]}`)}>
+                    <p class="status-pill">{resFmt(x.data.publishDate)}</p>
+                    <h3>{x.data.title}</h3>
+                    <p>{x.data.description}</p>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </section>
+        ) : null;
+      })}
+    </>
+  )}
+
+  {resCategory && resType && (
+    <>
+      <section class="intl-hero">
+        <div class="wrap">
+          <nav class="intl-crumbs" aria-label="Breadcrumb">
+            <a href={p("")}>{c.chrome.nav.home}</a>
+            <span aria-hidden="true">/</span>
+            <a href={p("resources")}>{c.chrome.nav.resources}</a>
+          </nav>
+          <p class="eyebrow">{rc.eyebrow}</p>
+          <h1>{rc.types[resType.id].plural}</h1>
+          <p class="lede">{rc.types[resType.id].description}</p>
+        </div>
+      </section>
+      <section class="cv-auto intl-band">
+        <div class="wrap">
+          <div class="intl-grid">
+            {resCategoryPosts.map((x) => (
+              <a class="intl-card intl-card-link" href={p(`resources/${resSeg}/${x.id.split("/")[1]}`)}>
+                <p class="status-pill">{resFmt(x.data.publishDate)}</p>
+                {/* h2: the category page has no section heading between the h1 and these cards. */}
+                <h2>{x.data.title}</h2>
+                <p>{x.data.description}</p>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
+  )}
+
+  {resPost && resContent && (
+    <article>
+      <section class="intl-hero">
+        <div class="wrap intl-prose">
+          <nav class="intl-crumbs" aria-label="Breadcrumb">
+            <a href={p("")}>{c.chrome.nav.home}</a>
+            <span aria-hidden="true">/</span>
+            <a href={p("resources")}>{c.chrome.nav.resources}</a>
+            <span aria-hidden="true">/</span>
+            <a href={p(`resources/${resSeg}`)}>{rc.types[resPost.data.type].plural}</a>
+          </nav>
+          <p class="eyebrow">{rc.types[resPost.data.type].label}</p>
+          <h1>{resPost.data.title}</h1>
+          <p class="muted">{rc.publishedLabel} <time datetime={resPost.data.publishDate.toISOString().slice(0, 10)}>{resFmt(resPost.data.publishDate)}</time></p>
+        </div>
+      </section>
+      <section class="cv-auto">
+        <div class="wrap intl-prose intl-article">
+          <resContent.Content />
+        </div>
+      </section>
+      {resBuiltFor.length > 0 && (
+        <section class="cv-auto intl-band">
+          <div class="wrap intl-prose">
+            <h2>{rc.builtFor}</h2>
+            <div class="intl-ctas">
+              {resBuiltFor.map((x) => (
+                <a class="btn-ghost" href={p(`solutions/${x.slug}`)}>{intlSolutions[locale.copyLang][x.slug as SolutionSlug].eyebrow}</a>
+              ))}
+              <a class="btn" href={p("contact")}>{rc.ctaLabel}</a>
+            </div>
+            <p><a href={p("resources")}>← {rc.backLabel}</a></p>
+          </div>
+        </section>
+      )}
+    </article>
+  )}
+
   {product && catalogue && (
     <>
       <section class="intl-hero">
@@ -722,6 +1104,38 @@ const appJsonLd =
           </div>
         </div>
       </section>
+
+      {/* Product → solutions: the verticals sold on this product (derived,
+          solutions.ts). Gives every intl solution page an in-body inbound
+          link from its product page — the AU tree has had it since S2. */}
+      {solutionsForProduct(catalogue.slug).length > 0 && (
+        <section class="cv-auto">
+          <div class="wrap">
+            <h2>{solutionsOverview.forProduct.replace("{product}", catalogue.name)}</h2>
+            <ul class="intl-city-links" role="list">
+              {solutionsForProduct(catalogue.slug).map((x) => (
+                <li><a href={p(`solutions/${x.slug}`)}>{intlSolutions[locale.copyLang][x.slug as SolutionSlug].eyebrow}</a></li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
+
+      {/* Product ↔ city: the market's published city pages, under the
+          existing "Cities" chrome label — until 13 Sep 2026 /gb-en/products/
+          voxtable/ and /gb-en/london/ never linked to each other. */}
+      {intlCitiesForBase(locale.base).length > 0 && (
+        <section class="cv-auto">
+          <div class="wrap">
+            <h2>{c.chrome.cities}</h2>
+            <ul class="intl-city-links" role="list">
+              {intlCitiesForBase(locale.base).map((x) => (
+                <li><a href={p(x.slug)}>{x.name}</a></li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
 
       <section class="cv-auto">
         <div class="wrap intl-prose">
@@ -837,6 +1251,10 @@ const appJsonLd =
     letter-spacing: 0.02em;
     color: var(--mist-2);
   }
+  .intl-city-links { list-style: none; padding: 0; margin: 18px 0 0; display: flex; flex-wrap: wrap; gap: 10px; }
+  .intl-city-links a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border: 1px solid var(--line); border-radius: 999px; text-decoration: none; color: var(--white); font-weight: 600; }
+  .intl-article table { display: block; overflow-x: auto; }
+  .intl-article h2 { margin-top: 1.6em; }
   .status-pill[data-status="live"] { color: var(--success); }
   .status-pill[data-status="in-development"] { color: var(--gold); }
   .status-note { max-width: 60ch; margin: 0 0 1.5rem; }

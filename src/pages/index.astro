@@ -1,4 +1,5 @@
 ---
+import { BRAND } from "@/data/site";
 import Base from "@/layouts/AuBase.astro";
 import Hero from "@/components/sections/Hero.astro";
 import TrustRow from "@/components/sections/TrustRow.astro";
@@ -14,6 +15,8 @@ import Cta from "@/components/Cta.astro";
 import FooterMood from "@/components/sections/FooterMood.astro";
 import FAQ from "@/components/FAQ.astro";
 import { getCollection } from "astro:content";
+import { buildFaqPage } from "@/data/schema";
+import SolutionStrip from "@/components/sections/SolutionStrip.astro";
 import { u } from "@/data/locales";
 
 // Latest guides — surfaces the content engine from the homepage (internal
@@ -24,9 +27,9 @@ const latestGuides = (await getCollection("blog", ({ data }) => !data.draft))
 const fmtGuideDate = (d: Date) =>
   new Intl.DateTimeFormat("en-AU", { day: "numeric", month: "short", year: "numeric" }).format(d);
 
-const title = "Biteperk — Voice + AI for Australian hospitality, made in Sydney";
+const title = `${BRAND} — Voice + AI for Australian hospitality, made in Sydney`;
 const description =
-  "Biteperk builds voice and AI tools that help Australian restaurants stay on the floor while the phone takes care of itself. VoxTable and VoxOrder are live; VoxConcierge, VoxStay and VoxDrive are next.";
+  "BitePerk builds voice and AI tools that let Australian restaurants stay on the floor while the phone takes care of itself. VoxTable and VoxOrder are live; more is coming.";
 
 // Homepage FAQ — written around what restaurant owners actually search
 // ("can AI answer my phone", "how much", "is my data safe"). Doubles as
@@ -58,15 +61,7 @@ const homeFaqs = [
   },
 ];
 
-const faqJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: homeFaqs.map((item) => ({
-    "@type": "Question",
-    name: item.q,
-    acceptedAnswer: { "@type": "Answer", text: item.a },
-  })),
-};
+const faqJsonLd = buildFaqPage(homeFaqs, "en-AU");
 ---
 
 <Base
@@ -86,6 +81,7 @@ const faqJsonLd = {
   <Hero />
   <TrustRow />
   <ProductGrid />
+  <SolutionStrip />
   <CallSim />
   <PlatformPeek />
   <InTheWild />
