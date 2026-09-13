@@ -89,7 +89,7 @@ const FORBIDDEN = [
     // The city alternation must cover every city with a market page — "our
     // Manchester team" is the same lie as "our London team". Extend it when
     // intl/cities.ts gains a market's cities.
-    re: /\bour\s+(?:London|Manchester|Birmingham|Edinburgh|Glasgow|Leeds|Bristol|Liverpool|Paris|Brussels|Bruxelles|UK|British|French|Belgian|European)\s+(?:team|office|staff|crew)\b|notre\s+(?:bureau|équipe)\s+(?:à|de|en)\s+(?:Londres|Paris|Bruxelles|Belgique|France)/i,
+    re: /\bour\s+(?:London|Manchester|Birmingham|Edinburgh|Glasgow|Leeds|Bristol|Liverpool|Paris|Brussels|Bruxelles|Antwerp|Antwerpen|Liège|Liege|Lyon|Marseille|Nice|Bordeaux|Toulouse|Lille|Nantes|Strasbourg|Montpellier|UK|British|French|Belgian|Flemish|European)\s+(?:team|office|staff|crew)\b|notre\s+(?:bureau|équipe)\s+(?:à|de|d'|en)\s+(?:Londres|Paris|Bruxelles|Anvers|Liège|Lyon|Marseille|Nice|Bordeaux|Toulouse|Lille|Nantes|Strasbourg|Montpellier|Belgique|France)/i,
   },
   {
     // No booking or POS integration ships in Europe. Naming one implies it

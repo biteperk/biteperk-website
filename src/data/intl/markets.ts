@@ -736,6 +736,7 @@ const frFr: MarketContent = {
 
 // ── Belgium — English (/be-en) ──────────────────────────────────────
 const beEn: MarketContent = {
+  callSim: true,
   hero: {
     slug: "brasserie-banquette",
     alt: "A blue velvet banquette and marble tables laid for service",
@@ -766,6 +767,38 @@ const beEn: MarketContent = {
     body: "A pilot is a conversation with a particular room in a particular street, not a launch. This is where those conversations are open.",
   },
   copy: {
+    // The bilingual transcript — the ONE demo only Belgium can run, and unique
+    // per language pool, so it lowers the similarity score rather than raising
+    // it (measured before merging; see MarketContent.callSim). The caller
+    // starts in French and switches to English; the French lines carry lang
+    // tags. Illustrative by its own disclaimer: switching is what a Belgian
+    // pilot PROVES on a venue's line (the home FAQ says so) — this shows how
+    // Bella is designed to handle it, never that it has been proven here.
+    // Venue name matches the contact form placeholder; fictional.
+    callSim: {
+      eyebrow: "The bilingual test",
+      headingLead: "This is what a caller changing language",
+      headingAccent: "sounds like, handled.",
+      lede: "One number, two languages, and no way of knowing which arrives first. Bella follows the caller into whichever they use, checks what is genuinely free and records the booking.",
+      note: "And when she is unsure — a language she does not serve, a request that needs a person — she does not guess. She offers to put the caller through to your own team.",
+      ctaLabel: "See how VoxTable works",
+      status: "Incoming call · 18:52",
+      badge: "Answered <1s",
+      whoBella: "Bella",
+      whoCaller: "Caller",
+      written: "Booking written to the venue book",
+      replay: "Replay",
+      disclaimer: "Illustrative — a fictional venue, showing how Bella is designed to handle a call that changes language. Proving it on your own line is what a Belgian pilot is for.",
+      lines: [
+        { role: "bella", lang: "fr", text: "Bonsoir, vous êtes bien chez Maison Verte. Ici Bella, l'assistante IA — je vous écoute." },
+        { role: "caller", lang: "fr", text: "Bonsoir — une table pour deux ce soir, vers 19 h 30 ?" },
+        { role: "bella", lang: "fr", text: "Je regarde le registre… 19 h 30 est complet. Je peux vous proposer 19 h, ou 20 h 15." },
+        { role: "caller", text: "Ah — sorry, my colleague's joining us, so three, and English is fine?" },
+        { role: "bella", text: "Of course. Three people at 8:15 tonight — what name shall I put it under?" },
+        { role: "caller", text: "Okafor." },
+        { role: "bella", text: "Booked, Okafor — three at 8:15. If you'd rather speak to someone, I can put you through to the team at any point. A confirmation is on its way." },
+      ],
+    },
     // cityPage.en was written when cities were a /gb-en-only feature and says
     // "the UK" in two visible places. merge() recurses plain objects, so this
     // overrides three keys and inherits the rest.
@@ -920,6 +953,7 @@ const beEn: MarketContent = {
 
 // ── Belgique — Français (/be-fr) ────────────────────────────────────
 const beFr: MarketContent = {
+  callSim: true,
   hero: {
     slug: "brasserie-banquette",
     alt: "Banquette en velours bleu et tables en marbre dressées pour le service",
@@ -947,6 +981,34 @@ const beFr: MarketContent = {
     body: "Le pilote se joue au téléphone d'une adresse précise, jamais dans une annonce. Ces pages parlent de la vôtre en particulier.",
   },
   copy: {
+    // Le pendant francophone du test bilingue (voir beEn.callSim) : l'appel
+    // commence en anglais et bascule vers le français ; les lignes anglaises
+    // portent lang="en". Français écrit le 13 sept. 2026 — NON relu ; prochain
+    // lot Ludovic (usage belge : « souper », etc.).
+    callSim: {
+      eyebrow: "Le test bilingue",
+      headingLead: "Voici ce qu'un appel qui change de langue",
+      headingAccent: "donne, bien géré.",
+      lede: "Un seul numéro, deux langues, et aucun moyen de savoir laquelle arrive en premier. Bella suit l'appelant dans celle qu'il choisit, vérifie ce qui est réellement libre et inscrit la réservation.",
+      note: "Et quand elle a un doute — une langue qu'elle ne sert pas, une demande qui exige une personne — elle ne devine pas. Elle propose de passer l'appel à votre propre équipe.",
+      ctaLabel: "Voir comment fonctionne VoxTable",
+      status: "Appel entrant · 18 h 52",
+      badge: "Décroché en <1 s",
+      whoBella: "Bella",
+      whoCaller: "Appelant",
+      written: "Réservation inscrite au registre de l'établissement",
+      replay: "Rejouer",
+      disclaimer: "À titre d'illustration — un établissement fictif, pour montrer comment Bella est conçue pour gérer un appel qui change de langue. Le prouver sur votre propre ligne, c'est précisément l'objet d'un pilote belge.",
+      lines: [
+        { role: "bella", lang: "en", text: "Good evening, you've reached Maison Verte. This is Bella, the AI assistant — how can I help?" },
+        { role: "caller", lang: "en", text: "Hi — a table for two tonight, around half past seven?" },
+        { role: "bella", lang: "en", text: "Let me check the book… 7:30 is full. I can offer 7:00, or 8:15." },
+        { role: "caller", text: "Euh… en fait on sera trois, et on peut continuer en français ?" },
+        { role: "bella", text: "Bien sûr. Trois personnes à 20 h 15 ce soir — à quel nom ?" },
+        { role: "caller", text: "Okafor." },
+        { role: "bella", text: "C'est noté, Okafor : trois couverts à 20 h 15. Si vous préférez parler à quelqu'un, je peux vous passer l'équipe à tout moment. Vous recevez une confirmation." },
+      ],
+    },
     home: {
       title: "BitePerk — Vox, l'hôte téléphonique IA pour les restaurants en Belgique",
       description:

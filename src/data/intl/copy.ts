@@ -165,7 +165,12 @@ export type CallSimCopy = {
   written: string;
   replay: string;
   disclaimer: string;
-  lines: ReadonlyArray<{ role: "bella" | "caller"; text: string }>;
+  /**
+   * `lang` marks a line spoken in a language other than the page's — the
+   * Belgian transcripts switch mid-call, and a screen reader needs the BCP 47
+   * tag to pronounce the French line on the English page (and vice versa).
+   */
+  lines: ReadonlyArray<{ role: "bella" | "caller"; text: string; lang?: string }>;
 };
 
 export type TrustFactsCopy = {

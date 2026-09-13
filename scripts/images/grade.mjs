@@ -99,14 +99,23 @@ async function processOne(file) {
 }
 
 // ── Run ────────────────────────────────────────────────────────────
-const files = readdirSync(RAW).filter((f) => f.endsWith(".jpg"));
+// GRADE_ONLY=slug,slug limits the run to those raws — adding one city should
+// not regrade the other fifty photos (binaries never delta-compress, so a
+// re-encode that differs by a byte is a 74MB repo growing for nothing). The
+// placeholder map is MERGED in that mode, never rewritten from scratch.
+const only = (process.env.GRADE_ONLY ?? "").split(",").map((s) => s.trim()).filter(Boolean);
+const files = readdirSync(RAW).filter((f) => f.endsWith(".jpg")).filter((f) => only.length === 0 || only.includes(f.replace(/\.jpg$/, "")));
+if (only.length && files.length !== only.length) {
+  console.error(`GRADE_ONLY names ${only.length} slug(s) but ${files.length} raw file(s) matched — run npm run images:fetch first`);
+  process.exit(1);
+}
 if (files.length === 0) {
   console.error("No photos in public/images/raw/ — run npm run images:fetch first");
   process.exit(1);
 }
 
 console.log(`Grading ${files.length} photos…\n`);
-const allPlaceholders = {};
+const allPlaceholders = only.length && existsSync(PLACEHOLDERS) ? JSON.parse(readFileSync(PLACEHOLDERS, "utf8")) : {};
 for (const file of files) {
   const r = await processOne(file);
   Object.assign(allPlaceholders, r.placeholders);
