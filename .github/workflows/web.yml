@@ -174,21 +174,21 @@ jobs:
       - name: Internal link check — AU tree (offline, blocking)
         uses: lycheeverse/lychee-action@v2
         with:
-          args: --config lychee.toml --offline --base ./dist ./dist/**/*.html
+          args: --config lychee.toml --offline --base ${{ github.workspace }}/dist ./dist/**/*.html
           fail: true
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Internal link check — global tree (offline, blocking)
         uses: lycheeverse/lychee-action@v2
         with:
-          args: --config lychee.toml --offline --base ./dist-global ./dist-global/**/*.html
+          args: --config lychee.toml --offline --base ${{ github.workspace }}/dist-global ./dist-global/**/*.html
           fail: true
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: External link check — both trees (report only)
         uses: lycheeverse/lychee-action@v2
         with:
-          args: --config lychee.toml --base ./dist-site ./dist-site/**/*.html
+          args: --config lychee.toml --base ${{ github.workspace }}/dist-site ./dist-site/**/*.html
           fail: false
           token: ${{ secrets.GITHUB_TOKEN }}
 
