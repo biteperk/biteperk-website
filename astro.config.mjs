@@ -73,8 +73,10 @@ export default defineConfig({
     defaultStrategy: "viewport",
   },
   image: {
-    // Astro picks AVIF/WebP for <Image> automatically; this keeps the
-    // pipeline explicit and consistent.
+    // No page uses <Image>/<Picture>: every photo is pre-generated offline by
+    // scripts/images/* and hand-wired through ImageBlock/Composite. This block
+    // exists only for `responsiveStyles`; there is no service/format config to
+    // tune here.
     responsiveStyles: true,
   },
   integrations: [

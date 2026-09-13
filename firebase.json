@@ -15,7 +15,7 @@
   ],
   "hosting": [
     {
-      "//": "biteperk.com \u2014 the one real site. Serves the merged build: /au-en (AU), /en + /fr (international), shared assets at root.",
+      "//": "biteperk.com — the one real site. Serves the merged build: /au-en (AU), /en + /fr (international), shared assets at root.",
       "target": "biteperk-global",
       "public": "dist-site",
       "ignore": [
@@ -59,6 +59,18 @@
         {
           "source": "/be",
           "destination": "/be-en/",
+          "type": 301
+        },
+        {
+          "//": "Home-market shortcut, sibling of /gb /uk /be.",
+          "source": "/au",
+          "destination": "/au-en/",
+          "type": 301
+        },
+        {
+          "//": "fr-FR is the hreflang code; people type it as a path.",
+          "source": "/fr-fr",
+          "destination": "/fr/",
           "type": 301
         },
         {
@@ -180,6 +192,146 @@
           "source": "/au-en/cookies",
           "destination": "/au-en/legal/cookies/",
           "type": 301
+        },
+        {
+          "source": "/voxtable",
+          "destination": "/au-en/products/voxtable/",
+          "type": 301
+        },
+        {
+          "source": "/voxorder",
+          "destination": "/au-en/products/voxorder/",
+          "type": 301
+        },
+        {
+          "source": "/voxconcierge",
+          "destination": "/au-en/products/voxconcierge/",
+          "type": 301
+        },
+        {
+          "source": "/voxstay",
+          "destination": "/au-en/products/voxstay/",
+          "type": 301
+        },
+        {
+          "source": "/voxdrive",
+          "destination": "/au-en/products/voxdrive/",
+          "type": 301
+        },
+        {
+          "source": "/vocotable",
+          "destination": "/au-en/products/voxtable/",
+          "type": 301
+        },
+        {
+          "source": "/vocoorder",
+          "destination": "/au-en/products/voxorder/",
+          "type": 301
+        },
+        {
+          "source": "/vococoncierge",
+          "destination": "/au-en/products/voxconcierge/",
+          "type": 301
+        },
+        {
+          "source": "/vocodrive",
+          "destination": "/au-en/products/voxdrive/",
+          "type": 301
+        },
+        {
+          "source": "/perktable",
+          "destination": "/au-en/products/voxtable/",
+          "type": 301
+        },
+        {
+          "source": "/perkorder",
+          "destination": "/au-en/products/voxorder/",
+          "type": 301
+        },
+        {
+          "source": "/perkconcierge",
+          "destination": "/au-en/products/voxconcierge/",
+          "type": 301
+        },
+        {
+          "source": "/perkdrive",
+          "destination": "/au-en/products/voxdrive/",
+          "type": 301
+        },
+        {
+          "source": "/en/privacy",
+          "destination": "/en/legal/privacy/",
+          "type": 301
+        },
+        {
+          "source": "/en/terms",
+          "destination": "/en/legal/terms/",
+          "type": 301
+        },
+        {
+          "source": "/en/cookies",
+          "destination": "/en/legal/cookies/",
+          "type": 301
+        },
+        {
+          "source": "/gb-en/privacy",
+          "destination": "/gb-en/legal/privacy/",
+          "type": 301
+        },
+        {
+          "source": "/gb-en/terms",
+          "destination": "/gb-en/legal/terms/",
+          "type": 301
+        },
+        {
+          "source": "/gb-en/cookies",
+          "destination": "/gb-en/legal/cookies/",
+          "type": 301
+        },
+        {
+          "source": "/fr/privacy",
+          "destination": "/fr/legal/privacy/",
+          "type": 301
+        },
+        {
+          "source": "/fr/terms",
+          "destination": "/fr/legal/terms/",
+          "type": 301
+        },
+        {
+          "source": "/fr/cookies",
+          "destination": "/fr/legal/cookies/",
+          "type": 301
+        },
+        {
+          "source": "/be-en/privacy",
+          "destination": "/be-en/legal/privacy/",
+          "type": 301
+        },
+        {
+          "source": "/be-en/terms",
+          "destination": "/be-en/legal/terms/",
+          "type": 301
+        },
+        {
+          "source": "/be-en/cookies",
+          "destination": "/be-en/legal/cookies/",
+          "type": 301
+        },
+        {
+          "source": "/be-fr/privacy",
+          "destination": "/be-fr/legal/privacy/",
+          "type": 301
+        },
+        {
+          "source": "/be-fr/terms",
+          "destination": "/be-fr/legal/terms/",
+          "type": 301
+        },
+        {
+          "source": "/be-fr/cookies",
+          "destination": "/be-fr/legal/cookies/",
+          "type": 301
         }
       ],
       "headers": [
@@ -200,7 +352,7 @@
             },
             {
               "key": "Permissions-Policy",
-              "value": "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+              "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()"
             },
             {
               "key": "Cross-Origin-Opener-Policy",
@@ -212,9 +364,10 @@
             },
             {
               "key": "Content-Security-Policy",
-              "value": "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' data: https://snap.licdn.com https://www.googletagmanager.com https://www.googleadservices.com https://www.google.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net; font-src 'self' data:; connect-src 'self' https://px.ads.linkedin.com https://px4.ads.linkedin.com https://www.googletagmanager.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://ad.doubleclick.net https://pagead2.googlesyndication.com https://www.google.com https://google.com https://www.google.co.uk https://www.google.com.au; frame-src https://www.googletagmanager.com; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests"
+              "value": "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://snap.licdn.com https://www.googletagmanager.com https://www.googleadservices.com https://www.google.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net; font-src 'self' data:; connect-src 'self' https://px.ads.linkedin.com https://px4.ads.linkedin.com https://www.googletagmanager.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://ad.doubleclick.net https://pagead2.googlesyndication.com https://www.google.com https://google.com https://www.google.co.uk https://www.google.com.au; frame-src https://www.googletagmanager.com; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests"
             }
-          ]
+          ],
+          "//": "CSP keeps 'unsafe-inline' on purpose: the pre-paint theme/consent scripts in Base.astro and every JSON-LD block are is:inline, and a static host cannot nonce them. `data:` was removed from script-src (nothing loads a data-URI script; it is a known bypass) and object-src is 'none'."
         },
         {
           "source": "**/*.@(js|css|woff2)",
@@ -230,12 +383,14 @@
           "headers": [
             {
               "key": "Cache-Control",
-              "value": "public,max-age=2592000,immutable"
+              "value": "public,max-age=2592000"
             }
-          ]
+          ],
+          "//": "Not content-hashed (/og, /images, /brand, /manifest, favicons) — so no `immutable`; a regenerated card or manifest must be re-fetchable within max-age. Hashed /_astro/** is the rule above."
         },
         {
-          "source": "**/*.@(html)",
+          "//": "HTML pages. With cleanUrls no request ends in .html — the previous `**/*.@(html)` glob never matched and pages cached for Firebase's 3600s default (measured live 13 Sep 2026). Pages are the only URLs ending in '/'; assets never do. check-hosting.mjs asserts this rule matches every index.html directory.",
+          "regex": "^/.*/$",
           "headers": [
             {
               "key": "Cache-Control",
@@ -260,11 +415,65 @@
               "value": "public,max-age=86400"
             }
           ]
+        },
+        {
+          "regex": "^/au-en(/.*)?$",
+          "headers": [
+            {
+              "key": "Content-Language",
+              "value": "en-AU"
+            }
+          ]
+        },
+        {
+          "regex": "^/en(/.*)?$",
+          "headers": [
+            {
+              "key": "Content-Language",
+              "value": "en"
+            }
+          ]
+        },
+        {
+          "regex": "^/gb-en(/.*)?$",
+          "headers": [
+            {
+              "key": "Content-Language",
+              "value": "en-GB"
+            }
+          ]
+        },
+        {
+          "regex": "^/fr(/.*)?$",
+          "headers": [
+            {
+              "key": "Content-Language",
+              "value": "fr"
+            }
+          ]
+        },
+        {
+          "regex": "^/be-en(/.*)?$",
+          "headers": [
+            {
+              "key": "Content-Language",
+              "value": "en-BE"
+            }
+          ]
+        },
+        {
+          "regex": "^/be-fr(/.*)?$",
+          "headers": [
+            {
+              "key": "Content-Language",
+              "value": "fr-BE"
+            }
+          ]
         }
       ]
     },
     {
-      "//": "biteperk.com.au \u2014 redirect-only country-code front door (Accenture-style). Every path 301s, path-for-path, to biteperk.com/au-en/**.",
+      "//": "biteperk.com.au — redirect-only country-code front door (Accenture-style). Every path 301s, path-for-path, to biteperk.com/au-en/**.",
       "target": "biteperk",
       "public": "dist-cctld",
       "ignore": [
@@ -278,6 +487,159 @@
           "//": "The apex. `/:path*` does not match the empty path, so without this the homepage fell through to dist-cctld/index.html — a meta-refresh, i.e. the WEAKEST redirect signal on the single URL carrying the most accumulated authority on the migrating domain. Server-side 301 is what Google's site-move guidance asks for.",
           "source": "/",
           "destination": "https://biteperk.com/au-en/",
+          "type": 301
+        },
+        {
+          "//": "Root-only files live at the biteperk.com ROOT (merge-dist keeps them out of /au-en). The catch-all below would send them to /au-en/<file> → 404 — which is what the old domain's Search Console sitemap did until 13 Sep 2026.",
+          "source": "/sitemap-index.xml",
+          "destination": "https://biteperk.com/sitemap-index.xml",
+          "type": 301
+        },
+        {
+          "source": "/sitemap-0.xml",
+          "destination": "https://biteperk.com/sitemap-0.xml",
+          "type": 301
+        },
+        {
+          "source": "/robots.txt",
+          "destination": "https://biteperk.com/robots.txt",
+          "type": 301
+        },
+        {
+          "source": "/llms.txt",
+          "destination": "https://biteperk.com/llms.txt",
+          "type": 301
+        },
+        {
+          "source": "/humans.txt",
+          "destination": "https://biteperk.com/humans.txt",
+          "type": 301
+        },
+        {
+          "//": "Legacy product/legal slugs: mirrored from the biteperk-global list so .com.au links are single-hop. check-hosting.mjs asserts the two lists agree.",
+          "source": "/voxtable",
+          "destination": "https://biteperk.com/au-en/products/voxtable/",
+          "type": 301
+        },
+        {
+          "source": "/voxorder",
+          "destination": "https://biteperk.com/au-en/products/voxorder/",
+          "type": 301
+        },
+        {
+          "source": "/voxconcierge",
+          "destination": "https://biteperk.com/au-en/products/voxconcierge/",
+          "type": 301
+        },
+        {
+          "source": "/voxstay",
+          "destination": "https://biteperk.com/au-en/products/voxstay/",
+          "type": 301
+        },
+        {
+          "source": "/voxdrive",
+          "destination": "https://biteperk.com/au-en/products/voxdrive/",
+          "type": 301
+        },
+        {
+          "source": "/vocotable",
+          "destination": "https://biteperk.com/au-en/products/voxtable/",
+          "type": 301
+        },
+        {
+          "source": "/vocoorder",
+          "destination": "https://biteperk.com/au-en/products/voxorder/",
+          "type": 301
+        },
+        {
+          "source": "/vococoncierge",
+          "destination": "https://biteperk.com/au-en/products/voxconcierge/",
+          "type": 301
+        },
+        {
+          "source": "/vocodrive",
+          "destination": "https://biteperk.com/au-en/products/voxdrive/",
+          "type": 301
+        },
+        {
+          "source": "/products/vocotable{,/**}",
+          "destination": "https://biteperk.com/au-en/products/voxtable/",
+          "type": 301
+        },
+        {
+          "source": "/products/vocoorder{,/**}",
+          "destination": "https://biteperk.com/au-en/products/voxorder/",
+          "type": 301
+        },
+        {
+          "source": "/products/vococoncierge{,/**}",
+          "destination": "https://biteperk.com/au-en/products/voxconcierge/",
+          "type": 301
+        },
+        {
+          "source": "/products/vocodrive{,/**}",
+          "destination": "https://biteperk.com/au-en/products/voxdrive/",
+          "type": 301
+        },
+        {
+          "source": "/perktable",
+          "destination": "https://biteperk.com/au-en/products/voxtable/",
+          "type": 301
+        },
+        {
+          "source": "/perkorder",
+          "destination": "https://biteperk.com/au-en/products/voxorder/",
+          "type": 301
+        },
+        {
+          "source": "/perkconcierge",
+          "destination": "https://biteperk.com/au-en/products/voxconcierge/",
+          "type": 301
+        },
+        {
+          "source": "/perkdrive",
+          "destination": "https://biteperk.com/au-en/products/voxdrive/",
+          "type": 301
+        },
+        {
+          "source": "/products/perktable{,/**}",
+          "destination": "https://biteperk.com/au-en/products/voxtable/",
+          "type": 301
+        },
+        {
+          "source": "/products/perkorder{,/**}",
+          "destination": "https://biteperk.com/au-en/products/voxorder/",
+          "type": 301
+        },
+        {
+          "source": "/products/perkconcierge{,/**}",
+          "destination": "https://biteperk.com/au-en/products/voxconcierge/",
+          "type": 301
+        },
+        {
+          "source": "/products/perkdrive{,/**}",
+          "destination": "https://biteperk.com/au-en/products/voxdrive/",
+          "type": 301
+        },
+        {
+          "source": "/privacy",
+          "destination": "https://biteperk.com/au-en/legal/privacy/",
+          "type": 301
+        },
+        {
+          "source": "/terms",
+          "destination": "https://biteperk.com/au-en/legal/terms/",
+          "type": 301
+        },
+        {
+          "source": "/cookies",
+          "destination": "https://biteperk.com/au-en/legal/cookies/",
+          "type": 301
+        },
+        {
+          "//": "Trailing-slash paths (every Astro page URL). The glob catch-all below drops the slash, which biteperk.com then 301s back on — a second hop on exactly the URL shape external links use. RE2 named capture keeps it single-hop.",
+          "regex": "^/(?P<path>.+)/$",
+          "destination": "https://biteperk.com/au-en/:path/",
           "type": 301
         },
         {
