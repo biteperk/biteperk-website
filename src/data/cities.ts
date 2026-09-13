@@ -425,7 +425,7 @@ export const cities: readonly City[] = [
     seoTitle: "24/7 AI receptionist for Perth restaurants · Biteperk",
     seoDescription:
       "An AI receptionist that never checks the clock. Bella answers Perth restaurant calls 24/7 — Northbridge to Fremantle — so the time zone never costs you a booking.",
-    heroHeadline: "Perth restaurant calls answered around the clock — the time zone never costs you a table.",
+    heroHeadline: "Around the clock, every Perth restaurant call answered — the time zone never costs you a table.",
     intro: [
       "Perth runs two to three hours behind the east coast, and hospitality feels it everywhere: suppliers, platforms and support desks are closing just as your service begins. The phone doesn't care. Beach-suburb bistros in Cottesloe and wine bars in Mount Lawley get their booking calls at Perth time — through the afternoon prep window and deep into a Friday night when there is nobody spare to answer.",
       "Bella never checks a clock. She answers every call instantly, around the clock, in a natural Australian voice — checks your live availability, books the table, takes the message — and because she's software, the time-zone gap that makes every other service feel far away simply doesn't exist. A Melbourne visitor calling at 9pm AWST gets answered exactly like a local calling at noon.",
