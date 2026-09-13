@@ -306,7 +306,7 @@ export const chrome: Record<Lang, ChromeCopy> = {
     menuClose: "Close menu",
     suggest: "There's a BitePerk site for your region.",
     suggestDismiss: "Dismiss",
-    email: "hello@biteperk.com.au",
+    email: "sales@biteperk.com",
     rights: "All rights reserved.",
     consent: {
       region: "Cookie consent",
@@ -357,7 +357,7 @@ export const chrome: Record<Lang, ChromeCopy> = {
     menuClose: "Fermer le menu",
     suggest: "Un site BitePerk existe pour votre région.",
     suggestDismiss: "Fermer",
-    email: "hello@biteperk.com.au",
+    email: "sales@biteperk.com",
     rights: "Tous droits réservés.",
     // French DISCHARGED — verbal pass from Ludovic, confirmed by Sam 7 Sep 2026;
     // see this file's header. The category titles match the cookies page (which

@@ -40,25 +40,28 @@ for (const l of localesForTarget("global")) {
   if (pages.length < 10) fail(`${l.base}: only ${pages.length} page(s) — the sweep is not covering the tree`);
   for (const f of pages) {
     const rel = f.slice(DIST.length + 1);
-    const t = text(readFileSync(f, "utf8"));
+    const raw = readFileSync(f, "utf8");
+    const t = text(raw);
     if (!t.includes(mc.contactEmail)) fail(`${rel}: does not carry the market mailbox ${mc.contactEmail}`);
     for (const a of allAuthorities) {
       if (mc.authority && a.short === mc.authority.short) continue;
-      if (t.includes(a.url) || t.includes(a.name.en) || t.includes(a.name.fr)) fail(`${rel}: names another market's authority (${a.short})`);
+      if (raw.includes(a.url) || t.includes(a.name.en) || t.includes(a.name.fr)) fail(`${rel}: names another market's authority (${a.short})`);
     }
   }
   const privacy = join(tree, "legal", "privacy", "index.html");
   if (mc.authority && existsSync(privacy)) {
-    const t = text(readFileSync(privacy, "utf8"));
-    const named = t.includes(mc.authority.url) || t.includes(mc.authority.name[l.copyLang]) || t.includes(mc.authority.short.split("/")[0]);
+    const raw = readFileSync(privacy, "utf8");
+    const t = text(raw);
+    const named = raw.includes(mc.authority.url) || t.includes(mc.authority.name[l.copyLang]) || t.includes(mc.authority.short.split("/")[0]);
     if (!named) fail(`${l.base}/legal/privacy/: does not name ${mc.authority.short}`);
   }
   for (const page of ["", "contact"]) {
     const f = join(tree, page, "index.html");
     if (!existsSync(f)) continue;
-    const t = text(readFileSync(f, "utf8"));
+    const raw = readFileSync(f, "utf8");
+    const t = text(raw);
     if (!t.includes(mc.timeZoneNote[l.copyLang])) fail(`${l.base}/${page ? page + "/" : ""}: missing the team-location sentence`);
-    if (mc.authority && page === "" && !t.includes(mc.authority.url)) fail(`${l.base}/: home trust strip does not link ${mc.authority.short}`);
+    if (mc.authority && page === "" && !raw.includes(mc.authority.url)) fail(`${l.base}/: home trust strip does not link ${mc.authority.short}`);
   }
   console.log(`ok    ${l.base}: ${pages.length} pages carry ${mc.contactEmail}; authority ${mc.authority?.short ?? "none (x-default)"}`);
 }
