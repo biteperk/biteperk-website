@@ -6,7 +6,8 @@
     "vocotable": {
       "hosting": {
         "biteperk": ["biteperk"],
-        "biteperk-global": ["biteperk-global"]
+        "biteperk-global": ["biteperk-global"],
+        "staging": ["biteperk-staging"]
       }
     }
   }
