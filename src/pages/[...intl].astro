@@ -124,6 +124,9 @@ const solutionEntry = solutionSlug ? renderableSolutions().find((x) => x.slug ==
 const solution = solutionEntry ? intlSolutions[locale.copyLang][solutionEntry.slug as SolutionSlug] : null;
 const solutionImage = solutionSlug ? solutionImageFor(solutionSlug) : undefined;
 const solutionProduct = solutionEntry ? getProduct(solutionEntry.primaryProduct) : null;
+const solutionSiblings = (solutionEntry?.relatedSolutions ?? [])
+  .map((slug) => renderableSolutions().find((x) => x.slug === slug))
+  .filter((x): x is NonNullable<typeof x> => Boolean(x));
 
 // Resources: hub, category, article — language-scoped articles from the
 // intlResources collection, shipped under every base in their `markets`.
@@ -901,12 +904,9 @@ const appJsonLd =
           <div class="wrap">
             <h2>{solutionsOverview.alsoBuiltFor}</h2>
             <ul class="intl-city-links" role="list">
-              {solutionEntry.relatedSolutions
-                .map((slug) => renderableSolutions().find((x) => x.slug === slug))
-                .filter((x): x is NonNullable<typeof x> => Boolean(x))
-                .map((x) => (
-                  <li><a href={p(`solutions/${x.slug}`)}>{intlSolutions[locale.copyLang][x.slug as SolutionSlug].eyebrow}</a></li>
-                ))}
+              {solutionSiblings.map((x) => (
+                <li><a href={p(`solutions/${x.slug}`)}>{intlSolutions[locale.copyLang][x.slug as SolutionSlug].eyebrow}</a></li>
+              ))}
             </ul>
           </div>
         </section>
