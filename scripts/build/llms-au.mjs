@@ -22,6 +22,15 @@ import { publishedPosts } from "./content-index.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const DIST = join(ROOT, "dist");
+// `npm run build` runs this after every astro build, including the GLOBAL leg
+// (BUILD_TARGET=global writes dist-global/, never dist/). The AU llms.txt is
+// derived from the AU tree only, so on any other target this is a no-op —
+// failing there turned CI's rollback job red on 13 Sep 2026 with no AU change.
+const target = (process.env.BUILD_TARGET ?? "au").trim().toLowerCase();
+if (target !== "au") {
+  console.log(`llms-au: BUILD_TARGET=${target} — nothing to derive (AU only).`);
+  process.exit(0);
+}
 if (!existsSync(DIST)) {
   console.error("llms-au: dist/ not found — run astro build first.");
   process.exit(1);
