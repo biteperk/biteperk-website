@@ -3,7 +3,7 @@ import Base from "@/layouts/AuBase.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import Cta from "@/components/Cta.astro";
 import { solutions, solutionPath } from "@/data/solutions";
-import { site } from "@/data/site";
+import { site, pageTitle } from "@/data/site";
 import { buildCollectionPage } from "@/data/schema";
 import { u } from "@/data/locales";
 import { bookDemoHref, CTA_LABELS, defaultCtaActions } from "@/data/conversion";
@@ -14,7 +14,7 @@ const hospitality = live.filter((s) => s.sector === "hospitality");
 const services = live.filter((s) => s.sector === "services");
 const enterprise = live.filter((s) => s.sector === "enterprise");
 
-const title = "Industry solutions · BitePerk";
+const title = pageTitle("Industry solutions");
 const description =
   "AI phone automation by industry — restaurants, hotels, cafes, takeaway, drive-thru, medical, professional services, and enterprise groups.";
 
@@ -30,7 +30,7 @@ const collectionJsonLd = buildCollectionPage({
 const cta = defaultCtaActions();
 ---
 
-<Base title={title} description={description} path={path}>
+<Base title={title} description={description} path={path} ogImage="/og/solutions/index.png">
   <Fragment slot="jsonld">
     <script is:inline type="application/ld+json" set:html={JSON.stringify(collectionJsonLd)} />
   </Fragment>

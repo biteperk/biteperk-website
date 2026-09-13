@@ -1,4 +1,5 @@
 ---
+import { pageTitle } from "@/data/site";
 /**
  * /resources/ — Phase 1D authority library hub.
  * Individual articles stay at /blog/{slug}/; this hub organises by type.
@@ -15,7 +16,7 @@ import { defaultCtaActions } from "@/data/conversion";
 
 const path = "/resources/";
 const cta = defaultCtaActions();
-const title = "Resources — guides, comparisons & proof · Biteperk";
+const title = pageTitle("Resources — guides, comparisons & proof");
 const description =
   "The BitePerk resources library: guides, comparisons, case studies, FAQs, product updates and industry reports on AI phone automation for hospitality.";
 
@@ -41,7 +42,7 @@ const collectionJsonLd = buildCollectionPage({
 });
 ---
 
-<Base title={title} description={description} path={path} ogImage="/og/blog.png">
+<Base title={title} description={description} path={path} ogImage="/og/resources/index.png">
   <Fragment slot="jsonld">
     <script is:inline type="application/ld+json" set:html={JSON.stringify(collectionJsonLd)} />
   </Fragment>

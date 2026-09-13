@@ -9,12 +9,12 @@ import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import ImageBlock from "@/components/ImageBlock.astro";
 import { coreProduct, addonProducts, voxProof, voxBundle, voxFaq, foundingVenues } from "@/data/products";
 import { buildFaqPage, buildVoxApplication, voxEditionId } from "@/data/schema";
-import { site } from "@/data/site";
+import { site, pageTitle } from "@/data/site";
 import { u, abs } from "@/data/locales";
 import { bookDemoHref, CTA_LABELS, defaultCtaActions } from "@/data/conversion";
 import SolutionStrip from "@/components/sections/SolutionStrip.astro";
 
-const title = "Vox — AI phone host for restaurants and hotels · Biteperk";
+const title = pageTitle("Vox — AI phone host for restaurants and hotels");
 const description =
   "Vox is one AI phone host for your venue — a warm voice that answers every call and books the table, day or night. Start with bookings; add takeaway, concierge, hotel stays and drive-thru as you grow.";
 

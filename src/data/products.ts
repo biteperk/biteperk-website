@@ -278,7 +278,7 @@ const voxtable: Product = {
     },
   ],
   seo: {
-    title: "VoxTable — AI phone host for restaurants · Biteperk",
+    title: "VoxTable — AI phone host for restaurants",
     description:
       "VoxTable answers every restaurant call in a warm Australian voice and books the table directly into your diary. $80/month flat, no per-cover fees. Made in Sydney.",
   },
@@ -336,7 +336,7 @@ const voxorder: Product = {
     },
   ],
   seo: {
-    title: "VoxOrder — AI phone ordering for hospitality · Biteperk",
+    title: "VoxOrder — AI phone ordering for hospitality",
     description:
       "VoxOrder is Biteperk's AI voice agent for takeaway and pickup — clean tickets straight to your POS, so no order is lost to a busy line. Live now; book a demo.",
   },
@@ -374,7 +374,7 @@ const voxconcierge: Product = {
     },
   ],
   seo: {
-    title: "VoxConcierge — Voice + SMS concierge for hospitality · Biteperk",
+    title: "VoxConcierge — Voice + SMS concierge for hospitality",
     description:
       "VoxConcierge handles waitlist, post-booking texts, and no-show recovery for restaurants and venues. In development — join the waitlist.",
   },
@@ -414,7 +414,7 @@ const voxstay: Product = {
     },
   ],
   seo: {
-    title: "VoxStay — AI phone receptionist for hotels · Biteperk",
+    title: "VoxStay — AI phone receptionist for hotels",
     description:
       "VoxStay is Biteperk's AI voice receptionist for independent hotels — answers the booking call in eight languages, quotes real prices with taxes, and texts a secure payment link. In development — join the waitlist.",
   },
@@ -452,7 +452,7 @@ const voxdrive: Product = {
     },
   ],
   seo: {
-    title: "VoxDrive — Drive-thru voice AI for cafes · Biteperk",
+    title: "VoxDrive — Drive-thru voice AI for cafes",
     description:
       "VoxDrive is a concept-stage voice AI for cafe and QSR drive-thrus, built for the Australian morning rush. Register your interest.",
   },

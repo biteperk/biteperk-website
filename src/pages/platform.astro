@@ -21,12 +21,12 @@ import SectionHeader from "@/components/SectionHeader.astro";
 import Illustration from "@/components/Illustration.astro";
 import FAQ from "@/components/FAQ.astro";
 import Cta from "@/components/Cta.astro";
-import { site } from "@/data/site";
+import { site, pageTitle } from "@/data/site";
 import { voxProof } from "@/data/products";
 import { VOX_ID, buildWebPage, buildFaqPage } from "@/data/schema";
 import { u } from "@/data/locales";
 
-const title = "The Vox dashboard — see every call, booking and order · Biteperk";
+const title = pageTitle("The Vox dashboard — see every call, booking and order");
 const description =
   "Every Vox venue gets a live operations dashboard: every AI call with its transcript and recording, a full booking log, analytics with PDF and CSV export, live tables, a kitchen display and menu management — with logins for owners, managers, staff and kitchen.";
 const path = "/platform/";

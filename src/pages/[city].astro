@@ -18,7 +18,7 @@ import FAQ from "@/components/FAQ.astro";
 import Cta from "@/components/Cta.astro";
 import ImageBlock from "@/components/ImageBlock.astro";
 import Illustration from "@/components/Illustration.astro";
-import { site } from "@/data/site";
+import { site, pageTitle } from "@/data/site";
 import { ORG_ID, buildFaqPage } from "@/data/schema";
 import { publishedCities, cityUrl, type City } from "@/data/cities";
 import { defaultCtaActions, bookDemoHref } from "@/data/conversion";
@@ -103,7 +103,7 @@ const [headStart, headAccent] = (() => {
 ---
 
 <Base
-  title={city.seoTitle}
+  title={pageTitle(city.seoTitle)}
   description={city.seoDescription}
   path={path}
   ogImage={ogImage}

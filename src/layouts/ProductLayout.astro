@@ -20,7 +20,7 @@ import Cta from "@/components/Cta.astro";
 import { bookDemoHref, defaultCtaActions, CTA_LABELS } from "@/data/conversion";
 import type { Product } from "@/data/products";
 import { solutionsForProduct, solutionPath } from "@/data/solutions";
-import { site } from "@/data/site";
+import { site, pageTitle } from "@/data/site";
 import { VOX_ID, voxEditionId, ORG_ID, buildFaqPage } from "@/data/schema";
 import { u } from "@/data/locales";
 
@@ -72,7 +72,7 @@ const faqJsonLd = product.faq && product.faq.length > 0 ? buildFaqPage(product.f
 ---
 
 <Base
-  title={product.seo.title}
+  title={pageTitle(product.seo.title)}
   description={product.seo.description}
   path={path}
   ogImage={`/og/${product.slug}.png`}

@@ -1,4 +1,5 @@
 ---
+import { pageTitle } from "@/data/site";
 import Base from "@/layouts/AuBase.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import Cta from "@/components/Cta.astro";
@@ -32,7 +33,7 @@ const typedMeta: ResourceTypeMeta = meta;
 
 const path = typedMeta.path;
 const cta = defaultCtaActions();
-const title = `${typedMeta.plural} · Biteperk Resources`;
+const title = pageTitle(`${typedMeta.plural} — Resources`);
 const description = typedMeta.description;
 
 const posts = (
@@ -57,7 +58,7 @@ const collectionJsonLd = buildCollectionPage({
 });
 ---
 
-<Base title={title} description={description} path={path} ogImage="/og/blog.png">
+<Base title={title} description={description} path={path} ogImage={`/og/resources/${segment}.png`}>
   <Fragment slot="jsonld">
     <script is:inline type="application/ld+json" set:html={JSON.stringify(collectionJsonLd)} />
   </Fragment>

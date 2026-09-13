@@ -11,6 +11,7 @@ import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import Cta from "@/components/Cta.astro";
 import ConversionTrust from "@/components/conversion/ConversionTrust.astro";
 import { getCollection, render } from "astro:content";
+import { pageTitle } from "@/data/site";
 import { u, abs } from "@/data/locales";
 import { solutions, solutionPath, type Solution } from "@/data/solutions";
 import { bookDemoHref } from "@/data/conversion";
@@ -58,7 +59,7 @@ const articleJsonLd = {
 
 ---
 
-<Base title={`${post.data.seoTitle ?? post.data.title} · Biteperk`} description={post.data.description} path={path} ogImage={ogImage}>
+<Base title={pageTitle(post.data.seoTitle ?? post.data.title)} description={post.data.description} path={path} ogImage={ogImage}>
   <Fragment slot="jsonld">
     <script is:inline type="application/ld+json" set:html={JSON.stringify(articleJsonLd)} />
   </Fragment>

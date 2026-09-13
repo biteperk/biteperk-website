@@ -1,4 +1,5 @@
 ---
+import { BRAND } from "@/data/site";
 import Base from "@/layouts/AuBase.astro";
 import Hero from "@/components/sections/Hero.astro";
 import TrustRow from "@/components/sections/TrustRow.astro";
@@ -26,7 +27,7 @@ const latestGuides = (await getCollection("blog", ({ data }) => !data.draft))
 const fmtGuideDate = (d: Date) =>
   new Intl.DateTimeFormat("en-AU", { day: "numeric", month: "short", year: "numeric" }).format(d);
 
-const title = "Biteperk — Voice + AI for Australian hospitality, made in Sydney";
+const title = `${BRAND} — Voice + AI for Australian hospitality, made in Sydney`;
 const description =
   "Biteperk builds voice and AI tools that help Australian restaurants stay on the floor while the phone takes care of itself. VoxTable and VoxOrder are live; VoxConcierge, VoxStay and VoxDrive are next.";
 
