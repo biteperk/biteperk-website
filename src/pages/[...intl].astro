@@ -30,7 +30,7 @@ import { resourceTypeFromSegment, RESOURCE_TYPE_BY_SEGMENT } from "@/data/resour
 import { getCollection, render } from "astro:content";
 import { pageImageFor, productImageFor, solutionImageFor } from "@/data/intl/page-images";
 import { products, getProduct } from "@/data/products";
-import { renderableSolutions, type SolutionSlug } from "@/data/solutions";
+import { renderableSolutions, solutionsForProduct, type SolutionSlug } from "@/data/solutions";
 import { buildFaqPage, buildVoxApplication, buildBreadcrumb, voxEditionId, ORG_ID, WEBSITE_ID } from "@/data/schema";
 import ImageBlock from "@/components/ImageBlock.astro";
 import FAQ from "@/components/FAQ.astro";
@@ -124,6 +124,9 @@ const solutionEntry = solutionSlug ? renderableSolutions().find((x) => x.slug ==
 const solution = solutionEntry ? intlSolutions[locale.copyLang][solutionEntry.slug as SolutionSlug] : null;
 const solutionImage = solutionSlug ? solutionImageFor(solutionSlug) : undefined;
 const solutionProduct = solutionEntry ? getProduct(solutionEntry.primaryProduct) : null;
+const solutionSiblings = (solutionEntry?.relatedSolutions ?? [])
+  .map((slug) => renderableSolutions().find((x) => x.slug === slug))
+  .filter((x): x is NonNullable<typeof x> => Boolean(x));
 
 // Resources: hub, category, article — language-scoped articles from the
 // intlResources collection, shipped under every base in their `markets`.
@@ -896,6 +899,19 @@ const appJsonLd =
         </div>
       </section>
 
+      {solutionEntry.relatedSolutions.length > 0 && (
+        <section class="cv-auto">
+          <div class="wrap">
+            <h2>{solutionsOverview.alsoBuiltFor}</h2>
+            <ul class="intl-city-links" role="list">
+              {solutionSiblings.map((x) => (
+                <li><a href={p(`solutions/${x.slug}`)}>{intlSolutions[locale.copyLang][x.slug as SolutionSlug].eyebrow}</a></li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
+
       <section class="cv-auto">
         <div class="wrap intl-prose">
           <h2>{solution.faqHeading}</h2>
@@ -1064,6 +1080,22 @@ const appJsonLd =
           </div>
         </div>
       </section>
+
+      {/* Product → solutions: the verticals sold on this product (derived,
+          solutions.ts). Gives every intl solution page an in-body inbound
+          link from its product page — the AU tree has had it since S2. */}
+      {solutionsForProduct(catalogue.slug).length > 0 && (
+        <section class="cv-auto">
+          <div class="wrap">
+            <h2>{solutionsOverview.forProduct.replace("{product}", catalogue.name)}</h2>
+            <ul class="intl-city-links" role="list">
+              {solutionsForProduct(catalogue.slug).map((x) => (
+                <li><a href={p(`solutions/${x.slug}`)}>{intlSolutions[locale.copyLang][x.slug as SolutionSlug].eyebrow}</a></li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
 
       {/* Product ↔ city: the market's published city pages, under the
           existing "Cities" chrome label — until 13 Sep 2026 /gb-en/products/
