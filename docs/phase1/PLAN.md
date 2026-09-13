@@ -60,9 +60,9 @@ The brief’s *order* is right (architecture → nav → solutions → resources
 - [x] `/resources/` hub page (library IA)
 - [x] Content `type` on blog schema: guide · comparison · case-study · faq · product-update · industry-report
 - [x] Existing posts classified (12 guides + 1 comparison); URLs stay `/blog/{slug}/`
-- [x] Category indexes under `/resources/{segment}/`
-- [x] Header/footer “Guides” → “Resources”
-- [ ] Deeper internal links from solutions ↔ resources (ongoing with content)
+- [x] Category indexes under `/resources/{segment}/` — **only for populated types** (13 Sep: four empty, indexable pages were a thin-page signal; `check-routes` now fails an empty one that builds)
+- [x] Header/footer “Guides” → “Resources”; `/blog/` index canonicalises to `/resources/guides/` and leaves the sitemap
+- [ ] Deeper internal links from solutions ↔ resources *(Wave 6 / S2)*
 - [ ] Optional later: 301 `/blog/` → `/resources/guides/` once analytics clear
 
 ### Wave 5 — Conversion system (1E)
@@ -70,7 +70,13 @@ The brief’s *order* is right (architecture → nav → solutions → resources
 - [x] `Cta.astro` Phase 1E defaults + `ConversionTrust` phone/trust line
 - [x] Wired on solutions, products, city, blog, resources commercial surfaces
 - [x] Contact `intent=demo` + optional `product=` continuity via `bookDemoHref()`
-- [x] Soft checklist documented in `CONVERSION_PAGE_REQUIREMENTS` (unit-tested imports)
+- [x] `CONVERSION_PAGE_REQUIREMENTS` is **enforced** by `scripts/gates/check-conversion.mjs` over every built commercial page *(13 Sep — it had been documented as unit-tested while nothing imported it)*
+
+### Wave 5.5 — Hardening before promotion *(13 Sep 2026, PRs #72 #73 + this one)*
+- [x] Solutions: named product links (was "See voxtable"), status-derived nav pills, real approved proof quotes, "Why we built this" instead of "Customer story", truthful copy, CTAs through `bookDemoHref()`
+- [x] Resources: empty categories build no page; `/blog/` canonical → hub; nav order = Phase 1 IA; `nav-ia.ts` removed (it was never wired — two nav definitions)
+- [x] Sitemap priorities for solutions/resources, cities derived, `lastmod` on posts; one predicate for which solution pages build
+- [x] Gates: `check-conversion` (this contract), unit tests in `gates:au`, foundation tests import the registries instead of grepping source
 
 ### Wave 6 — SEO foundation (1F)
 - Audit existing `schema.ts` / SEO component against Organization · FAQ · Article · Breadcrumb · SoftwareApplication

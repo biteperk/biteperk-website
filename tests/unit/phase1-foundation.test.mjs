@@ -1,127 +1,148 @@
+/**
+ * Phase 1 registries — asserted by IMPORTING them, not by grepping source.
+ *
+ * The first version of this file matched regexes against file text
+ * (`assert.match(src, /slug: "restaurants"/)`). That passes against a file of
+ * commented-out code and cannot see empty copy, a missing FAQ, a product slug
+ * that does not exist, or a nav that disagrees with itself — all of which the
+ * 13 Sep 2026 audit found while these tests were green.
+ *
+ * Run: node --test tests/unit/  (gates:au and gates:global)
+ */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { readFileSync } from "node:fs";
-import path from "node:path";
+import { existsSync } from "node:fs";
+import { join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+import { loadTS } from "../../scripts/build/_load-ts.mjs";
 
-const root = path.resolve(import.meta.dirname, "../..");
-function read(rel) {
-  return readFileSync(path.join(root, rel), "utf8");
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
+const ts = (rel) => loadTS(join(ROOT, rel));
+
+const words = (s) => String(s ?? "").trim().split(/\s+/).filter(Boolean).length;
+/** Every prose string a solution page renders (SEO title/description excluded). */
+function bodyWords(page) {
+  const parts = [
+    page.hero.eyebrow, page.hero.headline, page.hero.sub,
+    page.problem.title, page.problem.body,
+    page.lostRevenue.title, page.lostRevenue.body, ...page.lostRevenue.points,
+    page.howWeSolve.title, page.howWeSolve.body, ...page.howWeSolve.steps.flatMap((s) => [s.title, s.body]),
+    ...page.features.flatMap((f) => [f.title, f.body]),
+    ...page.benefits,
+    page.story.title, page.story.body,
+    ...page.faq.flatMap((f) => [f.q, f.a]),
+  ];
+  return parts.reduce((n, p) => n + words(p), 0);
 }
 
-describe("phase1 foundation registries", () => {
-  it("solutions registry lists exactly the eight required slugs with page copy", () => {
-    const src = read("src/data/solutions.ts");
-    for (const slug of [
-      "restaurants",
-      "hotels",
-      "cafes",
-      "takeaway",
-      "drive-thru",
-      "medical",
-      "professional-services",
-      "enterprise",
-    ]) {
-      assert.match(src, new RegExp(`slug: "${slug}"`));
+describe("solutions registry", async () => {
+  const { solutions, SOLUTION_SLUGS, renderableSolutions, RENDERABLE_SOLUTION_SLUGS, liveSolutions } = await ts("src/data/solutions.ts");
+  const { getProduct } = await ts("src/data/products.ts");
+  const { PRODUCT_SLUGS } = await ts("src/data/product-slugs.ts");
+
+  it("exactly the eight required verticals, each with a real product behind it", () => {
+    assert.deepEqual([...SOLUTION_SLUGS].sort(), ["cafes", "drive-thru", "enterprise", "hotels", "medical", "professional-services", "restaurants", "takeaway"]);
+    assert.equal(solutions.length, 8);
+    for (const s of solutions) {
+      assert.ok(PRODUCT_SLUGS.includes(s.primaryProduct), `${s.slug}: primaryProduct ${s.primaryProduct} is not in products.ts`);
+      assert.ok(getProduct(s.primaryProduct), `${s.slug}: getProduct(${s.primaryProduct}) is undefined`);
     }
-    assert.match(src, /readonly proof\?:/); // approved-quote slot; the dead SOLUTION_PAGE_SECTIONS constant is gone
-    assert.match(src, /status: "live"/);
-    assert.match(src, /page:\s*\{/);
   });
 
-  it("locale-plan keeps live UK/FR bases as /gb-en and /fr (no rename)", () => {
-    const src = read("src/data/locale-plan.ts");
-    assert.match(src, /"uk-en": "\/gb-en"/);
-    assert.match(src, /"fr-fr": "\/fr"/);
-    assert.match(src, /id: "ca-en"/);
-    assert.match(src, /status: "reserved"/);
+  it("every renderable page has enough copy to be a page, and at least two FAQs", () => {
+    for (const s of renderableSolutions()) {
+      const n = bodyWords(s.page);
+      assert.ok(n >= 250, `${s.slug}: ${n} body words — under the 250 floor`);
+      assert.ok(s.page.faq.length >= 2, `${s.slug}: ${s.page.faq.length} FAQ(s)`);
+      for (const f of s.page.faq) assert.ok(words(f.a) >= 8, `${s.slug}: FAQ "${f.q}" has a one-line answer`);
+    }
   });
+
+  it("proof is only ever an attributed quote from a named venue", () => {
+    let withProof = 0;
+    for (const s of solutions) {
+      if (!s.page.proof) continue;
+      withProof++;
+      assert.ok(words(s.page.proof.quote) >= 8, `${s.slug}: proof quote too short`);
+      assert.ok(s.page.proof.author && s.page.proof.role, `${s.slug}: proof must name who said it and where`);
+      assert.match(s.page.proof.role, /·/, `${s.slug}: role must name the venue ("Owner · Venue, City")`);
+    }
+    assert.ok(withProof >= 1, "at least one vertical carries the approved founding-venue quotes");
+  });
+
+  it("the route predicate and the nav predicate agree with the registry", () => {
+    assert.deepEqual(RENDERABLE_SOLUTION_SLUGS, renderableSolutions().map((s) => s.slug));
+    for (const s of liveSolutions()) assert.ok(RENDERABLE_SOLUTION_SLUGS.includes(s.slug), `${s.slug} is live but not renderable`);
+  });
+});
+
+describe("AU static pages derive from the registries", async () => {
+  const { AU_STATIC_PAGES } = await ts("src/data/locales.ts");
+  const { RENDERABLE_SOLUTION_SLUGS } = await ts("src/data/solutions.ts");
+  const { PRODUCT_SLUGS } = await ts("src/data/product-slugs.ts");
+
+  it("every renderable solution and product has a static page entry; resources hub present; no category page listed", () => {
+    for (const s of RENDERABLE_SOLUTION_SLUGS) assert.ok(AU_STATIC_PAGES.includes(`solutions/${s}`), `solutions/${s} missing`);
+    for (const p of PRODUCT_SLUGS) assert.ok(AU_STATIC_PAGES.includes(`products/${p}`), `products/${p} missing`);
+    assert.ok(AU_STATIC_PAGES.includes("solutions") && AU_STATIC_PAGES.includes("resources"));
+    assert.equal(AU_STATIC_PAGES.filter((p) => p.startsWith("resources/")).length, 0, "category pages are content-derived, never listed");
+  });
+});
+
+describe("resources registry", async () => {
+  const { RESOURCE_TYPES, resourceTypes, RESOURCE_SEGMENTS, RESOURCE_TYPE_BY_SEGMENT, resourceTypeFromSegment } = await ts("src/data/resources.ts");
+
+  it("six types, each with a path under /resources/ and a segment that maps back to it", () => {
+    assert.equal(RESOURCE_TYPES.length, 6);
+    assert.equal(resourceTypes.length, 6);
+    for (const t of resourceTypes) {
+      assert.match(t.path, /^\/resources\/[a-z-]+\/$/, `${t.id}: path ${t.path}`);
+      const seg = t.path.replace(/^\/resources\/|\/$/g, "");
+      assert.ok(RESOURCE_SEGMENTS.includes(seg), `${t.id}: segment ${seg} unmapped`);
+      assert.equal(RESOURCE_TYPE_BY_SEGMENT[seg], t.id);
+      assert.equal(resourceTypeFromSegment(seg)?.id, t.id);
+      assert.ok(t.label && t.plural && t.description);
+    }
+  });
+});
+
+describe("conversion SSOT", async () => {
+  const { bookDemoHref, defaultCtaActions, CTA_LABELS, CONVERSION_PAGE_REQUIREMENTS, CONVERSION_TRUST } = await ts("src/data/conversion.ts");
+  const { site } = await ts("src/data/site.ts");
+
+  it("Book Demo carries intent and product, on the AU base", () => {
+    assert.equal(bookDemoHref(), "/au-en/contact/?intent=demo");
+    assert.equal(bookDemoHref({ product: "voxtable" }), "/au-en/contact/?intent=demo&product=voxtable");
+    const a = defaultCtaActions({ product: "voxorder" });
+    assert.equal(a.primary.label, CTA_LABELS.bookDemo);
+    assert.match(a.primary.href, /intent=demo&product=voxorder$/);
+    assert.equal(a.secondary.label, CTA_LABELS.howItWorks);
+    assert.equal(a.secondary.href, "/au-en/technology/");
+    assert.equal(CTA_LABELS.seeProduct("VoxTable"), "See VoxTable");
+  });
+
+  it("the requirements list is the gate's contract, and the trust line uses the published phone", () => {
+    assert.deepEqual([...CONVERSION_PAGE_REQUIREMENTS], ["book-demo-cta", "contact-phone", "trust-indicator", "faq", "customer-story-when-data"]);
+    assert.equal(CONVERSION_TRUST.phone.href, site.phone.href);
+  });
+});
+
+describe("navigation", async () => {
+  const { headerNav } = await ts("src/data/nav.ts");
 
   it("nav.ts is the only header definition and carries the Phase 1 order", () => {
-    assert.throws(() => read("src/data/nav-ia.ts"), /ENOENT/, "nav-ia.ts must not come back — two nav definitions drift");
-    const src = read("src/data/nav.ts");
-    const order = ["Resources", "Pricing", "Platform", "About"].map((l) => src.indexOf(`label: "${l}"`));
-    assert.ok(order.every((i) => i > -1), "every Phase 1 header label present");
-    assert.deepEqual([...order].sort((a, b) => a - b), order, "Resources · Pricing · Platform · About, in that order");
+    assert.equal(existsSync(join(ROOT, "src/data/nav-ia.ts")), false, "nav-ia.ts must not come back — two nav definitions drift");
+    const desktop = headerNav.filter((l) => l.desktop !== false).map((l) => l.label);
+    assert.deepEqual(desktop, ["Resources", "Pricing", "Platform", "About"]);
+    for (const l of headerNav) assert.match(l.href, /^\/au-en\//, `${l.label}: href must carry the AU base`);
   });
+});
 
-  it("AU static pages include solutions routes", () => {
-    const src = read("src/data/locales.ts");
-    assert.match(src, /SOLUTION_SLUGS/);
-    assert.match(src, /"solutions"/);
-    assert.match(src, /solutions\/\$\{s\}/);
-  });
-
-  it("solutions pages and layout exist", () => {
-    assert.equal(read("src/pages/solutions/index.astro").includes("Industry solutions"), true);
-    assert.equal(read("src/pages/solutions/[slug].astro").includes("business-problem"), true);
-    assert.equal(read("src/layouts/SolutionLayout.astro").includes("CTA_LABELS.bookDemo"), true);
-  });
-
-  it("phase1 plan doc exists and locks locale rename decision", () => {
-    const plan = read("docs/phase1/PLAN.md");
+describe("phase 1 plan", async () => {
+  const { readFileSync } = await import("node:fs");
+  it("locks the locale rename decision", () => {
+    const plan = readFileSync(join(ROOT, "docs/phase1/PLAN.md"), "utf8");
     assert.match(plan, /Keep `\/gb-en`/);
     assert.match(plan, /Keep `\/fr`/);
-  });
-});
-
-describe("phase1 resources hub", () => {
-  it("resource types and segments are defined", () => {
-    const src = read("src/data/resources.ts");
-    for (const path of [
-      "/resources/guides/",
-      "/resources/comparisons/",
-      "/resources/case-studies/",
-      "/resources/faq/",
-      "/resources/product-updates/",
-      "/resources/industry-reports/",
-    ]) {
-      assert.match(src, new RegExp(path.replaceAll("/", "\/")));
-    }
-    assert.match(src, /id: "guide"/);
-    assert.match(src, /id: "comparison"/);
-    assert.match(src, /RESOURCE_SEGMENTS/);
-  });
-
-  it("AU static pages carry the resources hub; category pages are content-derived", () => {
-    const src = read("src/data/locales.ts");
-    assert.match(src, /"resources",/);
-    assert.doesNotMatch(src, /RESOURCE_SEGMENTS\.map/, "category pages must not be listed unconditionally — empty ones are thin pages");
-    assert.match(read("scripts/gates/check-routes.mjs"), /populatedResourceTypes/);
-    assert.match(read("tests/helpers/routes.ts"), /populatedResourceTypes/);
-    assert.match(read("src/pages/resources/[type].astro"), /populated\.has/);
-  });
-
-  it("prune-global removes resources from global dist", () => {
-    assert.match(read("scripts/build/prune-global.mjs"), /"resources"/);
-  });
-
-  it("comparison post is typed", () => {
-    assert.match(
-      read("src/content/blog/ai-receptionist-vs-answering-service-vs-voicemail.md"),
-      /type: comparison/,
-    );
-  });
-});
-
-describe("phase1 conversion system", () => {
-  it("conversion SSOT exports Book Demo hierarchy", () => {
-    const src = read("src/data/conversion.ts");
-    assert.match(src, /intent: "demo"/);
-    assert.match(src, /bookDemo: "Book Demo"/);
-    assert.match(src, /howItWorks: "See How It Works"/);
-    assert.match(src, /function bookDemoHref/);
-    assert.match(src, /function defaultCtaActions/);
-  });
-
-  it("Cta defaults use conversion SSOT", () => {
-    const src = read("src/components/Cta.astro");
-    assert.match(src, /defaultCtaActions/);
-    assert.match(src, /Book a demo/);
-  });
-
-  it("SolutionLayout and ProductLayout wire conversion helpers", () => {
-    assert.match(read("src/layouts/SolutionLayout.astro"), /bookDemoHref/);
-    assert.match(read("src/layouts/SolutionLayout.astro"), /ConversionTrust/);
-    assert.match(read("src/layouts/ProductLayout.astro"), /defaultCtaActions/);
   });
 });

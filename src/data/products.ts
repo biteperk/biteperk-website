@@ -315,6 +315,26 @@ const voxorder: Product = {
       body: "Bella checks current kitchen load before quoting a pickup window, so 'twenty minutes' actually means twenty minutes.",
     },
   ],
+  // Live product, so the page carries a FAQ (check-conversion). Every answer
+  // restates what this entry already claims — nothing new is promised here.
+  faq: [
+    {
+      q: "Does VoxOrder replace my takeaway app or marketplace?",
+      a: "No. It answers the phone line you already have and takes the order there, so a guest who rings does not get a busy signal and go elsewhere. Marketplace orders keep arriving the way they do today.",
+    },
+    {
+      q: "How does Bella know my menu?",
+      a: "You give us the menu once — items, sizes, the substitutions and the weekend small-print — and Bella reads it the way your staff would. Change the menu and the phone changes with it.",
+    },
+    {
+      q: "Where does the order go?",
+      a: "It lands as a clean ticket in the same VoxTable screen your bookings use, ready to be made. No copy-paste from a notepad, no misheard milks.",
+    },
+    {
+      q: "Will the quoted pickup time be right?",
+      a: "Bella checks current kitchen load before quoting a window, so 'twenty minutes' means twenty minutes. If a caller needs something unusual she hands the call to a person.",
+    },
+  ],
   seo: {
     title: "VoxOrder — AI phone ordering for hospitality · Biteperk",
     description:
