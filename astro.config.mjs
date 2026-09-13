@@ -2,7 +2,8 @@
 import { defineConfig } from "astro/config";
 import sitemap, { ChangeFreqEnum } from "@astrojs/sitemap";
 import { visit } from "unist-util-visit";
-import { localesForTarget } from "./src/data/locales";
+import { localesForTarget, localeFromPath, buildHreflang, isSharedPage, INTL_LAUNCHED } from "./src/data/locales";
+
 import { publishedCities } from "./src/data/cities";
 import { blogPosts } from "./scripts/build/content-index.mjs";
 
@@ -78,8 +79,10 @@ export default defineConfig({
     defaultStrategy: "viewport",
   },
   image: {
-    // Astro picks AVIF/WebP for <Image> automatically; this keeps the
-    // pipeline explicit and consistent.
+    // No page uses <Image>/<Picture>: every photo is pre-generated offline by
+    // scripts/images/* and hand-wired through ImageBlock/Composite. This block
+    // exists only for `responsiveStyles`; there is no service/format config to
+    // tune here.
     responsiveStyles: true,
   },
   integrations: [
@@ -102,6 +105,30 @@ export default defineConfig({
       changefreq: "monthly",
       priority: 0.7,
       serialize(item) {
+        // hreflang alternates in the sitemap — derived from the SAME cluster
+        // Base/IntlLayout put in <head> (buildHreflang), so the two cannot
+        // disagree. Google recommends the sitemap form as the redundancy; it
+        // costs nothing because the cluster is already computed. AU pages
+        // only join once launched, on the shared pages, exactly like <head>.
+        try {
+          const path = new URL(item.url).pathname;
+          const served = localeFromPath(path);
+          const pagePath = path.slice(served.base.length).replace(/^\//, "");
+          /** @type {readonly ("au" | "global")[] | null} */
+          const targets =
+            TARGET === "global"
+              ? INTL_LAUNCHED ? ["au", "global"] : ["global"]
+              : INTL_LAUNCHED && isSharedPage(pagePath) ? ["au", "global"] : null;
+          if (targets) {
+            const { alternates, xDefault } = buildHreflang(pagePath, targets);
+            item.links = [
+              ...alternates.map((a) => ({ url: a.href, lang: a.hreflang })),
+              ...(xDefault ? [{ url: xDefault, lang: "x-default" }] : []),
+            ];
+          }
+        } catch {
+          // A page outside every cluster (404, kitchen-sink) simply gets no links.
+        }
         // Locale homes are entry points for their whole market.
         if (
           TARGET === "global" &&

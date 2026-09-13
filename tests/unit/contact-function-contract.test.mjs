@@ -89,3 +89,66 @@ test("firestore.indexes.json: the TTL policy is declared for both collections", 
   assert.ok(ttl.has("contactSubmissions"), "contactSubmissions.expireAt needs a TTL override");
   assert.ok(ttl.has("rateLimits"), "rateLimits.expireAt needs a TTL override");
 });
+
+// ---------------------------------------------------------------------------
+// Audience-aware responses (functions/pages.js) — EXECUTED, not grepped.
+//
+// check-truthful sweeps every built global page for AU facts (the AU phone,
+// NAP, the .com.au mailbox, /au-en links) but a function response is not a
+// built page. Until 13 Sep 2026 a French visitor whose submit fell back to
+// no-JS got an en-AU page saying "Back to biteperk.com.au" with the Australian
+// address. These tests hold that line where the gate cannot.
+// ---------------------------------------------------------------------------
+import { createRequire } from "node:module";
+import { loadTS } from "../../scripts/build/_load-ts.mjs";
+const pages = createRequire(import.meta.url)(join(ROOT, "functions/pages.js"));
+
+const AU_FACTS = [/en-AU/, /\/au-en/, /biteperk\.com\.au/, /AEST/];
+
+test("pages.js: LOCALE_BASES equals the published bases in locales.ts", async () => {
+  const locales = await loadTS(join(ROOT, "src/data/locales.ts"));
+  const published = [...locales.localesForTarget("au"), ...locales.localesForTarget("global")].map((l) => l.base).sort();
+  assert.deepEqual([...pages.LOCALE_BASES].sort(), published);
+});
+
+test("pages.js: global thank-you / error pages carry no AU fact and link the visitor's own tree", () => {
+  for (const locale of ["/en", "/gb-en", "/fr", "/be-en", "/be-fr"]) {
+    const ctx = { audience: "global", locale };
+    for (const html of [pages.thankYouHtml(ctx), pages.errorHtml({ error: "Please try again.", ...ctx })]) {
+      for (const re of AU_FACTS) assert.doesNotMatch(html, re, `${locale}: global page leaks ${re}`);
+      assert.match(html, new RegExp(`href="https://biteperk\\.com${locale}/"`), `${locale}: back-link must be the visitor's tree`);
+      assert.match(html, /sales@biteperk\.com|Back to biteperk\.com/, `${locale}: wrong mailbox or back-link`);
+    }
+    const lang = locale === "/fr" || locale === "/be-fr" ? "fr" : "en";
+    assert.match(pages.thankYouHtml(ctx), new RegExp(`<html lang="${lang}">`));
+  }
+});
+
+test("pages.js: the AU page keeps the AU mailbox, AU back-link and en-AU", () => {
+  const html = pages.errorHtml({ error: "x", audience: "au", locale: "/au-en" });
+  assert.match(html, /<html lang="en-AU">/);
+  assert.match(html, /href="https:\/\/biteperk\.com\/au-en\/"/);
+  assert.match(html, /hello@biteperk\.com\.au/);
+  assert.doesNotMatch(html, /sales@biteperk\.com/);
+});
+
+test("pages.js: audience derives from crmForm first, then a non-AU locale; unknown locale is not trusted", () => {
+  assert.equal(pages.audienceOf({ crmForm: "zoho-global", locale: null }), "global");
+  assert.equal(pages.audienceOf({ crmForm: "", locale: "/fr" }), "global");
+  assert.equal(pages.audienceOf({ crmForm: "", locale: "/au-en" }), "au");
+  assert.equal(pages.audienceOf({ crmForm: "", locale: "/evil" }), "au");
+  assert.equal(pages.homeFor({ audience: "global", locale: "/nope" }), "https://biteperk.com/en/");
+  assert.equal(pages.escapeHtml(`<a href="x">&'`), "&lt;a href=&quot;x&quot;&gt;&amp;&#39;");
+});
+
+test("contactForm: the lead stores its locale, the rate limit runs after validation, previews are allowed origins", () => {
+  assert.match(leadWrite, /\n\s*locale,\n/, "lead write must persist `locale`");
+  const validation = code.indexOf("!EMAIL_RE.test(email)");
+  const limiter = code.indexOf("await rateLimited(clientIp)");
+  assert.ok(validation > -1 && limiter > validation, "rateLimited() must run after the validation block");
+  assert.match(code, /PREVIEW_ORIGIN = \/\^https:\\\/\\\/biteperk-global--\[a-z0-9-\]\+\\\.web\\\.app\$\//);
+  // The SMTP sender/notification constants legitimately name the AU mailbox
+  // (it is where notifications go); nothing user-facing may.
+  const userFacing = code.split("\n").filter((l) => !/const MAIL_(FROM|FROM_FALLBACK|TO) = /.test(l)).join("\n");
+  assert.doesNotMatch(userFacing, /hello@biteperk\.com\.au/, "no hardcoded AU mailbox in index.js — pages.js chooses by audience");
+});

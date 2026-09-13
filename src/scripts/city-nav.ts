@@ -128,14 +128,22 @@ function attach(root: HTMLDetailsElement): void {
   scrim?.addEventListener("click", () => close(refs, true));
   closeBtn?.addEventListener("click", () => close(refs, true));
 
-  document.addEventListener("click", (e) => {
-    if (root.open && !root.contains(e.target as Node)) close(refs);
-  });
-
-  document.addEventListener("focusin", (e) => {
-    if (root.open && !root.contains(e.target as Node)) close(refs);
-  });
+  // Outside click / focus-out live at module scope below — see
+  // locale-picker.ts for why binding them per attach() leaked a pair of
+  // permanent document listeners on every View Transition.
 }
+
+document.addEventListener("click", (e) => {
+  for (const root of document.querySelectorAll<HTMLDetailsElement>("[data-city-nav][open]")) {
+    if (!root.contains(e.target as Node)) root.open = false;
+  }
+});
+
+document.addEventListener("focusin", (e) => {
+  for (const root of document.querySelectorAll<HTMLDetailsElement>("[data-city-nav][open]")) {
+    if (!root.contains(e.target as Node)) root.open = false;
+  }
+});
 
 function init(): void {
   document
