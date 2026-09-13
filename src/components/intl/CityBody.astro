@@ -63,7 +63,7 @@ const otherCities = intlCitiesForBase(locale.base).filter((x) => x.slug !== city
 <section class="intl-hero">
   <div class="wrap intl-hero-grid">
     <div class="intl-hero-text">
-      <nav class="intl-crumbs" aria-label="Breadcrumb">
+      <nav class="intl-crumbs" aria-label={c.chrome.a11y.breadcrumb}>
         <a href={p("")}>{c.chrome.nav.home}</a>
         <span aria-hidden="true">/</span>
         <span aria-current="page">{city.name}</span>

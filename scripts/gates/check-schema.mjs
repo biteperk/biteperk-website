@@ -42,6 +42,9 @@ const ids = (objs) => {
 };
 
 let failed = 0;
+// Phrases that only ever appear in the ENGLISH cores — a hit inside a French
+// document's structured data means an English template literal leaked.
+const ENGLISH_MARKER = /\b(AI phone answering|AI receptionist|Restaurants, cafés and venues|reservation booking|the AI phone host)\b/;
 const expect = (page, id) => {
   const has = ids(blocks(page)).has(id);
   console.log(`${has ? "PASS" : "FAIL"}  ${page} declares/references ${id}`);
@@ -76,7 +79,8 @@ if (TARGET === "global") {
   const { localesForTarget } = await import("../build/_load-ts.mjs").then((m) =>
     m.loadTS(join(ROOT, "src/data/locales.ts")),
   );
-  for (const l of localesForTarget("global")) {
+  const locales = localesForTarget("global");
+  for (const l of locales) {
     const page = `${l.base.replace(/^\//, "")}/index.html`;
     expect(page, `${AU}/#organization`);
 
@@ -169,7 +173,43 @@ if (TARGET === "global") {
     } else {
       console.log(`PASS  ${page}: city Service is presence-free (no offers/areaServed/geo/address)`);
     }
+
+    // Language. Every page-level node declares the document's language, and a
+    // French page's Service prose is French — until 13 Sep 2026 all eleven
+    // French city pages declared "AI phone answering for Paris restaurants".
+    const loc = locales.find((l) => l.base === c.base);
+    const nodes = graphOf(page).filter((n) => ["Service", "BreadcrumbList", "FAQPage"].includes(n["@type"]));
+    for (const n of nodes) {
+      if (n.inLanguage !== loc.lang) {
+        console.error(`FAIL  ${page}: ${n["@type"]} inLanguage is ${JSON.stringify(n.inLanguage)}, expected ${loc.lang}`);
+        failed++;
+      }
+    }
+    if (loc.copyLang === "fr" && svc) {
+      const prose = [svc.name, svc.alternateName, ...(svc.serviceType ?? []), svc.audience?.name].join(" | ");
+      if (ENGLISH_MARKER.test(prose)) {
+        console.error(`FAIL  ${page}: French page's Service prose is English: ${prose}`);
+        failed++;
+      } else {
+        console.log(`PASS  ${page}: Service prose is French, inLanguage=${loc.lang} on ${nodes.length} nodes`);
+      }
+    }
   }
+
+  // The sitewide Organization description follows the document's language.
+  for (const l of locales) {
+    const page = `${l.base.replace(/^\//, "")}/index.html`;
+    const org = graphOf(page).find((n) => n["@id"] === `${AU}/#organization`);
+    if (l.copyLang === "fr" && org && ENGLISH_MARKER.test(org.description ?? "")) {
+      console.error(`FAIL  ${page}: Organization.description is English on a French tree`);
+      failed++;
+    }
+    if (org && /Australian voice|Made in Sydney/.test(org.description ?? "")) {
+      console.error(`FAIL  ${page}: Organization.description is the AU site blurb (${org.description.slice(0, 60)}…)`);
+      failed++;
+    }
+  }
+  console.log("PASS  Organization.description is localised on every global home");
 } else {
   // Anchors that must never drift (v1 baseline: docs/v1-baseline/schema/).
   expect("index.html", `${AU}/#organization`);

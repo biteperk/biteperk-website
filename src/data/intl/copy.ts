@@ -97,6 +97,35 @@ export type ChromeCopy = {
   email: string;
   rights: string;
   /**
+   * Accessible names and screen-reader-only text for the chrome. Language-
+   * scoped here because until 13 Sep 2026 nine of them were hardcoded English
+   * in the components ("Skip to content", "Close region picker", "Breadcrumb",
+   * "Switch to dark theme"…) and shipped into every French document. The
+   * check-i18n-chrome gate fails a French page that carries an English one.
+   * "{label}" in regionCurrent is replaced with the current locale's label.
+   */
+  a11y: {
+    skipToContent: string;
+    brandHome: string;
+    siteNav: string;
+    breadcrumb: string;
+    closeCities: string;
+    regionCurrent: string;
+    closeRegion: string;
+    themeToggle: string;
+    themeToLight: string;
+    themeToDark: string;
+  };
+  /**
+   * Organization.description in the sitewide JSON-LD graph, in this language.
+   * Was site.description — "…a warm Australian voice. Made in Sydney." — inside
+   * every French document. Europe-truthful: names Sydney as where the company
+   * is from, never a European premises.
+   */
+  orgDescription: string;
+  /** The 404 page, in this language (one file serves every tree). */
+  notFound: { eyebrow: string; title: string; body: string; home: string; contact: string };
+  /**
    * Cookie-consent notice + settings modal (ConsentBanner.astro). Language-
    * scoped here, not hardcoded in the component: until 6 Sep 2026 the banner
    * was English on /fr and /be-fr — GDPR consent has to be informed, and a
@@ -290,6 +319,16 @@ export type CityPageCopy = {
   othersHeading: string;
   closingHeading: string;
   closingBody: string;
+  /**
+   * The city page's Service JSON-LD, in this language. Until 13 Sep 2026 these
+   * were English template literals in [...intl].astro, so all eleven French
+   * city pages declared "AI phone answering for Paris restaurants" inside a
+   * `fr` document. "{city}" is replaced at render. Mirrored by llms-global.
+   */
+  serviceName: string;
+  serviceAltName: string;
+  serviceTypes: readonly [string, string];
+  audienceName: string;
 };
 
 export const chrome: Record<Lang, ChromeCopy> = {
@@ -322,6 +361,27 @@ export const chrome: Record<Lang, ChromeCopy> = {
     // move with the compliance registry (plan M3).
     email: "sales@biteperk.com",
     rights: "All rights reserved.",
+    a11y: {
+      skipToContent: "Skip to content",
+      brandHome: "BitePerk home",
+      siteNav: "Site",
+      breadcrumb: "Breadcrumb",
+      closeCities: "Close cities menu",
+      regionCurrent: "Region and language — currently {label}",
+      closeRegion: "Close region picker",
+      themeToggle: "Switch theme",
+      themeToLight: "Switch to light theme",
+      themeToDark: "Switch to dark theme",
+    },
+    orgDescription:
+      "BitePerk builds Vox, the AI phone host for hospitality — it answers every call in a natural voice, takes bookings and orders, and hands over to the venue the moment a person is needed. Founded in Sydney; pilot partnerships with venues in the UK, France and Belgium.",
+    notFound: {
+      eyebrow: "404 · Page not found",
+      title: "This page is having a quiet night.",
+      body: "We couldn't find what you were looking for. Try the home page, or write to us.",
+      home: "Home",
+      contact: "Contact",
+    },
     consent: {
       region: "Cookie consent",
       body: "We use privacy-first analytics and Google consent mode for ad measurement. Google may receive limited cookieless signals while consent is denied; ad storage and personalisation stay off unless you allow Marketing.",
@@ -373,6 +433,29 @@ export const chrome: Record<Lang, ChromeCopy> = {
     suggestDismiss: "Fermer",
     email: "sales@biteperk.com",
     rights: "Tous droits réservés.",
+    // French written 13 Sep 2026 — NOT yet reviewed; next Ludovic batch
+    // (extract-fr-review.mjs --since lists every key below).
+    a11y: {
+      skipToContent: "Aller au contenu",
+      brandHome: "Accueil BitePerk",
+      siteNav: "Navigation principale",
+      breadcrumb: "Fil d'Ariane",
+      closeCities: "Fermer le menu des villes",
+      regionCurrent: "Région et langue — actuellement {label}",
+      closeRegion: "Fermer le sélecteur de région",
+      themeToggle: "Changer de thème",
+      themeToLight: "Passer au thème clair",
+      themeToDark: "Passer au thème sombre",
+    },
+    orgDescription:
+      "BitePerk développe Vox, l'hôte téléphonique IA pour l'hôtellerie-restauration : il répond à chaque appel avec une voix naturelle, prend les réservations et les commandes, et passe la main à l'établissement dès qu'une personne est nécessaire. Fondée à Sydney ; partenariats pilotes avec des établissements au Royaume-Uni, en France et en Belgique.",
+    notFound: {
+      eyebrow: "404 · Page introuvable",
+      title: "Cette page passe une soirée calme.",
+      body: "Nous n'avons pas trouvé la page demandée. Essayez la page d'accueil, ou écrivez-nous.",
+      home: "Accueil",
+      contact: "Contact",
+    },
     // French DISCHARGED — verbal pass from Ludovic, confirmed by Sam 7 Sep 2026;
     // see this file's header. The category titles match the cookies page (which
     // had his verbal pass on 3 Sep 2026); the bar/modal sentences were new then
@@ -1218,6 +1301,10 @@ export const cityPage: Record<Lang, CityPageCopy> = {
     closingHeading: "Put Vox on a {city} line",
     closingBody:
       "Tell us how a busy service sounds at your venue and we'll show you Vox handling a call like it — live, before you commit to anything.",
+    serviceName: "AI phone answering for {city} restaurants",
+    serviceAltName: "AI receptionist for {city} restaurants",
+    serviceTypes: ["AI phone answering and reservation booking", "AI receptionist for restaurants"],
+    audienceName: "Restaurants, cafés and venues",
   },
   // French DISCHARGED — verbal pass from Ludovic, confirmed by Sam 7 Sep 2026;
   // see this file's header. This was cluster 5 of that batch, the one that gated
@@ -1242,5 +1329,10 @@ export const cityPage: Record<Lang, CityPageCopy> = {
     closingHeading: "Mettez Vox sur une ligne à {city}",
     closingBody:
       "Décrivez-nous un service chargé dans votre établissement et nous vous montrerons Vox au téléphone sur un appel semblable — en direct, avant tout engagement.",
+    // French written 13 Sep 2026 — NOT yet reviewed; next Ludovic batch.
+    serviceName: "Hôte téléphonique IA pour les restaurants de {city}",
+    serviceAltName: "Réceptionniste IA pour les restaurants de {city}",
+    serviceTypes: ["Réponse téléphonique IA et prise de réservations", "Réceptionniste IA pour restaurants"],
+    audienceName: "Restaurants, cafés et établissements",
   },
 };

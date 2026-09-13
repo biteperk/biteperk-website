@@ -178,6 +178,7 @@ const crumbs = [
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
+  inLanguage: locale.lang,
   itemListElement: crumbs.map((x, i) => ({
     "@type": "ListItem",
     position: i + 1,
@@ -191,24 +192,26 @@ const breadcrumbJsonLd = {
 // city, never located in it (PLAN.md §8, enforced by check-truthful +
 // check-schema). provider @id keeps the entity merge with the AU-anchored org.
 const cityUrl = city ? `${ORIGIN}${locale.base}/${city.slug}/` : "";
+// Every string in the language of the document (c.cityPage) — these were
+// English template literals on the French trees until 13 Sep 2026.
+const withCity = (s: string) => s.replace("{city}", city?.name ?? "");
 const cityServiceJsonLd = city && {
   "@context": "https://schema.org",
   "@type": "Service",
   "@id": `${cityUrl}#service`,
-  name: `AI phone answering for ${city.name} restaurants`,
-  alternateName: `AI receptionist for ${city.name} restaurants`,
-  serviceType: [
-    "AI phone answering and reservation booking",
-    "AI receptionist for restaurants",
-  ],
+  inLanguage: locale.lang,
+  name: withCity(c.cityPage.serviceName),
+  alternateName: withCity(c.cityPage.serviceAltName),
+  serviceType: [...c.cityPage.serviceTypes],
   description: city.seoDescription,
   provider: { "@id": ORG_ID },
-  audience: { "@type": "BusinessAudience", name: "Restaurants, cafés and venues" },
+  audience: { "@type": "BusinessAudience", name: c.cityPage.audienceName },
   url: cityUrl,
 };
 const cityBreadcrumbJsonLd = city && {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
+  inLanguage: locale.lang,
   itemListElement: [
     { "@type": "ListItem", position: 1, name: c.chrome.nav.home, item: `${ORIGIN}${locale.base}/` },
     { "@type": "ListItem", position: 2, name: city.name, item: cityUrl },
@@ -219,11 +222,11 @@ const cityBreadcrumbJsonLd = city && {
 // Note Google restricted FAQ rich results to government/health sites in 2023,
 // so this earns no SERP snippet — it is here for answer engines and on-page UX.
 const faqJsonLd = product
-  ? buildFaqPage(product.faqs)
+  ? buildFaqPage(product.faqs, locale.lang)
   : city
-    ? buildFaqPage([...city.faqs])
+    ? buildFaqPage([...city.faqs], locale.lang)
     : page === ""
-      ? buildFaqPage(h.faq.items)
+      ? buildFaqPage(h.faq.items, locale.lang)
       : null;
 const appJsonLd =
   page === "products"
@@ -697,7 +700,7 @@ const appJsonLd =
     <>
       <section class="intl-hero">
         <div class="wrap">
-          <nav class="intl-crumbs" aria-label="Breadcrumb">
+          <nav class="intl-crumbs" aria-label={c.chrome.a11y.breadcrumb}>
             <a href={p("")}>{c.chrome.nav.home}</a>
             <span aria-hidden="true">/</span>
             <a href={p("products")}>{c.chrome.nav.products}</a>

@@ -38,7 +38,11 @@ function apply(theme: "light" | "dark") {
   }
   for (const btn of document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle]")) {
     btn.setAttribute("aria-pressed", theme === "light" ? "true" : "false");
-    const label = theme === "light" ? "Switch to dark theme" : "Switch to light theme";
+    // Localised by the component (data-label-*); English only as a fallback.
+    const label =
+      theme === "light"
+        ? btn.dataset.labelToDark ?? "Switch to dark theme"
+        : btn.dataset.labelToLight ?? "Switch to light theme";
     btn.setAttribute("aria-label", label);
     btn.title = label;
   }
