@@ -68,6 +68,14 @@ export type Solution = {
   readonly status: SolutionStatus;
   readonly primaryProduct: ProductSlugRef;
   readonly shortDescription: string;
+  /**
+   * Guides (blog slugs) this vertical links to in-body, and the sibling
+   * verticals it points at. Both required, both validated by the unit tests
+   * against the collection / SOLUTION_SLUGS: until 13 Sep 2026 the solutions
+   * hub received ZERO editorial inbound links and emitted none.
+   */
+  readonly relatedGuides: readonly string[];
+  readonly relatedSolutions: readonly SolutionSlug[];
   readonly page: SolutionPageCopy;
 };
 
@@ -99,6 +107,8 @@ export const solutions: readonly Solution[] = [
     status: "live",
     primaryProduct: "voxtable",
     shortDescription: "AI phone host that answers booking calls during service.",
+    relatedGuides: ["what-missed-calls-cost-your-restaurant", "how-to-reduce-no-shows-at-your-restaurant", "do-diners-want-to-talk-to-an-ai"],
+    relatedSolutions: ["cafes", "takeaway"],
     page: {
       seo: {
         title: "AI receptionist for restaurants · BitePerk",
@@ -181,6 +191,8 @@ export const solutions: readonly Solution[] = [
     status: "live",
     primaryProduct: "voxstay",
     shortDescription: "AI receptionist for independent hotels and small chains.",
+    relatedGuides: ["how-much-does-ai-phone-answering-cost-for-a-restaurant", "ai-receptionist-vs-answering-service-vs-voicemail"],
+    relatedSolutions: ["enterprise", "restaurants"],
     page: {
       seo: {
         title: "AI phone receptionist for hotels · BitePerk",
@@ -255,6 +267,8 @@ export const solutions: readonly Solution[] = [
     status: "live",
     primaryProduct: "voxtable",
     shortDescription: "Never miss a table or takeaway call in the morning rush.",
+    relatedGuides: ["what-missed-calls-cost-your-restaurant", "why-an-australian-voice-matters", "how-to-forward-your-restaurant-phone-to-an-ai-host"],
+    relatedSolutions: ["restaurants", "takeaway"],
     page: {
       seo: {
         title: "AI phone answering for cafes · BitePerk",
@@ -331,6 +345,8 @@ export const solutions: readonly Solution[] = [
     status: "live",
     primaryProduct: "voxorder",
     shortDescription: "Phone ordering that keeps the pass moving.",
+    relatedGuides: ["how-to-forward-your-restaurant-phone-to-an-ai-host", "how-much-does-ai-phone-answering-cost-for-a-restaurant", "do-diners-want-to-talk-to-an-ai"],
+    relatedSolutions: ["restaurants", "cafes", "drive-thru"],
     page: {
       seo: {
         title: "AI phone ordering for takeaway · BitePerk",
@@ -407,6 +423,8 @@ export const solutions: readonly Solution[] = [
     status: "live",
     primaryProduct: "voxdrive",
     shortDescription: "Voice ordering for drive-thru lanes — in development story.",
+    relatedGuides: ["ai-receptionist-vs-answering-service-vs-voicemail", "what-missed-calls-cost-your-restaurant"],
+    relatedSolutions: ["takeaway"],
     page: {
       seo: {
         title: "AI drive-thru voice ordering · BitePerk",
@@ -477,6 +495,8 @@ export const solutions: readonly Solution[] = [
     status: "live",
     primaryProduct: "voxconcierge",
     shortDescription: "After-hours and overflow call handling for clinics.",
+    relatedGuides: ["ai-receptionist-vs-answering-service-vs-voicemail", "how-much-does-ai-phone-answering-cost-for-a-restaurant"],
+    relatedSolutions: ["professional-services"],
     page: {
       seo: {
         title: "AI phone answering for medical clinics · BitePerk",
@@ -547,6 +567,8 @@ export const solutions: readonly Solution[] = [
     status: "live",
     primaryProduct: "voxconcierge",
     shortDescription: "Front-desk phone coverage for firms that live on inbound calls.",
+    relatedGuides: ["ai-receptionist-vs-answering-service-vs-voicemail", "why-an-australian-voice-matters"],
+    relatedSolutions: ["medical", "enterprise"],
     page: {
       seo: {
         title: "AI receptionist for professional services · BitePerk",
@@ -617,6 +639,8 @@ export const solutions: readonly Solution[] = [
     status: "live",
     primaryProduct: "voxtable",
     shortDescription: "Multi-site voice automation with central visibility.",
+    relatedGuides: ["what-missed-calls-cost-your-restaurant", "how-much-does-ai-phone-answering-cost-for-a-restaurant"],
+    relatedSolutions: ["restaurants", "hotels"],
     page: {
       seo: {
         title: "Enterprise AI phone automation · BitePerk",
@@ -714,4 +738,9 @@ export const RENDERABLE_SOLUTION_SLUGS: readonly string[] = renderableSolutions(
 
 export function solutionPath(slug: string): string {
   return `/solutions/${slug}/`;
+}
+
+/** Live verticals sold on a given product — derived, so a product page's "solutions" block never restates the registry. */
+export function solutionsForProduct(productSlug: string): readonly Solution[] {
+  return liveSolutions().filter((s) => s.primaryProduct === productSlug);
 }

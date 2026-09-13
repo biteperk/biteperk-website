@@ -4,6 +4,7 @@ seoTitle: "AI phone answering for Perth restaurants"
 description: "How AI phone answering works for a Perth venue — the time-zone maths, the staffing crunch, group bookings, and what it costs. Plain English, no jargon."
 publishDate: 2026-07-12
 type: guide
+relatedSolutions: ["restaurants"]
 tags: ["AI receptionist", "Perth", "How it works"]
 ---
 

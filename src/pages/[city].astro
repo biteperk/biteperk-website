@@ -21,7 +21,7 @@ import Illustration from "@/components/Illustration.astro";
 import { site } from "@/data/site";
 import { ORG_ID, buildFaqPage } from "@/data/schema";
 import { publishedCities, cityUrl, type City } from "@/data/cities";
-import { defaultCtaActions } from "@/data/conversion";
+import { defaultCtaActions, bookDemoHref } from "@/data/conversion";
 import { u, abs } from "@/data/locales";
 import { getCollection } from "astro:content";
 
@@ -194,7 +194,7 @@ const [headStart, headAccent] = (() => {
       </div>
       <div class="city-how-cta reveal">
         <a class="btn" href={u("/products/voxtable/")}>Explore VoxTable →</a>
-        <a class="btn-ghost" href={u("/contact/")}>Book a 15-minute walkthrough</a>
+        <a class="btn-ghost" href={bookDemoHref({ product: "voxtable" })} data-cta="book-demo">Book a 15-minute walkthrough</a>
       </div>
     </div>
   </section>
@@ -262,7 +262,7 @@ const [headStart, headAccent] = (() => {
         </ul>
         <p class="city-areas-note">
           Somewhere else? VoxTable works anywhere in Australia — <a href={u("/products/voxtable/")}>see the product</a>
-          or <a href={u("/contact/")}>get in touch</a>.
+          or <a href={bookDemoHref({ product: "voxtable" })}>book a demo</a>.
         </p>
       </div>
     </div>

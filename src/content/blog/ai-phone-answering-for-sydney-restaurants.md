@@ -4,6 +4,7 @@ seoTitle: "AI phone answering for Sydney restaurants"
 description: "What AI phone answering actually is, how it works for a Sydney restaurant, what it costs, and how to tell a good one from a gimmick — explained without the jargon."
 publishDate: 2026-05-20
 type: guide
+relatedSolutions: ["restaurants"]
 tags: ["AI receptionist", "Sydney", "How it works"]
 ---
 

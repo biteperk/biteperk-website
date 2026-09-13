@@ -76,6 +76,39 @@ describe("solutions registry", async () => {
   });
 });
 
+describe("internal-linking graph", async () => {
+  const { solutions, SOLUTION_SLUGS, liveSolutions, solutionsForProduct } = await ts("src/data/solutions.ts");
+  const { blogPosts } = await import("../../scripts/build/content-index.mjs");
+  const { readFileSync } = await import("node:fs");
+  const slugs = new Set(blogPosts().map((p) => p.slug));
+
+  it("every solution links real guides and real, live sibling solutions", () => {
+    for (const s of solutions) {
+      assert.ok(s.relatedGuides.length >= 2, `${s.slug}: fewer than 2 related guides`);
+      for (const g of s.relatedGuides) assert.ok(slugs.has(g), `${s.slug}: guide "${g}" does not exist`);
+      assert.ok(s.relatedSolutions.length >= 1, `${s.slug}: no sibling solution`);
+      for (const r of s.relatedSolutions) {
+        assert.ok(SOLUTION_SLUGS.includes(r), `${s.slug}: sibling "${r}" is not a solution`);
+        assert.notEqual(r, s.slug, `${s.slug}: links to itself`);
+      }
+    }
+  });
+
+  it("every published post declares at least one live solution it is built for", () => {
+    for (const p of blogPosts().filter((p) => !p.draft)) {
+      const fm = readFileSync(join(ROOT, `src/content/blog/${p.slug}.md`), "utf8").match(/^relatedSolutions:\s*\[([^\]]*)\]/m);
+      assert.ok(fm, `${p.slug}: no relatedSolutions frontmatter`);
+      const list = fm[1].split(",").map((x) => x.trim().replace(/^"|"$/g, "")).filter(Boolean);
+      assert.ok(list.length >= 1, `${p.slug}: empty relatedSolutions`);
+      for (const r of list) assert.ok(liveSolutions().some((s) => s.slug === r), `${p.slug}: "${r}" is not a live solution`);
+    }
+  });
+
+  it("every live solution is reachable from its product page (derived back-reference)", () => {
+    for (const s of liveSolutions()) assert.ok(solutionsForProduct(s.primaryProduct).some((x) => x.slug === s.slug));
+  });
+});
+
 describe("AU static pages derive from the registries", async () => {
   const { AU_STATIC_PAGES } = await ts("src/data/locales.ts");
   const { RENDERABLE_SOLUTION_SLUGS } = await ts("src/data/solutions.ts");

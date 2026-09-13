@@ -1,9 +1,11 @@
 ---
 import SolutionLayout from "@/layouts/SolutionLayout.astro";
 import FAQ from "@/components/FAQ.astro";
-import { renderableSolutions, type Solution } from "@/data/solutions";
+import { renderableSolutions, solutions, solutionPath, type Solution } from "@/data/solutions";
 import { getProduct } from "@/data/products";
 import { u } from "@/data/locales";
+import { getCollection } from "astro:content";
+import RelatedGuides from "@/components/sections/RelatedGuides.astro";
 import { bookDemoHref, CTA_LABELS } from "@/data/conversion";
 
 export async function getStaticPaths() {
@@ -16,6 +18,13 @@ interface Props {
 const { solution } = Astro.props;
 const { page } = solution;
 const product = getProduct(solution.primaryProduct)!;
+const allGuides = await getCollection("blog", ({ data }) => !data.draft);
+const guides = solution.relatedGuides
+  .map((slug) => allGuides.find((g) => g.id === slug))
+  .filter((g): g is (typeof allGuides)[number] => Boolean(g));
+const siblings = solution.relatedSolutions
+  .map((slug) => solutions.find((s) => s.slug === slug))
+  .filter((s): s is Solution => Boolean(s) && s!.status === "live");
 ---
 
 <SolutionLayout solution={solution}>
@@ -105,6 +114,22 @@ const product = getProduct(solution.primaryProduct)!;
     </div>
   </section>
 
+  <RelatedGuides posts={guides} heading={`Plain-English reading for ${solution.name.toLowerCase()}.`} />
+
+  {siblings.length > 0 && (
+    <section class="sol-section" id="related-solutions">
+      <div class="wrap narrow">
+        <span class="eyebrow">Related solutions</span>
+        <h2 class="sol-h2">Also built for</h2>
+        <ul class="sol-siblings" role="list">
+          {siblings.map((s) => (
+            <li><a class="pressable" href={u(solutionPath(s.slug))}>{s.name} →</a></li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
   <section class="sol-section" id="faq">
     <div class="wrap narrow">
       <span class="eyebrow">FAQ</span>
@@ -120,6 +145,8 @@ const product = getProduct(solution.primaryProduct)!;
 </SolutionLayout>
 
 <style>
+  .sol-siblings { list-style: none; padding: 0; margin: 18px 0 0; display: flex; flex-wrap: wrap; gap: 10px; }
+  .sol-siblings a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border: 1px solid var(--line); border-radius: 999px; text-decoration: none; color: var(--white); font-weight: 600; }
   .sol-quote {
     margin: 18px 0 0;
     padding: 22px 26px;

@@ -19,6 +19,7 @@ import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import Cta from "@/components/Cta.astro";
 import { bookDemoHref, defaultCtaActions, CTA_LABELS } from "@/data/conversion";
 import type { Product } from "@/data/products";
+import { solutionsForProduct, solutionPath } from "@/data/solutions";
 import { site } from "@/data/site";
 import { VOX_ID, voxEditionId, ORG_ID, buildFaqPage } from "@/data/schema";
 import { u } from "@/data/locales";
@@ -28,6 +29,8 @@ interface Props {
 }
 const { product } = Astro.props;
 const path = `/products/${product.slug}/`;
+// Derived back-reference: the verticals sold on this product (solutions.ts).
+const productSolutions = solutionsForProduct(product.slug);
 
 const productJsonLd = {
   "@context": "https://schema.org",
@@ -123,6 +126,20 @@ const faqJsonLd = product.faq && product.faq.length > 0 ? buildFaqPage(product.f
 
   <slot />
 
+  {productSolutions.length > 0 && (
+    <section class="prod-solutions cv-auto">
+      <div class="wrap">
+        <span class="eyebrow">Solutions using {product.name}</span>
+        <h2 class="prod-solutions-h">Tuned for how your venue takes calls.</h2>
+        <ul class="prod-solutions-list" role="list">
+          {productSolutions.map((s) => (
+            <li><a class="pressable" href={u(solutionPath(s.slug))}>{s.name} →</a></li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
   <Cta
     eyebrow={product.status === "live" ? "Book a demo" : `Try ${product.name}`}
     headline={product.status === "live"
@@ -147,6 +164,10 @@ const faqJsonLd = product.faq && product.faq.length > 0 ? buildFaqPage(product.f
 </Base>
 
 <style>
+  .prod-solutions { padding-block: var(--space-section); border-top: 1px solid var(--line); }
+  .prod-solutions-h { margin-top: 12px; font-size: var(--fs-h2); font-weight: 800; letter-spacing: -0.02em; line-height: var(--lh-display); color: var(--white); max-width: 22ch; }
+  .prod-solutions-list { list-style: none; padding: 0; margin: 24px 0 0; display: flex; flex-wrap: wrap; gap: 10px; }
+  .prod-solutions-list a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border: 1px solid var(--line); border-radius: 999px; text-decoration: none; color: var(--white); font-weight: 600; }
   .prod-hero {
     position: relative;
     padding: clamp(120px, 16vw, 200px) 0 clamp(64px, 8vw, 96px);

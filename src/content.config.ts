@@ -38,6 +38,12 @@ const blog = defineCollection({
      * without frontmatter still classify cleanly.
      */
     type: resourceType.default("guide"),
+    /**
+     * Solution verticals this post supports (slugs from solutions.ts) —
+     * rendered as a "Built for" block under the article so every guide links
+     * into the commercial-intent pages. Validated by the unit tests.
+     */
+    relatedSolutions: z.array(z.string()).default([]),
     /** Optional per-post Open Graph image; falls back to /og/blog.png. */
     ogImage: z.string().optional(),
     /** Hide from the index + noindex while drafting. */

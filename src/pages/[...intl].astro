@@ -718,6 +718,22 @@ const appJsonLd =
         </div>
       </section>
 
+      {/* Product ↔ city: the market's published city pages, under the
+          existing "Cities" chrome label — until 13 Sep 2026 /gb-en/products/
+          voxtable/ and /gb-en/london/ never linked to each other. */}
+      {intlCitiesForBase(locale.base).length > 0 && (
+        <section class="cv-auto">
+          <div class="wrap">
+            <h2>{c.chrome.cities}</h2>
+            <ul class="intl-city-links" role="list">
+              {intlCitiesForBase(locale.base).map((x) => (
+                <li><a href={p(x.slug)}>{x.name}</a></li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
+
       <section class="cv-auto">
         <div class="wrap intl-prose">
           <h2>{product.faqHeading}</h2>
@@ -832,6 +848,8 @@ const appJsonLd =
     letter-spacing: 0.02em;
     color: var(--mist-2);
   }
+  .intl-city-links { list-style: none; padding: 0; margin: 18px 0 0; display: flex; flex-wrap: wrap; gap: 10px; }
+  .intl-city-links a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border: 1px solid var(--line); border-radius: 999px; text-decoration: none; color: var(--white); font-weight: 600; }
   .status-pill[data-status="live"] { color: var(--success); }
   .status-pill[data-status="in-development"] { color: var(--gold); }
   .status-note { max-width: 60ch; margin: 0 0 1.5rem; }
