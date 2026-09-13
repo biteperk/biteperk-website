@@ -192,6 +192,14 @@ const enNeutral: MarketContent = {
   //    and moves the UK wording to gbEn; on sync it supersedes this). No city
   //    renders on /en, but the resolved bundle is what the tests read.
   copy: {
+    // X3's orgDescription (the shared EN core, also the Organization JSON-LD
+    // description) says Europe — right for /gb-en and /be-en, wrong for the
+    // worldwide tree. Same rule as trustFacts below: override here, keep the
+    // core, so the filed French review's English column does not drift.
+    chrome: {
+      orgDescription:
+        "BitePerk builds Vox, the AI phone host for hospitality — it answers every call in a natural voice, takes bookings and orders, and hands over to the venue the moment a person is needed. Built in Sydney, live in Australia, and opening pilot partnerships in new markets.",
+    },
     cityPage: {
       districtsNote:
         "Not on the list? The pilot programme isn't drawn by postcode — a venue anywhere else works exactly the same way.",
@@ -270,6 +278,12 @@ const gbEn: MarketContent = {
     body: "Vox works the same anywhere a phone rings, but hospitality doesn't sound the same in every city. These pages talk about yours specifically.",
   },
   copy: {
+    // City-page furniture anchored to the UK; the EN core is market-neutral.
+    cityPage: {
+      districtsNote:
+        "Not on the list? The pilot programme isn't drawn by postcode — a venue anywhere in the UK works exactly the same way.",
+      othersEyebrow: "Elsewhere in the UK",
+    },
     // The UK regime is its own statute since Brexit (UK GDPR + DPA 2018); the
     // core facts strip says "GDPR", which on this tree would be the wrong law.
     trustFacts: {
@@ -591,6 +605,14 @@ const frFr: MarketContent = {
     body: "Un pilote, c'est une conversation avec une salle précise dans une rue précise, pas un lancement. Voici les villes où ces conversations sont ouvertes.",
   },
   copy: {
+    // City-page furniture anchored to France — the FR core says "ailleurs",
+    // which reads placeless next to the UK tree's "Elsewhere in the UK".
+    // French written 13 Sep 2026 — NOT yet reviewed; next Ludovic batch.
+    cityPage: {
+      districtsNote:
+        "Votre quartier n'y figure pas ? Le programme pilote ne s'arrête pas à un code postal — un établissement situé n'importe où en France fonctionne exactement de la même manière.",
+      othersEyebrow: "Ailleurs en France",
+    },
     home: {
       title: "BitePerk — Vox, l'hôte téléphonique IA pour les restaurants en France",
       description:
@@ -1008,6 +1030,13 @@ const beFr: MarketContent = {
         { role: "caller", text: "Okafor." },
         { role: "bella", text: "C'est noté, Okafor : trois couverts à 20 h 15. Si vous préférez parler à quelqu'un, je peux vous passer l'équipe à tout moment. Vous recevez une confirmation." },
       ],
+    },
+    // Same anchoring as be-en's override, in French. Written 13 Sep 2026 —
+    // NOT yet reviewed; next Ludovic batch.
+    cityPage: {
+      districtsNote:
+        "Votre quartier n'y figure pas ? Le programme pilote ne se dessine pas sur une carte — un établissement situé n'importe où en Belgique fonctionne exactement de la même manière.",
+      othersEyebrow: "Ailleurs en Belgique",
     },
     home: {
       title: "BitePerk — Vox, l'hôte téléphonique IA pour les restaurants en Belgique",

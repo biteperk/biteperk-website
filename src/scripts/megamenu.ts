@@ -221,15 +221,25 @@ function attach(root: HTMLElement): void {
     }
   });
 
-  // Outside click closes.
-  document.addEventListener("click", (e) => {
-    if (trigger.getAttribute("aria-expanded") !== "true") return;
-    const target = e.target as Node;
-    if (!root.contains(target)) {
-      setOpen(refs, false);
-    }
-  });
+  // Outside click is a single module-scope document listener (below) that
+  // looks menus up through REFS at event time. Binding it here would add one
+  // permanent handler per attach(), i.e. per mount of a non-persisted nav
+  // (an au-en → intl → au-en round trip mounts a fresh one).
+  REFS.set(root, refs);
 }
+
+/** Live refs per mounted root; WeakMap so a swapped-out nav is collectable. */
+const REFS = new WeakMap<HTMLElement, MenuRefs>();
+
+// Outside click closes any open mega-menu.
+document.addEventListener("click", (e) => {
+  const target = e.target as Node;
+  for (const root of document.querySelectorAll<HTMLElement>("[data-megamenu]")) {
+    const refs = REFS.get(root);
+    if (!refs || refs.trigger.getAttribute("aria-expanded") !== "true") continue;
+    if (!root.contains(target)) setOpen(refs, false);
+  }
+});
 
 function init(): void {
   document

@@ -3,15 +3,31 @@
  * Light/dark theme toggle. Progressive enhancement: hidden until JS runs
  * (no-JS visitors get the OS-preference theme via CSS, so a dead button
  * would only mislead). aria-pressed reflects "light theme on".
+ *
+ * Labels are props (defaults English for the AU chrome); scripts/theme.ts
+ * reads the two data-label-* attributes when it re-labels the button, so a
+ * French page never gets "Switch to dark theme".
  */
+interface Props {
+  label?: string;
+  labelToLight?: string;
+  labelToDark?: string;
+}
+const {
+  label = "Switch theme",
+  labelToLight = "Switch to light theme",
+  labelToDark = "Switch to dark theme",
+} = Astro.props;
 ---
 
 <button
   type="button"
   class="theme-toggle"
   data-theme-toggle
+  data-label-to-light={labelToLight}
+  data-label-to-dark={labelToDark}
   aria-pressed="false"
-  aria-label="Switch theme"
+  aria-label={label}
   hidden
 >
   <!-- Sun (shown in dark mode: "switch to light") -->
