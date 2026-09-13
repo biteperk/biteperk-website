@@ -132,17 +132,28 @@ function attach(root: HTMLDetailsElement): void {
   scrim?.addEventListener("click", () => close(refs, true));
   closeBtn?.addEventListener("click", () => close(refs, true));
 
-  // Outside click closes.
-  document.addEventListener("click", (e) => {
-    if (root.open && !root.contains(e.target as Node)) close(refs);
-  });
-
-  // Tabbing out of the picker closes it too — an open menu trailing behind
-  // the keyboard focus is the classic <details> menu wart.
-  document.addEventListener("focusin", (e) => {
-    if (root.open && !root.contains(e.target as Node)) close(refs);
-  });
+  // Outside click / focus-out are DOCUMENT listeners, bound once at module
+  // scope below — not here. This attach() runs again on every View Transition
+  // (the picker is re-created with each page, so the data-bound guard on it is
+  // gone too), and binding document listeners per attach() leaked two
+  // permanent handlers per soft navigation, each closing over a detached root.
 }
+
+// Outside click closes whichever picker is open. Roots are looked up at event
+// time, so this survives DOM swaps without ever being re-bound.
+document.addEventListener("click", (e) => {
+  for (const root of document.querySelectorAll<HTMLDetailsElement>("[data-locale-picker][open]")) {
+    if (!root.contains(e.target as Node)) root.open = false;
+  }
+});
+
+// Tabbing out of the picker closes it too — an open menu trailing behind
+// the keyboard focus is the classic <details> menu wart.
+document.addEventListener("focusin", (e) => {
+  for (const root of document.querySelectorAll<HTMLDetailsElement>("[data-locale-picker][open]")) {
+    if (!root.contains(e.target as Node)) root.open = false;
+  }
+});
 
 function init(): void {
   document

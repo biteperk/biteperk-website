@@ -25,8 +25,17 @@ function current(): "light" | "dark" {
   return (stored() ?? (mq.matches ? "light" : "dark")) as "light" | "dark";
 }
 
+// Mirrors the two media-gated <meta name="theme-color"> in Base.astro. Those
+// only follow the OS; once a visitor picks a theme explicitly the browser
+// chrome must follow the PAGE, so both metas are set to the applied theme's
+// colour (whichever media query matches then yields the same value).
+const THEME_COLOR: Record<"light" | "dark", string> = { dark: "#0a0b0d", light: "#faf9f6" };
+
 function apply(theme: "light" | "dark") {
   document.documentElement.dataset.theme = theme;
+  for (const meta of document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]')) {
+    meta.content = THEME_COLOR[theme];
+  }
   for (const btn of document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle]")) {
     btn.setAttribute("aria-pressed", theme === "light" ? "true" : "false");
     const label = theme === "light" ? "Switch to dark theme" : "Switch to light theme";
