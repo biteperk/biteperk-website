@@ -335,6 +335,19 @@ async function buildGlobalCards() {
     }
   }
 
+  // Solution cards, keyed by LANGUAGE like the product cards (same prose across
+  // the English trees). The status pill is the eyebrow — three verticals sit
+  // on unshipped products and the card must say so.
+  const { intlSolutions, intlSolutionsOverview } = await loadTS(join(ROOT, "src/data/intl/solutions.ts"));
+  const { renderableSolutions } = await loadTS(join(ROOT, "src/data/solutions.ts"));
+  for (const lang of ["en", "fr"]) {
+    cards.push({ file: `solutions-index-${lang}.png`, eyebrow: intlSolutionsOverview[lang].eyebrow, headline: intlSolutionsOverview[lang].h1, showBella: false });
+    for (const s of renderableSolutions()) {
+      const copy = intlSolutions[lang][s.slug];
+      cards.push({ file: `solutions-${s.slug}-${lang}.png`, eyebrow: copy.statusLabel, headline: copy.h1, showBella: false });
+    }
+  }
+
   // Market city cards, derived from intl/cities.ts — check-cities.mjs requires
   // public/og/intl/<slug><suffix>.png on disk for every published city, same
   // suffix rule as the core pages above. The eyebrow is the market hero pill
