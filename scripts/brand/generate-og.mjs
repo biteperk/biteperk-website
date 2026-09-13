@@ -503,6 +503,16 @@ if (TARGET === "au") {
   for (const t of resourceTypes) {
     auCards.push({ file: `resources/${t.path.replace(/^\/resources\/|\/$/g, "")}.png`, eyebrow: "Resources", headline: t.plural, showBella: false });
   }
+  // One card per PUBLISHED post (W1): eyebrow = the type label, headline = the
+  // post title. blog/[...slug].astro prefers frontmatter `ogImage`, then this
+  // card, then /og/blog.png — so a post never shares the generic card once
+  // `npm run og` has run. Drafts get none (nothing links to them).
+  const { publishedPosts } = await import("../build/content-index.mjs");
+  const { resourceTypeMeta } = await loadTS(join(ROOT, "src/data/resources.ts"));
+  if (!existsSync(join(OG_DIR, "posts"))) mkdirSync(join(OG_DIR, "posts"), { recursive: true });
+  for (const p of publishedPosts()) {
+    auCards.push({ file: `posts/${p.slug}.png`, eyebrow: resourceTypeMeta(p.type).label, headline: p.title, showBella: false });
+  }
 }
 
 // Every product page sets og:image=/og/<slug>.png (ProductLayout.astro), every
@@ -520,6 +530,7 @@ if (TARGET === "au") {
     ...PRODUCT_SLUGS.map((s) => `${s}.png`),
     ...renderableSolutions().map((s) => `solutions/${s.slug}.png`),
     ...resourceTypes.map((t) => `resources/${t.path.replace(/^\/resources\/|\/$/g, "")}.png`),
+    ...(await import("../build/content-index.mjs")).publishedPosts().map((p) => `posts/${p.slug}.png`),
   ].filter((f) => !have.has(f));
   if (missing.length) {
     throw new Error(`generate-og: no AU card for ${missing.join(", ")} — add an auCards entry.`);

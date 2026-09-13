@@ -90,7 +90,7 @@ The brief’s *order* is right (architecture → nav → solutions → resources
 
 ### Wave 8 — Content production (1H)
 - Cadence: weekly guide+comparison; monthly case study+product update; quarterly industry report
-- Track inventory vs Definition of Done in `docs/phase1/CONTENT-INVENTORY.md` (add in a later PR)
+- Inventory vs Definition of Done is **generated**: `docs/phase1/CONTENT-INVENTORY.md` from `RESOURCE_DOD_*` (resources.ts) + the collections; the unit test fails when it is stale. Templates: `docs/phase1/templates/`.
 
 ---
 
