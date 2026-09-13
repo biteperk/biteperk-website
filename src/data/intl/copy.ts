@@ -1292,11 +1292,15 @@ export const cityPage: Record<Lang, CityPageCopy> = {
     aiHeading: "Tuned for {city}. A person the moment it matters.",
     districtsEyebrow: "Across {city}",
     districtsHeading: "The neighbourhoods venues call from.",
+    // Market-neutral on purpose (this file's header rule): the UK wording is
+    // gbEn's cityPage override in markets.ts, the Belgian one is beEn's. Until
+    // 13 Sep 2026 the core said "anywhere in the UK", which /en would have
+    // inherited the day it published a city.
     districtsNote:
-      "Not on the list? The pilot programme isn't drawn by postcode — a venue anywhere in the UK works exactly the same way.",
+      "Not on the list? The pilot programme isn't drawn by postcode — a venue anywhere else works exactly the same way.",
     faqEyebrow: "{city} questions",
     faqHeading: "Answered plainly.",
-    othersEyebrow: "Elsewhere in the UK",
+    othersEyebrow: "Other cities",
     othersHeading: "Also in pilot conversations with venues in",
     closingHeading: "Put Vox on a {city} line",
     closingBody:

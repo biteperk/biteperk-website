@@ -40,10 +40,10 @@ const INTL = (f) => resolve(ROOT, "src/data/intl", f);
 
 export const META = {
   preparedFor: "Ludovic",
-  date: "7 September 2026",
+  date: "13 September 2026",
   requestedBy: "Sam Kalaliya",
   /** The pass that this batch is measured against — everything written since. */
-  sincePass: "26 and 27 July 2026",
+  sincePass: "7 September 2026",
 };
 
 /**
@@ -51,117 +51,67 @@ export const META = {
  * returned by `pick`; `[n]` indexes arrays. Order is the reading order in the
  * document, so group related keys together deliberately.
  *
- * `rows` (cluster 7) is the escape hatch for copy that is market-scoped rather
+ * `rows` (cluster 4) is the escape hatch for copy that is market-scoped rather
  * than language-scoped: there is no EN counterpart to pair against, so the
  * English column is a hand-written gloss and only the French is read live.
+ *
+ * ── The 13 Sep 2026 batch ────────────────────────────────────────────────────
+ * Everything French written between Ludovic's 7 Sep verbal pass and 13 Sep,
+ * found with `--since origin/main` rather than from memory: the accessible
+ * names that were hardcoded English on every French page, the 404 page, the
+ * Organization description, the contact form's runtime strings, the city
+ * Service JSON-LD strings, and the France/Belgium city-page anchoring lines.
+ * The French city TITLES (eleven, "Répondeur" → "Hôte téléphonique IA") and two
+ * Brussels lines live in intl/cities.ts and are reviewed through
+ * extract-city-fr-review.mjs — see docs/ops-records/2026-09-13-french-review-
+ * city-titles.md. The 7 Sep batch is filed at 2026-09-07-french-review-
+ * ludovic.md and is no longer regenerable from this config (by design: a new
+ * batch replaces CLUSTERS; the filed document is the record).
  */
 export const CLUSTERS = [
   {
     n: "1",
-    title: "chrome: nav, footer and menu labels",
-    summaryTitle: "Chrome — nav, footer, menu labels",
-    where: "Every French page",
+    title: "chrome: accessible names, the 404 page, the organisation description",
+    summaryTitle: "Chrome — accessible names, 404, organisation description",
+    where: "Every French page (screen-reader names + the one 404 page for all trees)",
     source: "copy.ts",
     pick: (m) => [m.copy.chrome.en, m.copy.chrome.fr],
     keys: [
-      "nav.home", "nav.products", "nav.howItWorks", "nav.about", "nav.contact",
-      "auSite", "regionTitle", "cities", "citiesTitle",
-      "footerExplore", "footerRegions", "footerProducts", "footerLegal", "footerFollow",
-      "menu", "menuClose", "suggest", "suggestDismiss",
+      "a11y.skipToContent", "a11y.brandHome", "a11y.siteNav", "a11y.breadcrumb",
+      "a11y.closeCities", "a11y.regionCurrent", "a11y.closeRegion",
+      "a11y.themeToggle", "a11y.themeToLight", "a11y.themeToDark",
+      "orgDescription",
+      "notFound.eyebrow", "notFound.title", "notFound.body", "notFound.home", "notFound.contact",
     ],
   },
   {
     n: "2",
-    title: "cookie banner and settings modal",
-    summaryTitle: "Cookie banner + settings modal",
-    where: "Every French page (consent must be *understood* to be valid)",
+    title: "contact form — what the visitor reads after pressing the button ⚠️ BLOCKING",
+    summaryTitle: "**Contact form runtime strings**",
+    where: "`/fr` and `/be-fr` contact pages, after submit",
+    blocking: "**Yes — gates deploying the French contact-form fix**",
+    note: "Until now a French visitor who submitted the pilot form read an English confirmation. These five strings replace it; nothing French ships on that form until they are signed off.",
     source: "copy.ts",
-    pick: (m) => [m.copy.chrome.en, m.copy.chrome.fr],
+    pick: (m) => [m.copy.contact.en, m.copy.contact.fr],
     keys: [
-      "consent.region", "consent.body", "consent.policy", "consent.settings",
-      "consent.reject", "consent.accept", "consent.modalTitle", "consent.modalLede",
-      "consent.alwaysOn", "consent.saved", "consent.cancel", "consent.save",
-      "consent.categories.necessary.title", "consent.categories.necessary.body",
-      "consent.categories.analytics.title", "consent.categories.analytics.body",
-      "consent.categories.marketing.title", "consent.categories.marketing.body",
+      "form.runtime.sending", "form.runtime.successTitle", "form.runtime.successBody",
+      "form.runtime.error", "form.runtime.networkError",
     ],
   },
   {
     n: "3",
-    title: "the call transcript",
-    summaryTitle: "Call transcript",
-    where: "`/fr` and `/be-fr` home pages",
+    title: "city pages — the structured-data service description",
+    summaryTitle: "City pages — Service description (structured data)",
+    where: "Every French city page, in the JSON-LD search engines and answer engines read; {city} is replaced by the city name",
     source: "copy.ts",
-    pick: (m) => [m.copy.callSim.en, m.copy.callSim.fr],
-    keys: [
-      "eyebrow", "headingLead", "headingAccent", "lede", "note", "ctaLabel",
-      "status", "badge", "whoBella", "whoCaller", "written", "replay", "disclaimer",
-      ...Array.from({ length: 7 }, (_, i) => [`lines[${i}].role`, `lines[${i}].text`]).flat(),
-    ],
+    pick: (m) => [m.copy.cityPage.en, m.copy.cityPage.fr],
+    keys: ["serviceName", "serviceAltName", "serviceTypes[0]", "serviceTypes[1]", "audienceName"],
   },
   {
     n: "4",
-    title: "the trust strip",
-    summaryTitle: "Trust strip",
-    where: "French home + contact pages",
-    source: "copy.ts",
-    pick: (m) => [m.copy.trustFacts.en, m.copy.trustFacts.fr],
-    keys: [
-      "heading", "entityLabel", "registerUk", "registerAu",
-      "transparencyLabel", "transparency", "recordsLabel", "records",
-      "basisLabel", "basis", "privacyLink",
-    ],
-  },
-  {
-    n: "5",
-    title: "city-page furniture ⚠️ BLOCKING",
-    summaryTitle: "**City-page furniture**",
-    where: "Every future French city page",
-    blocking: "**Yes — gates Paris and Brussels-FR**",
-    // Rendered by build-review-page.mjs only — the markdown a reviewer marks up
-    // stays plain, and this would sit between the heading and the table.
-    note: "Nothing French can launch in a city until this cluster is signed off. If you only have time for one section, this is the one.",
-    source: "copy.ts",
-    pick: (m) => [m.copy.cityPage.en, m.copy.cityPage.fr],
-    keys: [
-      "storyEyebrow", "storyHeading", "scenariosEyebrow", "scenariosHeading",
-      "aiEyebrow", "aiHeading", "districtsEyebrow", "districtsHeading", "districtsNote",
-      "faqEyebrow", "faqHeading", "othersEyebrow", "othersHeading",
-      "closingHeading", "closingBody",
-    ],
-  },
-  {
-    n: "6a",
-    title: "VoxStay, product page",
-    summaryTitle: "VoxStay (hotels)",
-    summaryN: "6",
-    where: "`/fr` and `/be-fr` product pages",
-    blocking: "No, but see the note below",
-    source: "products.ts",
-    prefix: "voxstay.",
-    pick: (m) => [m.products.intlProducts.en, m.products.intlProducts.fr],
-    keys: [
-      "voxstay.featuresHeading", "voxstay.faqHeading", "voxstay.ctaHeading", "voxstay.ctaLabel",
-      "voxstay.title", "voxstay.description", "voxstay.eyebrow", "voxstay.h1", "voxstay.lede",
-      "voxstay.statusLabel", "voxstay.statusNote",
-      ...Array.from({ length: 3 }, (_, i) => [`voxstay.features[${i}].title`, `voxstay.features[${i}].body`]).flat(),
-      ...Array.from({ length: 3 }, (_, i) => [`voxstay.faqs[${i}].q`, `voxstay.faqs[${i}].a`]).flat(),
-    ],
-  },
-  {
-    n: "6b",
-    title: "VoxStay, products overview",
-    where: "`/fr` and `/be-fr` product pages",
-    source: "products.ts",
-    skipSummary: true,
-    pick: (m) => [m.products.intlProductsOverview.en, m.products.intlProductsOverview.fr],
-    keys: ["capabilities.voxstay.outcome", "capabilities.voxstay.body"],
-  },
-  {
-    n: "7",
-    title: "two market lines",
-    summaryTitle: "Two market lines",
-    where: "`/fr` about page; FR/BE trust cards",
+    title: "market lines — France and Belgium city-page anchoring",
+    summaryTitle: "Market lines (France / Belgium)",
+    where: "French city pages: the note under the district chips, and the 'other cities' eyebrow",
     source: "markets.ts",
     whereHeader: "Where",
     englishHeader: "English (reference / gloss)",
@@ -169,19 +119,24 @@ export const CLUSTERS = [
       const at = (base, path) => get(m.markets.marketContent[base], path);
       return [
         {
-          key: "`/fr` about page, intro",
-          en: "We're a small Sydney shop with one product and no wish to turn it into a suite. Vox came from an unglamorous observation: the missed call is what costs a dining room most, and nobody had built the tool that simply picks up.",
-          fr: at("/fr", "copy.about.intro"),
+          key: "`/fr` city pages — note under the district chips",
+          en: "Not on the list? The pilot programme isn't drawn by postcode — a venue anywhere in France works exactly the same way.",
+          fr: at("/fr", "copy.cityPage.districtsNote"),
         },
         {
-          key: "`/fr` trust card — AI Act citation clause (new, 7 Sep)",
-          en: "…falls under the transparency duties of the EU AI Act (Article 50, Regulation (EU) 2024/1689).",
-          fr: at("/fr", "copy.home.trust.items[1].body"),
+          key: "`/fr` city pages — 'other cities' eyebrow",
+          en: "Elsewhere in France",
+          fr: at("/fr", "copy.cityPage.othersEyebrow"),
         },
         {
-          key: "`/be-fr` trust card — same clause, deliberately worded differently",
-          en: "(Same meaning; the wording differs from `/fr` on purpose — an automated gate measures how similar the two French pages are, so they must not converge.)",
-          fr: at("/be-fr", "copy.home.trust.items[1].body"),
+          key: "`/be-fr` city pages — note under the district chips",
+          en: "Not on the list? The pilot programme isn't drawn on a map — a venue anywhere in Belgium works exactly the same way.",
+          fr: at("/be-fr", "copy.cityPage.districtsNote"),
+        },
+        {
+          key: "`/be-fr` city pages — 'other cities' eyebrow",
+          en: "Elsewhere in Belgium",
+          fr: at("/be-fr", "copy.cityPage.othersEyebrow"),
         },
       ];
     },

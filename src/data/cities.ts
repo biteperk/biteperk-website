@@ -82,6 +82,9 @@ export const cities: readonly City[] = [
     published: true,
     geo: { lat: -33.8798, lng: 151.2058 },
     navLabel: "Sydney",
+    // The flagship keeps the exact-match keyword title; every other city varies
+    // its title and h1 (check-title-templates fails ≥3 cities on one shape —
+    // five of six shared this one until 13 Sep 2026).
     seoTitle: "AI phone answering for Sydney restaurants · Biteperk",
     seoDescription:
       "AI phone answering and an AI receptionist for Sydney restaurants. Bella answers every call from Surry Hills to Manly, checks live availability and books the table — 24/7, built in Sydney.",
@@ -194,10 +197,10 @@ export const cities: readonly City[] = [
     published: true,
     geo: { lat: -37.8136, lng: 144.9631 },
     navLabel: "Melbourne",
-    seoTitle: "AI phone answering for Melbourne restaurants · Biteperk",
+    seoTitle: "An AI receptionist for Melbourne restaurants · Biteperk",
     seoDescription:
       "An AI receptionist for Melbourne restaurants. Bella answers every call — Fitzroy laneway bar or CBD dining room — checks live availability and books the table, 24/7.",
-    heroHeadline: "AI phone answering for Melbourne restaurants.",
+    heroHeadline: "Fitzroy laneway bar or CBD dining room — Bella answers every Melbourne call.",
     intro: [
       "Melbourne runs on tight rooms and tighter margins. A forty-seat laneway diner doesn't have a host standing by the phone — the person nearest it is also running the pass, polishing glasses and seating walk-ins. When the room is loud and the espresso machine is screaming, the phone loses. Every one of those unanswered calls is a table that quietly books the place two doors down.",
       "Melbourne's dining culture also books differently: more no-shows to chase, more \"can we push to 8:15?\" calls, more groups reorganising themselves on a Thursday night. Bella handles the churn — answering instantly, checking your real availability, confirming, amending and rebooking — so your floor staff never have to choose between the guest in front of them and the one on the line.",
@@ -306,10 +309,10 @@ export const cities: readonly City[] = [
     published: true,
     geo: { lat: -27.4698, lng: 153.0251 },
     navLabel: "Brisbane",
-    seoTitle: "AI phone answering for Brisbane restaurants · Biteperk",
+    seoTitle: "Brisbane restaurant calls answered, deck or inside · Biteperk",
     seoDescription:
       "AI phone answering for Brisbane restaurants. Bella is the AI receptionist that answers every call from West End to Teneriffe, handles deck-or-inside changes and books tables 24/7.",
-    heroHeadline: "AI phone answering for Brisbane restaurants.",
+    heroHeadline: "Bella takes every Brisbane call, West End to Teneriffe.",
     intro: [
       "Brisbane dining is outdoor dining — river decks at Howard Smith Wharves, beer gardens in West End, footpath tables in Teneriffe. That makes the phone busier, not quieter: every change in the sky produces a wave of \"is the deck still on?\", \"can we move inside?\" and \"are you open if it storms?\" calls, all landing while your team is resetting tables in the heat.",
       "Queensland's early rhythm changes the maths too. Brisbane books earlier, eats earlier and calls earlier — the booking rush hits at knock-off time, right through the pre-service hour when nobody can spare a hand for the phone. Bella answers every one of those calls instantly, checks your real availability, and books or amends the table without anyone leaving the floor.",
@@ -419,10 +422,10 @@ export const cities: readonly City[] = [
     published: true,
     geo: { lat: -31.9523, lng: 115.8613 },
     navLabel: "Perth",
-    seoTitle: "AI phone answering for Perth restaurants · Biteperk",
+    seoTitle: "24/7 AI receptionist for Perth restaurants · Biteperk",
     seoDescription:
       "An AI receptionist that never checks the clock. Bella answers Perth restaurant calls 24/7 — Northbridge to Fremantle — so the time zone never costs you a booking.",
-    heroHeadline: "AI phone answering for Perth restaurants.",
+    heroHeadline: "Around the clock, every Perth restaurant call answered — the time zone never costs you a table.",
     intro: [
       "Perth runs two to three hours behind the east coast, and hospitality feels it everywhere: suppliers, platforms and support desks are closing just as your service begins. The phone doesn't care. Beach-suburb bistros in Cottesloe and wine bars in Mount Lawley get their booking calls at Perth time — through the afternoon prep window and deep into a Friday night when there is nobody spare to answer.",
       "Bella never checks a clock. She answers every call instantly, around the clock, in a natural Australian voice — checks your live availability, books the table, takes the message — and because she's software, the time-zone gap that makes every other service feel far away simply doesn't exist. A Melbourne visitor calling at 9pm AWST gets answered exactly like a local calling at noon.",
@@ -532,10 +535,10 @@ export const cities: readonly City[] = [
     published: true,
     geo: { lat: -34.9285, lng: 138.6007 },
     navLabel: "Adelaide",
-    seoTitle: "AI phone answering for Adelaide restaurants · Biteperk",
+    seoTitle: "AI receptionist for Adelaide restaurants and wine bars · Biteperk",
     seoDescription:
       "AI phone answering for Adelaide restaurants and wine bars. Bella, an AI receptionist, answers every call — Peel Street to Glenelg — books the table and rides the Mad March surge, 24/7.",
-    heroHeadline: "AI phone answering for Adelaide restaurants.",
+    heroHeadline: "Peel Street to Glenelg — Bella books every Adelaide table.",
     intro: [
       "Adelaide punches absurdly above its weight — a city of heritage-stone wine bars, Peel Street rooms with twelve tables, and East End dining built on personal service. That intimacy is the point, and it's also the problem: in a venue where the owner is on the floor, there is genuinely nobody to answer the phone, and the person calling can hear it ring out.",
       "The city's rhythm is spiky, too. Mad March alone — Fringe, the Festival, the motorsport crowd — can triple booking calls for weeks, then vintage season fills weekends with cellar-door visitors ringing from the Hills on their way back into town. Bella flattens the spikes: every call answered in one ring, availability checked, tables booked and amended without a single interruption to the room.",
@@ -644,10 +647,10 @@ export const cities: readonly City[] = [
     published: true,
     geo: { lat: -28.0167, lng: 153.4 },
     navLabel: "Gold Coast",
-    seoTitle: "AI phone answering for Gold Coast restaurants · Biteperk",
+    seoTitle: "Gold Coast restaurant calls answered 24/7, season included · Biteperk",
     seoDescription:
       "An AI receptionist for Gold Coast restaurants. Bella answers tourist calls 24/7 — Burleigh to Broadbeach — books same-day tables and never takes schoolies week off.",
-    heroHeadline: "AI phone answering for Gold Coast restaurants.",
+    heroHeadline: "Bella answers every Gold Coast call, Burleigh to Broadbeach.",
     intro: [
       "The Gold Coast feeds a permanent holiday crowd, and holiday-makers behave nothing like locals: they book same-day, they call from the beach at 3pm for tonight, they ask for directions, parking, kids' menus and whether thongs are fine — and if the phone rings out they simply call the next place on the strip. On the Coast, an unanswered phone isn't a missed booking, it's a donation to your competitor.",
       "Volume swings are wild — school holidays, schoolies, the 500, a wet week that empties the beach and fills every indoor table at once. Staffing a phone for peak means overpaying for the shoulder; staffing for the shoulder means drowning at peak. Bella is elastic: she answers every concurrent call instantly in a natural Australian voice, checks live availability, and books the table for one flat monthly fee.",
