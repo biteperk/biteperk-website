@@ -70,6 +70,7 @@ const chip = shortIsShared ? `${current.short} · ${current.copyLang.toUpperCase
             lang={l.lang}
             aria-current={l.base === current.base ? "true" : undefined}
             data-locale-picker-item
+            data-astro-reload
           >
             <span class="lp-item-chip" aria-hidden="true">{l.short}</span>
             <span class="lp-item-label">{l.label}</span>

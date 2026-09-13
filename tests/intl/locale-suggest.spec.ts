@@ -69,6 +69,24 @@ test("browser preference order wins — fr before fr-BE picks France", async ({ 
   await page.context().close();
 });
 
+test("falls back to the language when the region has no tree — fr-CA alone gets /fr", async ({ browser }) => {
+  // Safari and several mobile browsers report a single region-tagged entry
+  // with no bare `fr` behind it; until 13 Sep 2026 that visitor got nothing.
+  const page = await pageWithLanguages(browser, ["fr-CA"]);
+  await page.goto("/en/", { waitUntil: "networkidle" });
+  const r = await chip(page);
+  expect(r.visible).toBe(true);
+  expect(r.href).toBe("/fr/");
+  await page.context().close();
+});
+
+test("the fallback never offers the language-only x-default — en-US on /gb-en stays silent", async ({ browser }) => {
+  const page = await pageWithLanguages(browser, ["en-US"]);
+  await page.goto("/gb-en/", { waitUntil: "networkidle" });
+  expect((await chip(page)).visible).toBe(false);
+  await page.context().close();
+});
+
 test("never nags someone already in their market (incl. ccTLD arrivals)", async ({ browser }) => {
   const page = await pageWithLanguages(browser, ["en-GB", "en"]);
   await page.goto("/gb-en/", { waitUntil: "networkidle" });

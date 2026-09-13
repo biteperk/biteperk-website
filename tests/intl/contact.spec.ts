@@ -17,15 +17,15 @@ import { googleAdsGlobalDemoContactConversionId } from "../../src/data/consent";
  * statement on a legal page, not just a product change.
  */
 const LOCALES = [
-  { base: "/en", venue: "QA Bistro" },
-  { base: "/gb-en", venue: "QA Bistro London" },
-  { base: "/fr", venue: "QA Bistro Paris" },
-  { base: "/be-fr", venue: "QA Bistro Bruxelles" },
+  { base: "/en", venue: "QA Bistro", success: /Thanks/ },
+  { base: "/gb-en", venue: "QA Bistro London", success: /Thanks/ },
+  { base: "/fr", venue: "QA Bistro Paris", success: /Merci/ },
+  { base: "/be-fr", venue: "QA Bistro Bruxelles", success: /Merci/ },
 ];
 
 const RECAPTCHA_HOST = /(^|\.)(google\.com|gstatic\.com|recaptcha\.net)\/recaptcha\//;
 
-for (const { base, venue } of LOCALES) {
+for (const { base, venue, success } of LOCALES) {
   test(`${base} contact submits every field, loads no CAPTCHA, and reports its consent-aware Google Ads conversion`, async ({
     page,
   }) => {
@@ -70,7 +70,15 @@ for (const { base, venue } of LOCALES) {
     await page.fill("#if-message", "Automated QA message — please ignore.");
 
     await form.locator('button[type="submit"]').click();
-    await expect(page.locator(".intl-form-success")).toBeVisible();
+    const done = page.locator(".intl-form-success");
+    await expect(done).toBeVisible();
+    // In the tree's language (French trees got "Thanks — we'll be in touch."
+    // until 13 Sep 2026), announced through the live region that stays in the
+    // form, and holding focus since the submit button is gone.
+    await expect(done.locator("h2")).toHaveText(success);
+    await expect(page.locator(".intl-form-status")).toBeVisible();
+    await expect(page.locator(".intl-form-status")).toHaveText(success.source === "Merci" ? /Réponse/ : /reply/);
+    expect(await page.evaluate(() => document.activeElement?.className)).toBe("intl-form-success");
     await expect(page).toHaveURL(new RegExp(`${base}/contact/$`));
 
     expect(submittedBody).toMatchObject({
@@ -80,6 +88,7 @@ for (const { base, venue } of LOCALES) {
       message: "Automated QA message — please ignore.",
       product: "voxorder",
       crmForm: "zoho-global",
+      locale: base,
       _gotcha: "",
     });
     expect(submittedBody).not.toHaveProperty("g-recaptcha-response");
