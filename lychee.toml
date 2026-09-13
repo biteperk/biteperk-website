@@ -2,7 +2,7 @@
 # Internal passes add --offline (local files only) and fail the build;
 # the external pass reports only.
 no_progress = true
-exclude_mail = true
+# (mailto: links are excluded by default in lychee ≥0.15; `exclude_mail` was removed in 0.24.)
 # The product app / legacy subdomains and the form backend are not part of the marketing tree.
 exclude = [
   '^https://((voco|vox)table\.biteperk|formspree)',
