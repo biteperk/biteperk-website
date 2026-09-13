@@ -47,7 +47,7 @@ const candidates = localesForTarget("global").map((l) => {
 
 <div class="ls" id="locale-suggest" data-locale-suggest data-current={current.base} hidden>
   <p class="ls-text" data-ls-text></p>
-  <a class="ls-go" data-ls-go href="/">
+  <a class="ls-go" data-ls-go href={`${current.base}/`}>
     <span class="ls-chip" data-ls-chip aria-hidden="true"></span>
     <span data-ls-label></span>
     <span aria-hidden="true">→</span>
