@@ -171,19 +171,18 @@ jobs:
       # offline against the built tree and FAIL the build (a broken internal
       # link is a defect we own); EXTERNAL links are reported only (social
       # hosts bot-block runners). Both read lychee.toml.
-      - name: Internal link check — AU tree (offline, blocking)
+      # ONE offline pass over the MERGED tree. The AU build writes dist/ with no
+      # /au-en prefix while every AU href carries it, so checking dist/ alone
+      # resolves 1,800 links to files that only exist under dist-site/au-en/
+      # (the 13 Sep 2026 run that proved it). dist-site is what production
+      # serves, so cross-tree links (/au-en ↔ /gb-en, the region router) are
+      # checked against the same root the browser will hit.
+      - name: Internal link check — merged tree (offline, blocking)
         uses: lycheeverse/lychee-action@v2
         with:
-          args: --config lychee.toml --offline --base ${{ github.workspace }}/dist ./dist/**/*.html
+          args: --config lychee.toml --offline --base ${{ github.workspace }}/dist-site ./dist-site/**/*.html
           fail: true
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Internal link check — global tree (offline, blocking)
-        uses: lycheeverse/lychee-action@v2
-        with:
-          args: --config lychee.toml --offline --base ${{ github.workspace }}/dist-global ./dist-global/**/*.html
-          fail: true
-          token: ${{ secrets.GITHUB_TOKEN }}
+          failIfEmpty: true
 
       - name: External link check — both trees (report only)
         uses: lycheeverse/lychee-action@v2
