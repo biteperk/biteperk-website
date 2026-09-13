@@ -19,7 +19,7 @@ const { intlSolutions, intlSolutionsOverview } = await loadTS(join(ROOT, "src/da
 const { intlSolutionImages } = await loadTS(join(ROOT, "src/data/intl/page-images.ts"));
 const LANGS = ["en", "fr"];
 const H1_MAX = 80;
-const FRENCH_WORD = /(?:une?|le|la|les|des|du|de|au|aux|en|et|sur|dans|pour|avec|chaque|votre|vos|vous|nous|ce|qui|que|est|pas|plus|sans|par|son|sa|ses|à)|[àâçéèêëîïôûùüÿœ]/i;
+const FRENCH_WORD = /\b(?:une?|le|la|les|des|du|de|au|aux|en|et|sur|dans|pour|avec|chaque|votre|vos|vous|nous|ce|qui|que|est|pas|plus|sans|par|son|sa|ses|à)\b|[àâçéèêëîïôûùüÿœ]/i;
 const leaves = (v, path = "") =>
   typeof v === "string" ? [[path, v]] : Array.isArray(v) ? v.flatMap((x, i) => leaves(x, `${path}[${i}]`)) : v && typeof v === "object" ? Object.entries(v).flatMap(([k, x]) => leaves(x, path ? `${path}.${k}` : k)) : [];
 
