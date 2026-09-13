@@ -1,4 +1,5 @@
 ---
+import { pageTitle } from "@/data/site";
 /**
  * /blog/ — the Guides hub.
  *
@@ -20,7 +21,7 @@ const path = "/blog/";
 // (astro.config.mjs). A 301 can follow once analytics confirm nothing external
 // links here.
 const canonical = "/resources/guides/";
-const title = "Guides for restaurant owners — Biteperk";
+const title = pageTitle("Guides for restaurant owners");
 const description =
   "Practical, plain-English guides on missed calls, AI phone answering, bookings and running a busy restaurant phone — written for Australian venues by the team behind VoxTable.";
 

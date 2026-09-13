@@ -459,18 +459,42 @@ const auCards = [
   },
 ];
 
-// Every product page sets og:image=/og/<slug>.png (ProductLayout.astro), so a
-// product without an AU card here fails check-assets on the built page — but
-// only after a full build. Fail here instead, at the moment the card is missing.
-{
+// Solutions + resources cards are DERIVED from their registries (nine solution
+// pages shared /og/default.png until 13 Sep 2026). Namespaced directories so a
+// vertical slug can never collide with a product's.
+if (TARGET === "au") {
+  const { loadTS } = await import("../build/_load-ts.mjs");
+  const { renderableSolutions } = await loadTS(join(ROOT, "src/data/solutions.ts"));
+  const { resourceTypes } = await loadTS(join(ROOT, "src/data/resources.ts"));
+  for (const d of ["solutions", "resources"]) if (!existsSync(join(OG_DIR, d))) mkdirSync(join(OG_DIR, d), { recursive: true });
+  auCards.push({ file: "solutions/index.png", eyebrow: "Solutions by industry", headline: "Built for your kind of venue.", showBella: false });
+  for (const s of renderableSolutions()) {
+    auCards.push({ file: `solutions/${s.slug}.png`, eyebrow: s.name, headline: s.page.hero.headline, showBella: false });
+  }
+  auCards.push({ file: "resources/index.png", eyebrow: "Resources", headline: "Guides, comparisons and proof for a busy phone.", showBella: false });
+  for (const t of resourceTypes) {
+    auCards.push({ file: `resources/${t.path.replace(/^\/resources\/|\/$/g, "")}.png`, eyebrow: "Resources", headline: t.plural, showBella: false });
+  }
+}
+
+// Every product page sets og:image=/og/<slug>.png (ProductLayout.astro), every
+// solution page /og/solutions/<slug>.png, every resources page
+// /og/resources/<segment>.png — a missing card fails check-assets on the built
+// page, but only after a full build. Fail here instead, at the moment the card
+// is missing.
+if (TARGET === "au") {
   const { loadTS } = await import("../build/_load-ts.mjs");
   const { PRODUCT_SLUGS } = await loadTS(join(ROOT, "src/data/product-slugs.ts"));
+  const { renderableSolutions } = await loadTS(join(ROOT, "src/data/solutions.ts"));
+  const { resourceTypes } = await loadTS(join(ROOT, "src/data/resources.ts"));
   const have = new Set(auCards.map((c) => c.file));
-  const missing = PRODUCT_SLUGS.filter((slug) => !have.has(`${slug}.png`));
+  const missing = [
+    ...PRODUCT_SLUGS.map((s) => `${s}.png`),
+    ...renderableSolutions().map((s) => `solutions/${s.slug}.png`),
+    ...resourceTypes.map((t) => `resources/${t.path.replace(/^\/resources\/|\/$/g, "")}.png`),
+  ].filter((f) => !have.has(f));
   if (missing.length) {
-    throw new Error(
-      `generate-og: no AU card for product(s) ${missing.join(", ")} — add an auCards entry.`,
-    );
+    throw new Error(`generate-og: no AU card for ${missing.join(", ")} — add an auCards entry.`);
   }
 }
 

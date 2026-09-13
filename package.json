@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build && node scripts/build/stamp-build.mjs",
+    "build": "astro build && node scripts/build/llms-au.mjs && node scripts/build/stamp-build.mjs",
     "build:global": "BUILD_TARGET=global astro build && node scripts/build/prune-global.mjs && node scripts/build/llms-global.mjs && BUILD_TARGET=global node scripts/build/stamp-build.mjs",
     "build:site": "npm run build && npm run build:global && node scripts/build/merge-dist.mjs && npm run gates:merged",
     "gates:merged": "node scripts/gates/check-merged.mjs",

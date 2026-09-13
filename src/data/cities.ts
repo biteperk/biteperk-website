@@ -82,7 +82,7 @@ export const cities: readonly City[] = [
     published: true,
     geo: { lat: -33.8798, lng: 151.2058 },
     navLabel: "Sydney",
-    seoTitle: "AI phone answering for Sydney restaurants · Biteperk",
+    seoTitle: "AI phone answering for Sydney restaurants",
     seoDescription:
       "AI phone answering and an AI receptionist for Sydney restaurants. Bella answers every call from Surry Hills to Manly, checks live availability and books the table — 24/7, built in Sydney.",
     heroHeadline: "AI phone answering for Sydney restaurants.",
@@ -194,7 +194,7 @@ export const cities: readonly City[] = [
     published: true,
     geo: { lat: -37.8136, lng: 144.9631 },
     navLabel: "Melbourne",
-    seoTitle: "AI phone answering for Melbourne restaurants · Biteperk",
+    seoTitle: "AI phone answering for Melbourne restaurants",
     seoDescription:
       "An AI receptionist for Melbourne restaurants. Bella answers every call — Fitzroy laneway bar or CBD dining room — checks live availability and books the table, 24/7.",
     heroHeadline: "AI phone answering for Melbourne restaurants.",
@@ -306,7 +306,7 @@ export const cities: readonly City[] = [
     published: true,
     geo: { lat: -27.4698, lng: 153.0251 },
     navLabel: "Brisbane",
-    seoTitle: "AI phone answering for Brisbane restaurants · Biteperk",
+    seoTitle: "AI phone answering for Brisbane restaurants",
     seoDescription:
       "AI phone answering for Brisbane restaurants. Bella is the AI receptionist that answers every call from West End to Teneriffe, handles deck-or-inside changes and books tables 24/7.",
     heroHeadline: "AI phone answering for Brisbane restaurants.",
@@ -419,7 +419,7 @@ export const cities: readonly City[] = [
     published: true,
     geo: { lat: -31.9523, lng: 115.8613 },
     navLabel: "Perth",
-    seoTitle: "AI phone answering for Perth restaurants · Biteperk",
+    seoTitle: "AI phone answering for Perth restaurants",
     seoDescription:
       "An AI receptionist that never checks the clock. Bella answers Perth restaurant calls 24/7 — Northbridge to Fremantle — so the time zone never costs you a booking.",
     heroHeadline: "AI phone answering for Perth restaurants.",
@@ -532,7 +532,7 @@ export const cities: readonly City[] = [
     published: true,
     geo: { lat: -34.9285, lng: 138.6007 },
     navLabel: "Adelaide",
-    seoTitle: "AI phone answering for Adelaide restaurants · Biteperk",
+    seoTitle: "AI phone answering for Adelaide restaurants",
     seoDescription:
       "AI phone answering for Adelaide restaurants and wine bars. Bella, an AI receptionist, answers every call — Peel Street to Glenelg — books the table and rides the Mad March surge, 24/7.",
     heroHeadline: "AI phone answering for Adelaide restaurants.",
@@ -644,7 +644,7 @@ export const cities: readonly City[] = [
     published: true,
     geo: { lat: -28.0167, lng: 153.4 },
     navLabel: "Gold Coast",
-    seoTitle: "AI phone answering for Gold Coast restaurants · Biteperk",
+    seoTitle: "AI phone answering for Gold Coast restaurants",
     seoDescription:
       "An AI receptionist for Gold Coast restaurants. Bella answers tourist calls 24/7 — Burleigh to Broadbeach — books same-day tables and never takes schoolies week off.",
     heroHeadline: "AI phone answering for Gold Coast restaurants.",

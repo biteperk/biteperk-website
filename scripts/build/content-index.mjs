@@ -27,6 +27,8 @@ export function blogPosts() {
       const scalar = (key) => fm.match(new RegExp(`^${key}:\\s*"?([^"\\n]*)"?\\s*$`, "m"))?.[1]?.trim();
       return {
         slug: f.replace(/\.md$/, ""),
+        title: scalar("title") ?? "",
+        description: scalar("description") ?? "",
         type: scalar("type") ?? "guide",
         draft: scalar("draft") === "true",
         publishDate: scalar("publishDate") ?? "",

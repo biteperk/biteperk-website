@@ -1,7 +1,7 @@
 ---
 import Base from "@/layouts/AuBase.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
-import { site } from "@/data/site";
+import { site, pageTitle } from "@/data/site";
 import {
   categories,
   plausibleReady,
@@ -11,7 +11,7 @@ import {
 } from "@/data/consent";
 import { u } from "@/data/locales";
 
-const title = "Cookie policy — Biteperk";
+const title = pageTitle("Cookie policy");
 const description =
   "How Biteperk uses local storage, cookies and denied-by-default Google consent mode. Change your choice any time.";
 

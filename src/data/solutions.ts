@@ -111,7 +111,7 @@ export const solutions: readonly Solution[] = [
     relatedSolutions: ["cafes", "takeaway"],
     page: {
       seo: {
-        title: "AI receptionist for restaurants · BitePerk",
+        title: "AI receptionist for restaurants",
         description:
           "Stop losing bookings when the floor is slammed. Vox answers every restaurant call in a warm Australian voice, checks availability, and writes the booking to your screen.",
       },
@@ -195,7 +195,7 @@ export const solutions: readonly Solution[] = [
     relatedSolutions: ["enterprise", "restaurants"],
     page: {
       seo: {
-        title: "AI phone receptionist for hotels · BitePerk",
+        title: "AI phone receptionist for hotels",
         description:
           "VoxStay is BitePerk’s AI receptionist for independent hotels — answers booking calls, quotes real stay prices with taxes, and texts a secure payment link. In development; join the waitlist.",
       },
@@ -271,7 +271,7 @@ export const solutions: readonly Solution[] = [
     relatedSolutions: ["restaurants", "takeaway"],
     page: {
       seo: {
-        title: "AI phone answering for cafes · BitePerk",
+        title: "AI phone answering for cafes",
         description:
           "Morning rush should not mean a missed booking or takeaway order. Vox answers cafe calls so baristas stay on the machine.",
       },
@@ -349,7 +349,7 @@ export const solutions: readonly Solution[] = [
     relatedSolutions: ["restaurants", "cafes", "drive-thru"],
     page: {
       seo: {
-        title: "AI phone ordering for takeaway · BitePerk",
+        title: "AI phone ordering for takeaway",
         description:
           "Phone orders should not stall the pass. VoxOrder takes takeaway calls, captures the order cleanly, and keeps your kitchen moving.",
       },
@@ -427,7 +427,7 @@ export const solutions: readonly Solution[] = [
     relatedSolutions: ["takeaway"],
     page: {
       seo: {
-        title: "AI drive-thru voice ordering · BitePerk",
+        title: "AI drive-thru voice ordering",
         description:
           "VoxDrive is BitePerk’s drive-thru voice ordering concept — lane speed without sacrificing order accuracy. Join the conversation early.",
       },
@@ -499,7 +499,7 @@ export const solutions: readonly Solution[] = [
     relatedSolutions: ["professional-services"],
     page: {
       seo: {
-        title: "AI phone answering for medical clinics · BitePerk",
+        title: "AI phone answering for medical clinics",
         description:
           "Overflow and after-hours clinic calls deserve a competent answer. VoxConcierge is in development for professional front-desk coverage — register interest for medical use cases.",
       },
@@ -571,7 +571,7 @@ export const solutions: readonly Solution[] = [
     relatedSolutions: ["medical", "enterprise"],
     page: {
       seo: {
-        title: "AI receptionist for professional services · BitePerk",
+        title: "AI receptionist for professional services",
         description:
           "Law, accounting, agency and advisory firms lose work on unanswered inbound calls. VoxConcierge is BitePerk’s front-desk AI in development — join the waitlist.",
       },
@@ -643,7 +643,7 @@ export const solutions: readonly Solution[] = [
     relatedSolutions: ["restaurants", "hotels"],
     page: {
       seo: {
-        title: "Enterprise AI phone automation · BitePerk",
+        title: "Enterprise AI phone automation",
         description:
           "Multi-site hospitality groups need one voice standard and central visibility. Talk to BitePerk about rolling Vox across venues without a frankenstein telephony stack.",
       },

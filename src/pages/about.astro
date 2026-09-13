@@ -13,11 +13,11 @@ import SectionHeader from "@/components/SectionHeader.astro";
 import ImageBlock from "@/components/ImageBlock.astro";
 import Illustration from "@/components/Illustration.astro";
 import Cta from "@/components/Cta.astro";
-import { site } from "@/data/site";
+import { site, pageTitle } from "@/data/site";
 import { ORG_ID } from "@/data/schema";
 import { u, abs } from "@/data/locales";
 
-const title = "About Biteperk — the Sydney team behind Vox";
+const title = pageTitle("About BitePerk — the Sydney team behind Vox");
 const description =
   "Biteperk is a small Sydney company building voice and AI tools for hospitality. Based in Surry Hills, answering restaurant phones Australia-wide. Here's why we build what we build.";
 

@@ -1,10 +1,10 @@
 ---
 import Base from "@/layouts/AuBase.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
-import { site } from "@/data/site";
+import { site, pageTitle } from "@/data/site";
 import { u } from "@/data/locales";
 
-const title = "Terms of service — Biteperk";
+const title = pageTitle("Terms of service");
 const description =
   "Plain-English terms of service for Biteperk's website and products.";
 ---

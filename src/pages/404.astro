@@ -7,13 +7,14 @@ import AuBase from "@/layouts/AuBase.astro";
 // longer do. Tolerated here rather than splitting the route per target.
 import StarMark from "@/components/StarMark.astro";
 import { currentTarget, u } from "@/data/locales";
+import { pageTitle } from "@/data/site";
 
 // The global (biteperk.com) build gets its own 404: the AU version's chrome
 // carries the AU footer (NAP + phone) and links to routes pruned from that
 // host — both forbidden on the international surfaces (PLAN.md §8).
 const isGlobal = currentTarget() === "global";
 
-const title = isGlobal ? "Not found — BitePerk" : "Not found — Biteperk";
+const title = pageTitle("Not found");
 const description = "We couldn't find that page. Here are a few useful places to go.";
 ---
 
