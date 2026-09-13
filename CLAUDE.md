@@ -160,6 +160,7 @@ Same shape as `biteperk/voxtable`:
 - **`integration`** is the default working branch — open feature PRs against it.
 - **`main`** is production-only. Promote with PR `integration` → `main` after CI is green and the change has been soaked/tested.
 - Production Firebase deploys are **manual** and must run from `main`: `gh workflow run "Deploy Firebase Hosting" --ref main`. Do not treat `main` as the day-to-day working branch.
+- **Release process, branch policy and version tags: [`docs/RELEASING.md`](docs/RELEASING.md).** `integration` → staging automatically; `integration → main` promotion PR = a release, tagged `vX.Y.Z` on the deployed `main` commit (candidates `vX.Y.Z-rc.N` on `integration`). One PR at a time — never stack.
 
 ## Deploy
 
