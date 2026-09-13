@@ -1,0 +1,51 @@
+---
+/**
+ * "Built for your kind of venue" — the live solution verticals as a chip row.
+ * Gives the home and /products/ an IN-BODY path into /solutions/, which until
+ * 13 Sep 2026 was reachable only through the mega-menu (zero editorial inbound
+ * links to the highest-intent pages on the tree).
+ */
+import { liveSolutions, solutionPath } from "@/data/solutions";
+import { u } from "@/data/locales";
+
+interface Props {
+  eyebrow?: string;
+  heading?: string;
+  lede?: string;
+}
+const {
+  eyebrow = "Solutions by industry",
+  heading = "Built for your kind of venue.",
+  lede = "The same phone host, tuned to how your business actually takes calls — start with your vertical.",
+} = Astro.props;
+---
+
+<section class="ss cv-auto">
+  <div class="wrap">
+    <div class="ss-head reveal">
+      <span class="eyebrow">{eyebrow}</span>
+      <h2 class="ss-h">{heading}</h2>
+      <p class="ss-lede">{lede}</p>
+    </div>
+    <ul class="ss-chips reveal-stagger" role="list">
+      {liveSolutions().map((s) => (
+        <li><a class="ss-chip pressable" href={u(solutionPath(s.slug))}>{s.name}</a></li>
+      ))}
+      <li><a class="ss-chip ss-all" href={u("/solutions/")}>All solutions →</a></li>
+    </ul>
+  </div>
+</section>
+
+<style>
+  .ss { padding-block: var(--space-section); border-top: 1px solid var(--line); }
+  .ss-h { margin-top: 12px; font-size: var(--fs-h2); font-weight: 800; letter-spacing: -0.02em; line-height: var(--lh-display); color: var(--white); max-width: 22ch; }
+  .ss-lede { margin-top: 14px; color: var(--text); max-width: 60ch; line-height: var(--lh-lede); }
+  .ss-chips { list-style: none; padding: 0; margin: 28px 0 0; display: flex; flex-wrap: wrap; gap: 10px; }
+  .ss-chip {
+    display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px;
+    border: 1px solid var(--line); border-radius: 999px; text-decoration: none;
+    color: var(--white); font-weight: 600; background: color-mix(in srgb, var(--ink) 94%, var(--white));
+  }
+  .ss-chip:hover { border-color: color-mix(in srgb, var(--gold) 45%, var(--line)); }
+  .ss-all { color: var(--gold); }
+</style>

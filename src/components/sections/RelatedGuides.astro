@@ -1,0 +1,79 @@
+---
+/**
+ * "From the guides" — a grid of guide cards, shared by the city pages, the
+ * solution pages and the home. Extracted 13 Sep 2026 from three divergent
+ * inline copies ([city].astro, index.astro, resources/index.astro) so a
+ * fourth (solutions) did not become a fourth copy.
+ *
+ * Takes resolved collection entries — callers decide which guides (a city's
+ * `relatedGuides`, a solution's `relatedGuides`, the latest N on the home).
+ */
+import type { CollectionEntry } from "astro:content";
+import { u } from "@/data/locales";
+
+interface Props {
+  posts: ReadonlyArray<CollectionEntry<"blog">>;
+  eyebrow?: string;
+  heading: string;
+  /** Optional "All guides →" link; defaults to the canonical guides listing. */
+  allHref?: string | null;
+  allLabel?: string;
+}
+const {
+  posts,
+  eyebrow = "From the guides",
+  heading,
+  allHref = u("/resources/guides/"),
+  allLabel = "All guides →",
+} = Astro.props;
+const fmt = (d: Date) =>
+  new Intl.DateTimeFormat("en-AU", { day: "numeric", month: "short", year: "numeric" }).format(d);
+---
+
+{posts.length > 0 && (
+  <section class="rg cv-auto">
+    <div class="wrap">
+      <div class="rg-head reveal">
+        <div>
+          <span class="eyebrow">{eyebrow}</span>
+          <h2 class="rg-h">{heading}</h2>
+        </div>
+        {allHref && <a class="rg-all" href={allHref}>{allLabel}</a>}
+      </div>
+      <ul class="rg-grid reveal-stagger">
+        {posts.map((post) => (
+          <li>
+            <a class="rg-card pressable" href={u(`/blog/${post.id}/`)} data-glow>
+              <div class="rg-meta">
+                <time datetime={post.data.publishDate.toISOString().slice(0, 10)}>{fmt(post.data.publishDate)}</time>
+                {post.data.tags[0] && <span class="rg-tag">{post.data.tags[0]}</span>}
+              </div>
+              <h3 class="rg-title">{post.data.title}</h3>
+              <p class="rg-desc">{post.data.description}</p>
+              <span class="rg-read">Read →</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+)}
+
+<style>
+  .rg { padding-block: var(--space-section); border-top: 1px solid var(--line); background: var(--ink-0); }
+  .rg-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+  .rg-h { margin-top: 12px; font-size: var(--fs-h2); font-weight: 800; letter-spacing: -0.02em; line-height: var(--lh-display); color: var(--white); max-width: 20ch; }
+  .rg-all { color: var(--white); text-decoration: underline; text-underline-offset: 4px; font-weight: 600; }
+  .rg-grid { list-style: none; padding: 0; margin: 44px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+  .rg-card {
+    display: flex; flex-direction: column; gap: 10px; height: 100%;
+    padding: 22px 22px 20px; border: 1px solid var(--line); border-radius: 16px;
+    background: color-mix(in srgb, var(--ink) 94%, var(--white)); text-decoration: none; color: inherit;
+  }
+  .rg-card:hover { border-color: color-mix(in srgb, var(--gold) 45%, var(--line)); }
+  .rg-meta { display: flex; gap: 10px; align-items: center; color: var(--mist); font-size: var(--fs-small); }
+  .rg-tag { padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); }
+  .rg-title { margin: 0; font-size: 1.15rem; font-weight: 700; line-height: 1.3; color: var(--white); }
+  .rg-desc { margin: 0; color: var(--text); font-size: 0.95rem; line-height: 1.55; }
+  .rg-read { margin-top: auto; color: var(--gold); font-weight: 600; font-size: var(--fs-small); }
+</style>

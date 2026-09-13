@@ -31,8 +31,11 @@
  */
 
 import { PRODUCT_SLUGS } from "./product-slugs";
-import { SOLUTION_SLUGS } from "./solutions";
-import { RESOURCE_SEGMENTS } from "./resources";
+import { RENDERABLE_SOLUTION_SLUGS } from "./solutions";
+import { RESOURCE_TYPE_BY_SEGMENT } from "./resources";
+// Node-only (reads frontmatter). locales.ts is a server/build module — no
+// client script imports it; if one ever does, Vite fails the build loudly.
+import { intlResourcesForBase } from "../../scripts/build/content-index.mjs";
 import { intlCityPaths } from "./intl/cities";
 
 export type BuildTarget = "au" | "global";
@@ -46,7 +49,11 @@ export type BuildTarget = "au" | "global";
 export type Lang = "en" | "fr";
 
 /** Informational market grouping — overrides key on `base`, not on this. */
-export type Market = "au" | "int" | "gb" | "fr" | "be";
+/**
+ * `ca` is registered but PLANNED (see ALL_LOCALES): typing exists for it —
+ * compliance entry, city stubs, gate rules — while nothing is emitted.
+ */
+export type Market = "au" | "int" | "gb" | "fr" | "be" | "ca";
 
 export type Locale = {
   /** URL base path under the origin, no trailing slash. e.g. "/au-en", "/en". */
@@ -82,6 +89,17 @@ export type Locale = {
    * docs/accounts-and-ops-log.md for the exact rule expressions.
    */
   readonly cctld?: string;
+  /**
+   * "planned" = registered, typed, NOT emitted. The exported `locales` array
+   * filters these out, and every routing/hreflang/sitemap/picker/OG/gate
+   * surface derives from that array — so a planned locale leaks nowhere by
+   * construction (tests/unit/locale-planned.test.mjs pins the source-level
+   * contract, scripts/gates/check-planned.mjs the built artefacts). Removing
+   * the field is the launch. Canada's two entries must flip in the same
+   * commit (Québec Charter of the French Language); the test enforces it.
+   * Checklist: docs/phase1/CANADA-READINESS.md.
+   */
+  readonly status?: "planned";
 };
 
 /** The one origin every locale is served from. */
@@ -95,7 +113,7 @@ export const AU_HOME = `${ORIGIN}${AU_BASE}`;
  * The full locale cluster. Order matters only for display; the hreflang gate
  * asserts reciprocity + exactly one x-default regardless.
  */
-export const locales: readonly Locale[] = [
+export const ALL_LOCALES: readonly Locale[] = [
   {
     base: "/au-en",
     lang: "en-AU",
@@ -171,7 +189,44 @@ export const locales: readonly Locale[] = [
     short: "BE",
     target: "global",
   },
+  // ── Canada — PLANNED (13 Sep 2026). No cctld until launch (an unresolving
+  // domain in sameAs is worse than none). See docs/phase1/CANADA-READINESS.md.
+  {
+    base: "/ca-en",
+    lang: "en-CA",
+    copyLang: "en",
+    market: "ca",
+    ogLocale: "en_CA",
+    hreflang: ["en-CA"],
+    label: "Canada — English",
+    short: "CA",
+    target: "global",
+    status: "planned",
+  },
+  {
+    base: "/ca-fr",
+    lang: "fr-CA",
+    copyLang: "fr",
+    market: "ca",
+    ogLocale: "fr_CA",
+    hreflang: ["fr-CA"],
+    label: "Canada — Français",
+    short: "CA",
+    target: "global",
+    status: "planned",
+  },
 ];
+
+/**
+ * The LIVE locale list — what every surface derives from. Planned locales are
+ * filtered out here, once, rather than at 40 call sites.
+ */
+export const locales: readonly Locale[] = ALL_LOCALES.filter((l) => l.status !== "planned");
+
+/** Registered-but-not-emitted locales (Canada today). */
+export function plannedLocales(): readonly Locale[] {
+  return ALL_LOCALES.filter((l) => l.status === "planned");
+}
 
 /**
  * Every country-code front-door domain in the estate, derived from the locale
@@ -287,9 +342,15 @@ export const AU_STATIC_PAGES: readonly string[] = [
   "products",
   ...PRODUCT_SLUGS.map((s) => `products/${s}`),
   "solutions",
-  ...SOLUTION_SLUGS.map((s) => `solutions/${s}`),
+  // Same predicate as [slug].astro's getStaticPaths (live + draft) — never
+  // the full SOLUTION_SLUGS, or a "planned" entry breaks check-routes.
+  ...RENDERABLE_SOLUTION_SLUGS.map((s) => `solutions/${s}`),
+  // The resources HUB only. Category pages (/resources/<segment>/) exist only
+  // for types with ≥1 published post — an empty, indexable "nothing here yet"
+  // page is a thin-page signal — so they are content-derived: check-routes and
+  // tests/helpers/routes.ts append them from scripts/build/content-index.mjs
+  // + resources.ts, and [type].astro builds them from the collection.
   "resources",
-  ...RESOURCE_SEGMENTS.map((s) => `resources/${s}`),
   "contact",
   "about",
   "technology",
@@ -321,6 +382,11 @@ const INTL_CORE_PAGES: readonly string[] = [
   // fifth product needs no edit here.
   "products",
   ...PRODUCT_SLUGS.map((s) => `products/${s}`),
+  // Solution verticals are CORE for the same reason products are: language-
+  // level prose (intl/solutions.ts), alternates of each other across the
+  // English trees. Same predicate as the AU tree (renderable = live + draft).
+  "solutions",
+  ...RENDERABLE_SOLUTION_SLUGS.map((s) => `solutions/${s}`),
 ];
 
 /**
@@ -349,6 +415,19 @@ const INTL_EXTRA_PAGES: Readonly<Record<string, readonly string[]>> = {
   "/gb-en": ["legal/company-details"],
 };
 
+/** Resources routes for a base — content-derived (scripts/build/content-index.mjs). */
+export function intlResourcePaths(base: string): readonly string[] {
+  const posts = intlResourcesForBase(base);
+  if (posts.length === 0) return [];
+  const segmentOf = (type: string) => Object.entries(RESOURCE_TYPE_BY_SEGMENT).find(([, id]) => id === type)?.[0];
+  const segments = [...new Set(posts.map((p) => segmentOf(p.type)).filter((s): s is string => Boolean(s)))];
+  return [
+    "resources",
+    ...segments.map((s) => `resources/${s}`),
+    ...posts.map((p) => `resources/${segmentOf(p.type)}/${p.slug}`),
+  ];
+}
+
 /**
  * Every page path a locale emits.
  *
@@ -365,6 +444,10 @@ export function pagesForLocale(locale: Locale): readonly string[] {
     // intl/cities.ts gets its route, its hreflang cluster, its e2e coverage
     // and its OG-card requirement from that one flag.
     ...intlCityPaths(locale.base),
+    // Resources: hub + populated category pages + articles, only where the
+    // collection has an article for this base (a French tree with no French
+    // article gets no empty hub). Same rule as the AU tree.
+    ...intlResourcePaths(locale.base),
   ];
 }
 

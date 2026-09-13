@@ -132,13 +132,26 @@ test("localeSwitchUrl: global→global carries every intl page; AU-only pages fa
  * thinner page to one market.
  * ---------------------------------------------------------------------- */
 
+/**
+ * Keys that annotate a leaf rather than add content, and are optional by type.
+ * `lang` on a call-sim line is the BCP 47 tag for a line spoken in the other
+ * language (the Belgian bilingual transcripts) — a tree that carries it renders
+ * exactly the same number of lines as one that does not, which is what this
+ * fingerprint exists to compare. tests/unit/intl-callsim.test.mjs owns the
+ * rule for when `lang` must be present.
+ */
+const ANNOTATION_KEYS = new Set(["lang"]);
+
 /** Structural fingerprint: every leaf path + type, and every array's length. */
 function shapeOf(value, path = "", out = []) {
   if (Array.isArray(value)) {
     out.push(`${path}[]=${value.length}`);
     value.forEach((v, i) => shapeOf(v, `${path}[${i}]`, out));
   } else if (value && typeof value === "object") {
-    for (const k of Object.keys(value).sort()) shapeOf(value[k], path ? `${path}.${k}` : k, out);
+    for (const k of Object.keys(value).sort()) {
+      if (ANNOTATION_KEYS.has(k)) continue;
+      shapeOf(value[k], path ? `${path}.${k}` : k, out);
+    }
   } else {
     out.push(`${path}:${typeof value}`);
   }
@@ -242,6 +255,7 @@ test("bundle parity: no empty or whitespace-only copy on any tree", () => {
  */
 const FR_SHARED_WITH_EN = new Set([
   "chrome.nav.contact",       // "Contact"
+  "chrome.nav.solutions",     // "Solutions" — same word in French
   "chrome.consent.categories.marketing.title", // "Marketing"
   "chrome.menu",              // "Menu" is the same word in French
   "chrome.cookies",           // "Cookies"

@@ -110,6 +110,13 @@ const BE_STORY = {
 // The shared French hospitality shot, same contract as UK_STORY / BE_STORY.
 // Already graded and already frFr's `media.hospitality` slug (markets.ts), so a
 // French city costs no new photography — rule 3 again.
+// Canada is PLANNED: no photography has been chosen, so the stubs below point
+// at the neutral continental café until a Canadian hospitality shot is graded.
+const CA_STORY = {
+  storyImage: "cafe-continental",
+  storyImageAlt: "A relaxed café interior between services",
+} as const;
+
 const FR_STORY = {
   storyImage: "brasserie-banquette",
   storyImageAlt: "Banquette en velours bleu et tables en marbre dressées pour le service",
@@ -966,7 +973,7 @@ export const intlCities: readonly IntlCity[] = [
     copyLang: "fr",
     name: "Paris",
     published: true,
-    seoTitle: "Répondeur téléphonique IA pour les restaurants parisiens — Vox par BitePerk",
+    seoTitle: "Hôte téléphonique IA pour restaurants parisiens — BitePerk",
     seoDescription:
       "Vox répond au téléphone de votre restaurant parisien d'une voix naturelle, vérifie le registre réel et enregistre la réservation — pendant que votre équipe reste en salle. Pilotes ouverts en France.",
     heroHeadline: "Vingt heures trente, la salle est pleine, trois lignes sonnent. Vox les prend toutes.",
@@ -1064,7 +1071,7 @@ export const intlCities: readonly IntlCity[] = [
     copyLang: "fr",
     name: "Lyon",
     published: true,
-    seoTitle: "Répondeur téléphonique IA pour les restaurants lyonnais — Vox par BitePerk",
+    seoTitle: "Vox, l'hôte téléphonique IA de votre bouchon à Lyon",
     seoDescription:
       "Vox répond au téléphone de votre bouchon ou restaurant à Lyon d'une voix naturelle, vérifie le registre et prend la réservation pendant que la cuisine tourne. Pilotes ouverts en France.",
     heroHeadline: "Au bouchon, le patron est au piano. Le téléphone sonne dans une salle vide.",
@@ -1158,7 +1165,7 @@ export const intlCities: readonly IntlCity[] = [
     copyLang: "fr",
     name: "Marseille",
     published: true,
-    seoTitle: "Répondeur téléphonique IA pour les restaurants marseillais — Vox par BitePerk",
+    seoTitle: "Restaurants marseillais : Vox décroche et note la commande",
     seoDescription:
       "Vox répond au téléphone de votre restaurant à Marseille d'une voix naturelle, note les commandes passées à l'avance et vérifie le registre pendant que la salle tourne. Pilotes ouverts en France.",
     heroHeadline: "La bouillabaisse se commande la veille. Encore faut-il que quelqu'un décroche.",
@@ -1251,7 +1258,7 @@ export const intlCities: readonly IntlCity[] = [
     copyLang: "fr",
     name: "Nice",
     published: true,
-    seoTitle: "Répondeur téléphonique IA pour les restaurants niçois — Vox par BitePerk",
+    seoTitle: "Vox, l'hôte téléphonique IA des terrasses niçoises",
     seoDescription:
       "Vox répond au téléphone de votre restaurant à Nice d'une voix naturelle, tient la ligne quand la saison déborde et vérifie le registre réel. Pilotes ouverts en France.",
     heroHeadline: "L'été, la terrasse déborde — et le téléphone avec. Vox tient la ligne.",
@@ -1344,7 +1351,7 @@ export const intlCities: readonly IntlCity[] = [
     copyLang: "fr",
     name: "Bordeaux",
     published: true,
-    seoTitle: "Répondeur téléphonique IA pour les restaurants bordelais — Vox par BitePerk",
+    seoTitle: "Vox répond au téléphone de votre restaurant bordelais",
     seoDescription:
       "Vox répond au téléphone de votre restaurant à Bordeaux d'une voix naturelle, prend les grandes tablées et les menus accordés et vérifie le registre. Pilotes ouverts en France.",
     heroHeadline: "Le week-end, les tablées de dégustation appellent. Vox répond à chacune.",
@@ -1437,7 +1444,7 @@ export const intlCities: readonly IntlCity[] = [
     copyLang: "fr",
     name: "Toulouse",
     published: true,
-    seoTitle: "Répondeur téléphonique IA pour les restaurants toulousains — Vox par BitePerk",
+    seoTitle: "Le coup de feu de midi à Toulouse : Vox tient la ligne",
     seoDescription:
       "Vox répond au téléphone de votre restaurant à Toulouse d'une voix naturelle, tient la ligne au coup de feu de midi et vérifie le registre réel. Pilotes ouverts en France.",
     heroHeadline: "Midi en semaine, la ville déjeune en une heure. Le téléphone n'attend pas.",
@@ -1532,7 +1539,7 @@ export const intlCities: readonly IntlCity[] = [
     copyLang: "fr",
     name: "Lille",
     published: true,
-    seoTitle: "Répondeur téléphonique IA pour les restaurants lillois — Vox par BitePerk",
+    seoTitle: "Estaminets et restaurants lillois : Vox tient la ligne",
     seoDescription:
       "Vox répond au téléphone de votre estaminet ou restaurant à Lille d'une voix naturelle, tient la ligne les week-ends chargés et vérifie le registre. Pilotes ouverts en France.",
     heroHeadline: "Le week-end de la Braderie, la ligne explose. Vox décroche sans faiblir.",
@@ -1625,7 +1632,7 @@ export const intlCities: readonly IntlCity[] = [
     copyLang: "fr",
     name: "Nantes",
     published: true,
-    seoTitle: "Répondeur téléphonique IA pour les restaurants nantais — Vox par BitePerk",
+    seoTitle: "Vox, l'hôte téléphonique IA des restaurants nantais",
     seoDescription:
       "Vox répond au téléphone de votre restaurant à Nantes d'une voix naturelle, encaisse les week-ends en famille et vérifie le registre. Pilotes ouverts en France.",
     heroHeadline: "Le dimanche, les familles appellent et le nombre change trois fois. Vox suit.",
@@ -1718,7 +1725,7 @@ export const intlCities: readonly IntlCity[] = [
     copyLang: "fr",
     name: "Strasbourg",
     published: true,
-    seoTitle: "Répondeur téléphonique IA pour les restaurants strasbourgeois — Vox par BitePerk",
+    seoTitle: "Winstubs et restaurants strasbourgeois : Vox répond",
     seoDescription:
       "Vox répond au téléphone de votre winstub ou restaurant à Strasbourg d'une voix naturelle, encaisse les semaines de pointe et vérifie le registre. Pilotes ouverts en France.",
     heroHeadline: "Semaine de session, marché de Noël : la ville double et le téléphone déborde.",
@@ -1811,7 +1818,7 @@ export const intlCities: readonly IntlCity[] = [
     copyLang: "fr",
     name: "Montpellier",
     published: true,
-    seoTitle: "Répondeur téléphonique IA pour les restaurants montpelliérains — Vox par BitePerk",
+    seoTitle: "Hôte téléphonique IA pour restaurants à Montpellier",
     seoDescription:
       "Vox répond au téléphone de votre restaurant à Montpellier d'une voix naturelle, décroche tard quand la salle est pleine et vérifie le registre. Pilotes ouverts en France.",
     heroHeadline: "Tard le soir, la salle est pleine et le téléphone sonne encore. Vox décroche.",
@@ -1910,7 +1917,7 @@ export const intlCities: readonly IntlCity[] = [
     copyLang: "fr",
     name: "Bruxelles",
     published: true,
-    seoTitle: "Répondeur téléphonique IA pour les restaurants bruxellois — Vox par BitePerk",
+    seoTitle: "Vox, l'hôte téléphonique IA bilingue des restaurants bruxellois",
     seoDescription:
       "Vox répond au téléphone de votre restaurant bruxellois d'une voix naturelle, vérifie le registre réel et prend la réservation — pendant que votre équipe reste avec la salle. Pilotes belges en ouverture.",
     heroHeadline: "Le déjeuner dure quatre-vingt-dix minutes. Le téléphone, lui, n'attend pas.",
@@ -1992,6 +1999,361 @@ export const intlCities: readonly IntlCity[] = [
     cityscapeImage: "brussels-grand-place",
     cityscapeImageAlt: "Les maisons des corporations de la Grand-Place à Bruxelles",
     ...BE_STORY,
+  },
+  // ── Antwerp (/be-en) — the second Belgian city ─────────────────────────
+  //
+  // Built on a different spine from Brussels-EN (the narrow MIDI window and
+  // the FR/EN switch): Antwerp is the EVENING city, booked from the afternoon
+  // by an international trade — port, diamonds, fashion, the hotel belt — in
+  // a place that answers its phone in DUTCH first. That last fact is the
+  // page's honesty line and it is load-bearing: Vox speaks English and French,
+  // Dutch is NOT built, and the copy says so in the intro, a scenario, two
+  // FAQs and the aiLocal lead. A Dutch caller is passed to the venue, never
+  // guessed at. Same anti-doorway pool as London…Liverpool + Brussels-EN.
+  {
+    slug: "antwerp",
+    base: "/be-en",
+    copyLang: "en",
+    name: "Antwerp",
+    published: true,
+    seoTitle: "Vox for Antwerp restaurants — the phone answered, in English or French",
+    seoDescription:
+      "Vox answers your Antwerp restaurant's phone in a natural voice, in English or French, checks the real book and takes the booking. Dutch is not built yet — we say so. Belgian pilots now opening.",
+    heroHeadline: "The evening rush starts at seven. The phone starts earlier.",
+    intro: [
+      "Antwerp eats late and books late. The tables in Zuid and around the Eilandje fill from seven, but the calls that decide whether they fill start at four in the afternoon — the office in the diamond district settling on tonight, the visitor off the train at Centraal who has just read about your kitchen, the regular who wants the corner table on Friday and will ring until someone picks up. Those calls arrive while your team is prepping, and each one that rings out is a table that quietly books somewhere on the same street.",
+      "This is also a city that answers its phone in Dutch first, and that matters for what we can honestly offer. Vox speaks English and French today. It does not speak Dutch yet, and we will not pretend otherwise: an Antwerp pilot begins with the English and French calls a venue already receives, which in the fashion quarter, the port and the hotel belt is a larger share of the phone than most owners have ever measured. Dutch follows demand from venues, not the other way round.",
+      "Within that boundary, Vox does the job completely. It picks up on the first ring at any hour, reads what the book genuinely has left before it offers anything, writes the booking down with a transcript and a recording attached, and hands the call to your own staff the moment it stops being a reservation — a Dutch-speaking caller included, who is passed through rather than guessed at.",
+    ],
+    districts: [
+      "Zuid", "Eilandje", "Sint-Andries", "Zurenborg", "Meir",
+      "Diamond district", "Berchem", "Borgerhout", "Theaterbuurt", "Wilrijk",
+    ],
+    scenarios: [
+      {
+        title: "16:10, the office that hasn't decided yet",
+        body: "A group in the diamond district wants eight seats at eight and has not agreed on the day. Vox holds the conversation, offers what the book actually has on Thursday and on Friday, and writes down the one they choose — without your chef leaving the pass.",
+      },
+      {
+        title: "The visitor who read about you on the train",
+        body: "English, no idea how the street is spelled, arriving in forty minutes. Vox takes the name, the two covers and the time, confirms it by text, and the table is waiting before they have found the door.",
+      },
+      {
+        title: "A caller who opens in Dutch",
+        body: "Vox does not improvise in a language it does not serve. It says so, in English, offers to pass the call to your team, and the caller reaches a person — a better outcome than a machine guessing at goedenavond.",
+      },
+      {
+        title: "\"We definitely booked for Saturday\"",
+        body: "The recording and the transcript of the original call sit on the reservation. A disagreement about a Saturday six-top takes ten seconds to settle instead of a strained conversation at the door.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Is Vox live in Antwerp today?",
+        a: "No. It is in production in Australia, taking real bookings for venues that pay for it. Belgium is a pilot programme now opening, and Antwerp is part of it. Proven elsewhere, arriving here with pilot partners — that is the honest description.",
+      },
+      {
+        q: "Most of our callers speak Dutch. Is this for us?",
+        a: "Probably not yet, and we would rather say so than sell you a pilot that cannot help. If a meaningful share of your calls arrive in English or French — hotel guests, the port, the fashion and diamond trades, the international schools — a pilot can cover exactly those and hand the rest to your team. If nearly every call is Dutch, ask us again once Dutch is built.",
+      },
+      {
+        q: "When will Dutch be built?",
+        a: "When venues ask for it in numbers, and not before we can do it properly. Flanders deserves a Dutch that sounds like Antwerp rather than a setting we switch on, and that is a real piece of work. We will tell you when it exists; we will not put a date on a website.",
+      },
+      {
+        q: "Do we need a new number or any equipment?",
+        a: "No. You keep the number on your window and forward the calls you want covered — all of them, or only the ones nobody reaches in time. That forward is the whole installation; Belgian numbering for outbound confirmations is one of the things a pilot settles.",
+      },
+      {
+        q: "What does a pilot cost?",
+        a: "There is no price list. Terms are agreed per venue, and what a good result looks like is written down before the first call is answered. If it does not earn its keep, you stop — nothing to cancel.",
+      },
+    ],
+    aiLocal: {
+      lead: "Behind the voice: a listening model tuned to how this city actually sounds on the phone, a live read of the book before anything is promised, and a hard rule that anything unusual — a Dutch caller included — goes to your staff rather than to a guess.",
+      points: [
+        {
+          icon: "pin",
+          title: "Spells the city right",
+          body: "Zurenborg, Sint-Andries, Eilandje, the Meir — a generic transcription mangles Antwerp street names and the booking note with them. Getting them down intact is dull work, and it is exactly what a pilot sharpens.",
+        },
+        {
+          icon: "calendar-tick",
+          title: "Never a table it does not have",
+          body: "Nothing is offered before the book has been read. A Friday in Zuid does not absorb an over-eager yes, and a phantom eight-top at 20:00 costs the whole sitting.",
+        },
+        {
+          icon: "phone-wave",
+          title: "Built for a loud, international line",
+          body: "Calls here arrive from the port, the trade fairs and the hotel belt, in a spread of accents and over a full room. The listening model is built for that, and every pilot call tunes it further.",
+        },
+        {
+          icon: "shield",
+          title: "EU rules as a design input",
+          body: "The GDPR and the AI Act's transparency duty apply to a voice agent that talks to consumers, and the APD/GBA is the authority here. Call data completes a booking and stays yours; Bella says she is an AI at the start of every call.",
+        },
+      ],
+    },
+    relatedGuides: [],
+    cityscapeImage: "antwerp-cathedral-skyline",
+    cityscapeImageAlt: "Antwerp's rooftops and the cathedral tower above the old centre",
+    ...BE_STORY,
+  },
+
+  // ── Liège (/be-fr) — the second French-Belgian city, STAGED ────────────
+  //
+  // published: false until the French below has had a native pass — it was
+  // written 13 Sep 2026 and is Belgian usage on purpose (« souper », the
+  // Batte, boulets, café liégeois), so Ludovic or a Belgian reviewer. Spine:
+  // the late SOUPER and the Sunday market crowd, against Brussels-FR's midi
+  // window and Paris's evening/no-show line. Flipping `published` is the whole
+  // launch: route, hreflang, sitemap, strip, OG requirement and the
+  // check-cities gates all derive from it. The cityscape is fetched and graded
+  // already so the flip is one line.
+  {
+    slug: "liege",
+    base: "/be-fr",
+    copyLang: "fr",
+    name: "Liège",
+    published: false,
+    seoTitle: "Vox, l'hôte téléphonique IA des restaurants liégeois — BitePerk",
+    seoDescription:
+      "Vox répond au téléphone de votre restaurant liégeois d'une voix naturelle, vérifie le registre réel et prend la réservation — du souper du vendredi au dimanche de la Batte. Pilotes belges ouverts.",
+    heroHeadline: "Le souper se remplit tard. Le téléphone, lui, commence à midi.",
+    intro: [
+      "Liège soupe tard et réserve tard. Les salles d'Outremeuse et du Carré se remplissent après dix-neuf heures trente, mais les appels qui décident de ce remplissage commencent à midi : le bureau de la Médiacité qui hésite encore sur le jour, l'étudiant qui organise l'anniversaire à vingt, l'habitué qui veut sa table près de la fenêtre et rappellera jusqu'à ce que quelqu'un décroche. Ces appels tombent pendant la mise en place, et chacun qui sonne dans le vide est une table qui se réserve sans bruit deux rues plus loin.",
+      "Ici, la ville parle français au téléphone, avec ses mots à elle — on soupe, on dit septante, on commande des boulets et un café liégeois sans avoir à l'expliquer. Vox répond en français comme le ferait un bon responsable de salle : il comprend la date, le nombre de personnes, la demande particulière, et il vérifie ce que le registre a réellement de libre avant de proposer quoi que ce soit. Quand un appel arrive en anglais, il le suit ; quand il arrive en néerlandais, il le transmet à votre équipe plutôt que de deviner — le néerlandais n'est pas encore construit, et nous le disons.",
+      "Le dimanche, la Batte déverse ses visiteurs dans les rues du centre et le téléphone sonne pour le midi même, pendant que la salle sert. Vox décroche dès la première sonnerie, quelle que soit l'heure, inscrit la réservation au registre avec la transcription et l'enregistrement de l'appel, et passe la main à vos gens dès que la conversation cesse d'être une réservation.",
+    ],
+    districts: [
+      "Outremeuse", "Le Carré", "Saint-Léonard", "Guillemins", "Sainte-Marguerite",
+      "Laveu", "Cointe", "Fétinne", "Vennes", "Angleur",
+    ],
+    scenarios: [
+      {
+        title: "Midi, un dimanche de Batte",
+        body: "La salle est pleine et le téléphone demande une table pour tout de suite. Vox regarde ce qui se libère réellement à treize heures quinze, le propose, l'inscrit — et votre équipe n'a pas quitté le passe.",
+      },
+      {
+        title: "L'anniversaire à vingt",
+        body: "Un groupe d'étudiants veut souper vendredi sans s'être mis d'accord sur l'heure. Vox tient la conversation, propose ce que le registre permet vraiment pour vingt couverts, et note l'heure retenue — avec la demande du gâteau.",
+      },
+      {
+        title: "L'appel qui commence en néerlandais",
+        body: "Vox n'improvise pas dans une langue qu'il ne sert pas. Il le dit, en anglais, propose de passer l'appel à votre équipe, et l'appelant obtient une personne — ce qui vaut mieux qu'une machine qui devine.",
+      },
+      {
+        title: "« On avait bien réservé pour samedi »",
+        body: "L'enregistrement et la transcription de l'appel d'origine sont attachés à la réservation. Un désaccord sur une tablée de six se règle en dix secondes, sans discussion tendue à l'entrée.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Vox tourne-t-il déjà à Liège ?",
+        a: "Non. Il est en production en Australie, où il prend de vraies réservations pour des établissements clients. La Belgique est un programme pilote qui s'ouvre maintenant, et Liège en fait partie. Éprouvé ailleurs, il arrive ici avec des partenaires pilotes — c'est la description honnête.",
+      },
+      {
+        q: "Comprend-il le français de Liège ?",
+        a: "Il comprend le français parlé au téléphone, avec ses accents et ses tournures, et un pilote liégeois sert précisément à le confronter aux vôtres : les noms de rues, les habitudes de réservation, la façon dont vos clients demandent une table. Nous préférons le montrer sur vos appels que l'affirmer ici.",
+      },
+      {
+        q: "Et le néerlandais ?",
+        a: "Pas encore construit. Servir la Flandre correctement demande un néerlandais qui sonne juste, et c'est un vrai travail plutôt qu'un réglage à activer. Il suivra la demande des établissements, et nous vous le dirons quand il existera.",
+      },
+      {
+        q: "Faut-il un nouveau numéro ou du matériel ?",
+        a: "Non. Vous gardez le numéro que vos clients connaissent et vous renvoyez vers Vox les appels que vous voulez couvrir — tous, ou seulement ceux que personne n'atteint à temps. Ce renvoi constitue toute l'installation ; la numérotation belge pour les confirmations fait partie de ce qu'un pilote règle.",
+      },
+      {
+        q: "Combien coûte un pilote ?",
+        a: "Il n'y a pas de tarif affiché. Les conditions se conviennent établissement par établissement, et ce qu'est un bon résultat s'écrit avant le premier appel. Si Vox ne gagne pas sa place, vous arrêtez — rien à résilier.",
+      },
+    ],
+    aiLocal: {
+      lead: "Derrière la voix : un modèle d'écoute réglé sur la façon dont cette ville parle réellement au téléphone, une lecture du registre avant toute promesse, et une règle ferme — tout ce qui sort de la réservation, appel en néerlandais compris, va à votre équipe plutôt qu'à une supposition.",
+      points: [
+        {
+          icon: "pin",
+          title: "Écrit la ville correctement",
+          body: "Outremeuse, Saint-Léonard, Laveu, Fétinne — une transcription générique déforme les noms liégeois et la note de réservation avec eux. Les noter intacts est un travail ingrat, et c'est exactement ce qu'un pilote affine.",
+        },
+        {
+          icon: "calendar-tick",
+          title: "Jamais une table qu'il n'a pas",
+          body: "Rien n'est proposé avant la lecture du registre. Un vendredi dans le Carré ne pardonne pas un oui trop rapide, et une tablée fantôme à vingt heures coûte tout le service.",
+        },
+        {
+          icon: "phone-wave",
+          title: "Conçu pour une ligne bruyante",
+          body: "Les appels arrivent de la gare des Guillemins, des bureaux et d'une salle pleine, avec des accents variés. Le modèle d'écoute est fait pour cela, et chaque appel de pilote l'affine.",
+        },
+        {
+          icon: "shield",
+          title: "Les règles européennes comme contrainte de conception",
+          body: "Le RGPD et le devoir de transparence du règlement sur l'IA s'appliquent à un agent vocal qui parle à des consommateurs, et l'APD est l'autorité compétente ici. Les données d'appel servent la réservation et restent les vôtres ; Bella dit qu'elle est une IA dès le début de chaque appel.",
+        },
+      ],
+    },
+    relatedGuides: [],
+    cityscapeImage: "liege-meuse-skyline",
+    cityscapeImageAlt: "Liège vue de la citadelle : la Meuse et le centre au crépuscule",
+    ...BE_STORY,
+  },
+
+  // ── Canada — PLANNED city stubs (13 Sep 2026) ───────────────────────────
+  {
+    // PLANNED — Toronto. Stub so the /ca-en tree is typed before its copy exists;
+    // published stays false until the locale flips (locale-planned.test.mjs).
+    // Spine to write: the after-work booking wave and the condo-tower delivery habit; multilingual callers.
+    slug: "toronto",
+    base: "/ca-en",
+    copyLang: "en",
+    name: "Toronto",
+    published: false,
+    seoTitle: "",
+    seoDescription: "",
+    heroHeadline: "",
+    intro: [],
+    districts: ["Queen West", "King West", "Yorkville", "Leslieville", "The Danforth", "Liberty Village", "Kensington Market", "Distillery District", "Little Italy", "Roncesvalles"],
+    scenarios: [],
+    faqs: [],
+    aiLocal: { lead: "", points: [] },
+    relatedGuides: [],
+    cityscapeImage: "toronto-skyline",
+    cityscapeImageAlt: "Toronto's skyline from the harbour",
+    ...CA_STORY,
+  },
+  {
+    // PLANNED — Vancouver. Stub so the /ca-en tree is typed before its copy exists;
+    // published stays false until the locale flips (locale-planned.test.mjs).
+    // Spine to write: patio season, Pacific-time calls arriving overnight for Sydney, Cantonese/Mandarin as the honest not-built languages.
+    slug: "vancouver",
+    base: "/ca-en",
+    copyLang: "en",
+    name: "Vancouver",
+    published: false,
+    seoTitle: "",
+    seoDescription: "",
+    heroHeadline: "",
+    intro: [],
+    districts: ["Gastown", "Yaletown", "Kitsilano", "Mount Pleasant", "Commercial Drive", "West End", "Main Street", "Chinatown", "Coal Harbour", "Cambie Village"],
+    scenarios: [],
+    faqs: [],
+    aiLocal: { lead: "", points: [] },
+    relatedGuides: [],
+    cityscapeImage: "vancouver-skyline",
+    cityscapeImageAlt: "Vancouver's downtown against the North Shore mountains",
+    ...CA_STORY,
+  },
+  {
+    // PLANNED — Calgary. Stub so the /ca-en tree is typed before its copy exists;
+    // published stays false until the locale flips (locale-planned.test.mjs).
+    // Spine to write: Stampede week and the corporate-lunch trade.
+    slug: "calgary",
+    base: "/ca-en",
+    copyLang: "en",
+    name: "Calgary",
+    published: false,
+    seoTitle: "",
+    seoDescription: "",
+    heroHeadline: "",
+    intro: [],
+    districts: ["Inglewood", "Kensington", "Mission", "Beltline", "Bridgeland", "17th Avenue", "Marda Loop", "East Village", "Stephen Avenue", "Eau Claire"],
+    scenarios: [],
+    faqs: [],
+    aiLocal: { lead: "", points: [] },
+    relatedGuides: [],
+    cityscapeImage: "calgary-skyline",
+    cityscapeImageAlt: "Calgary's towers over the Bow River",
+    ...CA_STORY,
+  },
+  {
+    // PLANNED — Montréal. Stub so the /ca-fr tree is typed before its copy exists;
+    // published stays false until the locale flips (locale-planned.test.mjs).
+    // Colonne vertébrale à écrire : le souper tardif, la terrasse d'été, les appels qui basculent entre le français et l'anglais — proche du spine bruxellois, à différencier avant publication (check-intl-similarity).
+    slug: "montreal",
+    base: "/ca-fr",
+    copyLang: "fr",
+    name: "Montréal",
+    published: false,
+    seoTitle: "",
+    seoDescription: "",
+    heroHeadline: "",
+    intro: [],
+    districts: ["Plateau-Mont-Royal", "Mile End", "Vieux-Montréal", "Petite-Italie", "Rosemont", "Villeray", "Outremont", "Griffintown", "Verdun", "Hochelaga"],
+    scenarios: [],
+    faqs: [],
+    aiLocal: { lead: "", points: [] },
+    relatedGuides: [],
+    cityscapeImage: "montreal-skyline",
+    cityscapeImageAlt: "Montréal depuis le mont Royal",
+    ...CA_STORY,
+  },
+  {
+    // PLANNED — Québec. Stub so the /ca-fr tree is typed before its copy exists;
+    // published stays false until the locale flips (locale-planned.test.mjs).
+    // Colonne vertébrale à écrire : la saison touristique du Vieux-Québec et le Carnaval.
+    slug: "quebec",
+    base: "/ca-fr",
+    copyLang: "fr",
+    name: "Québec",
+    published: false,
+    seoTitle: "",
+    seoDescription: "",
+    heroHeadline: "",
+    intro: [],
+    districts: ["Vieux-Québec", "Saint-Roch", "Saint-Jean-Baptiste", "Montcalm", "Limoilou", "Sillery", "Sainte-Foy", "Saint-Sauveur", "Cap-Rouge", "Beauport"],
+    scenarios: [],
+    faqs: [],
+    aiLocal: { lead: "", points: [] },
+    relatedGuides: [],
+    cityscapeImage: "quebec-city-skyline",
+    cityscapeImageAlt: "Le Vieux-Québec et le fleuve",
+    ...CA_STORY,
+  },
+  {
+    // PLANNED — Laval. Stub so the /ca-fr tree is typed before its copy exists;
+    // published stays false until the locale flips (locale-planned.test.mjs).
+    // Colonne vertébrale à écrire : la banlieue familiale, les réservations de groupe du week-end.
+    slug: "laval",
+    base: "/ca-fr",
+    copyLang: "fr",
+    name: "Laval",
+    published: false,
+    seoTitle: "",
+    seoDescription: "",
+    heroHeadline: "",
+    intro: [],
+    districts: ["Chomedey", "Sainte-Rose", "Vimont", "Pont-Viau", "Laval-des-Rapides", "Duvernay", "Fabreville", "Sainte-Dorothée", "Auteuil", "Saint-Vincent-de-Paul"],
+    scenarios: [],
+    faqs: [],
+    aiLocal: { lead: "", points: [] },
+    relatedGuides: [],
+    cityscapeImage: "laval-riverside",
+    cityscapeImageAlt: "Laval au bord de la rivière des Mille Îles",
+    ...CA_STORY,
+  },
+  {
+    // PLANNED — Longueuil. Stub so the /ca-fr tree is typed before its copy exists;
+    // published stays false until the locale flips (locale-planned.test.mjs).
+    // Colonne vertébrale à écrire : la rive sud, le Vieux-Longueuil et le métro.
+    slug: "longueuil",
+    base: "/ca-fr",
+    copyLang: "fr",
+    name: "Longueuil",
+    published: false,
+    seoTitle: "",
+    seoDescription: "",
+    heroHeadline: "",
+    intro: [],
+    districts: ["Vieux-Longueuil", "Saint-Hubert", "Greenfield Park", "Le Moyne", "Saint-Lambert", "Boucherville", "Brossard", "Fatima", "Laflèche", "Parc-Extension"],
+    scenarios: [],
+    faqs: [],
+    aiLocal: { lead: "", points: [] },
+    relatedGuides: [],
+    cityscapeImage: "longueuil-riverside",
+    cityscapeImageAlt: "Longueuil et le fleuve Saint-Laurent",
+    ...CA_STORY,
   },
 ];
 

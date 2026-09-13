@@ -39,11 +39,24 @@ export type SolutionPageCopy = {
   };
   readonly features: readonly { readonly title: string; readonly body: string }[];
   readonly benefits: readonly string[];
+  /**
+   * "Why we built this" — BitePerk's own account of the vertical. It is NOT a
+   * customer story and the template never labels it as one: until 13 Sep 2026
+   * this rendered under a "Customer story" eyebrow with no customer in it,
+   * which is exactly the kind of framing the truthfulness gates exist to stop.
+   */
   readonly story: {
     readonly title: string;
     readonly body: string;
     readonly attribution?: string;
   };
+  /**
+   * Real, approved proof — a quote from a named venue that has agreed to it.
+   * Optional; only three verticals have one today (the two founding venues).
+   * Never fabricate: the wording must be the venue's own, on record
+   * (products.ts voxProof / marketing collateral approvals).
+   */
+  readonly proof?: { readonly quote: string; readonly author: string; readonly role: string };
   readonly faq: readonly FaqItem[];
 };
 
@@ -55,6 +68,14 @@ export type Solution = {
   readonly status: SolutionStatus;
   readonly primaryProduct: ProductSlugRef;
   readonly shortDescription: string;
+  /**
+   * Guides (blog slugs) this vertical links to in-body, and the sibling
+   * verticals it points at. Both required, both validated by the unit tests
+   * against the collection / SOLUTION_SLUGS: until 13 Sep 2026 the solutions
+   * hub received ZERO editorial inbound links and emitted none.
+   */
+  readonly relatedGuides: readonly string[];
+  readonly relatedSolutions: readonly SolutionSlug[];
   readonly page: SolutionPageCopy;
 };
 
@@ -71,25 +92,11 @@ export const SOLUTION_SLUGS = [
 
 export type SolutionSlug = (typeof SOLUTION_SLUGS)[number];
 
-/** Layout contract for every solution page (Phase 1C standard). */
-export const SOLUTION_PAGE_SECTIONS = [
-  "hero",
-  "business-problem",
-  "lost-revenue",
-  "how-we-solve",
-  "features",
-  "benefits",
-  "customer-story",
-  "faq",
-  "book-demo",
-] as const;
-
-export type SolutionPageSection = (typeof SOLUTION_PAGE_SECTIONS)[number];
-
-const demoPrimary = "Book Demo" as const;
-const seeHow = "See How It Works" as const;
-void demoPrimary;
-void seeHow;
+// The section order (hero → problem → lost revenue → how we solve → features
+// → benefits → why we built this → FAQ → book demo) lives in ONE place:
+// src/pages/solutions/[slug].astro. A parallel SOLUTION_PAGE_SECTIONS constant
+// used to sit here, imported by nothing and asserted only as a string in a
+// unit test — a contract that could not be broken because nothing read it.
 
 export const solutions: readonly Solution[] = [
   {
@@ -100,9 +107,11 @@ export const solutions: readonly Solution[] = [
     status: "live",
     primaryProduct: "voxtable",
     shortDescription: "AI phone host that answers booking calls during service.",
+    relatedGuides: ["what-missed-calls-cost-your-restaurant", "how-to-reduce-no-shows-at-your-restaurant", "do-diners-want-to-talk-to-an-ai"],
+    relatedSolutions: ["cafes", "takeaway"],
     page: {
       seo: {
-        title: "AI receptionist for restaurants · BitePerk",
+        title: "AI receptionist for restaurants",
         description:
           "Stop losing bookings when the floor is slammed. Vox answers every restaurant call in a warm Australian voice, checks availability, and writes the booking to your screen.",
       },
@@ -151,6 +160,13 @@ export const solutions: readonly Solution[] = [
         body: "BitePerk started by watching Sydney and Melbourne venues lose covers to a ringing phone. Vox exists to take that call without taking a human off the floor — narrow on purpose, measured on bookings taken.",
         attribution: "BitePerk · Sydney",
       },
+      // On record: products.ts voxProof (the same quote the product pages carry).
+      proof: {
+        quote:
+          "We used to lose tables every Friday night just because nobody could reach the phone. Bella picks up every single call — and the bookings just appear on our screen. It paid for itself in the first week.",
+        author: "Natalia",
+        role: "Owner · Natalia's Bistro, Sydney",
+      },
       faq: [
         {
           q: "Will guests know they are talking to AI?",
@@ -158,7 +174,7 @@ export const solutions: readonly Solution[] = [
         },
         {
           q: "How fast can a restaurant go live?",
-          a: "Most venues are live within a week after a short walkthrough. Book a demo and we will put Vox on a test call to your line.",
+          a: "Setup takes about 48 hours after a short walkthrough. Book a demo and we will put Vox on a test call to your line.",
         },
         {
           q: "Does this replace my booking system?",
@@ -175,11 +191,13 @@ export const solutions: readonly Solution[] = [
     status: "live",
     primaryProduct: "voxstay",
     shortDescription: "AI receptionist for independent hotels and small chains.",
+    relatedGuides: ["how-much-does-ai-phone-answering-cost-for-a-restaurant", "ai-receptionist-vs-answering-service-vs-voicemail"],
+    relatedSolutions: ["enterprise", "restaurants"],
     page: {
       seo: {
-        title: "AI phone receptionist for hotels · BitePerk",
+        title: "AI phone receptionist for hotels",
         description:
-          "VoxStay is BitePerk’s AI receptionist for independent hotels — answers booking calls, quotes real stay prices with taxes, and texts a secure payment link. In development; join the waitlist.",
+          "VoxStay is BitePerk’s AI receptionist for independent hotels — answers booking calls, quotes real stay prices with taxes and texts a secure payment link. In development.",
       },
       hero: {
         eyebrow: "Hotels",
@@ -249,9 +267,11 @@ export const solutions: readonly Solution[] = [
     status: "live",
     primaryProduct: "voxtable",
     shortDescription: "Never miss a table or takeaway call in the morning rush.",
+    relatedGuides: ["what-missed-calls-cost-your-restaurant", "why-an-australian-voice-matters", "how-to-forward-your-restaurant-phone-to-an-ai-host"],
+    relatedSolutions: ["restaurants", "takeaway"],
     page: {
       seo: {
-        title: "AI phone answering for cafes · BitePerk",
+        title: "AI phone answering for cafes",
         description:
           "Morning rush should not mean a missed booking or takeaway order. Vox answers cafe calls so baristas stay on the machine.",
       },
@@ -299,6 +319,12 @@ export const solutions: readonly Solution[] = [
         title: "Neighbourhood hospitality first",
         body: "BitePerk’s product sense comes from Australian service venues — including the cafes where the phone is always an afterthought until it costs a regular.",
       },
+      // Approved wording, Camilo & Mauro, 7 Sep 2026 (marketing/flyer_and_broucher/v2/copy.mjs).
+      proof: {
+        quote: "Bella picks up the calls we used to miss. Bookings and takeaway orders just land on our screen.",
+        author: "Camilo & Mauro",
+        role: "Owners · Mazcina Resto-Bar, Darlinghurst",
+      },
       faq: [
         {
           q: "Can Vox handle pickup orders?",
@@ -319,9 +345,11 @@ export const solutions: readonly Solution[] = [
     status: "live",
     primaryProduct: "voxorder",
     shortDescription: "Phone ordering that keeps the pass moving.",
+    relatedGuides: ["how-to-forward-your-restaurant-phone-to-an-ai-host", "how-much-does-ai-phone-answering-cost-for-a-restaurant", "do-diners-want-to-talk-to-an-ai"],
+    relatedSolutions: ["restaurants", "cafes", "drive-thru"],
     page: {
       seo: {
-        title: "AI phone ordering for takeaway · BitePerk",
+        title: "AI phone ordering for takeaway",
         description:
           "Phone orders should not stall the pass. VoxOrder takes takeaway calls, captures the order cleanly, and keeps your kitchen moving.",
       },
@@ -369,6 +397,12 @@ export const solutions: readonly Solution[] = [
         title: "Direct relationships still matter",
         body: "Marketplaces are useful. They should not be the only way a guest can reach you by phone. VoxOrder is how BitePerk brings the takeaway line back under your control.",
       },
+      // Approved wording, Camilo & Mauro, 7 Sep 2026 (marketing/flyer_and_broucher/v2/copy.mjs).
+      proof: {
+        quote: "Bella picks up the calls we used to miss. Bookings and takeaway orders just land on our screen.",
+        author: "Camilo & Mauro",
+        role: "Owners · Mazcina Resto-Bar, Darlinghurst",
+      },
       faq: [
         {
           q: "Is VoxOrder live?",
@@ -389,9 +423,11 @@ export const solutions: readonly Solution[] = [
     status: "live",
     primaryProduct: "voxdrive",
     shortDescription: "Voice ordering for drive-thru lanes — in development story.",
+    relatedGuides: ["ai-receptionist-vs-answering-service-vs-voicemail", "what-missed-calls-cost-your-restaurant"],
+    relatedSolutions: ["takeaway"],
     page: {
       seo: {
-        title: "AI drive-thru voice ordering · BitePerk",
+        title: "AI drive-thru voice ordering",
         description:
           "VoxDrive is BitePerk’s drive-thru voice ordering concept — lane speed without sacrificing order accuracy. Join the conversation early.",
       },
@@ -459,11 +495,13 @@ export const solutions: readonly Solution[] = [
     status: "live",
     primaryProduct: "voxconcierge",
     shortDescription: "After-hours and overflow call handling for clinics.",
+    relatedGuides: ["ai-receptionist-vs-answering-service-vs-voicemail", "how-much-does-ai-phone-answering-cost-for-a-restaurant"],
+    relatedSolutions: ["professional-services"],
     page: {
       seo: {
-        title: "AI phone answering for medical clinics · BitePerk",
+        title: "AI phone answering for medical clinics",
         description:
-          "Overflow and after-hours clinic calls deserve a competent answer. VoxConcierge is in development for professional front-desk coverage — register interest for medical use cases.",
+          "Overflow and after-hours clinic calls deserve a competent answer. VoxConcierge is in development for front-desk coverage — register interest for medical use cases.",
       },
       hero: {
         eyebrow: "Medical",
@@ -529,9 +567,11 @@ export const solutions: readonly Solution[] = [
     status: "live",
     primaryProduct: "voxconcierge",
     shortDescription: "Front-desk phone coverage for firms that live on inbound calls.",
+    relatedGuides: ["ai-receptionist-vs-answering-service-vs-voicemail", "why-an-australian-voice-matters"],
+    relatedSolutions: ["medical", "enterprise"],
     page: {
       seo: {
-        title: "AI receptionist for professional services · BitePerk",
+        title: "AI receptionist for professional services",
         description:
           "Law, accounting, agency and advisory firms lose work on unanswered inbound calls. VoxConcierge is BitePerk’s front-desk AI in development — join the waitlist.",
       },
@@ -599,9 +639,11 @@ export const solutions: readonly Solution[] = [
     status: "live",
     primaryProduct: "voxtable",
     shortDescription: "Multi-site voice automation with central visibility.",
+    relatedGuides: ["what-missed-calls-cost-your-restaurant", "how-much-does-ai-phone-answering-cost-for-a-restaurant"],
+    relatedSolutions: ["restaurants", "hotels"],
     page: {
       seo: {
-        title: "Enterprise AI phone automation · BitePerk",
+        title: "Enterprise AI phone automation",
         description:
           "Multi-site hospitality groups need one voice standard and central visibility. Talk to BitePerk about rolling Vox across venues without a frankenstein telephony stack.",
       },
@@ -616,7 +658,7 @@ export const solutions: readonly Solution[] = [
       },
       lostRevenue: {
         title: "Network-level leakage",
-        body: "A 2% miss rate across twenty venues is not a local anecdote — it is a budget line.",
+        body: "Run the arithmetic: a 2% miss rate across twenty venues is not a local anecdote — it is a budget line.",
         points: [
           "Inconsistent guest experience by site",
           "No single view of call outcomes",
@@ -683,6 +725,22 @@ export function liveSolutions(): readonly Solution[] {
   return solutions.filter((s) => s.status === "live");
 }
 
+/**
+ * Which solution pages BUILD: live and draft (draft = written, not yet linked
+ * from the nav). One predicate for [slug].astro's getStaticPaths AND
+ * locales.ts's AU_STATIC_PAGES, so the route gate and the build cannot
+ * disagree — they did (the gate expected every SOLUTION_SLUG unconditionally).
+ */
+export function renderableSolutions(): readonly Solution[] {
+  return solutions.filter((s) => s.status === "live" || s.status === "draft");
+}
+export const RENDERABLE_SOLUTION_SLUGS: readonly string[] = renderableSolutions().map((s) => s.slug);
+
 export function solutionPath(slug: string): string {
   return `/solutions/${slug}/`;
+}
+
+/** Live verticals sold on a given product — derived, so a product page's "solutions" block never restates the registry. */
+export function solutionsForProduct(productSlug: string): readonly Solution[] {
+  return liveSolutions().filter((s) => s.primaryProduct === productSlug);
 }

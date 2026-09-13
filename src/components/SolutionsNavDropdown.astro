@@ -5,6 +5,8 @@
  * megamenu.ts binds every [data-megamenu] root.
  */
 import { liveSolutions, solutionPath } from "@/data/solutions";
+import { getProduct, statusLabel } from "@/data/products";
+import { bookDemoHref } from "@/data/conversion";
 import { site } from "@/data/site";
 import { u, stripBase } from "@/data/locales";
 
@@ -61,7 +63,11 @@ const items = liveSolutions();
             <span class="megamenu-card-name">
               <span class="cap">{s.name}</span>
             </span>
-            <span class="megamenu-pill is-live">{s.sector}</span>
+            {/* Derived from the PRODUCT's status, like the Products menu beside
+                this one: Hotels/Medical/Drive-Thru used to render a green "live"
+                pill (the class said is-live, the text said the sector) while
+                the adjacent menu marked their products in development/concept. */}
+            <span class:list={["megamenu-pill", `is-${getProduct(s.primaryProduct)!.status}`]}>{statusLabel(getProduct(s.primaryProduct)!.status)}</span>
           </div>
           <p class="megamenu-card-tag">{s.shortDescription}</p>
           <span class="megamenu-card-arrow" aria-hidden="true">→</span>
@@ -74,7 +80,7 @@ const items = liveSolutions();
         <span>All solutions</span>
         <span aria-hidden="true">→</span>
       </a>
-      <a class="megamenu-foot-link" href={u("/contact/?intent=demo")} role="menuitem" tabindex="-1" data-cta="book-demo">
+      <a class="megamenu-foot-link" href={bookDemoHref()} role="menuitem" tabindex="-1" data-cta="book-demo">
         <span>Book a demo</span>
         <span aria-hidden="true">→</span>
       </a>

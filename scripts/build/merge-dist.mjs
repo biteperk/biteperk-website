@@ -128,15 +128,21 @@ for (const f of ["llms.txt", "humans.txt"]) {
         .localesForTarget("global")
         .map((l) => `- ${l.label}: ${ORIGIN}${l.base}/`)
         .join("\n");
-      const citySection = readFileSync(join(GLOBAL, "llms.txt"), "utf8")
+      // The global build's own sections, ALL of them — until 13 Sep 2026 only
+      // "Market city pages" was grafted in and the Capabilities / Product facts
+      // / Notes sections (the Europe-truthful framing) were written, gated and
+      // never served.
+      const globalSections = readFileSync(join(GLOBAL, "llms.txt"), "utf8")
         .split(/^## /m)
-        .find((s) => s.startsWith("Market city pages"));
-      const cityBlock = citySection ? `## ${citySection.trim()}` : "";
+        .slice(1)
+        .filter((sec) => !/^(Pages|Social profiles)\b/.test(sec))
+        .map((sec) => `## ${sec.trim().replace(/^([^\n]+)/, "$1 (international)")}`)
+        .join("\n\n");
       txt =
         txt.trimEnd() +
         `\n\n## International sites (same company, biteperk.com locale trees)\n` +
         intlLines +
-        (cityBlock ? `\n\n${cityBlock}` : "") +
+        (globalSections ? `\n\n${globalSections}` : "") +
         "\n";
     }
     writeFileSync(join(SITE, f), txt);

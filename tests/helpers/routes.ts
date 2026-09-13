@@ -11,6 +11,8 @@
  * read AU_STATIC_PAGES.
  */
 import { readdirSync } from "node:fs";
+import { resourceTypes } from "../../src/data/resources";
+import { populatedResourceTypes } from "../../scripts/build/content-index.mjs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { cities } from "../../src/data/cities";
@@ -41,6 +43,8 @@ function auRoutes(): string[] {
     // Static pages come from locales.ts so this list and check-routes.mjs
     // cannot disagree — they each held their own copy until Jul 2026.
     ...AU_STATIC_PAGES.map((p) => `${b}/${p ? `${p}/` : ""}`),
+    // Resources category pages: only populated types build (content-derived).
+    ...resourceTypes.filter((t) => populatedResourceTypes().has(t.id)).map((t) => `${b}${t.path}`),
     ...blogSlugs.map((s) => `${b}/blog/${s}/`),
     ...cities.filter((c) => c.published).map((c) => `${b}/${c.slug}/`),
     `${b}/404.html`,

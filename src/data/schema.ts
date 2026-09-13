@@ -283,6 +283,88 @@ export const ukEntityGraph = {
   "@graph": [ukOrganizationNode],
 };
 
+/* ─── Page-level builders ─────────────────────────────────────────────────
+ * Every page-level node goes through one of these, so `isPartOf`/`publisher`
+ * always resolve to the sitewide @ids and no page mints its own anonymous
+ * WebSite/Organization. Until 13 Sep 2026 there were ELEVEN hand-rolled
+ * BreadcrumbLists (one drifted from its visual trail), three FAQPages without
+ * `isPartOf`, and a WebPage whose `isPartOf` was an inline WebSite literal —
+ * a second, unmerged site entity on eight commercial pages.
+ */
+
+export type CrumbItem = { readonly name: string; readonly path: string };
+
+/**
+ * BreadcrumbList. `path` is app-absolute ("/", "/products/", "/au-en/about/"
+ * or a full intl base path) — `abs()` applies the origin (and the AU base,
+ * idempotently). Breadcrumbs.astro calls this from the SAME items it renders,
+ * so the visual trail and the structured trail cannot disagree.
+ */
+export function buildBreadcrumb(items: ReadonlyArray<CrumbItem>, inLanguage?: string) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    ...(inLanguage ? { inLanguage } : {}),
+    itemListElement: items.map((c, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: c.name,
+      item: abs(c.path),
+    })),
+  };
+}
+
+/** WebPage node with a stable @id, linked to the site and the org; `about` is an @id. */
+export function buildWebPage(opts: {
+  readonly path: string;
+  readonly name: string;
+  readonly description: string;
+  readonly about?: string;
+  readonly inLanguage?: string;
+  readonly type?: "WebPage" | "AboutPage" | "ContactPage" | "CollectionPage";
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": opts.type ?? "WebPage",
+    "@id": `${abs(opts.path)}#webpage`,
+    url: abs(opts.path),
+    name: opts.name,
+    description: opts.description,
+    ...(opts.inLanguage ? { inLanguage: opts.inLanguage } : {}),
+    isPartOf: { "@id": WEBSITE_ID },
+    publisher: { "@id": ORG_ID },
+    ...(opts.about ? { about: { "@id": opts.about } } : {}),
+  };
+}
+
+/** A listing page: CollectionPage whose mainEntity is an ItemList of the things it lists. */
+export function buildCollectionPage(opts: {
+  readonly path: string;
+  readonly name: string;
+  readonly description: string;
+  readonly items: ReadonlyArray<{ readonly name: string; readonly path: string }>;
+  readonly inLanguage?: string;
+}) {
+  return {
+    ...buildWebPage({ ...opts, type: "CollectionPage" }),
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: opts.items.length,
+      itemListElement: opts.items.map((it, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: it.name,
+        url: abs(it.path),
+      })),
+    },
+  };
+}
+
+/** The contact page: a ContactPage whose subject is the organisation. */
+export function buildContactPage(opts: { readonly path: string; readonly name: string; readonly description: string }) {
+  return { ...buildWebPage({ ...opts, type: "ContactPage" }), mainEntity: { "@id": ORG_ID } };
+}
+
 /**
  * Build a FAQPage node for a page that carries its own Q&A list. `isPartOf`
  * links it to the sitewide WebSite by @id so Google merges it into the one
@@ -292,11 +374,14 @@ export const ukEntityGraph = {
  */
 export function buildFaqPage(
   faqs: ReadonlyArray<{ readonly q: string; readonly a: string }>,
+  /** BCP 47 tag of the page (`<html lang>`); AU pages pass "en-AU", intl pages locale.lang. */
+  inLanguage?: string,
 ) {
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     isPartOf: { "@id": WEBSITE_ID },
+    ...(inLanguage ? { inLanguage } : {}),
     mainEntity: faqs.map((f) => ({
       "@type": "Question",
       name: f.q,

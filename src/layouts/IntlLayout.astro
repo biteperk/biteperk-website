@@ -23,6 +23,7 @@ import LocaleSuggest from "@/components/LocaleSuggest.astro";
 import CityNav from "@/components/intl/CityNav.astro";
 import IntlMobileMenu from "@/components/intl/IntlMobileMenu.astro";
 import { INTL_NAV } from "@/data/intl/nav";
+import { pageExistsInLocale } from "@/data/locales";
 import { products } from "@/data/products";
 import { entities, ukEmail } from "@/data/site";
 import { ukEntityGraph } from "@/data/schema";
@@ -44,6 +45,10 @@ interface Props {
 
 const { locale, page, title, description, ogImage, noindex = !INTL_LAUNCHED, preloadSlug } = Astro.props;
 const c = resolveCopy(locale).chrome;
+// Only the pages THIS locale emits: the Resources hub exists only where the
+// collection has an article for the tree, so a French tree without French
+// articles must not link a 404. Derived from the same predicate as the routes.
+const navItems = INTL_NAV.filter((item) => pageExistsInLocale(item.path, locale));
 
 const pagePath = page ? `${page}/` : "";
 // Paths come from the BASE ("/gb-en/…"), never from lang ("en-GB" → 404).
@@ -116,7 +121,7 @@ const isUk = locale.market === "gb";
           <span class="brand-name">bite<span class="perk">perk</span></span>
         </a>
         <nav class="intl-links" aria-label="Site">
-          {INTL_NAV.map((item) => (
+          {navItems.map((item) => (
             <a href={p(item.path)}>{c.nav[item.key]}</a>
           ))}
         </nav>
@@ -157,7 +162,7 @@ const isUk = locale.market === "gb";
 
     {/* Sibling of the header, not a child: the panel is position:fixed and a
         future filter/transform on the bar would otherwise trap it. */}
-    <IntlMobileMenu locale={locale} page={page} chrome={c} nav={INTL_NAV} cities={footerCities} />
+    <IntlMobileMenu locale={locale} page={page} chrome={c} nav={navItems} cities={footerCities} />
 
     <slot />
 
@@ -201,7 +206,7 @@ const isUk = locale.market === "gb";
             </nav>
             <nav class="intl-footer-links" aria-labelledby="ifc-explore">
               <p class="intl-footer-col-title" id="ifc-explore">{c.footerExplore}</p>
-              {INTL_NAV.map((item) => (
+              {navItems.map((item) => (
                 <a href={p(item.path)}>{c.nav[item.key]}</a>
               ))}
               {/* The UK entity's published contact address (already in the

@@ -94,3 +94,31 @@ export function resourceTypeFromSegment(segment: string): ResourceTypeMeta | und
 }
 
 export const RESOURCE_SEGMENTS = Object.keys(RESOURCE_TYPE_BY_SEGMENT);
+
+/**
+ * Phase 1 Definition of Done for the library, per market — the ONLY place the
+ * targets live. `scripts/build/content-inventory.mjs` renders
+ * docs/phase1/CONTENT-INVENTORY.md from these plus the content collections;
+ * tests/unit/content-inventory.test.mjs fails when the filed inventory is
+ * stale, so the numbers in PLAN.md's acceptance list and the tracker cannot
+ * drift apart. Zero means "not required for that market" (a European case
+ * study needs a European customer; there is none yet).
+ */
+export type ResourceDoD = Readonly<Record<ResourceType, number>>;
+export const RESOURCE_DOD_AU: ResourceDoD = {
+  guide: 20,
+  comparison: 10,
+  faq: 10,
+  "case-study": 5,
+  "product-update": 1,
+  "industry-report": 1,
+};
+/** Per international base — the seed set every market tree gets before market-specific pieces. */
+export const RESOURCE_DOD_INTL: ResourceDoD = {
+  guide: 5,
+  comparison: 3,
+  faq: 5,
+  "case-study": 0,
+  "product-update": 0,
+  "industry-report": 0,
+};
