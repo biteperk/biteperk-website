@@ -741,6 +741,28 @@ export function solutionPath(slug: string): string {
 }
 
 /** Live verticals sold on a given product — derived, so a product page's "solutions" block never restates the registry. */
+
+/**
+ * Hub-level FAQ for /solutions/ — the questions a buyer asks before picking a
+ * vertical. Truthful: live means live in Australia; nothing here quotes a price
+ * or a certification (the foundation test enforces that). Rendered by FAQ.astro
+ * and mirrored into FAQPage JSON-LD via buildFaqPage.
+ */
+export const HUB_FAQ: readonly FaqItem[] = [
+  {
+    q: "Which solution is right for my venue?",
+    a: "Start with what you run. Restaurants, cafes and takeaway are live in Australia today; hotels, medical, professional services and multi-site groups are in development, and their pages say so. Every one is the same AI phone host, framed for how your calls actually come in.",
+  },
+  {
+    q: "Is each solution a different product?",
+    a: "No. There is one AI phone host — Vox — and the solution pages describe how it answers the phone for your kind of venue. Bookings and takeaway ship today; the rest roll out as add-ons on the same line.",
+  },
+  {
+    q: "What does getting started look like?",
+    a: "A short call to map how your phone rings, then a call-forward from your existing number — no new hardware and about forty-eight hours to set up. Book a demo and we will put the right product on a real call with you.",
+  },
+];
+
 export function solutionsForProduct(productSlug: string): readonly Solution[] {
   return liveSolutions().filter((s) => s.primaryProduct === productSlug);
 }
