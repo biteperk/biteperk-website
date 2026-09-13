@@ -220,6 +220,12 @@ const gbEn: MarketContent = {
     body: "Vox works the same anywhere a phone rings, but hospitality doesn't sound the same in every city. These pages talk about yours specifically.",
   },
   copy: {
+    // City-page furniture anchored to the UK; the EN core is market-neutral.
+    cityPage: {
+      districtsNote:
+        "Not on the list? The pilot programme isn't drawn by postcode — a venue anywhere in the UK works exactly the same way.",
+      othersEyebrow: "Elsewhere in the UK",
+    },
     // The UK regime is its own statute since Brexit (UK GDPR + DPA 2018); the
     // core facts strip says "GDPR", which on this tree would be the wrong law.
     trustFacts: {
@@ -540,6 +546,14 @@ const frFr: MarketContent = {
     body: "Un pilote, c'est une conversation avec une salle précise dans une rue précise, pas un lancement. Voici les villes où ces conversations sont ouvertes.",
   },
   copy: {
+    // City-page furniture anchored to France — the FR core says "ailleurs",
+    // which reads placeless next to the UK tree's "Elsewhere in the UK".
+    // French written 13 Sep 2026 — NOT yet reviewed; next Ludovic batch.
+    cityPage: {
+      districtsNote:
+        "Votre quartier n'y figure pas ? Le programme pilote ne s'arrête pas à un code postal — un établissement situé n'importe où en France fonctionne exactement de la même manière.",
+      othersEyebrow: "Ailleurs en France",
+    },
     home: {
       title: "BitePerk — Vox, l'hôte téléphonique IA pour les restaurants en France",
       description:
@@ -894,6 +908,13 @@ const beFr: MarketContent = {
     body: "Le pilote se joue au téléphone d'une adresse précise, jamais dans une annonce. Ces pages parlent de la vôtre en particulier.",
   },
   copy: {
+    // Same anchoring as be-en's override, in French. Written 13 Sep 2026 —
+    // NOT yet reviewed; next Ludovic batch.
+    cityPage: {
+      districtsNote:
+        "Votre quartier n'y figure pas ? Le programme pilote ne se dessine pas sur une carte — un établissement situé n'importe où en Belgique fonctionne exactement de la même manière.",
+      othersEyebrow: "Ailleurs en Belgique",
+    },
     home: {
       title: "BitePerk — Vox, l'hôte téléphonique IA pour les restaurants en Belgique",
       description:
