@@ -6,7 +6,23 @@ import AuBase from "@/layouts/AuBase.astro";
 // no markup, no NAP). Every page did until 6 Sep 2026; the locale trees no
 // longer do. Tolerated here rather than splitting the route per target.
 import StarMark from "@/components/StarMark.astro";
-import { currentTarget, u } from "@/data/locales";
+import { currentTarget, u, localesForTarget, AU_BASE } from "@/data/locales";
+import { chrome } from "@/data/intl/copy";
+
+// Firebase serves ONE 404.html for the whole site — this global one, which
+// merge-dist places at the root (the AU build's copy lands at /au-en/404.html
+// and is never served). So it must work for a visitor from ANY of the six
+// trees: until 13 Sep 2026 it offered only /en and /fr, in English, so an
+// /au-en typo landed on a page with no AU link at all and a /gb-en or /be-*
+// one was sent to a tree that was not theirs.
+//
+// No-JS: bilingual EN/FR text plus every tree's home, each link in its own
+// language. With JS: the inline script below matches the path prefix, swaps
+// the copy to that tree's language and sets <html lang> to match.
+const trees = [...localesForTarget("au"), ...localesForTarget("global")];
+const notFoundByBase = Object.fromEntries(
+  trees.map((l) => [l.base, { lang: l.lang, ...chrome[l.copyLang].notFound, contactHref: `${l.base}/contact/` }]),
+);
 
 // The global (biteperk.com) build gets its own 404: the AU version's chrome
 // carries the AU footer (NAP + phone) and links to routes pruned from that
@@ -24,16 +40,48 @@ const description = "We couldn't find that page. Here are a few useful places to
       <div class="wrap">
         <div class="nf-inner">
           <div class="nf-mark"><StarMark size={56} /></div>
-          <p class="eyebrow nf-eyebrow">404 · Page not found / page introuvable</p>
-          <h1 class="nf-h">This page is having a quiet night.</h1>
-          <p class="nf-sub">
+          <p class="eyebrow nf-eyebrow" data-nf-eyebrow>404 · Page not found / page introuvable</p>
+          <h1 class="nf-h" data-nf-title>This page is having a quiet night.</h1>
+          <p class="nf-sub" data-nf-body>
             We couldn't find what you were looking for. · Nous n'avons pas trouvé la page demandée.
           </p>
-          <div class="nf-cta">
-            <a class="btn" href="/en/">English</a>
-            <a class="btn" href="/fr/">Français</a>
-            <a class="btn-ghost" href="/en/contact/">Contact</a>
+          <div class="nf-cta" data-nf-primary hidden>
+            <a class="btn" data-nf-home href="/en/">Home</a>
+            <a class="btn-ghost" data-nf-contact href="/en/contact/">Contact</a>
           </div>
+          <ul class="nf-trees" role="list">
+            {trees.map((l) => (
+              <li>
+                <a class="btn-ghost" href={`${l.base}/`} hreflang={l.hreflang[0]} lang={l.lang} data-nf-tree={l.base}>
+                  {l.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <script type="application/json" data-nf-copy set:html={JSON.stringify(notFoundByBase)} />
+          <script is:inline>
+            (function () {
+              try {
+                var data = JSON.parse(document.querySelector("[data-nf-copy]").textContent || "{}");
+                var seg = "/" + (location.pathname.split("/")[1] || "");
+                var t = data[seg];
+                if (!t) return;
+                document.documentElement.lang = t.lang;
+                var set = function (sel, text) { var el = document.querySelector(sel); if (el) el.textContent = text; };
+                set("[data-nf-eyebrow]", t.eyebrow);
+                set("[data-nf-title]", t.title);
+                set("[data-nf-body]", t.body);
+                var home = document.querySelector("[data-nf-home]");
+                var contact = document.querySelector("[data-nf-contact]");
+                if (home) { home.textContent = t.home; home.href = seg + "/"; }
+                if (contact) { contact.textContent = t.contact; contact.href = t.contactHref; }
+                var primary = document.querySelector("[data-nf-primary]");
+                if (primary) primary.hidden = false;
+                var own = document.querySelector('[data-nf-tree="' + seg + '"]');
+                if (own) own.parentElement.hidden = true;
+              } catch (e) {}
+            })();
+          </script>
         </div>
       </div>
     </section>
@@ -63,6 +111,15 @@ const description = "We couldn't find that page. Here are a few useful places to
 )}
 
 <style>
+  .nf-trees {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-5) 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3);
+  }
   .nf {
     min-height: 80vh;
     min-height: 80svh;
