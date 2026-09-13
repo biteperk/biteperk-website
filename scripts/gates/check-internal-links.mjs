@@ -24,13 +24,39 @@ import { publishedPosts } from "../build/content-index.mjs";
 import { pages, html, bodyOnly } from "./_dist.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
-const DIST = process.env.LINKS_DIST ?? join(ROOT, "dist");
-if (!existsSync(DIST)) { console.error("check-internal-links: dist/ not found — build first."); process.exit(1); }
+const TARGET = process.env.BUILD_TARGET === "global" ? "global" : "au";
+const DIST = process.env.LINKS_DIST ?? join(ROOT, TARGET === "global" ? "dist-global" : "dist");
+if (!existsSync(DIST)) { console.error(`check-internal-links: ${DIST} not found — build first.`); process.exit(1); }
 const MIN_INBOUND = 2;
+const hrefs = (h) => new Set([...bodyOnly(h).matchAll(/href="([^"#?]*)/g)].map((m) => m[1].replace(/\/?$/, "/")));
+
+if (TARGET === "global") {
+  // Per locale tree: every solution page has ≥2 in-body inbound links (product
+  // page + a sibling, or a resources article), links its product and a sibling.
+  const { localesForTarget } = await loadTS(join(ROOT, "src/data/locales.ts"));
+  const { renderableSolutions } = await loadTS(join(ROOT, "src/data/solutions.ts"));
+  const all = pages(DIST).map((p) => ({ ...p, links: hrefs(html(p.file)) }));
+  let failed = 0;
+  const fail = (m) => { failed++; console.error(`FAIL  ${m}`); };
+  for (const l of localesForTarget("global")) {
+    const tree = all.filter((p) => p.route.startsWith(`${l.base}/`));
+    for (const s of renderableSolutions()) {
+      const target = `${l.base}/solutions/${s.slug}/`;
+      const page = tree.find((p) => p.route === target);
+      if (!page) { fail(`${target}: not built`); continue; }
+      const inbound = tree.filter((p) => p.route !== target && p.links.has(target)).map((p) => p.route);
+      if (inbound.length < MIN_INBOUND) fail(`${target}: only ${inbound.length} in-body inbound link(s) (${inbound.join(", ") || "none"})`);
+      if (![...page.links].some((x) => x.startsWith(`${l.base}/products/`))) fail(`${target}: no in-body link to a product`);
+      if (s.relatedSolutions.length && ![...page.links].some((x) => /\/solutions\/[a-z-]+\/$/.test(x) && x !== target)) fail(`${target}: no in-body link to a sibling solution`);
+    }
+  }
+  if (failed) { console.error(`\ncheck-internal-links (global): ${failed} failure(s)`); process.exit(1); }
+  console.log(`check-internal-links (global): ok — every intl solution page has ≥${MIN_INBOUND} in-body inbound links, links its product and a sibling`);
+  process.exit(0);
+}
 
 const { renderableSolutions } = await loadTS(join(ROOT, "src/data/solutions.ts"));
 const { AU_BASE } = await loadTS(join(ROOT, "src/data/locales.ts"));
-const hrefs = (h) => new Set([...bodyOnly(h).matchAll(/href="([^"#?]*)/g)].map((m) => m[1].replace(/\/?$/, "/")));
 
 // dist/ paths carry no base; the hrefs inside the pages do (/au-en/…).
 const all = pages(DIST).map((p) => ({ ...p, route: `${AU_BASE}${p.route}`, links: hrefs(html(p.file)) }));

@@ -59,6 +59,10 @@ export type IntlSolutionsOverviewCopy = {
   readonly lede: string;
   readonly sectors: Readonly<Record<SolutionSector, string>>;
   readonly ctaLabel: string;
+  /** Product page block heading; "{product}" is replaced at render. */
+  readonly forProduct: string;
+  /** Solution page sibling block heading. */
+  readonly alsoBuiltFor: string;
 };
 
 const STATUS_EN = {
@@ -82,6 +86,8 @@ export const intlSolutionsOverview: Record<Lang, IntlSolutionsOverviewCopy> = {
     lede: "People search for the job to be done — an AI receptionist for a restaurant, overflow cover for a clinic — not a product name. Start with your vertical; every page says plainly what ships today and what is still a pilot.",
     sectors: { hospitality: "Hospitality", services: "Services", enterprise: "Groups" },
     ctaLabel: "Book a pilot conversation",
+    forProduct: "Solutions using {product}",
+    alsoBuiltFor: "Also built for",
   },
   fr: {
     title: "Solutions par secteur — Vox, l'hôte téléphonique IA",
@@ -92,6 +98,8 @@ export const intlSolutionsOverview: Record<Lang, IntlSolutionsOverviewCopy> = {
     lede: "On cherche un métier à faire — une réceptionniste IA pour un restaurant, une couverture des appels débordants pour un cabinet — pas un nom de produit. Commencez par votre secteur ; chaque page dit clairement ce qui est en production et ce qui reste un pilote.",
     sectors: { hospitality: "Hôtellerie-restauration", services: "Services", enterprise: "Groupes" },
     ctaLabel: "Réserver un échange pilote",
+    forProduct: "Solutions avec {product}",
+    alsoBuiltFor: "Également conçu pour",
   },
 };
 
