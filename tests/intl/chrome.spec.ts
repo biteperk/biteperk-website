@@ -1,6 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 import { INTL_NAV } from "../../src/data/intl/nav";
-import { localesForTarget, locales } from "../../src/data/locales";
+import { localesForTarget, locales, pageExistsInLocale, localeFromPath } from "../../src/data/locales";
 import { intlCitiesForBase } from "../../src/data/intl/cities";
 
 /**
@@ -75,7 +75,9 @@ test.describe("intl chrome — phone", () => {
       // adding a nav item cannot leave this asserting the old number. It was
       // hardcoded at 4 once and had already gone stale (3 → 4 with products).
       const links = page.locator(".imm-link");
-      await expect(links).toHaveCount(INTL_NAV.length);
+      // Filtered the way IntlLayout filters: only pages this locale emits.
+      const expectedNav = INTL_NAV.filter((item) => pageExistsInLocale(item.path, localeFromPath(home)));
+      await expect(links).toHaveCount(expectedNav.length);
       for (const link of await links.all()) {
         await expect(link).toBeVisible();
         const box = await link.boundingBox();
