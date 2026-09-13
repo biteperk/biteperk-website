@@ -110,6 +110,13 @@ const BE_STORY = {
 // The shared French hospitality shot, same contract as UK_STORY / BE_STORY.
 // Already graded and already frFr's `media.hospitality` slug (markets.ts), so a
 // French city costs no new photography — rule 3 again.
+// Canada is PLANNED: no photography has been chosen, so the stubs below point
+// at the neutral continental café until a Canadian hospitality shot is graded.
+const CA_STORY = {
+  storyImage: "cafe-continental",
+  storyImageAlt: "A relaxed café interior between services",
+} as const;
+
 const FR_STORY = {
   storyImage: "brasserie-banquette",
   storyImageAlt: "Banquette en velours bleu et tables en marbre dressées pour le service",
@@ -2191,6 +2198,162 @@ export const intlCities: readonly IntlCity[] = [
     cityscapeImage: "liege-meuse-skyline",
     cityscapeImageAlt: "Liège vue de la citadelle : la Meuse et le centre au crépuscule",
     ...BE_STORY,
+  },
+
+  // ── Canada — PLANNED city stubs (13 Sep 2026) ───────────────────────────
+  {
+    // PLANNED — Toronto. Stub so the /ca-en tree is typed before its copy exists;
+    // published stays false until the locale flips (locale-planned.test.mjs).
+    // Spine to write: the after-work booking wave and the condo-tower delivery habit; multilingual callers.
+    slug: "toronto",
+    base: "/ca-en",
+    copyLang: "en",
+    name: "Toronto",
+    published: false,
+    seoTitle: "",
+    seoDescription: "",
+    heroHeadline: "",
+    intro: [],
+    districts: ["Queen West", "King West", "Yorkville", "Leslieville", "The Danforth", "Liberty Village", "Kensington Market", "Distillery District", "Little Italy", "Roncesvalles"],
+    scenarios: [],
+    faqs: [],
+    aiLocal: { lead: "", points: [] },
+    relatedGuides: [],
+    cityscapeImage: "toronto-skyline",
+    cityscapeImageAlt: "Toronto's skyline from the harbour",
+    ...CA_STORY,
+  },
+  {
+    // PLANNED — Vancouver. Stub so the /ca-en tree is typed before its copy exists;
+    // published stays false until the locale flips (locale-planned.test.mjs).
+    // Spine to write: patio season, Pacific-time calls arriving overnight for Sydney, Cantonese/Mandarin as the honest not-built languages.
+    slug: "vancouver",
+    base: "/ca-en",
+    copyLang: "en",
+    name: "Vancouver",
+    published: false,
+    seoTitle: "",
+    seoDescription: "",
+    heroHeadline: "",
+    intro: [],
+    districts: ["Gastown", "Yaletown", "Kitsilano", "Mount Pleasant", "Commercial Drive", "West End", "Main Street", "Chinatown", "Coal Harbour", "Cambie Village"],
+    scenarios: [],
+    faqs: [],
+    aiLocal: { lead: "", points: [] },
+    relatedGuides: [],
+    cityscapeImage: "vancouver-skyline",
+    cityscapeImageAlt: "Vancouver's downtown against the North Shore mountains",
+    ...CA_STORY,
+  },
+  {
+    // PLANNED — Calgary. Stub so the /ca-en tree is typed before its copy exists;
+    // published stays false until the locale flips (locale-planned.test.mjs).
+    // Spine to write: Stampede week and the corporate-lunch trade.
+    slug: "calgary",
+    base: "/ca-en",
+    copyLang: "en",
+    name: "Calgary",
+    published: false,
+    seoTitle: "",
+    seoDescription: "",
+    heroHeadline: "",
+    intro: [],
+    districts: ["Inglewood", "Kensington", "Mission", "Beltline", "Bridgeland", "17th Avenue", "Marda Loop", "East Village", "Stephen Avenue", "Eau Claire"],
+    scenarios: [],
+    faqs: [],
+    aiLocal: { lead: "", points: [] },
+    relatedGuides: [],
+    cityscapeImage: "calgary-skyline",
+    cityscapeImageAlt: "Calgary's towers over the Bow River",
+    ...CA_STORY,
+  },
+  {
+    // PLANNED — Montréal. Stub so the /ca-fr tree is typed before its copy exists;
+    // published stays false until the locale flips (locale-planned.test.mjs).
+    // Colonne vertébrale à écrire : le souper tardif, la terrasse d'été, les appels qui basculent entre le français et l'anglais — proche du spine bruxellois, à différencier avant publication (check-intl-similarity).
+    slug: "montreal",
+    base: "/ca-fr",
+    copyLang: "fr",
+    name: "Montréal",
+    published: false,
+    seoTitle: "",
+    seoDescription: "",
+    heroHeadline: "",
+    intro: [],
+    districts: ["Plateau-Mont-Royal", "Mile End", "Vieux-Montréal", "Petite-Italie", "Rosemont", "Villeray", "Outremont", "Griffintown", "Verdun", "Hochelaga"],
+    scenarios: [],
+    faqs: [],
+    aiLocal: { lead: "", points: [] },
+    relatedGuides: [],
+    cityscapeImage: "montreal-skyline",
+    cityscapeImageAlt: "Montréal depuis le mont Royal",
+    ...CA_STORY,
+  },
+  {
+    // PLANNED — Québec. Stub so the /ca-fr tree is typed before its copy exists;
+    // published stays false until the locale flips (locale-planned.test.mjs).
+    // Colonne vertébrale à écrire : la saison touristique du Vieux-Québec et le Carnaval.
+    slug: "quebec",
+    base: "/ca-fr",
+    copyLang: "fr",
+    name: "Québec",
+    published: false,
+    seoTitle: "",
+    seoDescription: "",
+    heroHeadline: "",
+    intro: [],
+    districts: ["Vieux-Québec", "Saint-Roch", "Saint-Jean-Baptiste", "Montcalm", "Limoilou", "Sillery", "Sainte-Foy", "Saint-Sauveur", "Cap-Rouge", "Beauport"],
+    scenarios: [],
+    faqs: [],
+    aiLocal: { lead: "", points: [] },
+    relatedGuides: [],
+    cityscapeImage: "quebec-city-skyline",
+    cityscapeImageAlt: "Le Vieux-Québec et le fleuve",
+    ...CA_STORY,
+  },
+  {
+    // PLANNED — Laval. Stub so the /ca-fr tree is typed before its copy exists;
+    // published stays false until the locale flips (locale-planned.test.mjs).
+    // Colonne vertébrale à écrire : la banlieue familiale, les réservations de groupe du week-end.
+    slug: "laval",
+    base: "/ca-fr",
+    copyLang: "fr",
+    name: "Laval",
+    published: false,
+    seoTitle: "",
+    seoDescription: "",
+    heroHeadline: "",
+    intro: [],
+    districts: ["Chomedey", "Sainte-Rose", "Vimont", "Pont-Viau", "Laval-des-Rapides", "Duvernay", "Fabreville", "Sainte-Dorothée", "Auteuil", "Saint-Vincent-de-Paul"],
+    scenarios: [],
+    faqs: [],
+    aiLocal: { lead: "", points: [] },
+    relatedGuides: [],
+    cityscapeImage: "laval-riverside",
+    cityscapeImageAlt: "Laval au bord de la rivière des Mille Îles",
+    ...CA_STORY,
+  },
+  {
+    // PLANNED — Longueuil. Stub so the /ca-fr tree is typed before its copy exists;
+    // published stays false until the locale flips (locale-planned.test.mjs).
+    // Colonne vertébrale à écrire : la rive sud, le Vieux-Longueuil et le métro.
+    slug: "longueuil",
+    base: "/ca-fr",
+    copyLang: "fr",
+    name: "Longueuil",
+    published: false,
+    seoTitle: "",
+    seoDescription: "",
+    heroHeadline: "",
+    intro: [],
+    districts: ["Vieux-Longueuil", "Saint-Hubert", "Greenfield Park", "Le Moyne", "Saint-Lambert", "Boucherville", "Brossard", "Fatima", "Laflèche", "Parc-Extension"],
+    scenarios: [],
+    faqs: [],
+    aiLocal: { lead: "", points: [] },
+    relatedGuides: [],
+    cityscapeImage: "longueuil-riverside",
+    cityscapeImageAlt: "Longueuil et le fleuve Saint-Laurent",
+    ...CA_STORY,
   },
 ];
 

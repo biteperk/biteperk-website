@@ -49,7 +49,11 @@ export type BuildTarget = "au" | "global";
 export type Lang = "en" | "fr";
 
 /** Informational market grouping — overrides key on `base`, not on this. */
-export type Market = "au" | "int" | "gb" | "fr" | "be";
+/**
+ * `ca` is registered but PLANNED (see ALL_LOCALES): typing exists for it —
+ * compliance entry, city stubs, gate rules — while nothing is emitted.
+ */
+export type Market = "au" | "int" | "gb" | "fr" | "be" | "ca";
 
 export type Locale = {
   /** URL base path under the origin, no trailing slash. e.g. "/au-en", "/en". */
@@ -85,6 +89,17 @@ export type Locale = {
    * docs/accounts-and-ops-log.md for the exact rule expressions.
    */
   readonly cctld?: string;
+  /**
+   * "planned" = registered, typed, NOT emitted. The exported `locales` array
+   * filters these out, and every routing/hreflang/sitemap/picker/OG/gate
+   * surface derives from that array — so a planned locale leaks nowhere by
+   * construction (tests/unit/locale-planned.test.mjs pins the source-level
+   * contract, scripts/gates/check-planned.mjs the built artefacts). Removing
+   * the field is the launch. Canada's two entries must flip in the same
+   * commit (Québec Charter of the French Language); the test enforces it.
+   * Checklist: docs/phase1/CANADA-READINESS.md.
+   */
+  readonly status?: "planned";
 };
 
 /** The one origin every locale is served from. */
@@ -98,7 +113,7 @@ export const AU_HOME = `${ORIGIN}${AU_BASE}`;
  * The full locale cluster. Order matters only for display; the hreflang gate
  * asserts reciprocity + exactly one x-default regardless.
  */
-export const locales: readonly Locale[] = [
+export const ALL_LOCALES: readonly Locale[] = [
   {
     base: "/au-en",
     lang: "en-AU",
@@ -174,7 +189,44 @@ export const locales: readonly Locale[] = [
     short: "BE",
     target: "global",
   },
+  // ── Canada — PLANNED (13 Sep 2026). No cctld until launch (an unresolving
+  // domain in sameAs is worse than none). See docs/phase1/CANADA-READINESS.md.
+  {
+    base: "/ca-en",
+    lang: "en-CA",
+    copyLang: "en",
+    market: "ca",
+    ogLocale: "en_CA",
+    hreflang: ["en-CA"],
+    label: "Canada — English",
+    short: "CA",
+    target: "global",
+    status: "planned",
+  },
+  {
+    base: "/ca-fr",
+    lang: "fr-CA",
+    copyLang: "fr",
+    market: "ca",
+    ogLocale: "fr_CA",
+    hreflang: ["fr-CA"],
+    label: "Canada — Français",
+    short: "CA",
+    target: "global",
+    status: "planned",
+  },
 ];
+
+/**
+ * The LIVE locale list — what every surface derives from. Planned locales are
+ * filtered out here, once, rather than at 40 call sites.
+ */
+export const locales: readonly Locale[] = ALL_LOCALES.filter((l) => l.status !== "planned");
+
+/** Registered-but-not-emitted locales (Canada today). */
+export function plannedLocales(): readonly Locale[] {
+  return ALL_LOCALES.filter((l) => l.status === "planned");
+}
 
 /**
  * Every country-code front-door domain in the estate, derived from the locale

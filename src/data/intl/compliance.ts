@@ -24,7 +24,7 @@
 import type { Lang, Market } from "../locales";
 import { entities, site, ukEmail } from "../site";
 
-export type ConsentRegime = "au-privacy-act" | "gdpr-eprivacy" | "uk-gdpr-pecr";
+export type ConsentRegime = "au-privacy-act" | "gdpr-eprivacy" | "uk-gdpr-pecr" | "pipeda-law25-casl";
 
 export type MarketCompliance = {
   /** Which legal entity the visitor contracts with (site.ts `entities`). */
@@ -49,6 +49,10 @@ const note = (en: string, fr: string): Record<Lang, string> => ({ en, fr });
 const INT_NOTE = note(
   "The team is in Sydney, Australia. Wherever you are writing from, a reply usually arrives within one business day — often overnight, your time.",
   "L'équipe est à Sydney, en Australie. D'où que vous écriviez, la réponse arrive généralement sous un jour ouvré — souvent pendant votre nuit.",
+);
+const CA_NOTE = note(
+  "The team is in Sydney, fourteen to seventeen hours ahead of Canada. A morning enquiry is usually answered the same evening, your time; an afternoon one by the next morning.",
+  "L'équipe est à Sydney, quatorze à dix-sept heures en avance sur le Canada. Une demande envoyée le matin reçoit généralement sa réponse le soir même, heure locale ; une demande de l'après-midi, le lendemain matin.",
 );
 const UK_NOTE = note(
   "BitePerk's team works from Sydney. A UK enquiry sent in the afternoon is usually answered by the next morning, within one business day.",
@@ -110,6 +114,20 @@ export const compliance: Readonly<Record<Market, MarketCompliance>> = {
     disclosures: [],
     contactEmail: ukEmail.display,
     timeZoneNote: BE_NOTE,
+  },
+  // PLANNED market — typed now so the locale can flip without touching this
+  // file's shape. Wording is a first draft for counsel (CANADA-READINESS row 5):
+  // federal PIPEDA under the OPC; Québec's Law 25 under the CAI adds
+  // privacy-by-default and a transfer assessment for data leaving Québec —
+  // which ours does (Australia, US). CASL governs outbound email.
+  ca: {
+    controller: "au",
+    authority: { name: { en: "Office of the Privacy Commissioner of Canada", fr: "Commissariat à la protection de la vie privée du Canada" }, short: "OPC", url: "https://www.priv.gc.ca/" },
+    law: { en: "PIPEDA, and in Québec the Act respecting the protection of personal information in the private sector (Law 25)", fr: "la LPRPDE et, au Québec, la Loi sur la protection des renseignements personnels dans le secteur privé (loi 25)" },
+    consentRegime: "pipeda-law25-casl",
+    disclosures: [],
+    contactEmail: ukEmail.display,
+    timeZoneNote: CA_NOTE,
   },
 };
 

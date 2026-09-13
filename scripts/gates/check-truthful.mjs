@@ -89,7 +89,7 @@ const FORBIDDEN = [
     // The city alternation must cover every city with a market page — "our
     // Manchester team" is the same lie as "our London team". Extend it when
     // intl/cities.ts gains a market's cities.
-    re: /\bour\s+(?:London|Manchester|Birmingham|Edinburgh|Glasgow|Leeds|Bristol|Liverpool|Paris|Brussels|Bruxelles|Antwerp|Antwerpen|Liège|Liege|Lyon|Marseille|Nice|Bordeaux|Toulouse|Lille|Nantes|Strasbourg|Montpellier|UK|British|French|Belgian|Flemish|European)\s+(?:team|office|staff|crew)\b|notre\s+(?:bureau|équipe)\s+(?:à|de|d'|en)\s+(?:Londres|Paris|Bruxelles|Anvers|Liège|Lyon|Marseille|Nice|Bordeaux|Toulouse|Lille|Nantes|Strasbourg|Montpellier|Belgique|France)/i,
+    re: /\bour\s+(?:London|Manchester|Birmingham|Edinburgh|Glasgow|Leeds|Bristol|Liverpool|Paris|Brussels|Bruxelles|Antwerp|Antwerpen|Liège|Liege|Toronto|Vancouver|Calgary|Montreal|Montréal|Québec|Quebec|Laval|Longueuil|Canadian|Lyon|Marseille|Nice|Bordeaux|Toulouse|Lille|Nantes|Strasbourg|Montpellier|UK|British|French|Belgian|Flemish|European)\s+(?:team|office|staff|crew)\b|notre\s+(?:bureau|équipe)\s+(?:à|de|d'|en)\s+(?:Londres|Paris|Bruxelles|Anvers|Liège|Toronto|Vancouver|Calgary|Montréal|Québec|Laval|Longueuil|Lyon|Marseille|Nice|Bordeaux|Toulouse|Lille|Nantes|Strasbourg|Montpellier|Belgique|France|Canada)/i,
   },
   {
     // No booking or POS integration ships in Europe. Naming one implies it
@@ -120,6 +120,19 @@ const FORBIDDEN = [
     // (2-4-4 in London, 1-2-2-2-2 in Paris), so shape must not be assumed.
     label: "fabricated European phone number",
     re: /\+\s?(?:44|33|32)(?:[\s.\-()]*\d){7,}/,
+  },
+  {
+    // Canada is a PLANNED market (locales.ts) and there is no North American
+    // line either. NANP: +1 then ten digits in any punctuation.
+    label: "fabricated North American phone number",
+    re: /\+\s?1(?:[\s.\-()]*\d){10}\b/,
+  },
+  {
+    // No rate card exists outside Australia, in any currency. $80 is caught
+    // above as an AU fact; this catches the shapes a Canadian page would
+    // reach for. Case-sensitive on purpose: "cad" is a French word.
+    label: "currency amount on a global page (no international rate card exists)",
+    re: /\bCA\$\s?\d|\bC\$\s?\d|\bCAD\s?\d|\d\s?CAD\b|\bUS\$\s?\d/,
   },
   {
     // AU chrome leaking through the import graph (see header). Selector-shaped
