@@ -277,7 +277,7 @@ const gbEn: MarketContent = {
         "Legitimate interests (Article 6(1)(f) UK GDPR) for answering the enquiry you send us; consent for optional cookies, withdrawable at any time. Your rights are listed in the privacy notice.",
     },
     home: {
-      title: "BitePerk — Vox, the AI phone host for UK restaurants",
+      title: "BitePerk — Vox, the AI phone host for UK restaurants and pubs",
       description:
         "Vox answers every restaurant call in a natural voice, checks real availability and books the table. Live in Australia today — now opening UK pilot partnerships.",
       h1: "The phone rings all through service. Let it be answered.",
@@ -291,6 +291,7 @@ const gbEn: MarketContent = {
           "Checks the real diary before it promises a table",
           "Every call kept with a transcript, so nothing is hearsay",
           "One place to see what the phone did all week",
+          "Books inside your rules — last orders, Sunday sittings, a deposit for the big party",
         ],
       },
       pilot: {
@@ -605,6 +606,7 @@ const frFr: MarketContent = {
           "Consulte le registre avant de promettre une table",
           "Chaque appel conservé, avec sa transcription",
           "Une vue d'ensemble de ce que le téléphone a réellement produit",
+          "Réserve dans vos règles — service continu ou coupure, arrhes pour les grandes tablées",
         ],
       },
       pilot: {
@@ -778,7 +780,7 @@ const beEn: MarketContent = {
       othersHeading: "Also in pilot conversations with venues in",
     },
     home: {
-      title: "BitePerk — Vox, the AI phone host for restaurants in Belgium",
+      title: "BitePerk — Vox, the AI phone host for Belgian restaurants and horeca",
       description:
         "Vox answers every restaurant call in a natural voice, checks real availability and books the table. Live in Australia today — now opening pilot partnerships in Belgium.",
       h1: "One line. Two languages. Every booking taken.",
@@ -792,6 +794,7 @@ const beEn: MarketContent = {
           "Checks the real book before promising a table",
           "Every call kept, with a transcript to settle any dispute",
           "One view of what the phone actually did this week",
+          "Books inside your horeca rules — lunch service, closing day, a deposit for large tables",
         ],
       },
       pilot: {
@@ -959,6 +962,7 @@ const beFr: MarketContent = {
           "Vérifie la disponibilité réelle avant d'engager une table",
           "Conserve l'appel et sa transcription, utile en cas de contestation",
           "Restitue enfin ce que le téléphone rapporte, semaine après semaine",
+          "Réserve selon vos règles horeca — service du midi, jour de fermeture, acompte pour les grandes tablées",
         ],
       },
       pilot: {
