@@ -268,6 +268,20 @@ export const siteGraph = {
 };
 
 /**
+ * The same graph with the Organization description in the PAGE's language.
+ * The node is AU-anchored by @id on every tree (check-schema asserts that);
+ * only its prose should follow the document — until 13 Sep 2026 every French
+ * page carried site.description's "warm Australian voice. Made in Sydney."
+ */
+export function siteGraphWith(opts: { readonly orgDescription?: string }) {
+  if (!opts.orgDescription) return siteGraph;
+  return {
+    ...siteGraph,
+    "@graph": [{ ...organizationNode, description: opts.orgDescription }, websiteNode],
+  };
+}
+
+/**
  * The UK subsidiary node, for the UK tree only.
  *
  * Emitted by IntlLayout on /gb-en and nowhere else — deliberately NOT folded
@@ -292,11 +306,14 @@ export const ukEntityGraph = {
  */
 export function buildFaqPage(
   faqs: ReadonlyArray<{ readonly q: string; readonly a: string }>,
+  /** BCP 47 tag of the page (`<html lang>`); the intl pages pass locale.lang. */
+  inLanguage?: string,
 ) {
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     isPartOf: { "@id": WEBSITE_ID },
+    ...(inLanguage ? { inLanguage } : {}),
     mainEntity: faqs.map((f) => ({
       "@type": "Question",
       name: f.q,

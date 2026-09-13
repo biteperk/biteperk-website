@@ -63,7 +63,7 @@ const p = (seg: string) => `${locale.base}/${seg ? `${seg}/` : ""}`;
   <div class="imm-backdrop" data-mobile-menu-backdrop aria-hidden="true"></div>
   <div class="imm-panel">
     <div class="imm-header">
-      <a class="brand" href={p("")} aria-label="BitePerk home">
+      <a class="brand" href={p("")} aria-label={c.a11y.brandHome}>
         <StarMark size={28} />
         <span class="brand-name">bite<span class="perk">perk</span></span>
       </a>
@@ -74,7 +74,7 @@ const p = (seg: string) => `${locale.base}/${seg ? `${seg}/` : ""}`;
       </button>
     </div>
 
-    <nav class="imm-body" aria-label="Site">
+    <nav class="imm-body" aria-label={c.a11y.siteNav}>
       {nav.map((item) => (
         <a
           class:list={["imm-link", { "is-current": item.path === page }]}

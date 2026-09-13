@@ -41,11 +41,15 @@ const productLines = PRODUCT_SLUGS.map(
 // published city's URL to appear in this file, byte-exact. Framed as pilot
 // conversations, never as local operations (Europe-truthful).
 const { intlCities } = await loadTS(join(ROOT, "src/data/intl/cities.ts"));
+const { cityPage } = await loadTS(join(ROOT, "src/data/intl/copy.ts"));
 const publishedIntlCities = intlCities.filter((c) => c.published);
+// Descriptor in the city's own language — the same string its Service JSON-LD
+// declares — so an AI crawler is never handed "AI phone answering for Paris
+// restaurants" next to a French URL.
+const cityLine = (c) =>
+  `- ${cityPage[c.copyLang].serviceName.replace("{city}", c.name)} (pilot): https://biteperk.com${c.base}/${c.slug}/`;
 const citySection = publishedIntlCities.length
-  ? `\n## Market city pages (pilot programme — no local premises)\n${publishedIntlCities
-      .map((c) => `- AI phone answering for ${c.name} restaurants (pilot): https://biteperk.com${c.base}/${c.slug}/`)
-      .join("\n")}\n`
+  ? `\n## Market city pages (pilot programme — no local premises)\n${publishedIntlCities.map(cityLine).join("\n")}\n`
   : "";
 
 // NOTE: Phase-1 scaffold copy. Keep it truthful — AI crawlers quote this file.
