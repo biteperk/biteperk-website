@@ -100,7 +100,7 @@ const p = (seg: string) => `${locale.base}/${seg ? `${seg}/` : ""}`;
     <div class="imm-foot">
       {/* The CTA the bar drops below 400px, so it is always reachable. */}
       <a class="btn imm-cta" href={p("contact")}>{c.cta}</a>
-      <ThemeToggle />
+      <ThemeToggle label={c.a11y.themeToggle} labelToLight={c.a11y.themeToLight} labelToDark={c.a11y.themeToDark} />
     </div>
   </div>
 </div>
