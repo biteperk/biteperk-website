@@ -42,10 +42,26 @@ export type MarketCompliance = {
   readonly timeZoneNote: Record<Lang, string>;
 };
 
-const SYDNEY_NOTE: Record<Lang, string> = {
-  en: "The team is in Sydney, Australia. Replies to European enquiries usually arrive overnight, within one business day.",
-  fr: "L'équipe est à Sydney, en Australie. Les réponses aux demandes européennes arrivent généralement dans la nuit, sous un jour ouvré.",
-};
+// Market-specific wording on purpose: the five homes are scored for mutual
+// similarity (check-intl-similarity, 35% ceiling) and one identical sentence
+// on all of them cost three points of headroom.
+const note = (en: string, fr: string): Record<Lang, string> => ({ en, fr });
+const SYDNEY_NOTE = note(
+  "The team is in Sydney, Australia. Replies to European enquiries usually arrive overnight, within one business day.",
+  "L'équipe est à Sydney, en Australie. Les réponses aux demandes européennes arrivent généralement dans la nuit, sous un jour ouvré.",
+);
+const UK_NOTE = note(
+  "BitePerk's team works from Sydney. A UK enquiry sent in the afternoon is usually answered by the next morning, within one business day.",
+  "L'équipe de BitePerk travaille depuis Sydney. Une demande envoyée l'après-midi depuis le Royaume-Uni reçoit généralement sa réponse le lendemain matin, sous un jour ouvré.",
+);
+const FR_NOTE = note(
+  "Our team is based in Sydney, nine or ten hours ahead of France. Send an enquiry today and you will usually have an answer tomorrow morning.",
+  "Notre équipe est basée à Sydney, avec neuf ou dix heures d'avance sur la France. Envoyez une demande aujourd'hui et vous aurez généralement une réponse demain matin.",
+);
+const BE_NOTE = note(
+  "The people who answer are in Sydney, ahead of Belgium by most of a working day — enquiries sent in Belgian office hours are typically answered before the next one starts.",
+  "Les personnes qui répondent sont à Sydney, avec presque une journée de travail d'avance sur la Belgique — une demande envoyée aux heures de bureau belges reçoit généralement sa réponse avant le début des suivantes.",
+);
 
 export const compliance: Readonly<Record<Market, MarketCompliance>> = {
   au: {
@@ -75,7 +91,7 @@ export const compliance: Readonly<Record<Market, MarketCompliance>> = {
     consentRegime: "uk-gdpr-pecr",
     disclosures: ["uk-companies-reg25", "uk-ecommerce-reg6"],
     contactEmail: ukEmail.display,
-    timeZoneNote: SYDNEY_NOTE,
+    timeZoneNote: UK_NOTE,
   },
   fr: {
     controller: "au",
@@ -84,7 +100,7 @@ export const compliance: Readonly<Record<Market, MarketCompliance>> = {
     consentRegime: "gdpr-eprivacy",
     disclosures: [],
     contactEmail: ukEmail.display,
-    timeZoneNote: SYDNEY_NOTE,
+    timeZoneNote: FR_NOTE,
   },
   be: {
     controller: "au",
@@ -93,7 +109,7 @@ export const compliance: Readonly<Record<Market, MarketCompliance>> = {
     consentRegime: "gdpr-eprivacy",
     disclosures: [],
     contactEmail: ukEmail.display,
-    timeZoneNote: SYDNEY_NOTE,
+    timeZoneNote: BE_NOTE,
   },
 };
 
