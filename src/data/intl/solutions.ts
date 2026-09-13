@@ -455,7 +455,7 @@ export const intlSolutions: Record<Lang, Record<SolutionSlug, IntlSolutionCopy>>
     hotels: {
       title: "Réceptionniste téléphonique IA pour hôtels",
       description:
-        "VoxStay, c'est Bella en réceptionniste d'hôtel — répond à l'appel de réservation en huit langues, annonce le vrai prix taxes comprises, envoie un lien de paiement sécurisé par SMS. En développement ; pilotes en Europe.",
+        "VoxStay, c'est Bella en réceptionniste d'hôtel — huit langues, le vrai prix taxes comprises, un lien de paiement sécurisé par SMS. En développement ; pilotes en Europe.",
       eyebrow: "Hôtels",
       h1: "L'appel de réservation, décroché dans la langue du client.",
       lede: "La réception a une file au comptoir et un téléphone qui ne s'arrête pas. VoxStay est conçu pour prendre l'appel de réservation — huit langues, le vrai tarif taxes comprises, un lien de paiement sécurisé par SMS — et pour faire sonner la réception dès que quelque chose sort de ce cadre.",
