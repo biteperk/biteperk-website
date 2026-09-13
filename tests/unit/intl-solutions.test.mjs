@@ -44,10 +44,11 @@ test("intl solutions: French is French and differs from the English", () => {
   for (const slug of Object.keys(intlSolutions.en)) {
     const en = Object.fromEntries(leaves(intlSolutions.en[slug]));
     for (const [path, v] of leaves(intlSolutions.fr[slug])) {
-      if (v.length > 30) {
-        assert.notEqual(v, en[path], `fr.${slug}.${path} is the English`);
-        assert.match(v, FRENCH_WORD, `fr.${slug}.${path} carries no French function word: "${v.slice(0, 60)}"`);
-      }
+      // Any French leaf must differ from the English; the function-word
+      // heuristic only judges sentences (short noun lists like "Horaires,
+      // chiens, terrasse" are legitimately word-only).
+      if (v.length > 12) assert.notEqual(v, en[path], `fr.${slug}.${path} is the English`);
+      if (v.length > 45) assert.match(v, FRENCH_WORD, `fr.${slug}.${path} carries no French function word: "${v.slice(0, 60)}"`);
     }
   }
 });
