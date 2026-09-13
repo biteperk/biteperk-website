@@ -6,7 +6,7 @@ import AuBase from "@/layouts/AuBase.astro";
 // no markup, no NAP). Every page did until 6 Sep 2026; the locale trees no
 // longer do. Tolerated here rather than splitting the route per target.
 import StarMark from "@/components/StarMark.astro";
-import { currentTarget, u, localesForTarget, AU_BASE } from "@/data/locales";
+import { currentTarget, u, localesForTarget, ORIGIN } from "@/data/locales";
 import { chrome } from "@/data/intl/copy";
 
 // Firebase serves ONE 404.html for the whole site — this global one, which
@@ -52,7 +52,11 @@ const description = "We couldn't find that page. Here are a few useful places to
           <ul class="nf-trees" role="list">
             {trees.map((l) => (
               <li>
-                <a class="btn-ghost" href={`${l.base}/`} hreflang={l.hreflang[0]} lang={l.lang} data-nf-tree={l.base}>
+                {/* The AU tree is another Firebase base from this build's point
+                    of view: absolute, like IntlLayout's footer link, so
+                    check-links (global) does not read it as a root-relative
+                    escape from the locale bases. */}
+                <a class="btn-ghost" href={l.target === "au" ? `${ORIGIN}${l.base}/` : `${l.base}/`} hreflang={l.hreflang[0]} lang={l.lang} data-nf-tree={l.base}>
                   {l.label}
                 </a>
               </li>
