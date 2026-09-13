@@ -39,14 +39,17 @@ export interface HeaderNavLink extends NavLink {
   readonly activeMatch?: "prefix" | "exact" | "never";
 }
 
-// Order is the Phase 1 IA — Products · Solutions (the two mega-menus, rendered
-// before this list) · Resources · Pricing · Platform · About. This array is the
-// ONLY definition: a parallel `nav-ia.ts` used to carry the target order,
-// imported by nothing, and disagreed with what rendered.
+// Order is the Phase 1 IA — Products (mega-menu, rendered before this list) ·
+// Solutions · Resources · Pricing · About. Solutions is a plain link to the
+// /solutions/ hub (the mega-menu was dropped 14 Sep 2026 — it rendered
+// unstyled and a hub reads cleaner); Platform and How it works moved off the
+// desktop bar into the mobile menu + footer to let the five links breathe.
+// This array is the ONLY definition of the header order.
 export const headerNav: ReadonlyArray<HeaderNavLink> = [
+  { label: "Solutions", href: u("/solutions/") },
   { label: "Resources", href: u("/resources/") },
   { label: "Pricing", href: u("/products/voxtable/#pricing"), activeMatch: "never" },
-  { label: "Platform", href: u("/platform/") },
+  { label: "Platform", href: u("/platform/"), desktop: false },
   { label: "How it works", href: u("/technology/"), desktop: false },
   { label: "About", href: u("/about/") },
   // Desktop-hidden: Contact is already reachable from the visible phone
