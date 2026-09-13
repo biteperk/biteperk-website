@@ -166,7 +166,10 @@ describe("navigation", async () => {
   it("nav.ts is the only header definition and carries the Phase 1 order", () => {
     assert.equal(existsSync(join(ROOT, "src/data/nav-ia.ts")), false, "nav-ia.ts must not come back — two nav definitions drift");
     const desktop = headerNav.filter((l) => l.desktop !== false).map((l) => l.label);
-    assert.deepEqual(desktop, ["Resources", "Pricing", "Platform", "About"]);
+    // Products is a separate mega-menu (NavDropdown), rendered before this list.
+    // Solutions is a plain link to the hub (its mega-menu was dropped 14 Sep 2026);
+    // Platform + How it works moved to the mobile menu + footer.
+    assert.deepEqual(desktop, ["Solutions", "Resources", "Pricing", "About"]);
     for (const l of headerNav) assert.match(l.href, /^\/au-en\//, `${l.label}: href must carry the AU base`);
   });
 });

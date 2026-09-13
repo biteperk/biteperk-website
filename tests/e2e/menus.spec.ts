@@ -2,25 +2,16 @@ import { test, expect, devices } from "@playwright/test";
 import { p } from "../helpers/routes";
 
 /**
- * Keyboard flows for the Products + Solutions mega-menus (desktop) and the
+ * Keyboard flows for the Products mega-menu (desktop) and the
  * mobile menu (focus trap, Esc, backdrop). Contracts live in
  * src/scripts/megamenu.ts and src/scripts/mobile-menu.ts.
  *
- * There are two [data-megamenu] roots after Phase 1 Wave 3 — always scope
- * locators to one menu or Playwright strict-mode fails.
+ * Products is the one [data-megamenu] root; Solutions is a plain link to the
+ * /solutions/ hub since 14 Sep 2026 (the mega-menu was dropped).
  */
 
 function productsMenu(page: import("@playwright/test").Page) {
   const root = page.locator('[data-megamenu]:has([aria-controls="megamenu-products-panel"])');
-  return {
-    root,
-    trigger: root.locator("[data-megamenu-trigger]"),
-    panel: root.locator("[data-megamenu-panel]"),
-  };
-}
-
-function solutionsMenu(page: import("@playwright/test").Page) {
-  const root = page.locator('[data-megamenu]:has([aria-controls="megamenu-solutions-panel"])');
   return {
     root,
     trigger: root.locator("[data-megamenu-trigger]"),
@@ -84,21 +75,14 @@ test.describe("mega-menu (desktop keyboard)", () => {
     await expect(productsMenu(page).panel).toBeHidden();
   });
 
-  test("Solutions mega-menu opens, lists verticals, Esc closes", async ({ page }) => {
+  test("Solutions is a plain link to the hub (no mega-menu), active on /solutions/", async ({ page }) => {
     await page.goto(p());
-    const { trigger, panel } = solutionsMenu(page);
-
-    await expect(trigger).toBeVisible();
-    await trigger.focus();
-    await page.keyboard.press("Enter");
-    await expect(trigger).toHaveAttribute("aria-expanded", "true");
-    await expect(panel).toBeVisible();
-    await expect(panel.getByRole("menuitem", { name: /Restaurants/i })).toBeVisible();
-    await expect(panel.getByRole("menuitem", { name: /All solutions/i })).toBeVisible();
-
-    await page.keyboard.press("Escape");
-    await expect(trigger).toHaveAttribute("aria-expanded", "false");
-    await expect(panel).toBeHidden();
+    const link = page.locator(`.nav-centre a[href="${p("/solutions/")}"]`);
+    await expect(link).toBeVisible();
+    await expect(link).not.toHaveAttribute("aria-expanded", /.*/); // it is a link, not a disclosure
+    await link.click();
+    await page.waitForURL("**/solutions/");
+    await expect(page.locator(`.nav-centre a[href="${p("/solutions/")}"]`)).toHaveAttribute("aria-current", "page");
   });
 });
 
@@ -177,7 +161,7 @@ test.describe("mobile menu", () => {
     const panel = page.locator("[data-mobile-menu]");
     await expect(panel.getByText("Solutions", { exact: true }).first()).toBeVisible();
     await expect(panel.locator(`a[href="${p("/solutions/restaurants/")}"]`)).toBeVisible();
-    await expect(panel.locator(`a[href="${p("/solutions/")}"]`)).toBeVisible();
+    await expect(panel.locator(`a.mm-all[href="${p("/solutions/")}"]`)).toBeVisible();
   });
 });
 
