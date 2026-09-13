@@ -967,7 +967,8 @@ const appJsonLd =
             {resCategoryPosts.map((x) => (
               <a class="intl-card intl-card-link" href={p(`resources/${resSeg}/${x.id.split("/")[1]}`)}>
                 <p class="status-pill">{resFmt(x.data.publishDate)}</p>
-                <h3>{x.data.title}</h3>
+                {/* h2: the category page has no section heading between the h1 and these cards. */}
+                <h2>{x.data.title}</h2>
                 <p>{x.data.description}</p>
               </a>
             ))}
