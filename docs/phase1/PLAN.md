@@ -36,16 +36,16 @@ The brief’s *order* is right (architecture → nav → solutions → resources
 - [x] Codify target nav IA in `src/data/nav-ia.ts` (data only — **not** wired to header yet)
 - [x] Codify Solutions registry in `src/data/solutions.ts` + unit contract test
 
-### Wave 1 — Platform architecture (1A)
-- Extend market config fields needed for expansion readiness: currency, primary phone strategy, address strategy (without inventing fake CA NAP)
-- Add `planned` locales (`ca-en`, `ca-fr`) that **do not emit routes** until an explicit `published: true` (or `INTL_LAUNCHED`-style flag) flips
-- Document Canada readiness checklist in this folder
+### Wave 1 — Platform architecture (1A) *(done 13 Sep 2026 — C1/C2, #87)*
+- [x] `Locale.status: "planned"` + `ALL_LOCALES` filter: `ca-en` / `ca-fr` registered, typed everywhere, emitted nowhere (`check-planned` proves it on every merged build)
+- [x] `Market += "ca"` with a compliance entry; no currency/phone/address invented (`check-truthful` bans `+1` numbers and CAD amounts)
+- [x] `docs/phase1/CANADA-READINESS.md` — the 14-row launch checklist
 
 ### Wave 2 — Solutions engine (1C) — **AU first commercial intent**
 - [x] `/au-en/solutions/` index + `/au-en/solutions/{slug}/` for the eight required verticals
 - [x] Shared layout: Hero → Problem → Lost revenue → How we solve → Features → Benefits → Story → FAQ → Book demo
-- [ ] Wire Products mega-menu / footer only after ≥1 solution page is live *(Wave 3)*
-- [ ] Intl: reuse same registry via `[...intl].astro` page registry once AU template is green
+- [x] Wire Products mega-menu / footer only after ≥1 solution page is live *(Wave 3, #65 / #72)*
+- [x] Intl: same registry via `[...intl].astro` — 45 solution pages across the five trees *(M1, #79 → landed via #72)*
 
 ### Wave 3 — Navigation (1B)
 - [x] Desktop: Solutions mega-menu beside Products (eight verticals + hub)
@@ -62,7 +62,7 @@ The brief’s *order* is right (architecture → nav → solutions → resources
 - [x] Existing posts classified (12 guides + 1 comparison); URLs stay `/blog/{slug}/`
 - [x] Category indexes under `/resources/{segment}/` — **only for populated types** (13 Sep: four empty, indexable pages were a thin-page signal; `check-routes` now fails an empty one that builds)
 - [x] Header/footer “Guides” → “Resources”; `/blog/` index canonicalises to `/resources/guides/` and leaves the sitemap
-- [ ] Deeper internal links from solutions ↔ resources *(Wave 6 / S2)*
+- [x] Deeper internal links from solutions ↔ resources *(S2, #76; enforced by `check-internal-links`)*
 - [ ] Optional later: 301 `/blog/` → `/resources/guides/` once analytics clear
 
 ### Wave 5 — Conversion system (1E)
@@ -78,17 +78,20 @@ The brief’s *order* is right (architecture → nav → solutions → resources
 - [x] Sitemap priorities for solutions/resources, cities derived, `lastmod` on posts; one predicate for which solution pages build
 - [x] Gates: `check-conversion` (this contract), unit tests in `gates:au`, foundation tests import the registries instead of grepping source
 
-### Wave 6 — SEO foundation (1F)
-- Audit existing `schema.ts` / SEO component against Organization · FAQ · Article · Breadcrumb · SoftwareApplication
-- Ensure every new solutions/resources template emits the set
-- Breadcrumb + hub linking rules
+### Wave 6 — SEO foundation (1F) *(done 13 Sep 2026 — S1–S4 #75–#78, M1–M4 #79–#82, L1–L3 #83/#84/#86; all landed via #72 + #89)*
+- [x] Page-level schema builders (`buildBreadcrumb`, `buildWebPage`, `buildCollectionPage`, `buildContactPage`, `buildFaqPage(…, lang)`); `Breadcrumbs.astro` emits its own JSON-LD; every node linked by `@id`
+- [x] Every solutions/resources template emits the set on all six trees; `check-schema` per-template type sets + `@id` integrity
+- [x] Internal-linking graph (solutions ↔ guides ↔ products, intl product ↔ city) enforced by `check-internal-links` on both targets; `check-meta`, `check-llms`, `check-sitemap`, blocking offline lychee
+- [x] Multinational engine: Solutions + Resources on every locale tree, compliance registry (`intl/compliance.ts`) + `check-market-disclosure`, parity test; feel-local waves (`/en` region router, market vocabulary, bilingual Belgian demo, Antwerp; Liège staged)
 
-### Wave 7 — Canada readiness (1G)
-- Add `ca-en` / `ca-fr` as planned locales (noindex, no sitemap, no public picker) when Wave 1 lands
-- Ontario / BC / Alberta and Montréal / Québec / Laval / Longueuil as *planned* city slots (unpublished)
-- Launch = content + flip publish flags — **no template rewrite**
+### Wave 7 — Canada readiness (1G) *(done 13 Sep 2026 — #87)*
+- [x] `ca-en` / `ca-fr` planned locales — no routes, sitemap, hreflang, picker, OG or manifest (`check-planned` in `gates:merged`, fault-injected)
+- [x] Seven `published:false` city stubs (Toronto, Vancouver, Calgary; Montréal, Québec, Laval, Longueuil) with real districts
+- [x] Launch = content + flip `status` on both locales in one commit — **no template rewrite** (`locale-planned.test.mjs` enforces the pairing)
 
-### Wave 8 — Content production (1H)
+### Wave 8 — Content production (1H) *(system done 13 Sep 2026 — W1 #88; batches are next)*
+- [x] Proof rules in the schema: a published case study needs `customer.approved: true`, a report needs `sources`; six templates in `docs/phase1/templates/`; per-post OG cards
+- [ ] Batches: case studies (Mazcina, Natalia — approvals pending) → comparisons ×4 → FAQ ×10 → guides ×8 → product update → industry report (real data only); intl seed sets after
 - Cadence: weekly guide+comparison; monthly case study+product update; quarterly industry report
 - Inventory vs Definition of Done is **generated**: `docs/phase1/CONTENT-INVENTORY.md` from `RESOURCE_DOD_*` (resources.ts) + the collections; the unit test fails when it is stale. Templates: `docs/phase1/templates/`.
 
@@ -97,30 +100,33 @@ The brief’s *order* is right (architecture → nav → solutions → resources
 ## Definition of Done (Phase 1) — acceptance
 
 ### Platform
-- [ ] Localisation remains config-driven via existing SSOT (+ locale-plan)
-- [ ] Reusable solutions + resources templates
-- [ ] Canada reserved without emitting public routes
+- [x] Localisation remains config-driven via existing SSOT (`locales.ts` is the SSOT; `locale-plan.ts` was superseded by `ALL_LOCALES` + `status`)
+- [x] Reusable solutions + resources templates (AU + all five intl trees)
+- [x] Canada reserved without emitting public routes (`check-planned`)
 
 ### Content (AU)
 - [ ] 20+ guides, 10+ comparisons, 10+ FAQs, 5+ case studies, industry reports (inventory tracked)
-- [ ] All eight solution pages live on AU
+- [ ] All eight solution pages live on AU *(built and green on `integration` + staging; production after the integration → main promotion)*
 
 ### SEO / conversion
-- [ ] Metadata + schema + internal linking on new templates
-- [ ] Every new page: Book Demo CTA, trust, FAQ; mobile-safe
+- [x] Metadata + schema + internal linking on new templates (`check-meta`, `check-schema`, `check-internal-links`)
+- [x] Every new page: Book Demo CTA, trust, FAQ; mobile-safe (`check-conversion`; no-overflow assertions in both browser suites)
 
 ### Expansion
-- [ ] UK / FR / BE continue on **current bases**; Canada ready to publish from config
+- [x] UK / FR / BE continue on **current bases**; Canada ready to publish from config
 
 ---
 
+## Staging *(done 13 Sep 2026 — #85)*
+- `biteperk-staging.web.app` auto-deploys from `integration` (`deploy-staging.yml`), `noindex`, generated hosting block (`check-staging-hosting`); the staging origin is on the contact function's allowlist (leads tagged `environment`, kept out of Zoho).
+
 ## Out of scope for early waves
 - Renaming live locale bases
-- Staging Firebase / auto-deploy from `integration`
 - Rewriting product catalogue or Vox naming
 - Building Canada city pages as published content
 
 ## PR discipline
 - Base: **`integration`**
+- **One PR at a time — never stack PRs.** The rulesets are squash-only with strict up-to-date checks, so a stack cascades (13 Sep 2026: sixteen stacked PRs collapsed into one squash, #72). Validate the full local chain before pushing; merge; then start the next.
 - Promote to **`main`** only after soak + green CI
 - Deploy: `gh workflow run "Deploy Firebase Hosting" --ref main`
