@@ -14,7 +14,7 @@
  * (no AU price/phone/NAP) are enforced by scripts/gates/check-truthful.mjs.
  */
 import IntlLayout from "@/layouts/IntlLayout.astro";
-import { localesForTarget, pagesForLocale, currentTarget, localeHome, ORIGIN, type Locale } from "@/data/locales";
+import { localesForTarget, pagesForLocale, currentTarget, localeHomePath, ORIGIN, type Locale } from "@/data/locales";
 import {
   resolveCopy, resolveMedia, resolveHero, resolveSupport, resolveCityStrip, resolveShowCallSim, resolveRegions,
   type CopyBundle, type SimplePageCopy,
@@ -97,7 +97,7 @@ const regions = resolveRegions(locale);
 const regionLinks = regions
   ? [...localesForTarget("au"), ...localesForTarget("global")]
       .filter((l) => l.base !== locale.base)
-      .map((l) => ({ l, href: l.market === "au" ? localeHome(l) : new URL(localeHome(l)).pathname }))
+      .map((l) => ({ l, href: localeHomePath(l) }))
   : [];
 const hero = resolveHero(locale);
 const { home: h, contact: ct } = c;

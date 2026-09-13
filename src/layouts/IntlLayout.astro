@@ -12,7 +12,7 @@
 import Base from "@/layouts/Base.astro";
 import { resolveCopy } from "@/data/intl";
 import {
-  localesForTarget, buildHreflang, localeSwitchUrl, INTL_LAUNCHED, AU_HOME, pageExistsInLocale,
+  localesForTarget, buildHreflang, localeSwitchUrl, INTL_LAUNCHED, AU_BASE, pageExistsInLocale,
   type BuildTarget, type Locale,
 } from "@/data/locales";
 import LocalePicker from "@/components/LocalePicker.astro";
@@ -251,10 +251,10 @@ const isUk = locale.market === "gb";
             )}
             <nav class="intl-footer-links" aria-labelledby="ifc-regions">
               <p class="intl-footer-col-title" id="ifc-regions">{c.footerRegions}</p>
-              <a href={AU_HOME + "/"}>{c.auSite} ↗</a>
+              <a href={`${AU_BASE}/`}>{c.auSite} ↗</a>
               {alternateLocales.map((l) => (
                 <a
-                  href={new URL(localeSwitchUrl(canonicalPath, l)).pathname}
+                  href={localeSwitchUrl(canonicalPath, l)}
                   rel="alternate"
                   hreflang={l.hreflang[0]}
                   lang={l.lang}
