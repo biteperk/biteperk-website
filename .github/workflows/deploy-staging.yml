@@ -1,0 +1,112 @@
+name: Deploy Staging
+
+# Standing staging site: https://biteperk-staging.web.app
+#
+# Every push to `integration` rebuilds the merged site with INTL_LAUNCHED=true
+# (what production ships) and publishes it to the Firebase Hosting target
+# `staging` (site biteperk-staging, .firebaserc). It exists so that:
+#   - the six-tree hreflang clusters and sitemaps can be checked on a stable
+#     URL before a production deploy;
+#   - the contact form can be tested end-to-end — the staging origin is on the
+#     function's ALLOWED_ORIGINS (functions/index.js), which the ephemeral PR
+#     preview channels are not;
+#   - stakeholders (Ludovic, counsel) get one stable link for sign-off.
+#
+# What it does NOT do: deploy the Cloud Functions (staging posts to the
+# production function on purpose, see functions/index.js), deploy the
+# redirect host, or touch biteperk.com. Production stays manual from `main`
+# via "Deploy Firebase Hosting". The staging block in firebase.json is
+# generated from the production block and carries X-Robots-Tag: noindex —
+# check-staging-hosting (gates:au) fails CI if the two drift.
+
+on:
+  push:
+    branches: [integration]
+  workflow_dispatch:
+
+concurrency:
+  group: firebase-hosting-staging
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy:
+    name: Build integration and deploy to biteperk-staging
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      INTL_LAUNCHED: "true"
+      FIREBASE_PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID }}
+      GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+      GCP_FIREBASE_DEPLOY_SERVICE_ACCOUNT: ${{ vars.GCP_FIREBASE_DEPLOY_SERVICE_ACCOUNT }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate deploy environment
+        run: |
+          set -euo pipefail
+          for name in FIREBASE_PROJECT_ID GCP_WORKLOAD_IDENTITY_PROVIDER GCP_FIREBASE_DEPLOY_SERVICE_ACCOUNT; do
+            if [[ -z "${!name:-}" ]]; then
+              echo "::error title=Missing GitHub variable::Set ${name} as a repository variable (the production deploy uses the same three)." >&2
+              exit 1
+            fi
+          done
+
+      # The staging block must be the production block + noindex, and the
+      # target must be mapped — a drifted config would deploy something other
+      # than what production serves, which is the one thing staging is for.
+      - name: Check staging hosting config
+        run: node scripts/gates/check-staging-hosting.mjs
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.GCP_FIREBASE_DEPLOY_SERVICE_ACCOUNT }}
+
+      - name: Build merged site (INTL_LAUNCHED=true)
+        run: npm run build:site
+
+      - name: Merged-tree sanity gate
+        run: npm run gates:merged
+
+      - name: Deploy to Firebase Hosting (staging)
+        run: |
+          npx --yes firebase-tools@13.35.1 deploy \
+            --project "$FIREBASE_PROJECT_ID" \
+            --only hosting:staging \
+            --non-interactive
+
+      - name: Verify the deployed staging site
+        run: |
+          set -euo pipefail
+          url="https://biteperk-staging.web.app"
+          # Hard checks: it serves the site and it is noindex. The cache header
+          # is compared with production rather than asserted — staging mirrors
+          # whatever hosting config integration carries, and integration can
+          # legitimately lag or lead main by one hotfix; a difference is
+          # information, not a failed deploy.
+          sleep 10
+          h="$(curl -sSI "$url/gb-en/" | tr -d '\r')"
+          echo "$h" | grep -qiE '^HTTP/[0-9.]+ 200' || { echo "::error::$url/gb-en/ did not return 200"; echo "$h"; exit 1; }
+          echo "$h" | grep -qiE '^x-robots-tag: .*noindex' || { echo "::error::staging is missing X-Robots-Tag noindex"; echo "$h"; exit 1; }
+          s_cc="$(echo "$h" | grep -iE '^cache-control:' | head -1 | cut -d' ' -f2- || true)"
+          p_cc="$(curl -sSI https://biteperk.com/gb-en/ | tr -d '\r' | grep -iE '^cache-control:' | head -1 | cut -d' ' -f2- || true)"
+          if [[ "$s_cc" != "$p_cc" ]]; then
+            echo "::warning title=Staging cache header differs from production::staging '$s_cc' vs production '$p_cc' — integration and main carry different hosting rules right now."
+          fi
+          echo "staging OK: 200, noindex; cache-control '$s_cc' at $url"
