@@ -242,6 +242,7 @@ test("bundle parity: no empty or whitespace-only copy on any tree", () => {
  */
 const FR_SHARED_WITH_EN = new Set([
   "chrome.nav.contact",       // "Contact"
+  "chrome.nav.solutions",     // "Solutions" — same word in French
   "chrome.consent.categories.marketing.title", // "Marketing"
   "chrome.menu",              // "Menu" is the same word in French
   "chrome.cookies",           // "Cookies"

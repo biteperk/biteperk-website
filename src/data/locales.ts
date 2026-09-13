@@ -326,6 +326,11 @@ const INTL_CORE_PAGES: readonly string[] = [
   // fifth product needs no edit here.
   "products",
   ...PRODUCT_SLUGS.map((s) => `products/${s}`),
+  // Solution verticals are CORE for the same reason products are: language-
+  // level prose (intl/solutions.ts), alternates of each other across the
+  // English trees. Same predicate as the AU tree (renderable = live + draft).
+  "solutions",
+  ...RENDERABLE_SOLUTION_SLUGS.map((s) => `solutions/${s}`),
 ];
 
 /**
