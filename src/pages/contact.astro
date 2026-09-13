@@ -6,7 +6,7 @@ import ImageBlock from "@/components/ImageBlock.astro";
 import SocialLinks from "@/components/SocialLinks.astro";
 import { site } from "@/data/site";
 import { products, voxProof } from "@/data/products";
-import { u } from "@/data/locales";
+import { u, AU_BASE } from "@/data/locales";
 
 const title = "Contact Biteperk — Restaurant voice AI, Sydney & Australia-wide";
 const description =
@@ -156,6 +156,9 @@ const description =
               carries anything about the visitor. */}
           <input type="hidden" name="formToken" value="" data-form-token />
           <input type="hidden" name="leadRef" value="" data-lead-ref />
+          {/* Which tree the lead came from — the intl form sends its locale
+              base too, so every lead can be routed by market. */}
+          <input type="hidden" name="locale" value={AU_BASE} />
 
 
           <div class="contact-row">
@@ -599,21 +602,38 @@ const description =
         status.hidden = false;
       }
 
+      const SUCCESS_BODY =
+        "Your message has reached the Biteperk team. We usually reply within a " +
+        "few hours during business hours (Mon–Fri, 9am–5pm AEST).";
       const showSuccess = () => {
         // Arrow (not a hoisted declaration) so it captures `form` narrowed
-        // non-null by the early-return guard above.
-        form.innerHTML =
-          '<div class="contact-success">' +
+        // non-null by the early-return guard above. The status live region
+        // stays in the DOM (replacing innerHTML used to destroy it, so the
+        // success was never announced) and focus moves to the confirmation
+        // because the submit button that held it is now hidden.
+        for (const child of Array.from(form.children)) {
+          if (child !== status) (child as HTMLElement).hidden = true;
+        }
+        const done = document.createElement("div");
+        done.className = "contact-success";
+        done.tabIndex = -1;
+        done.innerHTML =
           '<span class="contact-success-tick" aria-hidden="true">' +
           '<svg viewBox="0 0 56 56" width="44" height="44" fill="none">' +
           '<circle cx="28" cy="28" r="25" stroke="currentColor" stroke-width="2"/>' +
           '<path d="M17 29l8 8 15-17" stroke="currentColor" stroke-width="2.5" ' +
           'stroke-linecap="round" stroke-linejoin="round"/>' +
           "</svg></span>" +
-          "<h2>Thanks — we'll be in touch.</h2>" +
-          "<p>Your message has reached the Biteperk team. We usually reply within a " +
-          "few hours during business hours (Mon–Fri, 9am–5pm AEST).</p>" +
-          "</div>";
+          "<h2>Thanks — we'll be in touch.</h2>";
+        const p = document.createElement("p");
+        p.textContent = SUCCESS_BODY;
+        done.appendChild(p);
+        form.prepend(done);
+        if (status) {
+          status.textContent = SUCCESS_BODY;
+          status.hidden = false;
+        }
+        done.focus();
       };
 
       form.addEventListener("submit", async (e) => {
@@ -662,7 +682,7 @@ const description =
             showSuccess();
             reportDemoConversion();
             document.dispatchEvent(new CustomEvent("bp:event", { detail: { name: "form-success" } }));
-            return; // form is gone; nothing left to re-enable
+            return; // button is hidden; the finally block re-enables it harmlessly
           }
 
           showError(body.error || "Sorry — something went wrong.");

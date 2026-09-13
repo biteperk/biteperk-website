@@ -244,6 +244,21 @@ export type ContactCopy = {
     messagePlaceholder: string;
     submit: string;
     note: string;
+    /**
+     * Strings the submit script writes at runtime. They live here, not in the
+     * script, because until 13 Sep 2026 every tree — /fr and /be-fr included —
+     * got an English "Thanks — we'll be in touch." and, on a network error,
+     * the Australian mailbox. The template hands them to the script through
+     * data-* attributes on the form.
+     */
+    runtime: {
+      sending: string;
+      successTitle: string;
+      successBody: string;
+      error: string;
+      /** "{email}" is replaced with the tree's chrome.email at render. */
+      networkError: string;
+    };
   };
   aside: { heading: string; body: string; emailLabel: string };
 };
@@ -301,7 +316,11 @@ export const chrome: Record<Lang, ChromeCopy> = {
     menuClose: "Close menu",
     suggest: "There's a BitePerk site for your region.",
     suggestDismiss: "Dismiss",
-    email: "hello@biteperk.com.au",
+    // International correspondence lives on @biteperk.com (CLAUDE.md, sender
+    // identity). Was the AU hello@ address on four of five trees until
+    // 13 Sep 2026; the legal pages' controller-contact lines still name it and
+    // move with the compliance registry (plan M3).
+    email: "sales@biteperk.com",
     rights: "All rights reserved.",
     consent: {
       region: "Cookie consent",
@@ -352,7 +371,7 @@ export const chrome: Record<Lang, ChromeCopy> = {
     menuClose: "Fermer le menu",
     suggest: "Un site BitePerk existe pour votre région.",
     suggestDismiss: "Fermer",
-    email: "hello@biteperk.com.au",
+    email: "sales@biteperk.com",
     rights: "Tous droits réservés.",
     // French DISCHARGED — verbal pass from Ludovic, confirmed by Sam 7 Sep 2026;
     // see this file's header. The category titles match the cookies page (which
@@ -865,6 +884,13 @@ export const contact: Record<Lang, ContactCopy> = {
       messagePlaceholder: "Covers, locations, what the phone is like on a busy night…",
       submit: "Request a pilot",
       note: "No rate card at this stage — commercial terms are agreed per pilot. We reply within a business day.",
+      runtime: {
+        sending: "Sending…",
+        successTitle: "Thanks — we'll be in touch.",
+        successBody: "Your request has reached the BitePerk team. We'll reply within a business day.",
+        error: "Sorry — something went wrong. Please try again.",
+        networkError: "Network error — please try again or email {email}.",
+      },
     },
     aside: {
       heading: "Prefer email?",
@@ -891,6 +917,15 @@ export const contact: Record<Lang, ContactCopy> = {
       messagePlaceholder: "Couverts, adresses, à quoi ressemble le téléphone un soir de service…",
       submit: "Demander un pilote",
       note: "Pas de grille tarifaire à ce stade — les conditions commerciales sont convenues par pilote. Réponse sous un jour ouvré.",
+      // French written 13 Sep 2026 — NOT yet reviewed. Goes in the next
+      // Ludovic batch (extract-fr-review.mjs --since lists it).
+      runtime: {
+        sending: "Envoi…",
+        successTitle: "Merci — nous revenons vers vous.",
+        successBody: "Votre demande est arrivée chez l'équipe BitePerk. Réponse sous un jour ouvré.",
+        error: "Désolé — quelque chose n'a pas fonctionné. Merci de réessayer.",
+        networkError: "Erreur réseau — réessayez ou écrivez à {email}.",
+      },
     },
     aside: {
       heading: "Vous préférez l'e-mail ?",

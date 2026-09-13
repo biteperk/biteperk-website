@@ -34,9 +34,11 @@ const cookiesHref = `${served.base}/legal/cookies/`;
 // the English it always had. Until 6 Sep 2026 every tree got English.
 //
 // NB: this component is `transition:persist`ed in Base.astro, so a View
-// Transition from /fr/ to /gb-en/ keeps the French bar until a full load.
-// Accepted: the region picker is the only cross-locale link and it is a
-// full navigation on the global build.
+// Transition from /fr/ to /gb-en/ would keep the French bar (and its
+// /fr/legal/cookies/ link) on the English page. Every cross-locale link —
+// the LocalePicker items, the footer region links, the AU mobile-menu region
+// list — therefore carries `data-astro-reload`, which makes the region switch
+// a full navigation. It was assumed to be one already; it was not.
 const cc = chrome[served.copyLang].consent;
 
 const toggleable = categories.filter((c) => !c.locked);

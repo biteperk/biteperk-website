@@ -451,7 +451,17 @@ const appJsonLd =
           <h1>{ct.h1}</h1>
           <p class="lede">{ct.intro}</p>
 
-          <form class="intl-form" method="post" action="/api/contact" data-astro-reload>
+          <form
+            class="intl-form"
+            method="post"
+            action="/api/contact"
+            data-astro-reload
+            data-i18n-sending={ct.form.runtime.sending}
+            data-i18n-success-title={ct.form.runtime.successTitle}
+            data-i18n-success-body={ct.form.runtime.successBody}
+            data-i18n-error={ct.form.runtime.error}
+            data-i18n-network-error={ct.form.runtime.networkError.replace("{email}", isUk ? ukEmail.display : c.chrome.email)}
+          >
             {/* Honeypot — same contract as the AU form / Cloud Function. */}
             <p class="hp" aria-hidden="true">
               <label>Leave this field empty<input type="text" name="_gotcha" tabindex="-1" autocomplete="off" /></label>
@@ -465,6 +475,11 @@ const appJsonLd =
                 sent visitor IPs to Google. The honeypot plus the function's
                 per-connection rate limit do that job now. */}
             <input type="hidden" name="crmForm" value="zoho-global" />
+            {/* Which tree the lead came from. Without it a /fr/ enquiry and a
+                /gb-en/ enquiry were indistinguishable in Firestore and Zoho;
+                sales could not route by market. The function allowlists the
+                value against locales.ts bases. */}
+            <input type="hidden" name="locale" value={locale.base} />
             {/* First-touch campaign attribution (utm fields + gclid), mirrored
                 from the AU form: without it no UK/EU ad click can ever be
                 joined to a lead. Filled from sessionStorage by the submit
@@ -882,7 +897,16 @@ const appJsonLd =
 
       const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
       const status = form.querySelector<HTMLParagraphElement>(".intl-form-status");
-      const buttonLabel = button?.textContent ?? "Request a pilot";
+      const buttonLabel = button?.textContent ?? "";
+      // In-language runtime strings, handed over by the template (copy.ts
+      // contact.form.runtime). No literal user-facing English lives here.
+      const t = {
+        sending: form.dataset.i18nSending ?? "",
+        successTitle: form.dataset.i18nSuccessTitle ?? "",
+        successBody: form.dataset.i18nSuccessBody ?? "",
+        error: form.dataset.i18nError ?? "",
+        networkError: form.dataset.i18nNetworkError ?? "",
+      };
       let busy = false;
 
       // First-touch attribution (utm_*/gclid) captured by scripts/attribution.ts
@@ -922,7 +946,7 @@ const appJsonLd =
         if (button) {
           button.disabled = true;
           button.setAttribute("aria-busy", "true");
-          button.textContent = "Sending…";
+          button.textContent = t.sending;
         }
 
         const payload: Record<string, string> = {};
@@ -941,22 +965,37 @@ const appJsonLd =
           if (response.ok && body.ok) {
             reportGoogleAdsConversion(googleAdsGlobalDemoContactConversionId, leadRef);
             document.dispatchEvent(new CustomEvent("bp:event", { detail: { name: "form-success" } }));
-            form.innerHTML =
-              '<div class="intl-form-success">' +
-              "<h2>Thanks — we'll be in touch.</h2>" +
-              "<p>Your request has reached the BitePerk team. We'll reply within a business day.</p>" +
-              "</div>";
+            // Keep the live region (it is INSIDE the form — replacing innerHTML
+            // destroyed it, so nothing was announced) and move focus onto the
+            // confirmation, since the submit button that held focus is gone.
+            for (const child of Array.from(form.children)) {
+              if (child !== status) (child as HTMLElement).hidden = true;
+            }
+            const done = document.createElement("div");
+            done.className = "intl-form-success";
+            done.tabIndex = -1;
+            const h2 = document.createElement("h2");
+            h2.textContent = t.successTitle;
+            const p = document.createElement("p");
+            p.textContent = t.successBody;
+            done.append(h2, p);
+            form.prepend(done);
+            if (status) {
+              status.textContent = t.successBody;
+              status.hidden = false;
+            }
+            done.focus();
             return;
           }
 
           if (status) {
-            status.textContent = body.error || "Sorry — something went wrong. Please try again.";
+            status.textContent = body.error || t.error;
             status.classList.add("is-error");
             status.hidden = false;
           }
         } catch {
           if (status) {
-            status.textContent = "Network error — please try again or email hello@biteperk.com.au.";
+            status.textContent = t.networkError;
             status.classList.add("is-error");
             status.hidden = false;
           }

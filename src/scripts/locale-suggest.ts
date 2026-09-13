@@ -61,12 +61,35 @@
       .filter(Boolean)
       .map((l) => l.toLowerCase());
 
+    // Exact tag first (fr-BE → /be-fr, en-GB → /gb-en). Then the primary
+    // subtag on its own: Safari and several mobile browsers report a single
+    // region-tagged entry with no bare `fr` behind it, so a visitor with
+    // [fr-CA] alone got no offer at all. The fallback only considers trees
+    // that claim the bare language AND a region (/fr claims fr + fr-FR) —
+    // never a language-only tree like /en, the x-default, because "there's a
+    // site for your region" would be false for an en-US visitor. It is a
+    // second loop, not a widening of the first, so preference order still
+    // wins — [en-US, fr-BE] offers /be-fr (exact), not /fr (fallback).
+    const codesOf = (c: Candidate) => c.hreflang.map((h) => h.toLowerCase());
+    const isRegional = (c: Candidate) => codesOf(c).some((h) => h.includes("-"));
     let match: Candidate | undefined;
     outer: for (const tag of langs) {
       for (const c of candidates) {
-        if (c.hreflang.some((h) => h.toLowerCase() === tag)) {
+        if (codesOf(c).includes(tag)) {
           match = c;
           break outer;
+        }
+      }
+    }
+    if (!match) {
+      outer2: for (const tag of langs) {
+        const primary = tag.split("-")[0];
+        if (primary === tag) continue; // a bare tag already had its exact chance
+        for (const c of candidates) {
+          if (isRegional(c) && codesOf(c).includes(primary)) {
+            match = c;
+            break outer2;
+          }
         }
       }
     }
