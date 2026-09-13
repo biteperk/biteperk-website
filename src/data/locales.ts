@@ -308,6 +308,24 @@ export function localeHome(locale: Locale): string {
   return `${ORIGIN}${locale.base}/`;
 }
 
+/**
+ * A locale's home as a HOST-RELATIVE path — what every navigation link uses.
+ *
+ * Navigation between the six trees is host-relative on purpose (rev. 13 Sep
+ * 2026): the merged site serves all of them from one host, so `/fr/…` is
+ * right on biteperk.com AND on the staging host. Until then the picker, the
+ * AU footer link and the /en region router were written absolute to
+ * biteperk.com — only because check-links rejected a root-relative link to
+ * another build's base — so every region switch on staging jumped to
+ * production. Only things that NAME the canonical host stay absolute:
+ * canonical, hreflang (buildHreflang), og:url, sitemap, llms, JSON-LD
+ * (localeHome / abs / AU_HOME). check-links now fails an absolute internal
+ * anchor, so this cannot regress.
+ */
+export function localeHomePath(locale: Locale): string {
+  return `${locale.base}/`;
+}
+
 // Removed Jul 2026: AU_CCTLD, currentOrigin() and localeUrl() were exported
 // here and referenced nowhere in src/, scripts/, tests/ or astro.config.mjs.
 // localeUrl() also carried a no-op — `.replace(/\/$/, "/")` swapped a trailing
@@ -565,7 +583,7 @@ export function localeSwitchUrl(path: string, to: Locale): string {
   const from = localeFromPath(path);
   const rest = path.slice(from.base.length) || "/";
   const page = rest.endsWith("/") ? rest : rest + "/";
-  return pageExistsInLocale(page, to) ? `${ORIGIN}${to.base}${page}` : localeHome(to);
+  return pageExistsInLocale(page, to) ? `${to.base}${page}` : localeHomePath(to);
 }
 
 /**
