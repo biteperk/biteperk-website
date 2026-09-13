@@ -13,7 +13,13 @@ import { u, abs } from "@/data/locales";
 import { defaultCtaActions } from "@/data/conversion";
 
 export async function getStaticPaths() {
-  return RESOURCE_SEGMENTS.map((type) => ({ params: { type } }));
+  // Only categories with something in them get a page. Four of six shipped as
+  // live, indexable pages whose whole body was "nothing published yet".
+  const posts = await getCollection("blog", ({ data }) => !data.draft);
+  const populated = new Set(posts.map((p) => p.data.type));
+  return RESOURCE_SEGMENTS.filter((seg) => populated.has(resourceTypeFromSegment(seg)!.id)).map((type) => ({
+    params: { type },
+  }));
 }
 
 const segment = Astro.params.type!;
@@ -74,11 +80,7 @@ const breadcrumbJsonLd = {
   <section class="res-section">
     <div class="wrap">
       {posts.length === 0 ? (
-        <p class="res-empty">
-          Nothing published in this category yet — the hub is ready for the content cadence.
-          Meanwhile, browse <a href={u("/resources/")}>all resources</a> or the
-          <a href={u("/blog/")}>guides index</a>.
-        </p>
+        <p class="res-empty">Nothing published here yet.</p>
       ) : (
         <ul class="res-list">
           {posts.map((post) => (

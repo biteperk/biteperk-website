@@ -701,6 +701,17 @@ export function liveSolutions(): readonly Solution[] {
   return solutions.filter((s) => s.status === "live");
 }
 
+/**
+ * Which solution pages BUILD: live and draft (draft = written, not yet linked
+ * from the nav). One predicate for [slug].astro's getStaticPaths AND
+ * locales.ts's AU_STATIC_PAGES, so the route gate and the build cannot
+ * disagree — they did (the gate expected every SOLUTION_SLUG unconditionally).
+ */
+export function renderableSolutions(): readonly Solution[] {
+  return solutions.filter((s) => s.status === "live" || s.status === "draft");
+}
+export const RENDERABLE_SOLUTION_SLUGS: readonly string[] = renderableSolutions().map((s) => s.slug);
+
 export function solutionPath(slug: string): string {
   return `/solutions/${slug}/`;
 }

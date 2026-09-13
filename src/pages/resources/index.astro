@@ -71,11 +71,18 @@ const collectionJsonLd = {
       <div class="res-type-grid">
         {resourceTypes.map((t) => {
           const count = byType(t.id).length;
-          return (
+          // An empty category has no page (see [type].astro) — so no link.
+          return count === 0 ? (
+            <div class="res-type-card is-empty" aria-disabled="true">
+              <h2>{t.plural}</h2>
+              <p>{t.description}</p>
+              <span class="res-type-meta">Coming soon</span>
+            </div>
+          ) : (
             <a class="res-type-card" href={u(t.path)}>
               <h2>{t.plural}</h2>
               <p>{t.description}</p>
-              <span class="res-type-meta">{count === 0 ? "Coming soon" : `${count} published`} →</span>
+              <span class="res-type-meta">{`${count} published`} →</span>
             </a>
           );
         })}
@@ -126,6 +133,8 @@ const collectionJsonLd = {
 </Base>
 
 <style>
+  .res-type-card.is-empty { opacity: 0.6; cursor: default; }
+
   .res-hero {
     padding: clamp(120px, 16vw, 180px) 0 clamp(48px, 6vw, 72px);
     border-bottom: 1px solid var(--line);

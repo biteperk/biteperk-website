@@ -9,6 +9,7 @@
  * (set BUILD_TARGET=global for the global pass).
  */
 import { existsSync, readdirSync } from "node:fs";
+import { populatedResourceTypes } from "../build/content-index.mjs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadTS as loadTSAbs } from "../build/_load-ts.mjs";
@@ -35,9 +36,15 @@ if (TARGET === "global") {
   // They each carried their own hand-written copy, in different shapes, until
   // Jul 2026 — under a comment claiming they could not drift.
   const { AU_STATIC_PAGES } = await loadTS("src/data/locales.ts");
+  // Resources category pages exist only for populated types (content-derived,
+  // see locales.ts). Expect exactly those — and, below, NONE of the others.
+  const { resourceTypes } = await loadTS("src/data/resources.ts");
+  const populated = populatedResourceTypes();
+  const categoryPages = resourceTypes.map((t) => ({ t, page: `${t.path.replace(/^\/|\/$/g, "")}/index.html` }));
   DIST = "dist";
   expected = [
     ...AU_STATIC_PAGES.map((p) => (p ? `${p}/index.html` : "index.html")),
+    ...categoryPages.filter(({ t }) => populated.has(t.id)).map(({ page }) => page),
     ...blogSlugs.map((s) => `blog/${s}/index.html`),
     ...cities.filter((c) => c.published).map((c) => `${c.slug}/index.html`),
     ...INFRA,
@@ -45,6 +52,17 @@ if (TARGET === "global") {
 }
 
 let failed = 0;
+if (TARGET !== "global") {
+  const { resourceTypes } = await loadTS("src/data/resources.ts");
+  const populated = populatedResourceTypes();
+  for (const t of resourceTypes) {
+    const page = `${t.path.replace(/^\/|\/$/g, "")}/index.html`;
+    if (!populated.has(t.id) && existsSync(join(ROOT, DIST, page))) {
+      console.error(`FAIL  ${DIST}/${page} was built for an EMPTY category (${t.id}) — a thin page`);
+      failed++;
+    }
+  }
+}
 for (const route of expected) {
   if (!existsSync(join(ROOT, DIST, route))) {
     console.error(`FAIL  missing ${DIST}/${route}`);

@@ -31,8 +31,7 @@
  */
 
 import { PRODUCT_SLUGS } from "./product-slugs";
-import { SOLUTION_SLUGS } from "./solutions";
-import { RESOURCE_SEGMENTS } from "./resources";
+import { RENDERABLE_SOLUTION_SLUGS } from "./solutions";
 import { intlCityPaths } from "./intl/cities";
 
 export type BuildTarget = "au" | "global";
@@ -287,9 +286,15 @@ export const AU_STATIC_PAGES: readonly string[] = [
   "products",
   ...PRODUCT_SLUGS.map((s) => `products/${s}`),
   "solutions",
-  ...SOLUTION_SLUGS.map((s) => `solutions/${s}`),
+  // Same predicate as [slug].astro's getStaticPaths (live + draft) — never
+  // the full SOLUTION_SLUGS, or a "planned" entry breaks check-routes.
+  ...RENDERABLE_SOLUTION_SLUGS.map((s) => `solutions/${s}`),
+  // The resources HUB only. Category pages (/resources/<segment>/) exist only
+  // for types with ≥1 published post — an empty, indexable "nothing here yet"
+  // page is a thin-page signal — so they are content-derived: check-routes and
+  // tests/helpers/routes.ts append them from scripts/build/content-index.mjs
+  // + resources.ts, and [type].astro builds them from the collection.
   "resources",
-  ...RESOURCE_SEGMENTS.map((s) => `resources/${s}`),
   "contact",
   "about",
   "technology",
