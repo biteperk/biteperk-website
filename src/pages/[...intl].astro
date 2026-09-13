@@ -14,9 +14,9 @@
  * (no AU price/phone/NAP) are enforced by scripts/gates/check-truthful.mjs.
  */
 import IntlLayout from "@/layouts/IntlLayout.astro";
-import { localesForTarget, pagesForLocale, currentTarget, ORIGIN, type Locale } from "@/data/locales";
+import { localesForTarget, pagesForLocale, currentTarget, localeHome, ORIGIN, type Locale } from "@/data/locales";
 import {
-  resolveCopy, resolveMedia, resolveHero, resolveSupport, resolveCityStrip, resolveShowCallSim,
+  resolveCopy, resolveMedia, resolveHero, resolveSupport, resolveCityStrip, resolveShowCallSim, resolveRegions,
   type CopyBundle, type SimplePageCopy,
 } from "@/data/intl";
 import { intlCitiesForBase } from "@/data/intl/cities";
@@ -90,6 +90,15 @@ const media = resolveMedia(locale);
 // Mutually exclusive with `media` in practice: a tree gets the two-up band OR
 // this single photo, never both. See MarketSupport in markets.ts.
 const support = resolveSupport(locale);
+// Region router (x-default only): every launched tree, AU included, labelled in
+// its own language. The AU link is absolute like the footer's — dist-global
+// has no /au-en/, the merged site does.
+const regions = resolveRegions(locale);
+const regionLinks = regions
+  ? [...localesForTarget("au"), ...localesForTarget("global")]
+      .filter((l) => l.base !== locale.base)
+      .map((l) => ({ l, href: l.market === "au" ? localeHome(l) : new URL(localeHome(l)).pathname }))
+  : [];
 const hero = resolveHero(locale);
 const { home: h, contact: ct } = c;
 // Only /gb-en carries market "gb" — the tree Biteperk Ltd's UK disclosures
@@ -525,6 +534,21 @@ const appJsonLd =
           <FAQ items={h.faq.items} stagger />
         </div>
       </section>
+
+      {regions && (
+        <section class="cv-auto intl-regions">
+          <div class="wrap">
+            <p class="eyebrow">{regions.eyebrow}</p>
+            <h2>{regions.heading}</h2>
+            <p class="lede">{regions.body}</p>
+            <ul class="intl-city-links" role="list">
+              {regionLinks.map(({ l, href }) => (
+                <li><a href={href} lang={l.lang} hreflang={l.hreflang[0]} data-astro-reload>{l.label}</a></li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
 
       <section class="cv-auto intl-closing">
         <div class="wrap">

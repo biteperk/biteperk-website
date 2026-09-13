@@ -66,7 +66,7 @@ export type IntlSolutionsOverviewCopy = {
 };
 
 const STATUS_EN = {
-  live: "Live in Australia · pilots in Europe",
+  live: "Live in Australia · pilots in new markets",
   dev: "In development · pilot partners wanted",
   concept: "Concept · register interest",
 } as const;
@@ -80,7 +80,7 @@ export const intlSolutionsOverview: Record<Lang, IntlSolutionsOverviewCopy> = {
   en: {
     title: "Solutions by industry — Vox, the AI phone host",
     description:
-      "AI phone answering by industry — restaurants, hotels, cafés, takeaway, drive-thru, medical clinics, professional services and multi-site groups. Pilot partnerships in Europe.",
+      "AI phone answering by industry — restaurants, hotels, cafés, takeaway, drive-thru, medical clinics, professional services and multi-site groups. Pilot partnerships in new markets.",
     eyebrow: "Solutions by industry",
     h1: "The same phone host, tuned to how your business takes calls.",
     lede: "People search for the job to be done — an AI receptionist for a restaurant, overflow cover for a clinic — not a product name. Start with your vertical; every page says plainly what ships today and what is still a pilot.",
@@ -108,12 +108,12 @@ export const intlSolutions: Record<Lang, Record<SolutionSlug, IntlSolutionCopy>>
     restaurants: {
       title: "AI receptionist for restaurants",
       description:
-        "Vox answers your restaurant's phone in a natural voice, checks real availability and writes the booking to the diary — during service and after close. Pilots in Europe.",
+        "Vox answers your restaurant's phone in a natural voice, checks real availability and writes the booking to the diary — during service and after close. Pilots in new markets.",
       eyebrow: "Restaurants",
       h1: "Every booking call answered, even mid-service.",
       lede: "A ringing phone at eight on a Friday is a table trying to give you money. Vox picks up on the first ring, books against what is actually free, and hands over to a person the moment a call stops being ordinary.",
       statusLabel: STATUS_EN.live,
-      statusNote: "Bookings ship today for Australian restaurants. In Europe this is a pilot: your venue, your line, a live demonstration before any commitment.",
+      statusNote: "Bookings ship today for Australian restaurants. Outside Australia this is a pilot: your venue, your line, a live demonstration before any commitment.",
       problemHeading: "The problem",
       problem: "Restaurants lose bookings for one plain reason: the phone rings when the whole team is on the floor. Voicemail does not take a table; the caller simply tries the next place.",
       lostHeading: "What it costs",
@@ -140,7 +140,7 @@ export const intlSolutions: Record<Lang, Record<SolutionSlug, IntlSolutionCopy>>
       faqs: [
         { q: "Will guests know they are talking to an AI?", a: "Yes — Vox says so when it answers. Diners care more that someone competent picked up than that a human left them on hold." },
         { q: "Does it replace our booking system?", a: "No. Vox answers the phone and writes the booking into the flow you run. It is the receptionist you do not have, not a new system to learn." },
-        { q: "What does a European pilot look like?", a: "A short conversation about your venue and call volume, then Vox on a test line so you hear it handle a call like yours. Commercial terms are agreed per pilot." },
+        { q: "What does a pilot look like?", a: "A short conversation about your venue and call volume, then Vox on a test line so you hear it handle a call like yours. Commercial terms are agreed per pilot." },
       ],
       ctaHeading: "Put Vox on your line",
       ctaLabel: "Book a pilot conversation",
@@ -148,12 +148,12 @@ export const intlSolutions: Record<Lang, Record<SolutionSlug, IntlSolutionCopy>>
     hotels: {
       title: "AI phone receptionist for hotels",
       description:
-        "VoxStay is Bella as a hotel receptionist — answers the room-booking call in eight languages, quotes the real price with taxes, texts a secure payment link. In development; pilots in Europe.",
+        "VoxStay is Bella as a hotel receptionist — answers the room-booking call in eight languages, quotes the real price with taxes, texts a secure payment link. In development; EU-first by design.",
       eyebrow: "Hotels",
       h1: "The room-booking call, answered in the guest's language.",
       lede: "Reception has a queue at the desk and a phone that will not stop. VoxStay is designed to take the booking call — eight languages, the real rate with taxes, a secure payment link by text — and to ring the front desk the moment anything falls outside that.",
       statusLabel: STATUS_EN.dev,
-      statusNote: "VoxStay is in development. There is no live hotel yet; every claim on this page is about how it is designed, and the first pilots are in Europe.",
+      statusNote: "VoxStay is in development. There is no live hotel yet; every claim on this page is about how it is designed, and the first pilot hotels are being sought in the EU.",
       problemHeading: "The problem",
       problem: "Independent hotels lose bookings at reception's busiest moments, and the caller who reaches voicemail books elsewhere or through a channel that takes a cut.",
       lostHeading: "What it costs",
@@ -172,13 +172,13 @@ export const intlSolutions: Record<Lang, Record<SolutionSlug, IntlSolutionCopy>>
         { title: "Multilingual by design", body: "The guest's language, not a menu of options." },
         { title: "Honest pricing", body: "Real rates with taxes; nothing quoted that is not in the hotel's system." },
         { title: "No card numbers on the call", body: "Payment happens on a secure link, on the guest's own phone." },
-        { title: "Built for Europe first", body: "Designed for European hotels from the start — one of the reasons the first pilots are here." },
+        { title: "Built for the EU first", body: "Designed for EU hotels and EU data residency from the start — which is where the first pilot hotels are being sought." },
       ],
       benefitsHeading: "What it is meant to change",
       benefits: ["Direct bookings taken while the desk is busy", "Fewer callers lost to language", "No commission on a call your own phone answered", "Reception free for the guests in front of it"],
       faqHeading: "Questions hotels ask",
       faqs: [
-        { q: "Is VoxStay available now?", a: "Not yet — it is in development, with a working demonstration. We are looking for pilot hotels in Europe; nothing here describes a live deployment." },
+        { q: "Is VoxStay available now?", a: "Not yet — it is in development, with a working demonstration. We are looking for pilot hotels in the EU; nothing here describes a live deployment." },
         { q: "What happens when the AI is unsure?", a: "The call rings the front desk as it does today. VoxStay is designed to take the ordinary booking, not to replace reception." },
       ],
       ctaHeading: "Talk about a hotel pilot",
@@ -187,12 +187,12 @@ export const intlSolutions: Record<Lang, Record<SolutionSlug, IntlSolutionCopy>>
     cafes: {
       title: "AI phone answering for cafés",
       description:
-        "Vox answers the café phone that is always an afterthought — bookings, opening hours, the regular asking if the terrace is open — in a natural voice, while the team stays at the machine. Pilots in Europe.",
+        "Vox answers the café phone that is always an afterthought — bookings, opening hours, whether the terrace is open — in a natural voice, while the team stays at the machine. Pilots in new markets.",
       eyebrow: "Cafés",
       h1: "The café phone, answered while you are on the machine.",
       lede: "Cafés run on a small team and a phone nobody can reach at nine in the morning. Vox takes the booking, answers the ordinary question and passes on anything that needs a person.",
       statusLabel: STATUS_EN.live,
-      statusNote: "Bookings ship today in Australia; in Europe this is a pilot with a live demonstration on your own line.",
+      statusNote: "Bookings ship today in Australia; elsewhere this is a pilot with a live demonstration on your own line.",
       problemHeading: "The problem",
       problem: "A café phone rings during the morning rush and again at the lunch turn — exactly when every pair of hands is busy. The regular who cannot get through stops calling.",
       lostHeading: "What it costs",
@@ -226,12 +226,12 @@ export const intlSolutions: Record<Lang, Record<SolutionSlug, IntlSolutionCopy>>
     takeaway: {
       title: "AI phone ordering for takeaway",
       description:
-        "VoxOrder takes the takeaway and collection order by phone — the menu, the substitutions, the collection time — and puts a clean ticket in front of the kitchen. Live in Australia; pilots in Europe.",
+        "VoxOrder takes the takeaway and collection order by phone — the menu, the substitutions, the collection time — and puts a clean ticket in front of the kitchen. Live in Australia; pilots in new markets.",
       eyebrow: "Takeaway & collection",
       h1: "Every order picked up, even when the kitchen is on the floor.",
       lede: "The takeaway line rings hardest exactly when nobody can hold it. VoxOrder takes the order — items, modifiers, a collection time you can keep — and sends a clean ticket to the kitchen.",
       statusLabel: STATUS_EN.live,
-      statusNote: "VoxOrder ships today for Australian venues. In Europe it is a pilot; your menu, your line, a live demonstration first.",
+      statusNote: "VoxOrder ships today for Australian venues. Outside Australia it is a pilot; your menu, your line, a live demonstration first.",
       problemHeading: "The problem",
       problem: "Marketplaces are useful, but a guest who rings you directly and hits a busy signal orders from someone else — or through a platform that takes its share.",
       lostHeading: "What it costs",
@@ -382,12 +382,12 @@ export const intlSolutions: Record<Lang, Record<SolutionSlug, IntlSolutionCopy>>
     enterprise: {
       title: "Enterprise AI phone automation for groups",
       description:
-        "Multi-site hospitality groups need one voice standard and central visibility. Talk to BitePerk about rolling Vox across venues, starting with one pilot site in Europe.",
+        "Multi-site hospitality groups need one voice standard and central visibility. Talk to BitePerk about rolling Vox across venues, starting with one pilot site in your market.",
       eyebrow: "Groups",
       h1: "One voice standard across every venue phone.",
       lede: "Groups lose bookings the same way single venues do — site by site. Vox rolls out with shared configuration, central reporting and a pilot site first.",
       statusLabel: STATUS_EN.live,
-      statusNote: "The live capabilities (bookings, takeaway) ship today in Australia. A European group engagement starts with one pilot venue on a real line.",
+      statusNote: "The live capabilities (bookings, takeaway) ship today in Australia. A group engagement outside Australia starts with one pilot venue on a real line.",
       problemHeading: "The problem",
       problem: "Each venue invents its own overflow hack. Head office cannot see what the phones produced, and the guest experience drifts by site.",
       lostHeading: "What it costs",

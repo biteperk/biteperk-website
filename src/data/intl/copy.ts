@@ -500,7 +500,7 @@ export const home: Record<Lang, HomeCopy> = {
   en: {
     title: "BitePerk — Vox, the AI phone host for restaurants",
     description:
-      "Vox answers every restaurant call in a natural voice, checks real availability and books the table. Live in Australia today — now opening European pilot partnerships.",
+      "Vox answers every restaurant call in a natural voice, checks real availability and books the table. Live in Australia today — now opening pilot partnerships in new markets.",
     eyebrow: "Vox · AI phone host",
     h1: "Every call answered. Every booking captured.",
     lede: "Vox answers your restaurant's phone in a warm, natural voice — day and night, mid-service, on the line your guests already call. It checks real availability and writes the booking straight into your dashboard.",
@@ -536,9 +536,9 @@ export const home: Record<Lang, HomeCopy> = {
       ],
     },
     pilot: {
-      eyebrow: "European pilots",
-      heading: "We're bringing Vox to Europe — with pilot partners, not promises.",
-      body: "The European build — local languages, local numbers, local integrations — is what we develop together with our first pilot venues. Pilot partners get direct access to the team building it and shape what Vox becomes in their market.",
+      eyebrow: "Pilot partnerships",
+      heading: "We're bringing Vox to new markets — with pilot partners, not promises.",
+      body: "The build for your market — local language, local numbers, local integrations — is what we develop together with our first pilot venues there. Pilot partners get direct access to the team building it and shape what Vox becomes where they are.",
       points: [
         "Structured pilot with clear success criteria, defined together",
         "Direct line to the founding team throughout",
@@ -559,7 +559,7 @@ export const home: Record<Lang, HomeCopy> = {
         },
         {
           title: "Privacy taken seriously",
-          body: "Calls are processed to complete the booking, not to build profiles. European deployments are being designed for GDPR from the ground up.",
+          body: "Calls are processed to complete the booking, not to build profiles. Every deployment outside Australia is designed around the privacy law of the market it runs in — the GDPR where it applies — rather than retrofitted to it.",
         },
       ],
     },
@@ -574,7 +574,7 @@ export const home: Record<Lang, HomeCopy> = {
       items: [
         {
           q: "Is Vox actually running, or is this a prototype?",
-          a: "It runs in production in Australia, taking real bookings for paying venues. Europe is where we go next, and pilot partners shape how it lands here.",
+          a: "It runs in production in Australia, taking real bookings for paying venues. Outside Australia we go market by market, and pilot partners shape how it lands in theirs.",
         },
         {
           q: "What does a pilot actually involve?",
@@ -582,11 +582,11 @@ export const home: Record<Lang, HomeCopy> = {
         },
         {
           q: "Which booking system do you connect to?",
-          a: "In Europe, none yet — that integration is part of what a pilot defines. Tell us what you run and it goes on the list we build against.",
+          a: "Outside Australia, none yet — that integration is part of what a pilot defines. Tell us what you run and it goes on the list we build against.",
         },
         {
           q: "What does it cost?",
-          a: "There is no European rate card. Pilot terms are agreed case by case, because what a first deployment is worth depends on what we learn together.",
+          a: "There is no international rate card. Pilot terms are agreed case by case, because what a first deployment is worth depends on what we learn together.",
         },
         {
           q: "Will callers know they are talking to a machine?",
@@ -740,9 +740,9 @@ export const howItWorks: Record<Lang, SimplePageCopy> = {
         ],
       },
       {
-        heading: "What a European pilot looks like",
+        heading: "What a pilot looks like",
         body: [
-          "We set up Vox for your venue together — your menu, your hours, your booking rules — and run it on real calls with clear success criteria we define with you. The European build (local language, local number, local integrations) is developed with pilot partners; you shape it.",
+          "We set up Vox for your venue together — your menu, your hours, your booking rules — and run it on real calls with clear success criteria we define with you. The build for your market (local language, local number, local integrations) is developed with pilot partners; you shape it.",
           "There's no rate card at this stage and no lock-in: commercial terms are agreed per pilot.",
         ],
       },
@@ -798,7 +798,7 @@ export const about: Record<Lang, SimplePageCopy> = {
   en: {
     title: "About BitePerk — the team behind Vox",
     description:
-      "BitePerk is a Sydney-built company shipping voice AI for hospitality. Vox answers real restaurant calls in production today; European pilots are now opening.",
+      "BitePerk is a Sydney-built company shipping voice AI for hospitality. Vox answers real restaurant calls in production today; pilot partnerships are now opening in new markets.",
     eyebrow: "About",
     h1: "A shipped product, from a team that answers to restaurants.",
     intro:
@@ -807,7 +807,7 @@ export const about: Record<Lang, SimplePageCopy> = {
       {
         heading: "Where we are",
         body: [
-          "BitePerk was built in Sydney, where Vox answers real calls for paying venues as VoxTable. Europe is our next market: we're opening pilot partnerships with venues in France and Belgium, and building the European version — local languages, local numbers — with them.",
+          "BitePerk was built in Sydney, where Vox answers real calls for paying venues as VoxTable. Beyond Australia we go one market at a time: pilot partnerships open with a handful of venues, and the local version — language, numbers, integrations — is built with them. The market sites linked from every page show where we have gone furthest.",
         ],
       },
       {
@@ -859,7 +859,7 @@ export const about: Record<Lang, SimplePageCopy> = {
 
 export const contact: Record<Lang, ContactCopy> = {
   en: {
-    title: "Contact BitePerk — book a European pilot",
+    title: "Contact BitePerk — book a pilot",
     description:
       "Tell us about your venue and book a pilot of Vox, the AI phone host. Direct access to the founding team.",
     eyebrow: "Contact",

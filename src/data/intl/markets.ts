@@ -140,8 +140,27 @@ export type MarketCities = {
  * the Ltd entity; and France). Before adding a third, re-run
  * `node scripts/gates/check-intl-similarity.mjs` and look at the pool it joins.
  */
+/**
+ * The region router — the one section only the x-default can carry.
+ *
+ * /en serves every visitor outside the five named markets, so it can neither
+ * claim a city band nor a market pill. What it CAN do, and no other tree can,
+ * is send a visitor to the tree that is actually theirs: the links derive from
+ * `locales` (every launched tree, the AU site included) and render each
+ * label in its own language with `lang`/`hreflang` set, so a French reader
+ * who landed on the x-default sees "France — Français" in French. Copy only;
+ * the list itself is never restated here.
+ */
+export type MarketRegions = {
+  eyebrow: string;
+  heading: string;
+  body: string;
+};
+
 export type MarketContent = {
   copy?: Override<CopyBundle>;
+  /** Absent → no region router. Only the x-default (/en) carries one. */
+  regions?: MarketRegions;
   /** Home carries the call simulation. See the note above before adding one. */
   callSim?: true;
   /** Absent (e.g. /en) → the home renders no market band. */
@@ -161,6 +180,30 @@ export type MarketContent = {
  * no imagery at all — zero images on every page — while being the x-default.
  */
 const enNeutral: MarketContent = {
+  // De-Europeanised 13 Sep 2026: the EN core no longer says "European pilots"
+  // / "France and Belgium" / GDPR-as-the-basis — that colour lives in the
+  // gb-en and be-en overrides. Two things are overridden HERE rather than
+  // neutralised in the core, because the core wording is the English reference
+  // column of the filed 7 Sep French review and must not drift:
+  //  - the facts strip says "transfers out of Europe" and names the GDPR as the
+  //    basis — right for /gb-en and /be-en, which share the core and are in
+  //    Europe; wrong for the worldwide tree;
+  //  - the cityPage furniture says "in the UK" (PR #71 on main neutralises it
+  //    and moves the UK wording to gbEn; on sync it supersedes this). No city
+  //    renders on /en, but the resolved bundle is what the tests read.
+  copy: {
+    cityPage: {
+      districtsNote:
+        "Not on the list? The pilot programme isn't drawn by postcode — a venue anywhere else works exactly the same way.",
+      othersEyebrow: "Other cities",
+    },
+    trustFacts: {
+      records:
+        "Enquiry and booking records are stored on Google Cloud in Australia. Live calls are processed by our voice platform in the United States. For most venues both are transfers out of their own country, and the safeguards are set out plainly in our privacy notice.",
+      basis:
+        "Legitimate interests for answering the enquiry you send us — Article 6(1)(f) where the GDPR applies; consent for optional cookies, withdrawable at any time. Your rights are listed in the privacy notice.",
+    },
+  },
   hero: {
     slug: "table-set-neutral",
     alt: "Tables laid in warm light, ready for service",
@@ -174,6 +217,13 @@ const enNeutral: MarketContent = {
   support: {
     slug: "busy-service-night",
     alt: "A dining room mid-service, every table occupied",
+  },
+  // The neutral tree's replacement for a market band: point people at the site
+  // built for where they are.
+  regions: {
+    eyebrow: "Vox where you are",
+    heading: "Pick the site built for your market.",
+    body: "Each market site is written for its own venues — language, booking habits, the law that applies there. If yours is not listed yet, this page is the right place to start a conversation.",
   },
 };
 
