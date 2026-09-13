@@ -20,24 +20,14 @@ import Cta from "@/components/Cta.astro";
 import { bookDemoHref, defaultCtaActions, CTA_LABELS } from "@/data/conversion";
 import type { Product } from "@/data/products";
 import { site } from "@/data/site";
-import { VOX_ID, voxEditionId } from "@/data/schema";
-import { u, abs } from "@/data/locales";
+import { VOX_ID, voxEditionId, ORG_ID, buildFaqPage } from "@/data/schema";
+import { u } from "@/data/locales";
 
 interface Props {
   product: Product;
 }
 const { product } = Astro.props;
 const path = `/products/${product.slug}/`;
-
-const breadcrumbJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: abs("/") },
-    { "@type": "ListItem", position: 2, name: "Products", item: abs("/products/") },
-    { "@type": "ListItem", position: 3, name: product.name, item: abs(path) },
-  ],
-};
 
 const productJsonLd = {
   "@context": "https://schema.org",
@@ -49,7 +39,8 @@ const productJsonLd = {
   operatingSystem: "Web, Phone",
   // This capability page is an edition of the one Vox product.
   isPartOf: { "@id": VOX_ID },
-  brand: { "@type": "Organization", name: site.name },
+  brand: { "@id": ORG_ID },
+  publisher: { "@id": ORG_ID },
   // Cross-link to the running app (same entity, its live location) so the
   // marketing page and the product subdomain resolve to one entity. Only
   // for capabilities that actually have an app to launch.
@@ -74,17 +65,7 @@ const productJsonLd = {
   })()),
 };
 
-const faqJsonLd = product.faq && product.faq.length > 0
-  ? {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      mainEntity: product.faq.map((item) => ({
-        "@type": "Question",
-        name: item.q,
-        acceptedAnswer: { "@type": "Answer", text: item.a },
-      })),
-    }
-  : null;
+const faqJsonLd = product.faq && product.faq.length > 0 ? buildFaqPage(product.faq, "en-AU") : null;
 ---
 
 <Base
@@ -95,7 +76,6 @@ const faqJsonLd = product.faq && product.faq.length > 0
   preloadComposite={product.slug === "voxtable" ? "voxtable-hero" : undefined}
 >
   <Fragment slot="jsonld">
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(productJsonLd)} />
     {faqJsonLd && (
       <script is:inline type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />

@@ -53,21 +53,11 @@ const blogJsonLd = {
   })),
 };
 
-const breadcrumbJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: abs("/") },
-    { "@type": "ListItem", position: 2, name: "Resources", item: abs("/resources/") },
-    { "@type": "ListItem", position: 3, name: "Guides", item: abs(canonical) },
-  ],
-};
 ---
 
 <Base title={title} description={description} path={canonical} ogImage="/og/blog.png">
   <Fragment slot="jsonld">
     <script is:inline type="application/ld+json" set:html={JSON.stringify(blogJsonLd)} />
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
   </Fragment>
 
   <section class="blog-hero">

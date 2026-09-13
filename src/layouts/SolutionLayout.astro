@@ -9,9 +9,9 @@ import Cta from "@/components/Cta.astro";
 import ConversionTrust from "@/components/conversion/ConversionTrust.astro";
 import type { Solution } from "@/data/solutions";
 import { bookDemoHref, CTA_LABELS, defaultCtaActions } from "@/data/conversion";
-import { site } from "@/data/site";
 import { getProduct } from "@/data/products";
-import { u, abs } from "@/data/locales";
+import { buildFaqPage, buildWebPage, voxEditionId } from "@/data/schema";
+import { u } from "@/data/locales";
 
 interface Props {
   solution: Solution;
@@ -23,37 +23,17 @@ const cta = defaultCtaActions({ product: solution.primaryProduct });
 const product = getProduct(solution.primaryProduct);
 if (!product) throw new Error(`SolutionLayout: ${solution.slug} names unknown product ${solution.primaryProduct}`);
 
-const breadcrumbJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: abs("/") },
-    { "@type": "ListItem", position: 2, name: "Solutions", item: abs("/solutions/") },
-    { "@type": "ListItem", position: 3, name: solution.name, item: abs(path) },
-  ],
-};
-
-const faqJsonLd =
-  solution.page.faq.length > 0
-    ? {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        mainEntity: solution.page.faq.map((item) => ({
-          "@type": "Question",
-          name: item.q,
-          acceptedAnswer: { "@type": "Answer", text: item.a },
-        })),
-      }
-    : null;
-
-const webPageJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
+// Breadcrumb JSON-LD comes from <Breadcrumbs> (same items it renders).
+const faqJsonLd = solution.page.faq.length > 0 ? buildFaqPage(solution.page.faq, "en-AU") : null;
+// The vertical page is ABOUT the product it sells — linked by @id, so the
+// commercial-intent template joins the one Vox entity graph.
+const webPageJsonLd = buildWebPage({
+  path,
   name: solution.page.seo.title,
   description: solution.page.seo.description,
-  url: abs(path),
-  isPartOf: { "@type": "WebSite", name: site.name, url: abs("/") },
-};
+  about: voxEditionId(product.slug),
+  inLanguage: "en-AU",
+});
 ---
 
 <Base
@@ -62,7 +42,6 @@ const webPageJsonLd = {
   path={path}
 >
   <Fragment slot="jsonld">
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(webPageJsonLd)} />
     {faqJsonLd && (
       <script is:inline type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />

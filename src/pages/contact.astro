@@ -7,6 +7,7 @@ import SocialLinks from "@/components/SocialLinks.astro";
 import { site } from "@/data/site";
 import { products, voxProof } from "@/data/products";
 import { u } from "@/data/locales";
+import { buildContactPage } from "@/data/schema";
 
 const title = "Contact Biteperk — Restaurant voice AI, Sydney & Australia-wide";
 const description =
@@ -14,6 +15,7 @@ const description =
 ---
 
 <Base title={title} description={description} path="/contact/" ogImage="/og/contact.png">
+  <script is:inline type="application/ld+json" slot="jsonld" set:html={JSON.stringify(buildContactPage({ path: "/contact/", name: title, description }))} />
   <section class="contact-hero">
     <div class="contact-glow" aria-hidden="true"></div>
     <div class="wrap">
