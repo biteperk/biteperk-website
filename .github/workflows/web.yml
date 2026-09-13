@@ -163,48 +163,32 @@ jobs:
 
       # Both trees in one step; each branch is the assertion its old matrix leg
       # ran.
-      - name: Sanity-check sitemaps
-        run: |
-          set -e
-          test -f dist/sitemap-0.xml || { echo "Missing dist/sitemap-0.xml"; exit 1; }
-          test -f dist-global/sitemap-0.xml || { echo "Missing dist-global/sitemap-0.xml"; exit 1; }
-          # -F (literal): the old pattern 'biteperk.com.au' had unescaped dots,
-          # so it matched 'biteperk.com/au-en' and kept passing after the
-          # single-domain move — a no-op assertion. The AU sitemap must now
-          # point at the /au-en base on the canonical host, and must NOT still
-          # be emitting the retired ccTLD.
-          grep -qF 'https://biteperk.com/au-en/' dist/sitemap-0.xml
-          grep -qF 'products/voxtable' dist/sitemap-0.xml
-          ! grep -qF 'https://biteperk.com.au' dist/sitemap-0.xml
-          grep -qF 'biteperk.com/en/' dist-global/sitemap-0.xml
-          echo "Both sitemaps look healthy."
+      # Sitemap assertions moved into scripts/gates/check-sitemap.mjs (both
+      # targets, in gates:au / gates:global): the URL set must be EXACTLY the
+      # derived expected set, not "contains one product URL and the host".
 
-      - name: Internal link check — AU tree (lychee)
+      # Link checks split by what can be trusted: INTERNAL links are checked
+      # offline against the built tree and FAIL the build (a broken internal
+      # link is a defect we own); EXTERNAL links are reported only (social
+      # hosts bot-block runners). Both read lychee.toml.
+      - name: Internal link check — AU tree (offline, blocking)
         uses: lycheeverse/lychee-action@v2
         with:
-          args: >-
-            --no-progress
-            --exclude-mail
-            --exclude '^https://((voco|vox)table\.biteperk|formspree)'
-            # Social hosts bot-block CI runners (LinkedIn 999, Instagram 403).
-            # `fail: false` means they can never redden the build, but a report
-            # full of false failures is how a real one gets scrolled past.
-            --exclude '^https://(www\.)?(linkedin|instagram|facebook|youtube)\.com'
-            --base ./dist
-            ./dist/**/*.html
-          fail: false
+          args: --config lychee.toml --offline --base ./dist ./dist/**/*.html
+          fail: true
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Internal link check — global tree (lychee)
+      - name: Internal link check — global tree (offline, blocking)
         uses: lycheeverse/lychee-action@v2
         with:
-          args: >-
-            --no-progress
-            --exclude-mail
-            --exclude '^https://((voco|vox)table\.biteperk|formspree)'
-            --exclude '^https://(www\.)?(linkedin|instagram|facebook|youtube)\.com'
-            --base ./dist-global
-            ./dist-global/**/*.html
+          args: --config lychee.toml --offline --base ./dist-global ./dist-global/**/*.html
+          fail: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: External link check — both trees (report only)
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --config lychee.toml --base ./dist-site ./dist-site/**/*.html
           fail: false
           token: ${{ secrets.GITHUB_TOKEN }}
 

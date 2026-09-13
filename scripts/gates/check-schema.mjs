@@ -197,6 +197,74 @@ if (TARGET === "global") {
     }
     console.log(`PASS  ${crumbPages} pages carry one BreadcrumbList matching the rendered trail`);
   }
+  // Per-template type sets + referential integrity. Expected types derive from
+  // the same registries the routes do; every bare {"@id": X} reference must
+  // resolve to a node declared on the page or to a sitewide anchor. The
+  // SolutionLayout used to declare an inline WebSite literal as isPartOf —
+  // a second, unmerged site entity on eight pages — and nothing noticed.
+  {
+    const { AU_STATIC_PAGES } = await import("../build/_load-ts.mjs").then((m) => m.loadTS(join(ROOT, "src/data/locales.ts")));
+    const { renderableSolutions } = await import("../build/_load-ts.mjs").then((m) => m.loadTS(join(ROOT, "src/data/solutions.ts")));
+    const { PRODUCT_SLUGS } = await import("../build/_load-ts.mjs").then((m) => m.loadTS(join(ROOT, "src/data/product-slugs.ts")));
+    const { publishedCities } = await import("../build/_load-ts.mjs").then((m) => m.loadTS(join(ROOT, "src/data/cities.ts")));
+    const { publishedPosts, populatedResourceTypes } = await import("../build/content-index.mjs");
+    const { resourceTypes } = await import("../build/_load-ts.mjs").then((m) => m.loadTS(join(ROOT, "src/data/resources.ts")));
+    const populated = populatedResourceTypes();
+    const anchors = new Set([`${AU}/#organization`, `${AU}/#website`, `${AU}/products/#vox`, ...PRODUCT_SLUGS.map((s) => `${AU}/products/${s}/#software`)]);
+    // Deep: ItemList sits under CollectionPage.mainEntity, Question under FAQPage.
+    const typesOf = (page) => {
+      const found = new Set();
+      const walk = (o) => {
+        if (Array.isArray(o)) return o.forEach(walk);
+        if (o && typeof o === "object") { for (const t of [].concat(o["@type"] ?? [])) found.add(t); Object.values(o).forEach(walk); }
+      };
+      walk(graphOf(page));
+      return found;
+    };
+    /** [page, required types] — derived, never listed by hand. */
+    const table = [
+      ["index.html", ["Organization", "WebSite", "FAQPage"]],
+      ["products/index.html", ["BreadcrumbList", "FAQPage", "SoftwareApplication"]],
+      ...PRODUCT_SLUGS.map((s) => [`products/${s}/index.html`, ["BreadcrumbList", "SoftwareApplication"]]),
+      ["solutions/index.html", ["BreadcrumbList", "CollectionPage", "ItemList"]],
+      ...renderableSolutions().map((s) => [`solutions/${s.slug}/index.html`, ["BreadcrumbList", "WebPage", "FAQPage"]]),
+      ...publishedCities.map((c) => [`${c.slug}/index.html`, ["BreadcrumbList", "Service", "FAQPage"]]),
+      ["resources/index.html", ["BreadcrumbList", "CollectionPage", "ItemList"]],
+      ...resourceTypes.filter((t) => populated.has(t.id)).map((t) => [`${t.path.replace(/^\/|\/$/g, "")}/index.html`, ["BreadcrumbList", "CollectionPage", "ItemList"]]),
+      ...publishedPosts().map((p) => [`blog/${p.slug}/index.html`, ["BreadcrumbList", "BlogPosting"]]),
+      ["about/index.html", ["BreadcrumbList", "AboutPage"]],
+      ["contact/index.html", ["BreadcrumbList", "ContactPage"]],
+      ["technology/index.html", ["BreadcrumbList", "WebPage", "FAQPage"]],
+      ["platform/index.html", ["BreadcrumbList", "WebPage", "FAQPage"]],
+    ];
+    let ok = 0;
+    for (const [page, required] of table) {
+      const types = typesOf(page);
+      const missing = required.filter((t) => !types.has(t));
+      if (missing.length) { console.error(`FAIL  ${page}: missing JSON-LD type(s) ${missing.join(", ")}`); failed++; } else ok++;
+      // Referential integrity: every {"@id": X} used as a reference resolves.
+      const declared = new Set(graphOf(page).map((n) => n["@id"]).filter(Boolean));
+      const refs = [];
+      const walk = (o, top) => {
+        if (Array.isArray(o)) return o.forEach((x) => walk(x, false));
+        if (o && typeof o === "object") {
+          const keys = Object.keys(o);
+          if (!top && keys.length === 1 && keys[0] === "@id") refs.push(o["@id"]);
+          for (const k of keys) walk(o[k], false);
+        }
+      };
+      graphOf(page).forEach((n) => walk(n, true));
+      for (const r of refs) if (!declared.has(r) && !anchors.has(r)) { console.error(`FAIL  ${page}: @id reference ${r} resolves to nothing`); failed++; }
+      // No anonymous WebSite/Organization literals on page-level nodes.
+      for (const n of graphOf(page)) {
+        const inline = ["isPartOf", "publisher", "brand"].filter((k) => n[k] && typeof n[k] === "object" && !("@id" in n[k]));
+        if (inline.length) { console.error(`FAIL  ${page}: ${n["@type"]} carries inline ${inline.join("/")} instead of an @id reference`); failed++; }
+      }
+    }
+    console.log(`PASS  ${ok}/${table.length} templates carry their required JSON-LD types; all @id references resolve`);
+    // Solution pages declare which product edition they are about.
+    for (const s of renderableSolutions()) expect(`solutions/${s.slug}/index.html`, `${AU}/products/${s.primaryProduct}/#software`);
+  }
   // Anchors that must never drift (v1 baseline: docs/v1-baseline/schema/).
   expect("index.html", `${AU}/#organization`);
   expect("index.html", `${AU}/#website`);

@@ -966,7 +966,7 @@ export const intlCities: readonly IntlCity[] = [
     copyLang: "fr",
     name: "Paris",
     published: true,
-    seoTitle: "Répondeur téléphonique IA pour les restaurants parisiens — Vox par BitePerk",
+    seoTitle: "Hôte téléphonique IA pour restaurants parisiens — BitePerk",
     seoDescription:
       "Vox répond au téléphone de votre restaurant parisien d'une voix naturelle, vérifie le registre réel et enregistre la réservation — pendant que votre équipe reste en salle. Pilotes ouverts en France.",
     heroHeadline: "Vingt heures trente, la salle est pleine, trois lignes sonnent. Vox les prend toutes.",
@@ -1064,7 +1064,7 @@ export const intlCities: readonly IntlCity[] = [
     copyLang: "fr",
     name: "Lyon",
     published: true,
-    seoTitle: "Répondeur téléphonique IA pour les restaurants lyonnais — Vox par BitePerk",
+    seoTitle: "Vox, l'hôte téléphonique IA de votre bouchon à Lyon",
     seoDescription:
       "Vox répond au téléphone de votre bouchon ou restaurant à Lyon d'une voix naturelle, vérifie le registre et prend la réservation pendant que la cuisine tourne. Pilotes ouverts en France.",
     heroHeadline: "Au bouchon, le patron est au piano. Le téléphone sonne dans une salle vide.",
@@ -1158,7 +1158,7 @@ export const intlCities: readonly IntlCity[] = [
     copyLang: "fr",
     name: "Marseille",
     published: true,
-    seoTitle: "Répondeur téléphonique IA pour les restaurants marseillais — Vox par BitePerk",
+    seoTitle: "Restaurants marseillais : Vox décroche et note la commande",
     seoDescription:
       "Vox répond au téléphone de votre restaurant à Marseille d'une voix naturelle, note les commandes passées à l'avance et vérifie le registre pendant que la salle tourne. Pilotes ouverts en France.",
     heroHeadline: "La bouillabaisse se commande la veille. Encore faut-il que quelqu'un décroche.",
@@ -1251,7 +1251,7 @@ export const intlCities: readonly IntlCity[] = [
     copyLang: "fr",
     name: "Nice",
     published: true,
-    seoTitle: "Répondeur téléphonique IA pour les restaurants niçois — Vox par BitePerk",
+    seoTitle: "Vox, l'hôte téléphonique IA des terrasses niçoises",
     seoDescription:
       "Vox répond au téléphone de votre restaurant à Nice d'une voix naturelle, tient la ligne quand la saison déborde et vérifie le registre réel. Pilotes ouverts en France.",
     heroHeadline: "L'été, la terrasse déborde — et le téléphone avec. Vox tient la ligne.",
@@ -1344,7 +1344,7 @@ export const intlCities: readonly IntlCity[] = [
     copyLang: "fr",
     name: "Bordeaux",
     published: true,
-    seoTitle: "Répondeur téléphonique IA pour les restaurants bordelais — Vox par BitePerk",
+    seoTitle: "Vox répond au téléphone de votre restaurant bordelais",
     seoDescription:
       "Vox répond au téléphone de votre restaurant à Bordeaux d'une voix naturelle, prend les grandes tablées et les menus accordés et vérifie le registre. Pilotes ouverts en France.",
     heroHeadline: "Le week-end, les tablées de dégustation appellent. Vox répond à chacune.",
@@ -1437,7 +1437,7 @@ export const intlCities: readonly IntlCity[] = [
     copyLang: "fr",
     name: "Toulouse",
     published: true,
-    seoTitle: "Répondeur téléphonique IA pour les restaurants toulousains — Vox par BitePerk",
+    seoTitle: "Le coup de feu de midi à Toulouse : Vox tient la ligne",
     seoDescription:
       "Vox répond au téléphone de votre restaurant à Toulouse d'une voix naturelle, tient la ligne au coup de feu de midi et vérifie le registre réel. Pilotes ouverts en France.",
     heroHeadline: "Midi en semaine, la ville déjeune en une heure. Le téléphone n'attend pas.",
@@ -1532,7 +1532,7 @@ export const intlCities: readonly IntlCity[] = [
     copyLang: "fr",
     name: "Lille",
     published: true,
-    seoTitle: "Répondeur téléphonique IA pour les restaurants lillois — Vox par BitePerk",
+    seoTitle: "Estaminets et restaurants lillois : Vox tient la ligne",
     seoDescription:
       "Vox répond au téléphone de votre estaminet ou restaurant à Lille d'une voix naturelle, tient la ligne les week-ends chargés et vérifie le registre. Pilotes ouverts en France.",
     heroHeadline: "Le week-end de la Braderie, la ligne explose. Vox décroche sans faiblir.",
@@ -1625,7 +1625,7 @@ export const intlCities: readonly IntlCity[] = [
     copyLang: "fr",
     name: "Nantes",
     published: true,
-    seoTitle: "Répondeur téléphonique IA pour les restaurants nantais — Vox par BitePerk",
+    seoTitle: "Vox, l'hôte téléphonique IA des restaurants nantais",
     seoDescription:
       "Vox répond au téléphone de votre restaurant à Nantes d'une voix naturelle, encaisse les week-ends en famille et vérifie le registre. Pilotes ouverts en France.",
     heroHeadline: "Le dimanche, les familles appellent et le nombre change trois fois. Vox suit.",
@@ -1718,7 +1718,7 @@ export const intlCities: readonly IntlCity[] = [
     copyLang: "fr",
     name: "Strasbourg",
     published: true,
-    seoTitle: "Répondeur téléphonique IA pour les restaurants strasbourgeois — Vox par BitePerk",
+    seoTitle: "Winstubs et restaurants strasbourgeois : Vox répond",
     seoDescription:
       "Vox répond au téléphone de votre winstub ou restaurant à Strasbourg d'une voix naturelle, encaisse les semaines de pointe et vérifie le registre. Pilotes ouverts en France.",
     heroHeadline: "Semaine de session, marché de Noël : la ville double et le téléphone déborde.",
@@ -1811,7 +1811,7 @@ export const intlCities: readonly IntlCity[] = [
     copyLang: "fr",
     name: "Montpellier",
     published: true,
-    seoTitle: "Répondeur téléphonique IA pour les restaurants montpelliérains — Vox par BitePerk",
+    seoTitle: "Hôte téléphonique IA pour restaurants à Montpellier",
     seoDescription:
       "Vox répond au téléphone de votre restaurant à Montpellier d'une voix naturelle, décroche tard quand la salle est pleine et vérifie le registre. Pilotes ouverts en France.",
     heroHeadline: "Tard le soir, la salle est pleine et le téléphone sonne encore. Vox décroche.",
@@ -1910,7 +1910,7 @@ export const intlCities: readonly IntlCity[] = [
     copyLang: "fr",
     name: "Bruxelles",
     published: true,
-    seoTitle: "Répondeur téléphonique IA pour les restaurants bruxellois — Vox par BitePerk",
+    seoTitle: "Vox, l'hôte téléphonique IA bilingue des restaurants bruxellois",
     seoDescription:
       "Vox répond au téléphone de votre restaurant bruxellois d'une voix naturelle, vérifie le registre réel et prend la réservation — pendant que votre équipe reste avec la salle. Pilotes belges en ouverture.",
     heroHeadline: "Le déjeuner dure quatre-vingt-dix minutes. Le téléphone, lui, n'attend pas.",

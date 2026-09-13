@@ -1,6 +1,6 @@
 ---
 title: "How to forward your restaurant phone to an AI host"
-description: "A step-by-step guide to call forwarding for restaurants — Telstra, Optus, and VoIP — so an AI host can answer the calls you'd otherwise miss, without changing your number."
+description: "Step-by-step call forwarding for restaurants — Telstra, Optus and VoIP — so an AI host answers the calls you'd otherwise miss, without changing your number."
 publishDate: 2026-05-27
 type: guide
 relatedSolutions: ["restaurants", "cafes", "takeaway"]

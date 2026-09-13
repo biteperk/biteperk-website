@@ -197,7 +197,7 @@ export const solutions: readonly Solution[] = [
       seo: {
         title: "AI phone receptionist for hotels",
         description:
-          "VoxStay is BitePerk’s AI receptionist for independent hotels — answers booking calls, quotes real stay prices with taxes, and texts a secure payment link. In development; join the waitlist.",
+          "VoxStay is BitePerk’s AI receptionist for independent hotels — answers booking calls, quotes real stay prices with taxes and texts a secure payment link. In development.",
       },
       hero: {
         eyebrow: "Hotels",
@@ -501,7 +501,7 @@ export const solutions: readonly Solution[] = [
       seo: {
         title: "AI phone answering for medical clinics",
         description:
-          "Overflow and after-hours clinic calls deserve a competent answer. VoxConcierge is in development for professional front-desk coverage — register interest for medical use cases.",
+          "Overflow and after-hours clinic calls deserve a competent answer. VoxConcierge is in development for front-desk coverage — register interest for medical use cases.",
       },
       hero: {
         eyebrow: "Medical",
