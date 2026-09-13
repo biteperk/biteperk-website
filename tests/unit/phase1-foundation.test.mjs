@@ -36,11 +36,12 @@ describe("phase1 foundation registries", () => {
     assert.match(src, /status: "reserved"/);
   });
 
-  it("nav-ia encodes the Phase 1 header targets", () => {
-    const src = read("src/data/nav-ia.ts");
-    for (const label of ["Products", "Solutions", "Resources", "Pricing", "Platform", "About", "Book Demo"]) {
-      assert.match(src, new RegExp(`label: "${label}"`));
-    }
+  it("nav.ts is the only header definition and carries the Phase 1 order", () => {
+    assert.throws(() => read("src/data/nav-ia.ts"), /ENOENT/, "nav-ia.ts must not come back — two nav definitions drift");
+    const src = read("src/data/nav.ts");
+    const order = ["Resources", "Pricing", "Platform", "About"].map((l) => src.indexOf(`label: "${l}"`));
+    assert.ok(order.every((i) => i > -1), "every Phase 1 header label present");
+    assert.deepEqual([...order].sort((a, b) => a - b), order, "Resources · Pricing · Platform · About, in that order");
   });
 
   it("AU static pages include solutions routes", () => {
@@ -81,10 +82,13 @@ describe("phase1 resources hub", () => {
     assert.match(src, /RESOURCE_SEGMENTS/);
   });
 
-  it("AU static pages include resources routes", () => {
+  it("AU static pages carry the resources hub; category pages are content-derived", () => {
     const src = read("src/data/locales.ts");
-    assert.match(src, /RESOURCE_SEGMENTS/);
-    assert.match(src, /"resources"/);
+    assert.match(src, /"resources",/);
+    assert.doesNotMatch(src, /RESOURCE_SEGMENTS\.map/, "category pages must not be listed unconditionally — empty ones are thin pages");
+    assert.match(read("scripts/gates/check-routes.mjs"), /populatedResourceTypes/);
+    assert.match(read("tests/helpers/routes.ts"), /populatedResourceTypes/);
+    assert.match(read("src/pages/resources/[type].astro"), /populated\.has/);
   });
 
   it("prune-global removes resources from global dist", () => {

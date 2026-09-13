@@ -1,15 +1,13 @@
 ---
 import SolutionLayout from "@/layouts/SolutionLayout.astro";
 import FAQ from "@/components/FAQ.astro";
-import { solutions, type Solution } from "@/data/solutions";
+import { renderableSolutions, type Solution } from "@/data/solutions";
 import { getProduct } from "@/data/products";
 import { u } from "@/data/locales";
 import { bookDemoHref, CTA_LABELS } from "@/data/conversion";
 
 export async function getStaticPaths() {
-  return solutions
-    .filter((s) => s.status === "live" || s.status === "draft")
-    .map((s) => ({ params: { slug: s.slug }, props: { solution: s } }));
+  return renderableSolutions().map((s) => ({ params: { slug: s.slug }, props: { solution: s } }));
 }
 
 interface Props {
