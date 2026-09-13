@@ -25,7 +25,7 @@ import "@/styles/global.css";
 import interLatinUrl from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
 import SEO from "@/components/SEO.astro";
 import ConsentBanner from "@/components/ConsentBanner.astro";
-import { siteGraph } from "@/data/schema";
+import { siteGraphWith } from "@/data/schema";
 import { u, buildHreflang, currentTarget, stripBase, isSharedPage, localeFromPath, INTL_LAUNCHED } from "@/data/locales";
 import { ClientRouter } from "astro:transitions";
 
@@ -35,6 +35,10 @@ interface Props {
   path?: string;
   /** `<html lang>` — defaults to en-AU (AU build); global locales pass en / fr. */
   lang?: string;
+  /** Skip-link text, in the page's language. Defaults to English (AU). */
+  skipLabel?: string;
+  /** Organization.description for the sitewide graph, in the page's language. */
+  orgDescription?: string;
   /** og:locale — defaults to en_AU. */
   ogLocale?: string;
   /** Emit robots noindex (used by the international staging scaffold). */
@@ -61,6 +65,8 @@ const {
   description,
   path,
   lang = "en-AU",
+  skipLabel = "Skip to content",
+  orgDescription,
   ogLocale = "en_AU",
   noindex = false,
   alternates,
@@ -188,12 +194,12 @@ if (!alternates && INTL_LAUNCHED && currentTarget() === "au") {
     {hreflangXDefault && <link rel="alternate" hreflang="x-default" href={hreflangXDefault} />}
 
     {/* Sitewide brand graph (Organization + WebSite), linked by @id. */}
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(siteGraph)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(siteGraphWith({ orgDescription }))} />
 
     <ClientRouter fallback="animate" />
   </head>
   <body>
-    <a class="skip-link" href="#main">Skip to content</a>
+    <a class="skip-link" href="#main">{skipLabel}</a>
     {/* Chrome is a SLOT, not a prop. Astro inlines the CSS of every component
         in a page's import graph — a `{!hideNav && <Nav />}` still shipped the
         AU nav, mega-menu, mobile menu and footer styles (~20 KB) into every

@@ -142,6 +142,28 @@ for (const theme of THEMES) {
  */
 test.describe("intl heading structure (all routes)", () => {
   for (const route of routes.filter((r) => !r.endsWith(".html"))) {
+    // Landmarks. axe passes `landmark-one-main` and `region` on a page whose
+    // <header>/<footer> sit INSIDE <main> — but ARIA in HTML says those are
+    // not banner/contentinfo there, so every international page shipped with
+    // one landmark and a skip link that skipped nothing (13 Sep 2026). Role
+    // queries apply the ARIA rules, so this is the check axe cannot make.
+    test(`one banner, one main, one contentinfo; skip link lands after the nav: ${route}`, async ({ page }) => {
+      await page.goto(route);
+      await expect(page.getByRole("banner")).toHaveCount(1);
+      await expect(page.getByRole("main")).toHaveCount(1);
+      await expect(page.getByRole("contentinfo")).toHaveCount(1);
+      const skip = page.locator("a.skip-link");
+      await expect(skip).toHaveAttribute("href", "#main");
+      const ok = await page.evaluate(() => {
+        const main = document.getElementById("main");
+        const nav = document.querySelector("header nav");
+        // The nav must come BEFORE main in document order and not be inside it.
+        return !!main && !!nav && !main.contains(nav) &&
+          !!(nav.compareDocumentPosition(main) & Node.DOCUMENT_POSITION_FOLLOWING);
+      });
+      expect(ok, "site nav must precede <main> and sit outside it").toBe(true);
+    });
+
     test(`exactly one h1, in order, no skipped levels: ${route}`, async ({ page }) => {
       await page.goto(route, { waitUntil: "domcontentloaded" });
       const levels = await page.evaluate(() =>

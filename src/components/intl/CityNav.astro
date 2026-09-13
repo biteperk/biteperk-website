@@ -34,8 +34,10 @@ interface Props {
   label: string;
   /** Menu title (c.chrome.citiesTitle). */
   title: string;
+  /** Close button accessible name (c.chrome.a11y.closeCities). */
+  closeLabel: string;
 }
-const { locale, page, label, title } = Astro.props;
+const { locale, page, label, title, closeLabel } = Astro.props;
 const cities = intlCitiesForBase(locale.base);
 ---
 
@@ -82,7 +84,7 @@ const cities = intlCitiesForBase(locale.base);
       <span class="intl-citynav-grabber" aria-hidden="true"></span>
       <div class="intl-citynav-header">
         <p class="intl-citynav-title">{title}</p>
-        <button type="button" class="intl-citynav-close" data-city-nav-close aria-label="Close cities menu">
+        <button type="button" class="intl-citynav-close" data-city-nav-close aria-label={closeLabel}>
           <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
         </button>
       </div>
