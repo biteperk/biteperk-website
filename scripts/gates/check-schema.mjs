@@ -188,7 +188,7 @@ if (TARGET === "global") {
       if (rel === "index.html" || rel.startsWith("kitchen-sink") || rel.startsWith("404")) continue;
       const html = readFileSync(file, "utf8");
       const lists = graphOf(rel).filter((n) => n["@type"] === "BreadcrumbList");
-      const rendered = (html.match(/<nav class="crumbs"[\s\S]*?<\/nav>/)?.[0].match(/<li>/g) ?? []).length;
+      const rendered = (html.match(/<nav class="crumbs"[\s\S]*?<\/nav>/)?.[0].match(/<li[\s>]/g) ?? []).length;
       if (lists.length !== 1) { console.error(`FAIL  ${rel}: ${lists.length} BreadcrumbList nodes (expected 1)`); failed++; continue; }
       if (lists[0].itemListElement.length !== rendered) {
         console.error(`FAIL  ${rel}: BreadcrumbList has ${lists[0].itemListElement.length} items, the rendered trail has ${rendered}`);
