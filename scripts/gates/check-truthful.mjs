@@ -141,6 +141,15 @@ const FORBIDDEN = [
  */
 const FORBIDDEN_CLAIMS = [
   {
+    // Facts about which law applies belong on the legal pages; "we are GDPR
+    // compliant" is a claim, not a fact, and nowhere else may make it. The
+    // compliance registry (intl/compliance.ts) names authorities and laws —
+    // it never asserts compliance.
+    label: "compliance claim outside a legal page",
+    re: /\b(?:GDPR|RGPD|PECR|UK GDPR)[- ]?(?:compliant|compliance)\b|\bcompliant with (?:the )?(?:GDPR|RGPD|UK GDPR|PECR)|\bconforme (?:au|à la|aux) (?:RGPD|loi)/i,
+    unless: /\/legal\//,
+  },
+  {
     // Records are in Australia and live calls are processed in the United
     // States — the privacy notice says so. A "regional cloud boundary" badge
     // for the restaurant products would be exactly the false claim this repo's

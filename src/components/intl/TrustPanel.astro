@@ -29,6 +29,7 @@
 import type { Locale } from "@/data/locales";
 import type { CopyBundle } from "@/data/intl";
 import { entities } from "@/data/site";
+import { complianceFor } from "@/data/intl/compliance";
 import Illustration from "@/components/Illustration.astro";
 
 interface Props {
@@ -47,6 +48,9 @@ const isUk = locale.market === "gb";
 const entity = isUk ? entities.uk : entities.au;
 const registerLabel = isUk ? tf.registerUk : tf.registerAu;
 const privacyHref = `${locale.base}/legal/privacy/`;
+// Market facts (intl/compliance.ts): the authority the visitor can complain to
+// and the honest sentence about where the team is. Neither is a claim.
+const mc = complianceFor(locale.market);
 
 // One icon per principle, by position: hand-off → phone, data → shield,
 // honesty-about-what-ships → calendar. Decorative; the card title carries
@@ -95,6 +99,19 @@ const Heading = variant === "full" ? "h3" : "h2";
             {tf.basis}{" "}
             <a class="link-arrow" href={privacyHref}>{tf.privacyLink}</a>
           </dd>
+        </div>
+        {mc.authority && (
+          <div class="intl-fact" data-market-authority>
+            <dt>{tf.authorityLabel}</dt>
+            <dd>
+              {tf.authorityBody}{" "}
+              <a href={mc.authority.url} rel="noopener">{mc.authority.name[locale.copyLang]}</a>.
+            </dd>
+          </div>
+        )}
+        <div class="intl-fact" data-market-team>
+          <dt>{tf.teamLabel}</dt>
+          <dd>{mc.timeZoneNote[locale.copyLang]}</dd>
         </div>
       </dl>
     </div>
