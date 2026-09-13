@@ -311,7 +311,7 @@ export const cities: readonly City[] = [
     navLabel: "Brisbane",
     seoTitle: "Brisbane restaurant calls answered, deck or inside",
     seoDescription:
-      "AI phone answering for Brisbane restaurants. Bella is the AI receptionist that answers every call from West End to Teneriffe, handles deck-or-inside changes and books tables 24/7.",
+      "AI phone answering for Brisbane restaurants. Bella answers every call from West End to Teneriffe, handles deck-or-inside changes and books tables 24/7.",
     heroHeadline: "Bella takes every Brisbane call, West End to Teneriffe.",
     intro: [
       "Brisbane dining is outdoor dining — river decks at Howard Smith Wharves, beer gardens in West End, footpath tables in Teneriffe. That makes the phone busier, not quieter: every change in the sky produces a wave of \"is the deck still on?\", \"can we move inside?\" and \"are you open if it storms?\" calls, all landing while your team is resetting tables in the heat.",
@@ -537,7 +537,7 @@ export const cities: readonly City[] = [
     navLabel: "Adelaide",
     seoTitle: "AI receptionist for Adelaide restaurants and wine bars",
     seoDescription:
-      "AI phone answering for Adelaide restaurants and wine bars. Bella, an AI receptionist, answers every call — Peel Street to Glenelg — books the table and rides the Mad March surge, 24/7.",
+      "AI phone answering for Adelaide restaurants and wine bars. Bella answers every call — Peel Street to Glenelg — books the table and rides the Mad March surge, 24/7.",
     heroHeadline: "Peel Street to Glenelg — Bella books every Adelaide table.",
     intro: [
       "Adelaide punches absurdly above its weight — a city of heritage-stone wine bars, Peel Street rooms with twelve tables, and East End dining built on personal service. That intimacy is the point, and it's also the problem: in a venue where the owner is on the floor, there is genuinely nobody to answer the phone, and the person calling can hear it ring out.",
@@ -647,7 +647,7 @@ export const cities: readonly City[] = [
     published: true,
     geo: { lat: -28.0167, lng: 153.4 },
     navLabel: "Gold Coast",
-    seoTitle: "Gold Coast restaurant calls answered 24/7, season included",
+    seoTitle: "Gold Coast restaurant calls answered 24/7, in season",
     seoDescription:
       "An AI receptionist for Gold Coast restaurants. Bella answers tourist calls 24/7 — Burleigh to Broadbeach — books same-day tables and never takes schoolies week off.",
     heroHeadline: "Bella answers every Gold Coast call, Burleigh to Broadbeach.",
