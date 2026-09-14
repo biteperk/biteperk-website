@@ -39,6 +39,11 @@ jobs:
     timeout-minutes: 25
     env:
       INTL_LAUNCHED: "true"
+      # Send staging analytics to the dedicated "BitePerk staging" Umami website
+      # (and tag pages with data-domains=biteperk-staging.web.app) so staging
+      # traffic never lands in the production analytics. Unset everywhere else,
+      # so CI and production builds use the production Umami website.
+      UMAMI_ENV: "staging"
       FIREBASE_PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID }}
       GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
       GCP_FIREBASE_DEPLOY_SERVICE_ACCOUNT: ${{ vars.GCP_FIREBASE_DEPLOY_SERVICE_ACCOUNT }}
