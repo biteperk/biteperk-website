@@ -105,8 +105,8 @@ test.describe("cookie consent", () => {
     // Does not reappear on reload or client-side navigation.
     await page.reload();
     await expect(bar).toBeHidden();
-    await page.locator(`nav a[href="${p('/platform/')}"]`).first().click();
-    await page.waitForURL("**/platform/");
+    await page.locator(`nav a[href="${p('/solutions/')}"]`).first().click();
+    await page.waitForURL("**/solutions/");
     await expect(bar).toBeHidden();
   });
 

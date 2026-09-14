@@ -1,10 +1,10 @@
 ---
 import Base from "@/layouts/AuBase.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
-import { site } from "@/data/site";
+import { site, pageTitle } from "@/data/site";
 import { u } from "@/data/locales";
 
-const title = "Legal — Biteperk";
+const title = pageTitle("Legal");
 const description =
   "Biteperk's legal documents: privacy policy, terms of service, and cookie policy.";
 

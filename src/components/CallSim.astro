@@ -38,7 +38,7 @@ interface Props {
 }
 const { copy, productHref, showDemo = true } = Astro.props;
 
-const auLines = [
+const auLines: CallSimCopy["lines"] = [
   {
     role: "bella",
     text: "Good evening — you've called Marlow Lane. This is Bella. How can I help?",
@@ -134,7 +134,7 @@ const href = productHref ?? u("/products/voxtable/");
           {t.lines.map((l) => (
             <li class="cs-line" data-cs-line data-role={l.role}>
               <span class="cs-who">{l.role === "bella" ? t.whoBella : t.whoCaller}</span>
-              <span class="cs-bubble">{l.text}</span>
+              <span class="cs-bubble" lang={l.lang}>{l.text}</span>
               {l.role === "bella" && (
                 <span class="cs-typing" aria-hidden="true">
                   <span></span><span></span><span></span>

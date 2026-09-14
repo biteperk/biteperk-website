@@ -271,3 +271,15 @@ export const ukEmail = {
   display: "sales@biteperk.com",
   href: "mailto:sales@biteperk.com",
 } as const;
+
+/**
+ * The one <title> suffix. Every AU page title went through five hand-typed
+ * variants ("· Biteperk", "· BitePerk", "— Biteperk", "Biteperk —"…) until
+ * 13 Sep 2026; the wordmark is BitePerk (BRAND.md). Registries store the BARE
+ * title; layouts wrap it here. `site.name` stays "Biteperk" for the
+ * Organization node (a legal-name spelling, not the wordmark).
+ */
+export const BRAND = "BitePerk";
+export function pageTitle(title: string): string {
+  return `${title} · ${BRAND}`;
+}

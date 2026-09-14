@@ -1,0 +1,83 @@
+---
+/**
+ * One industry-solution card — used by the /solutions/ hub and (Chunk C) the
+ * product pages' "Solutions using X" strip, so the two never drift.
+ *
+ * The status pill derives from the PRODUCT behind the solution, not the
+ * solution's own status: Hotels is a real page (status "live") but VoxStay is
+ * in development, so the honest label is "In development" — the same
+ * derivation the nav used before the mega-menu was dropped. StatusPill owns
+ * the pill styling (icon + text + colour), so this stays one source of truth.
+ */
+import StatusPill from "@/components/StatusPill.astro";
+import { getProduct } from "@/data/products";
+import { solutionPath, type Solution } from "@/data/solutions";
+import { u } from "@/data/locales";
+
+interface Props {
+  solution: Solution;
+}
+const { solution } = Astro.props;
+const status = getProduct(solution.primaryProduct)?.status ?? "concept";
+---
+
+<a class="sol-card" href={u(solutionPath(solution.slug))} data-status={status}>
+  <div class="sol-card-top">
+    <h3 class="sol-card-name">{solution.name}</h3>
+    <StatusPill status={status} size="sm" />
+  </div>
+  <p class="sol-card-tag">{solution.shortDescription}</p>
+  <span class="sol-card-go" aria-hidden="true">View solution →</span>
+</a>
+
+<style>
+  .sol-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 24px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--fill-subtle);
+    text-decoration: none;
+    color: inherit;
+    min-height: 100%;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .sol-card {
+      transition:
+        border-color var(--dur-fast) var(--ease-out),
+        transform var(--dur-fast) var(--ease-out);
+    }
+  }
+  .sol-card:hover {
+    border-color: color-mix(in srgb, var(--gold) 55%, var(--line));
+    transform: translateY(-2px);
+  }
+  .sol-card:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+  }
+  .sol-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .sol-card-name {
+    color: var(--white);
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .sol-card-tag {
+    color: var(--text);
+    flex: 1;
+    line-height: var(--lh-body);
+  }
+  .sol-card-go {
+    color: var(--gold);
+    font-size: var(--fs-small);
+    font-weight: 600;
+  }
+</style>

@@ -1,7 +1,9 @@
 import { test, expect, type Page } from "@playwright/test";
 import { INTL_NAV } from "../../src/data/intl/nav";
-import { localesForTarget, locales } from "../../src/data/locales";
+import { localesForTarget, locales, pageExistsInLocale, localeFromPath } from "../../src/data/locales";
 import { intlCitiesForBase } from "../../src/data/intl/cities";
+import { PRODUCT_SLUGS } from "../../src/data/product-slugs";
+import { intlProducts } from "../../src/data/intl/products";
 
 /**
  * Device contracts for the international chrome (IntlLayout + LocalePicker).
@@ -75,7 +77,9 @@ test.describe("intl chrome — phone", () => {
       // adding a nav item cannot leave this asserting the old number. It was
       // hardcoded at 4 once and had already gone stale (3 → 4 with products).
       const links = page.locator(".imm-link");
-      await expect(links).toHaveCount(INTL_NAV.length);
+      // Filtered the way IntlLayout filters: only pages this locale emits.
+      const expectedNav = INTL_NAV.filter((item) => pageExistsInLocale(item.path, localeFromPath(home)));
+      await expect(links).toHaveCount(expectedNav.length);
       for (const link of await links.all()) {
         await expect(link).toBeVisible();
         const box = await link.boundingBox();
@@ -226,7 +230,9 @@ test.describe("intl chrome — tablet keeps the desktop layout", () => {
 
   test("single-row sticky header with the CTA intact", async ({ page }) => {
     await page.goto("/gb-en/");
-    const links = page.locator(".intl-links a");
+    // Direct children only: the Products dropdown lives inside .intl-links and
+    // its cards are nested <a> — the bar's own links are direct children.
+    const links = page.locator(".intl-links > a");
     const tops = await Promise.all(
       (await links.all()).map(async (l) => (await l.boundingBox())!.y),
     );
@@ -314,11 +320,134 @@ test.describe("intl chrome — cities on a phone live in the drawer", () => {
     }
   });
 
+  test("every Vox edition is reachable from the drawer with its localised pill on /fr/", async ({ page }) => {
+    await page.goto("/fr/");
+    await page.locator("[data-mobile-menu-trigger]").click();
+    await settle(page, ".imm-panel");
+    const items = page.locator(".imm-product");
+    // Derived from the same registry the drawer renders from — a sixth edition
+    // must not need a test edit. Products are core pages, present on every tree.
+    await expect(items).toHaveCount(PRODUCT_SLUGS.length);
+    // The plain nav links must be untouched by the new section.
+    await expect(page.locator(".imm-link")).toHaveCount(
+      INTL_NAV.filter((item) => pageExistsInLocale(item.path, localeFromPath("/fr/"))).length,
+    );
+    for (const item of await items.all()) {
+      const box = (await item.boundingBox())!;
+      expect(box.height, "product row must be a 44px touch target").toBeGreaterThanOrEqual(44);
+      expect(box.x + box.width).toBeLessThanOrEqual(PHONE.width);
+    }
+    // Pills carry the French status text, not the English catalogue label.
+    await expect(page.locator('.imm-product[href$="/fr/products/voxtable/"] .imm-product-pill'))
+      .toHaveText(intlProducts.fr.voxtable.statusLabel);
+  });
+
   test("no city section on a tree without cities", async ({ page }) => {
     // /en, the x-default, is the only tree with no city pages (was /fr until
     // Paris published on 7 Sep 2026).
     await page.goto("/en/");
     await page.locator("[data-mobile-menu-trigger]").click();
     await expect(page.locator(".imm-city")).toHaveCount(0);
+  });
+});
+
+test.describe("intl chrome — Product dropdown", () => {
+  // DESKTOP: the dropdown is a bar affordance (hidden ≤720px, where products
+  // move into the drawer — covered by the phone drawer spec). Values derived
+  // from the registries, never hardcoded: PRODUCT_SLUGS is the same list the
+  // component maps over, so a sixth product is covered the day it ships.
+  const DESKTOP = { width: 1280, height: 900 };
+  test.use({ viewport: DESKTOP });
+
+  async function slugs(page: Page): Promise<string[]> {
+    return page.$$eval(".intl-links [data-intl-prodnav-item]", (els) =>
+      els
+        .map((e) => (e as HTMLAnchorElement).getAttribute("href") || "")
+        .filter((h) => /\/products\/[a-z]/.test(h))
+        .map((h) => h.replace(/\/$/, "").split("/").pop() as string),
+    );
+  }
+
+  for (const home of LOCALE_HOMES) {
+    test(`opens with every product listed and inside the viewport: ${home}`, async ({ page }) => {
+      await page.goto(home);
+      const details = page.locator(".intl-links [data-intl-prodnav]");
+      const trigger = page.locator("[data-intl-prodnav-trigger]");
+      await expect(trigger).toBeVisible();
+      // Progressive enhancement: click-open works (hover intent is additive).
+      await trigger.click();
+      await expect(details).toHaveAttribute("open", "");
+      const menu = page.locator("[data-intl-prodnav-menu]");
+      await settle(page, "[data-intl-prodnav-menu]");
+      // Cards === the whole catalogue, in product order, each a real link.
+      const found = await slugs(page);
+      expect(found).toEqual(["voxtable", "voxorder", "voxconcierge", "voxstay", "voxdrive"]);
+      // Panel fully inside the viewport, no overflow.
+      const box = (await menu.boundingBox())!;
+      expect(box.x).toBeGreaterThanOrEqual(0);
+      expect(box.x + box.width).toBeLessThanOrEqual(DESKTOP.width + 1);
+      expect(await horizontalOverflow(page)).toBe(0);
+      // Escape closes and returns focus to the trigger.
+      await page.keyboard.press("Escape");
+      await expect(details).not.toHaveAttribute("open", "");
+      await expect(trigger).toBeFocused();
+    });
+  }
+
+  test("pills carry the localised status text on /fr/", async ({ page }) => {
+    await page.goto("/fr/");
+    await page.locator("[data-intl-prodnav-trigger]").click();
+    await settle(page, "[data-intl-prodnav-menu]");
+    const pills = page.locator("[data-intl-prodnav-menu] .intl-prodnav-pill");
+    // The five FR statusLabel values from src/data/intl/products.ts.
+    await expect(pills.nth(0)).toHaveText("En production en Australie"); // voxtable
+    await expect(pills.nth(2)).toHaveText("En développement"); // voxconcierge
+    await expect(pills.nth(4)).toHaveText("Concept"); // voxdrive
+  });
+
+  test("ArrowDown opens and focuses the first card", async ({ page }) => {
+    await page.goto("/gb-en/");
+    const trigger = page.locator("[data-intl-prodnav-trigger]");
+    await trigger.focus();
+    await page.keyboard.press("ArrowDown");
+    await settle(page, "[data-intl-prodnav-menu]");
+    const first = page.locator("[data-intl-prodnav-item]").first();
+    await expect(first).toBeFocused();
+  });
+
+  test("only one bar menu is open at a time on /gb-en/", async ({ page }) => {
+    await page.goto("/gb-en/");
+    await page.locator("[data-city-nav-trigger]").click();
+    await expect(page.locator("[data-city-nav]")).toHaveAttribute("open", "");
+    await page.locator("[data-intl-prodnav-trigger]").click();
+    await expect(page.locator("[data-intl-prodnav]")).toHaveAttribute("open", "");
+    await expect(page.locator("[data-city-nav]")).not.toHaveAttribute("open", "");
+  });
+
+  test("marks the active product on /be-fr/products/voxtable/", async ({ page }) => {
+    await page.goto("/be-fr/products/voxtable/");
+    const trigger = page.locator("[data-intl-prodnav-trigger]");
+    await expect(trigger).toHaveAttribute("aria-current", "true");
+    await trigger.click();
+    await settle(page, "[data-intl-prodnav-menu]");
+    const active = page.locator("[data-intl-prodnav-item][aria-current='page']");
+    await expect(active).toHaveCount(1);
+    await expect(active).toHaveAttribute("href", "/be-fr/products/voxtable/");
+  });
+});
+
+test.describe("intl chrome — Product dropdown on a tablet (pill tier)", () => {
+  test.use({ viewport: TABLET });
+
+  test("opens inside the viewport with no overflow: /gb-en/", async ({ page }) => {
+    await page.goto("/gb-en/");
+    const trigger = page.locator("[data-intl-prodnav-trigger]");
+    await expect(trigger).toBeVisible();
+    await trigger.click();
+    await settle(page, "[data-intl-prodnav-menu]");
+    const box = (await page.locator("[data-intl-prodnav-menu]").boundingBox())!;
+    expect(box.x).toBeGreaterThanOrEqual(0);
+    expect(box.x + box.width).toBeLessThanOrEqual(TABLET.width + 1);
+    expect(await horizontalOverflow(page)).toBe(0);
   });
 });

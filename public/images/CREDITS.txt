@@ -215,6 +215,16 @@ brussels-grand-place
   Original:     https://unsplash.com/@sleblanc01
   Brief:        Brussels Grand-Place guild houses against a dramatic sky — the Belgian establishing shot. Replaces belgium-dinant, a town 90 min away that stood in while every Belgian string said Brussels.
 
+antwerp-cathedral-skyline
+  Photographer: Zoë Gayah Jonker
+  Original:     https://unsplash.com/@zoegayah
+  Brief:        Antwerp rooftops with the Cathedral of Our Lady's tower in soft haze — the Antwerp establishing shot (/be-en/antwerp)
+
+liege-meuse-skyline
+  Photographer: Albert Dehon
+  Original:     https://unsplash.com/@sinout
+  Brief:        Liège from the citadel: the Meuse, its bridges and the centre under a dusk sky — the Liège establishing shot (/be-fr/liege, staged)
+
 brasserie-banquette
   Photographer: Klara Kulikova
   Original:     https://unsplash.com/@kkalerry

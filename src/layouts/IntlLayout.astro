@@ -12,7 +12,7 @@
 import Base from "@/layouts/Base.astro";
 import { resolveCopy } from "@/data/intl";
 import {
-  localesForTarget, buildHreflang, localeSwitchUrl, INTL_LAUNCHED, AU_HOME,
+  localesForTarget, buildHreflang, localeSwitchUrl, INTL_LAUNCHED, AU_BASE, pageExistsInLocale,
   type BuildTarget, type Locale,
 } from "@/data/locales";
 import LocalePicker from "@/components/LocalePicker.astro";
@@ -21,9 +21,11 @@ import StarMark from "@/components/StarMark.astro";
 import SocialLinks from "@/components/SocialLinks.astro";
 import LocaleSuggest from "@/components/LocaleSuggest.astro";
 import CityNav from "@/components/intl/CityNav.astro";
+import IntlProductNav from "@/components/intl/IntlProductNav.astro";
 import IntlMobileMenu from "@/components/intl/IntlMobileMenu.astro";
 import { INTL_NAV } from "@/data/intl/nav";
 import { products } from "@/data/products";
+import { intlProducts } from "@/data/intl/products";
 import { entities, ukEmail } from "@/data/site";
 import { ukEntityGraph } from "@/data/schema";
 import { intlCitiesForBase } from "@/data/intl/cities";
@@ -66,6 +68,21 @@ const p = (seg: string) => `${locale.base}/${seg ? `${seg}/` : ""}`;
 // This locale's published city pages — empty on trees without cities, so the
 // footer and nav stay identical there (no locale branching, no dead links).
 const footerCities = intlCitiesForBase(locale.base);
+const navItems = INTL_NAV.filter((item) => pageExistsInLocale(item.path, locale));
+// The header bar renders Products as a dropdown (IntlProductNav), so drop it
+// from the plain-link loop. The drawer and footer keep the full navItems list.
+const barLinks = navItems.filter((item) => item.key !== "products");
+// The Vox editions for the phone drawer's products section — built here so the
+// drawer stays data-agnostic (props only). ORDER + name/status from the AU
+// catalogue (already imported for the footer); the pill text is localised.
+const intlProductCopy = intlProducts[locale.copyLang];
+const productLinks = products.map((prod) => ({
+  slug: prod.slug,
+  name: prod.name,
+  href: `${locale.base}/products/${prod.slug}/`,
+  status: prod.status,
+  statusLabel: intlProductCopy[prod.slug].statusLabel,
+}));
 const hasCities = footerCities.length > 0;
 // Past ~6, a single vertical list towers over the 4–5-item sibling columns
 // (10 French cities = ~440px). Split those into two sub-columns so the footer
@@ -127,7 +144,8 @@ const isUk = locale.market === "gb";
           <span class="brand-name">bite<span class="perk">perk</span></span>
         </a>
         <nav class="intl-links" aria-label={c.a11y.siteNav}>
-          {INTL_NAV.map((item) => (
+          <IntlProductNav locale={locale} page={page} chrome={c} />
+          {barLinks.map((item) => (
             <a href={p(item.path)}>{c.nav[item.key]}</a>
           ))}
         </nav>
@@ -168,7 +186,7 @@ const isUk = locale.market === "gb";
 
     {/* Sibling of the header, not a child: the panel is position:fixed and a
         future filter/transform on the bar would otherwise trap it. */}
-    <IntlMobileMenu locale={locale} page={page} chrome={c} nav={INTL_NAV} cities={footerCities} />
+    <IntlMobileMenu locale={locale} page={page} chrome={c} nav={navItems} cities={footerCities} products={productLinks} />
   </div>
 
   <div class="intl">
@@ -216,7 +234,7 @@ const isUk = locale.market === "gb";
             </nav>
             <nav class="intl-footer-links" aria-labelledby="ifc-explore">
               <p class="intl-footer-col-title" id="ifc-explore">{c.footerExplore}</p>
-              {INTL_NAV.map((item) => (
+              {navItems.map((item) => (
                 <a href={p(item.path)}>{c.nav[item.key]}</a>
               ))}
               {/* The UK entity's published contact address (already in the
@@ -250,10 +268,10 @@ const isUk = locale.market === "gb";
             )}
             <nav class="intl-footer-links" aria-labelledby="ifc-regions">
               <p class="intl-footer-col-title" id="ifc-regions">{c.footerRegions}</p>
-              <a href={AU_HOME + "/"}>{c.auSite} ↗</a>
+              <a href={`${AU_BASE}/`}>{c.auSite} ↗</a>
               {alternateLocales.map((l) => (
                 <a
-                  href={new URL(localeSwitchUrl(canonicalPath, l)).pathname}
+                  href={localeSwitchUrl(canonicalPath, l)}
                   rel="alternate"
                   hreflang={l.hreflang[0]}
                   lang={l.lang}
@@ -314,13 +332,17 @@ const isUk = locale.market === "gb";
     align-items: center;
     gap: var(--space-5);
     min-height: 64px;
+    /* Anchor for IntlProductNav's absolute panel — the panel uses left:0 +
+       width:min(680px,100%) against THIS box so it can never overflow the row
+       at any viewport (the trigger sits mid-row; anchoring to it would). */
+    position: relative;
   }
   .intl-links {
     display: flex;
     gap: var(--space-5);
     margin-inline-start: auto;
   }
-  .intl-links a {
+  .intl-links > a {
     color: var(--text);
     text-decoration: none;
     font-size: var(--fs-small);
@@ -329,8 +351,8 @@ const isUk = locale.market === "gb";
   /* Never wrap a nav label. Without this, flex-shrink squeezed each link to
      three lines in the band where the bar is too narrow for the full row —
      visible on every tree, worst in French ("Comment ça marche"). */
-  .intl-links a { white-space: nowrap; }
-  .intl-links a:hover { color: var(--gold); }
+  .intl-links > a { white-space: nowrap; }
+  .intl-links > a:hover { color: var(--gold); }
   .intl-actions { display: flex; align-items: center; gap: var(--space-4); }
   .intl-lang {
     color: var(--mist);
@@ -625,7 +647,7 @@ const isUk = locale.market === "gb";
       margin-inline-start: 0;
       gap: var(--space-2);
     }
-    .intl-nav[data-has-cities="true"] .intl-links a {
+    .intl-nav[data-has-cities="true"] .intl-links > a {
       display: inline-flex;
       align-items: center;
       min-height: 44px;
@@ -646,7 +668,7 @@ const isUk = locale.market === "gb";
       margin-inline-start: 0;
       gap: var(--space-2);
     }
-    .intl-links a {
+    .intl-links > a {
       display: inline-flex;
       align-items: center;
       min-height: 44px;
@@ -718,3 +740,9 @@ const isUk = locale.market === "gb";
     }
   }
 </style>
+
+<script>
+  // Products dropdown enhancement — intl only. NOT in Base.astro's shared
+  // bundle: AU pages have their own megamenu.ts, and Base feeds both trees.
+  import "@/scripts/intl-prodnav.ts";
+</script>

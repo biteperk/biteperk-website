@@ -74,6 +74,8 @@ const otherCities = intlCitiesForBase(locale.base).filter((x) => x.slug !== city
       <div class="intl-ctas">
         <a class="btn" href={p("contact")}>{c.chrome.cta}</a>
         <a class="btn-ghost" href={p("how-it-works")}>{h.ctaSecondary}</a>
+        {/* City → product: the existing nav label, so no new French to review. */}
+        <a class="btn-ghost" href={p("products/voxtable")}>{c.chrome.nav.products}</a>
       </div>
     </div>
     <div class="intl-hero-visual">

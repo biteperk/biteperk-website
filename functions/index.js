@@ -63,12 +63,22 @@ const ZOHO_WEB_TO_LEAD = {
 // on biteperk.com). Both functions stay in australia-southeast1; only the
 // browser Origin allowlist widens so the EU contact form isn't blocked by CORS.
 // (International architecture: PLAN.md §7 — "Functions deploy before hosting".)
-const ALLOWED_ORIGINS = [
+const PRODUCTION_ORIGINS = [
   "https://biteperk.com.au",
   "https://www.biteperk.com.au",
   "https://biteperk.com",
   "https://www.biteperk.com",
 ];
+// The standing staging site (Firebase Hosting target `staging`, deployed from
+// `integration` by .github/workflows/deploy-staging.yml). It posts to THIS
+// production function through the same /api/contact rewrite, which is the
+// point — the lead pipeline is tested end-to-end. A staging lead is stored
+// and emailed like any other, tagged `environment: "staging"`, and is NOT
+// pushed into Zoho CRM: test enquiries are not pipeline. `biteperk-global.web.app`
+// (the raw production origin) stays deliberately absent; preview channels are
+// matched by PREVIEW_ORIGIN below.
+const STAGING_ORIGINS = ["https://biteperk-staging.web.app"];
+const ALLOWED_ORIGINS = [...PRODUCTION_ORIGINS, ...STAGING_ORIGINS];
 // Firebase Hosting preview channels (`firebase hosting:channel:deploy <name>`)
 // serve from https://biteperk-global--<name>-<hash>.web.app. They are the
 // review surface for every PR now, so the form must work there; the raw
@@ -117,6 +127,7 @@ exports.contactForm = onRequest(
     if (origin && !originAllowed(origin)) {
       return finish(res, false, 403, "Forbidden", false);
     }
+    const environment = origin && STAGING_ORIGINS.includes(origin) ? "staging" : "production";
 
     const wantsJson = (req.get("accept") || "").includes("application/json");
     const b = req.body && typeof req.body === "object" ? req.body : {};
@@ -219,6 +230,7 @@ exports.contactForm = onRequest(
         leadRef: leadRef || null,
         quality,
         elapsedMs,
+        environment,
         createdAt: FieldValue.serverTimestamp(),
         expireAt: Timestamp.fromMillis(Date.now() + LEAD_RETENTION_MS),
       });
@@ -235,7 +247,7 @@ exports.contactForm = onRequest(
     // gate any scripted POST could write itself straight into the CRM — the
     // observed spam did exactly that. Unverified/suspect leads stay in
     // Firestore and the notification email; a human can promote them.
-    if (zohoGlobal && quality === "ok") {
+    if (zohoGlobal && quality === "ok" && environment === "production") {
       try {
         await submitZohoLead({ name, email, venue, product, message, locale });
       } catch (e) {

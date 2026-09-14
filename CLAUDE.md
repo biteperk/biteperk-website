@@ -145,6 +145,14 @@ that keep them fixed:
   BE · FR only — everywhere else the suffix is redundant width the AU desktop
   bar cannot afford).
 
+## Phase 1 (Australia authority)
+
+Active programme: **Australia Authority & Global Foundation**. The locked plan,
+locale alias map, solutions registry, and target nav IA live under
+`docs/phase1/PLAN.md` plus `src/data/locale-plan.ts`, `solutions.ts`, `nav-ia.ts`.
+Do **not** rename live bases (`/gb-en`, `/fr`, `/en`, `/be-en`) to match brief
+aliases. Feature work branches from `integration`.
+
 ## Branch model
 
 Same shape as `biteperk/voxtable`:
@@ -152,6 +160,7 @@ Same shape as `biteperk/voxtable`:
 - **`integration`** is the default working branch — open feature PRs against it.
 - **`main`** is production-only. Promote with PR `integration` → `main` after CI is green and the change has been soaked/tested.
 - Production Firebase deploys are **manual** and must run from `main`: `gh workflow run "Deploy Firebase Hosting" --ref main`. Do not treat `main` as the day-to-day working branch.
+- **Release process, branch policy and version tags: [`docs/RELEASING.md`](docs/RELEASING.md).** `integration` → staging automatically; `integration → main` promotion PR = a release, tagged `vX.Y.Z` on the deployed `main` commit (candidates `vX.Y.Z-rc.N` on `integration`). One PR at a time — never stack.
 
 ## Deploy
 
@@ -159,6 +168,7 @@ Site is one Firebase project (id `vocotable` — a legacy id, do **not** "fix" i
 
 - **`biteperk-global` serves `dist-site` — this is the ENTIRE live site**, both the AU tree (`biteperk.com/au-en/**`) *and* the five international locales. It is the target you deploy for almost every content, page, form or copy change. Build it with **`build:site`** (which produces `dist-site`), not `build:global` (which only produces the `dist-global` half that `merge-dist.mjs` folds in).
 - **`biteperk` serves `dist-cctld` — the `biteperk.com.au` → `biteperk.com` redirect-only host** (a single file). It changes almost never. Deploying it does **not** touch any page or form — a `hosting:biteperk` deploy that reports "found 1 files in dist-cctld" is the redirect host, not the site.
+- **`staging` serves `dist-site` at https://biteperk-staging.web.app — the standing staging site (rev. 13 Sep 2026).** Deployed automatically on every push to `integration` by `.github/workflows/deploy-staging.yml` (same Workload Identity deploy account as production, `INTL_LAUNCHED=true`, hosting only). Its `firebase.json` block is **generated** from the `biteperk-global` block by `node scripts/build/sync-staging-hosting.mjs` and differs in exactly two ways: `target`, and an `X-Robots-Tag: noindex, nofollow` header on every path (a second indexable copy of the site is a duplicate-content problem; canonicals still point at biteperk.com). `check-staging-hosting` (`gates:au`, config-only) fails when the two blocks drift — so after any change to the production hosting block, re-run the sync script and commit; never hand-edit the staging block. The staging origin is on the contact function's allowlist: a staging enquiry is stored and emailed like any other, tagged `environment: "staging"`, and is **not** pushed to Zoho CRM (see `STAGING_ORIGINS` in `functions/index.js`). It posts to the *production* function through the same `/api/contact` rewrite — there is no staging function.
 
 ```bash
 # The Cloud Function (contact form) — deploy FIRST when a change touches both
@@ -225,7 +235,7 @@ This repo is heavily tuned for local + AI-agent discoverability. When touching t
 
 ### Contact form flow
 
-Form posts same-origin to `/api/contact` → Firebase Hosting rewrites to `contactForm` Cloud Function → validates → writes to Firestore (`biteperk-leads`) → best-effort Zoho SMTP notification. Origin allowlist (`ALLOWED_ORIGINS` in `functions/index.js`): **four** entries — `biteperk.com.au`, `www.biteperk.com.au`, `biteperk.com`, `www.biteperk.com`. The `.com` pair is **load-bearing, not leftover**: every page the AU tree now serves lives on `biteperk.com/au-en/**` (the `.com.au` host only 301s), and the five international locales post from `biteperk.com` too — drop them and every contact form on the site dies. `biteperk-global.web.app` is deliberately absent, so the form does not work from the raw staging origin. Honeypot field is `_gotcha`. Product slug allowlist (`PRODUCT_SLUGS` in `functions/index.js`) must be kept in sync with `src/data/products.ts`.
+Form posts same-origin to `/api/contact` → Firebase Hosting rewrites to `contactForm` Cloud Function → validates → writes to Firestore (`biteperk-leads`) → best-effort Zoho SMTP notification. Origin allowlist (`ALLOWED_ORIGINS` in `functions/index.js`): the **four** production entries — `biteperk.com.au`, `www.biteperk.com.au`, `biteperk.com`, `www.biteperk.com` — plus the standing staging origin `biteperk-staging.web.app` (`STAGING_ORIGINS`; its leads are tagged and kept out of Zoho). The `.com` pair is **load-bearing, not leftover**: every page the AU tree now serves lives on `biteperk.com/au-en/**` (the `.com.au` host only 301s), and the five international locales post from `biteperk.com` too — drop them and every contact form on the site dies. `biteperk-global.web.app` is deliberately absent, so the form does not work from the raw staging origin. Honeypot field is `_gotcha`. Product slug allowlist (`PRODUCT_SLUGS` in `functions/index.js`) must be kept in sync with `src/data/products.ts`.
 
 ## Redirects to remember
 

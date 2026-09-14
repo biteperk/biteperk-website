@@ -49,7 +49,7 @@ function close(refs: Refs, returnFocus = false): void {
 function closeOthers(except: HTMLDetailsElement): void {
   document
     .querySelectorAll<HTMLDetailsElement>(
-      "[data-city-nav][open], [data-locale-picker][open]",
+      "[data-city-nav][open], [data-locale-picker][open], [data-intl-prodnav][open]",
     )
     .forEach((el) => {
       if (el !== except) el.open = false;

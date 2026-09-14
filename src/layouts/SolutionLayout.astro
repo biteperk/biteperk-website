@@ -1,0 +1,118 @@
+---
+/**
+ * Shared chrome for /solutions/[slug] pages (Phase 1C).
+ * Mirrors ProductLayout patterns: Base + breadcrumbs + JSON-LD + hero CTAs + bottom Cta.
+ */
+import Base from "@/layouts/AuBase.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import Cta from "@/components/Cta.astro";
+import ConversionTrust from "@/components/conversion/ConversionTrust.astro";
+import type { Solution } from "@/data/solutions";
+import { bookDemoHref, CTA_LABELS, defaultCtaActions } from "@/data/conversion";
+import { getProduct } from "@/data/products";
+import { buildFaqPage, buildWebPage, voxEditionId } from "@/data/schema";
+import { pageTitle } from "@/data/site";
+import { u } from "@/data/locales";
+
+interface Props {
+  solution: Solution;
+}
+const { solution } = Astro.props;
+const path = `/solutions/${solution.slug}/`;
+const demoHref = bookDemoHref({ product: solution.primaryProduct });
+const cta = defaultCtaActions({ product: solution.primaryProduct });
+const product = getProduct(solution.primaryProduct);
+if (!product) throw new Error(`SolutionLayout: ${solution.slug} names unknown product ${solution.primaryProduct}`);
+
+// Breadcrumb JSON-LD comes from <Breadcrumbs> (same items it renders).
+const faqJsonLd = solution.page.faq.length > 0 ? buildFaqPage(solution.page.faq, "en-AU") : null;
+// The vertical page is ABOUT the product it sells — linked by @id, so the
+// commercial-intent template joins the one Vox entity graph.
+const webPageJsonLd = buildWebPage({
+  path,
+  name: solution.page.seo.title,
+  description: solution.page.seo.description,
+  about: voxEditionId(product.slug),
+  inLanguage: "en-AU",
+});
+---
+
+<Base
+  title={pageTitle(solution.page.seo.title)}
+  description={solution.page.seo.description}
+  path={path}
+  ogImage={`/og/solutions/${solution.slug}.png`}
+>
+  <Fragment slot="jsonld">
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(webPageJsonLd)} />
+    {faqJsonLd && (
+      <script is:inline type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
+    )}
+  </Fragment>
+
+  <header class="sol-hero">
+    <div class="wrap">
+      <Breadcrumbs
+        items={[
+          { label: "Home", href: u("/") },
+          { label: "Solutions", href: u("/solutions/") },
+          { label: solution.name },
+        ]}
+      />
+      <span class="eyebrow sol-eyebrow">{solution.page.hero.eyebrow}</span>
+      <h1 class="sol-h">{solution.page.hero.headline}</h1>
+      <p class="sol-sub">{solution.page.hero.sub}</p>
+      <div class="sol-cta">
+        <a class="btn" href={demoHref} data-cta="book-demo">{CTA_LABELS.bookDemo}</a>
+        {/* Named product link — the bottom Cta keeps "See How It Works" (→ /technology/),
+            so the two secondary CTAs on this page no longer share a label with
+            different destinations. */}
+        <a class="btn-ghost" href={u(`/products/${product.slug}/`)}>{CTA_LABELS.seeProduct(product.name)}</a>
+      </div>
+      <ConversionTrust />
+    </div>
+  </header>
+
+  <slot />
+
+  <Cta
+    eyebrow="Book a demo"
+    headline={`Talk through ${solution.name.toLowerCase()} on your line.`}
+    lede="Fifteen minutes is enough to hear Vox, map your overflow, and decide if BitePerk fits — no slide deck required."
+    primary={cta.primary}
+    secondary={cta.secondary}
+  />
+</Base>
+
+<style>
+  .sol-hero {
+    padding: clamp(120px, 16vw, 180px) 0 clamp(56px, 7vw, 88px);
+    border-bottom: 1px solid var(--line);
+  }
+  .sol-eyebrow {
+    display: inline-block;
+    margin-top: 28px;
+  }
+  .sol-h {
+    margin-top: 18px;
+    font-size: var(--fs-h2);
+    font-weight: 800;
+    line-height: var(--lh-display);
+    letter-spacing: -0.025em;
+    max-width: 18ch;
+    color: var(--white);
+  }
+  .sol-sub {
+    margin-top: 22px;
+    color: var(--text);
+    font-size: var(--fs-lede);
+    line-height: var(--lh-lede);
+    max-width: 62ch;
+  }
+  .sol-cta {
+    margin-top: 36px;
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+</style>

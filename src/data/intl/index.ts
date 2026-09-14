@@ -31,7 +31,7 @@ import {
 } from "./copy";
 import {
   marketContent,
-  type MarketContent, type MarketMedia, type MarketHero, type MarketSupport, type MarketCities,
+  type MarketContent, type MarketMedia, type MarketHero, type MarketSupport, type MarketCities, type MarketRegions,
 } from "./markets";
 
 export type CopyBundle = {
@@ -121,6 +121,11 @@ export function resolveSupport(locale: Locale): MarketSupport | undefined {
   return marketContent[locale.base]?.support;
 }
 
+/** The region-router section copy — the x-default alone carries one. See MarketRegions. */
+export function resolveRegions(locale: Locale): MarketRegions | undefined {
+  return marketContent[locale.base]?.regions;
+}
+
 /**
  * The locale home's city-links strip copy, if the market has one. Only
  * meaningful alongside a non-empty intlCitiesForBase(locale.base) — the home
@@ -140,5 +145,5 @@ export function resolveShowCallSim(locale: Locale): boolean {
   return marketContent[locale.base]?.callSim === true;
 }
 
-export type { MarketContent, MarketMedia, MarketHero, MarketSupport, MarketCities };
+export type { MarketContent, MarketMedia, MarketHero, MarketSupport, MarketCities, MarketRegions };
 export type { ChromeCopy, HomeCopy, SimplePageCopy, ContactCopy, CityPageCopy, TrustFactsCopy, CallSimCopy, Lang };
