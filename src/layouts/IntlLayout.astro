@@ -21,6 +21,7 @@ import StarMark from "@/components/StarMark.astro";
 import SocialLinks from "@/components/SocialLinks.astro";
 import LocaleSuggest from "@/components/LocaleSuggest.astro";
 import CityNav from "@/components/intl/CityNav.astro";
+import IntlProductNav from "@/components/intl/IntlProductNav.astro";
 import IntlMobileMenu from "@/components/intl/IntlMobileMenu.astro";
 import { INTL_NAV } from "@/data/intl/nav";
 import { products } from "@/data/products";
@@ -67,6 +68,9 @@ const p = (seg: string) => `${locale.base}/${seg ? `${seg}/` : ""}`;
 // footer and nav stay identical there (no locale branching, no dead links).
 const footerCities = intlCitiesForBase(locale.base);
 const navItems = INTL_NAV.filter((item) => pageExistsInLocale(item.path, locale));
+// The header bar renders Products as a dropdown (IntlProductNav), so drop it
+// from the plain-link loop. The drawer and footer keep the full navItems list.
+const barLinks = navItems.filter((item) => item.key !== "products");
 const hasCities = footerCities.length > 0;
 // Past ~6, a single vertical list towers over the 4–5-item sibling columns
 // (10 French cities = ~440px). Split those into two sub-columns so the footer
@@ -128,7 +132,8 @@ const isUk = locale.market === "gb";
           <span class="brand-name">bite<span class="perk">perk</span></span>
         </a>
         <nav class="intl-links" aria-label={c.a11y.siteNav}>
-          {navItems.map((item) => (
+          <IntlProductNav locale={locale} page={page} chrome={c} />
+          {barLinks.map((item) => (
             <a href={p(item.path)}>{c.nav[item.key]}</a>
           ))}
         </nav>
@@ -315,13 +320,17 @@ const isUk = locale.market === "gb";
     align-items: center;
     gap: var(--space-5);
     min-height: 64px;
+    /* Anchor for IntlProductNav's absolute panel — the panel uses left:0 +
+       width:min(680px,100%) against THIS box so it can never overflow the row
+       at any viewport (the trigger sits mid-row; anchoring to it would). */
+    position: relative;
   }
   .intl-links {
     display: flex;
     gap: var(--space-5);
     margin-inline-start: auto;
   }
-  .intl-links a {
+  .intl-links > a {
     color: var(--text);
     text-decoration: none;
     font-size: var(--fs-small);
@@ -330,8 +339,8 @@ const isUk = locale.market === "gb";
   /* Never wrap a nav label. Without this, flex-shrink squeezed each link to
      three lines in the band where the bar is too narrow for the full row —
      visible on every tree, worst in French ("Comment ça marche"). */
-  .intl-links a { white-space: nowrap; }
-  .intl-links a:hover { color: var(--gold); }
+  .intl-links > a { white-space: nowrap; }
+  .intl-links > a:hover { color: var(--gold); }
   .intl-actions { display: flex; align-items: center; gap: var(--space-4); }
   .intl-lang {
     color: var(--mist);
@@ -626,7 +635,7 @@ const isUk = locale.market === "gb";
       margin-inline-start: 0;
       gap: var(--space-2);
     }
-    .intl-nav[data-has-cities="true"] .intl-links a {
+    .intl-nav[data-has-cities="true"] .intl-links > a {
       display: inline-flex;
       align-items: center;
       min-height: 44px;
@@ -647,7 +656,7 @@ const isUk = locale.market === "gb";
       margin-inline-start: 0;
       gap: var(--space-2);
     }
-    .intl-links a {
+    .intl-links > a {
       display: inline-flex;
       align-items: center;
       min-height: 44px;
@@ -719,3 +728,9 @@ const isUk = locale.market === "gb";
     }
   }
 </style>
+
+<script>
+  // Products dropdown enhancement — intl only. NOT in Base.astro's shared
+  // bundle: AU pages have their own megamenu.ts, and Base feeds both trees.
+  import "@/scripts/intl-prodnav.ts";
+</script>

@@ -117,6 +117,22 @@ export type ChromeCopy = {
     themeToDark: string;
   };
   /**
+   * Products dropdown in the nav bar (IntlProductNav.astro). Language-scoped,
+   * never hardcoded: the panel eyebrow/lede/labels are chrome and would trip
+   * check-i18n-chrome on a French page if left English. Market-neutral — this
+   * lede renders on /en (the x-default) too, so no "Europe"/"the UK".
+   */
+  productMenu: {
+    /** aria-label on the panel; a name, never a heading element. */
+    menuLabel: string;
+    /** Eyebrow above the lede — "One AI phone host". */
+    eyebrow: string;
+    /** One market-neutral sentence framing the family. */
+    lede: string;
+    /** Footer link to the /products/ overview. */
+    overview: string;
+  };
+  /**
    * Organization.description in the sitewide JSON-LD graph, in this language.
    * Was site.description — "…a warm Australian voice. Made in Sydney." — inside
    * every French document. Europe-truthful: names Sydney as where the company
@@ -383,6 +399,12 @@ export const chrome: Record<Lang, ChromeCopy> = {
       themeToLight: "Switch to light theme",
       themeToDark: "Switch to dark theme",
     },
+    productMenu: {
+      menuLabel: "Product menu",
+      eyebrow: "One AI phone host",
+      lede: "Vox answers the phone for your venue. Bookings and takeaway are in production today; concierge, hotel stays and drive-thru switch on as you grow.",
+      overview: "The whole product",
+    },
     orgDescription:
       "BitePerk builds Vox, the AI phone host for hospitality — it answers every call in a natural voice, takes bookings and orders, and hands over to the venue the moment a person is needed. Founded in Sydney; pilot partnerships with venues in the UK, France and Belgium.",
     notFound: {
@@ -456,6 +478,12 @@ export const chrome: Record<Lang, ChromeCopy> = {
       themeToggle: "Changer de thème",
       themeToLight: "Passer au thème clair",
       themeToDark: "Passer au thème sombre",
+    },
+    productMenu: {
+      menuLabel: "Menu produit",
+      eyebrow: "Un seul hôte téléphonique IA",
+      lede: "Vox répond au téléphone de votre établissement. Réservations et commandes à emporter sont en production aujourd'hui ; conciergerie, séjours à l'hôtel et service au volant s'activent à mesure que vous grandissez.",
+      overview: "Le produit dans son ensemble",
     },
     orgDescription:
       "BitePerk développe Vox, l'hôte téléphonique IA pour l'hôtellerie-restauration : il répond à chaque appel avec une voix naturelle, prend les réservations et les commandes, et passe la main à l'établissement dès qu'une personne est nécessaire. Fondée à Sydney ; partenariats pilotes avec des établissements au Royaume-Uni, en France et en Belgique.",
