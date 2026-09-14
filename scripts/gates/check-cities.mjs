@@ -121,10 +121,15 @@ if (!IS_GLOBAL) {
 
   for (const c of published) checkCity(c, c.slug, `public/og/${c.slug}.png`, guides, "src/content/blog/");
 
-  const llms = readFileSync(join(ROOT, "public/llms.txt"), "utf8");
+  // dist/llms.txt is GENERATED (scripts/build/llms-au.mjs, derived from
+  // cities.ts) — the file that ships, not a hand-kept public/ copy that
+  // pointed every URL at the redirect-only .com.au host until 13 Sep 2026.
+  const llmsPath = join(ROOT, "dist/llms.txt");
+  if (!existsSync(llmsPath)) fail("dist/llms.txt missing — run npm run build (llms-au.mjs writes it)");
+  const llms = existsSync(llmsPath) ? readFileSync(llmsPath, "utf8") : "";
   for (const c of published)
-    if (!llms.includes(`https://biteperk.com.au/${c.slug}/`))
-      fail(`${c.slug}: not listed in public/llms.txt`);
+    if (!llms.includes(`https://biteperk.com/au-en/${c.slug}/`))
+      fail(`${c.slug}: not listed in dist/llms.txt`);
 
   comparePool("AU", published, (c) => c.slug);
 

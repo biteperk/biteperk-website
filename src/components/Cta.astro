@@ -1,8 +1,13 @@
 ---
 /**
  * Page-end CTA block. Eyebrow + headline + dual action.
+ *
+ * Phase 1E defaults: Book Demo (primary) + See How It Works (secondary).
+ * Override per page when the commercial intent differs (waitlist, external trial).
  */
-import { site } from "@/data/site";
+import { defaultCtaActions } from "@/data/conversion";
+
+const phase1Defaults = defaultCtaActions();
 
 interface Props {
   eyebrow?: string;
@@ -12,11 +17,11 @@ interface Props {
   secondary?: { label: string; href: string };
 }
 const {
-  eyebrow = "Talk to a human",
-  headline = "Let's see what we can build for your venue.",
-  lede = "We work with a small number of restaurants at a time. If you want to talk — about VoxTable, about a future product, or just about the missed-call problem — say hello.",
-  primary = { label: `Call us · ${site.phone.display}`, href: site.phone.href },
-  secondary = { label: `Email ${site.email.display}`, href: site.email.href },
+  eyebrow = "Book a demo",
+  headline = "Let's put Vox on your line.",
+  lede = "Fifteen minutes is enough to hear it, map your overflow, and decide if BitePerk fits — no slide deck required.",
+  primary = phase1Defaults.primary,
+  secondary = phase1Defaults.secondary,
 } = Astro.props;
 ---
 

@@ -42,7 +42,7 @@ if (!existsSync(DIST)) {
 }
 
 const ENGLISH = new RegExp(
-  String.raw`\b(?:Skip to|Close (?:region|cities|menu)|Choose your|Sending|Thanks|Sorry|Network error|Switch (?:to|theme)|Region and language|Breadcrumb|home page|BitePerk home|Region picker|Select a|Please)\b`,
+  String.raw`\b(?:Skip to|Close (?:region|cities|menu)|Choose your|Sending|Thanks|Sorry|Network error|Switch (?:to|theme)|Region and language|Breadcrumb|home page|BitePerk home|Region picker|Select a|Please|One AI phone host|Product menu|The whole product)\b`,
 );
 
 const pages = [];

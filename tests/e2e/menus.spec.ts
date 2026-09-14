@@ -2,18 +2,29 @@ import { test, expect, devices } from "@playwright/test";
 import { p } from "../helpers/routes";
 
 /**
- * Keyboard flows for the Products mega-menu (desktop) and the mobile
- * menu (focus trap, Esc, backdrop). Contracts live in
+ * Keyboard flows for the Products mega-menu (desktop) and the
+ * mobile menu (focus trap, Esc, backdrop). Contracts live in
  * src/scripts/megamenu.ts and src/scripts/mobile-menu.ts.
+ *
+ * Products is the one [data-megamenu] root; Solutions is a plain link to the
+ * /solutions/ hub since 14 Sep 2026 (the mega-menu was dropped).
  */
+
+function productsMenu(page: import("@playwright/test").Page) {
+  const root = page.locator('[data-megamenu]:has([aria-controls="megamenu-products-panel"])');
+  return {
+    root,
+    trigger: root.locator("[data-megamenu-trigger]"),
+    panel: root.locator("[data-megamenu-panel]"),
+  };
+}
 
 test.describe("mega-menu (desktop keyboard)", () => {
   test.use({ viewport: { width: 1280, height: 800 } });
 
   test("Enter opens + focuses first item, Esc closes + returns focus", async ({ page }) => {
     await page.goto(p());
-    const trigger = page.locator("[data-megamenu-trigger]");
-    const panel = page.locator("[data-megamenu-panel]");
+    const { trigger, panel } = productsMenu(page);
 
     await trigger.focus();
     await expect(trigger).toHaveAttribute("aria-expanded", "false");
@@ -31,8 +42,7 @@ test.describe("mega-menu (desktop keyboard)", () => {
 
   test("arrow keys cycle menu items, Home/End jump", async ({ page }) => {
     await page.goto(p());
-    const trigger = page.locator("[data-megamenu-trigger]");
-    const panel = page.locator("[data-megamenu-panel]");
+    const { trigger, panel } = productsMenu(page);
     const items = panel.locator('a[role="menuitem"]');
 
     await trigger.focus();
@@ -54,15 +64,25 @@ test.describe("mega-menu (desktop keyboard)", () => {
 
   test("mega-menu is closed after client-side navigation", async ({ page }) => {
     await page.goto(p());
-    const trigger = page.locator("[data-megamenu-trigger]");
+    const { trigger, panel } = productsMenu(page);
     await trigger.focus();
     await page.keyboard.press("Enter");
-    const firstItem = page.locator('[data-megamenu-panel] a[role="menuitem"]').first();
+    const firstItem = panel.locator('a[role="menuitem"]').first();
     await expect(firstItem).toBeFocused();
     await page.keyboard.press("Enter"); // navigate to the product page
     await page.waitForURL("**/products/**");
-    await expect(page.locator("[data-megamenu-trigger]")).toHaveAttribute("aria-expanded", "false");
-    await expect(page.locator("[data-megamenu-panel]")).toBeHidden();
+    await expect(productsMenu(page).trigger).toHaveAttribute("aria-expanded", "false");
+    await expect(productsMenu(page).panel).toBeHidden();
+  });
+
+  test("Solutions is a plain link to the hub (no mega-menu), active on /solutions/", async ({ page }) => {
+    await page.goto(p());
+    const link = page.locator(`.nav-centre a[href="${p("/solutions/")}"]`);
+    await expect(link).toBeVisible();
+    await expect(link).not.toHaveAttribute("aria-expanded", /.*/); // it is a link, not a disclosure
+    await link.click();
+    await page.waitForURL("**/solutions/");
+    await expect(page.locator(`.nav-centre a[href="${p("/solutions/")}"]`)).toHaveAttribute("aria-current", "page");
   });
 });
 
@@ -133,6 +153,15 @@ test.describe("mobile menu", () => {
     // Book-a-demo parity with desktop + a tappable phone action.
     await expect(panel.locator('a[data-cta="book-demo"]')).toBeVisible();
     await expect(panel.locator('a[data-cta="call-menu"]')).toBeVisible();
+  });
+
+  test("lists Solutions verticals", async ({ page }) => {
+    await page.goto(p());
+    await page.locator("[data-mobile-menu-trigger]").click();
+    const panel = page.locator("[data-mobile-menu]");
+    await expect(panel.getByText("Solutions", { exact: true }).first()).toBeVisible();
+    await expect(panel.locator(`a[href="${p("/solutions/restaurants/")}"]`)).toBeVisible();
+    await expect(panel.locator(`a.mm-all[href="${p("/solutions/")}"]`)).toBeVisible();
   });
 });
 

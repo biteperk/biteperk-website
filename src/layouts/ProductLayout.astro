@@ -15,28 +15,23 @@
  */
 import Base from "@/layouts/AuBase.astro";
 import StatusPill from "@/components/StatusPill.astro";
+import SolutionCard from "@/components/SolutionCard.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import Cta from "@/components/Cta.astro";
+import { bookDemoHref, defaultCtaActions, CTA_LABELS } from "@/data/conversion";
 import type { Product } from "@/data/products";
-import { site } from "@/data/site";
-import { VOX_ID, voxEditionId } from "@/data/schema";
-import { u, abs } from "@/data/locales";
+import { solutionsForProduct } from "@/data/solutions";
+import { site, pageTitle } from "@/data/site";
+import { VOX_ID, voxEditionId, ORG_ID, buildFaqPage } from "@/data/schema";
+import { u } from "@/data/locales";
 
 interface Props {
   product: Product;
 }
 const { product } = Astro.props;
 const path = `/products/${product.slug}/`;
-
-const breadcrumbJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: abs("/") },
-    { "@type": "ListItem", position: 2, name: "Products", item: abs("/products/") },
-    { "@type": "ListItem", position: 3, name: product.name, item: abs(path) },
-  ],
-};
+// Derived back-reference: the verticals sold on this product (solutions.ts).
+const productSolutions = solutionsForProduct(product.slug);
 
 const productJsonLd = {
   "@context": "https://schema.org",
@@ -48,7 +43,8 @@ const productJsonLd = {
   operatingSystem: "Web, Phone",
   // This capability page is an edition of the one Vox product.
   isPartOf: { "@id": VOX_ID },
-  brand: { "@type": "Organization", name: site.name },
+  brand: { "@id": ORG_ID },
+  publisher: { "@id": ORG_ID },
   // Cross-link to the running app (same entity, its live location) so the
   // marketing page and the product subdomain resolve to one entity. Only
   // for capabilities that actually have an app to launch.
@@ -73,28 +69,17 @@ const productJsonLd = {
   })()),
 };
 
-const faqJsonLd = product.faq && product.faq.length > 0
-  ? {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      mainEntity: product.faq.map((item) => ({
-        "@type": "Question",
-        name: item.q,
-        acceptedAnswer: { "@type": "Answer", text: item.a },
-      })),
-    }
-  : null;
+const faqJsonLd = product.faq && product.faq.length > 0 ? buildFaqPage(product.faq, "en-AU") : null;
 ---
 
 <Base
-  title={product.seo.title}
+  title={pageTitle(product.seo.title)}
   description={product.seo.description}
   path={path}
   ogImage={`/og/${product.slug}.png`}
   preloadComposite={product.slug === "voxtable" ? "voxtable-hero" : undefined}
 >
   <Fragment slot="jsonld">
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(productJsonLd)} />
     {faqJsonLd && (
       <script is:inline type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
@@ -142,22 +127,47 @@ const faqJsonLd = product.faq && product.faq.length > 0
 
   <slot />
 
+  {productSolutions.length > 0 && (
+    <section class="prod-solutions cv-auto">
+      <div class="wrap">
+        <span class="eyebrow">Solutions using {product.name}</span>
+        <h2 class="prod-solutions-h">Tuned for how your venue takes calls.</h2>
+        <div class="prod-solutions-grid">
+          {productSolutions.map((s) => <SolutionCard solution={s} />)}
+        </div>
+      </div>
+    </section>
+  )}
+
   <Cta
-    eyebrow={`Try ${product.name}`}
+    eyebrow={product.status === "live" ? "Book a demo" : `Try ${product.name}`}
     headline={product.status === "live"
       ? `Bring ${product.name} to your venue.`
       : `Want to be first to use ${product.name}?`}
     lede={product.status === "live"
-      ? "Most venues are live within a week. Talk to us about a 15-minute walkthrough or just call the number and hear it for yourself."
+      ? "Most venues are live within a week. Book a 15-minute walkthrough — or open the product if you already know you want it."
       : "Join the waitlist and we'll bring you in early. We'd rather start with a small group of venues that genuinely need the product than open the gates."}
-    primary={product.status === "live" && product.externalUrl
-      ? { label: `Open ${product.name} →`, href: product.externalUrl }
-      : { label: `Call us · ${site.phone.display}`, href: site.phone.href }}
-    secondary={{ label: `Email ${site.email.display}`, href: site.email.href }}
+    primary={
+      product.status === "live" && product.externalUrl
+        ? { label: `Open ${product.name} →`, href: product.externalUrl }
+        : product.status === "live"
+          ? defaultCtaActions({ product: product.slug }).primary
+          : { label: "Join the waitlist", href: bookDemoHref({ product: product.slug }) }
+    }
+    secondary={
+      product.status === "live" && product.externalUrl
+        ? { label: CTA_LABELS.bookDemo, href: bookDemoHref({ product: product.slug }) }
+        : defaultCtaActions({ product: product.slug }).secondary
+    }
   />
 </Base>
 
 <style>
+  .prod-solutions { padding-block: var(--space-section); border-top: 1px solid var(--line); }
+  .prod-solutions-h { margin-top: 12px; font-size: var(--fs-h2); font-weight: 800; letter-spacing: -0.02em; line-height: var(--lh-display); color: var(--white); max-width: 22ch; }
+  .prod-solutions-grid { margin-top: 28px; display: grid; gap: 18px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  @media (max-width: 980px) { .prod-solutions-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 600px) { .prod-solutions-grid { grid-template-columns: 1fr; } }
   .prod-hero {
     position: relative;
     padding: clamp(120px, 16vw, 200px) 0 clamp(64px, 8vw, 96px);

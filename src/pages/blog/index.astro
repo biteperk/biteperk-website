@@ -1,4 +1,5 @@
 ---
+import { pageTitle } from "@/data/site";
 /**
  * /blog/ — the Guides hub.
  *
@@ -8,14 +9,21 @@
 import Base from "@/layouts/AuBase.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import Cta from "@/components/Cta.astro";
+import ConversionTrust from "@/components/conversion/ConversionTrust.astro";
 import { getCollection } from "astro:content";
 import { u, abs } from "@/data/locales";
 import { WEBSITE_ID } from "@/data/schema";
 
 const path = "/blog/";
-const title = "Guides for restaurant owners — Biteperk";
+// /blog/ and /resources/guides/ list the same twelve guides. The articles keep
+// their /blog/{slug}/ URLs (Ads finals, inbound links); this INDEX defers to
+// the Resources hub as the canonical listing and leaves the sitemap
+// (astro.config.mjs). A 301 can follow once analytics confirm nothing external
+// links here.
+const canonical = "/resources/guides/";
+const title = pageTitle("Guides for restaurant owners");
 const description =
-  "Practical, plain-English guides on missed calls, AI phone answering, bookings and running a busy restaurant phone — written for Australian venues by the team behind VoxTable.";
+  "Plain-English guides on missed calls, AI phone answering, bookings and running a busy restaurant phone — written for Australian venues by the team behind VoxTable.";
 
 const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort((a, b) => {
   if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
@@ -46,33 +54,25 @@ const blogJsonLd = {
   })),
 };
 
-const breadcrumbJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: abs("/") },
-    { "@type": "ListItem", position: 2, name: "Guides", item: abs(path) },
-  ],
-};
 ---
 
-<Base title={title} description={description} path={path} ogImage="/og/blog.png">
+<Base title={title} description={description} path={canonical} ogImage="/og/blog.png">
   <Fragment slot="jsonld">
     <script is:inline type="application/ld+json" set:html={JSON.stringify(blogJsonLd)} />
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
   </Fragment>
 
   <section class="blog-hero">
     <div class="blog-hero-glow" aria-hidden="true"></div>
     <div class="wrap">
       <div class="blog-top">
-        <Breadcrumbs items={[{ label: "Home", href: u("/") }, { label: "Guides" }]} />
+        <Breadcrumbs items={[{ label: "Home", href: u("/") }, { label: "Resources", href: u("/resources/") }, { label: "Guides" }]} />
       </div>
       <span class="eyebrow">Guides</span>
       <h1 class="blog-h1">Field notes for a <span class="gold">busier, calmer floor.</span></h1>
       <p class="lede blog-lede">
         Practical, no-jargon guides on the unglamorous bits — the phone, the missed calls,
         the bookings — written for Australian restaurants by the team behind VoxTable.
+        Part of the <a href={u("/resources/")}>Resources</a> library.
       </p>
     </div>
   </section>
@@ -102,10 +102,15 @@ const breadcrumbJsonLd = {
     </div>
   </section>
 
+  <section class="blog-conv">
+    <div class="wrap">
+      <ConversionTrust />
+    </div>
+  </section>
   <Cta
     eyebrow="Have a venue?"
     headline="Rather skip the reading and just hear it?"
-    lede="VoxTable answers a real restaurant phone in a warm Australian voice. Call us and listen, or book a 15-minute walkthrough."
+    lede="VoxTable answers a real restaurant phone in a warm Australian voice. Book a 15-minute walkthrough — or see how it works first."
   />
 </Base>
 
@@ -136,6 +141,7 @@ const breadcrumbJsonLd = {
   }
   .blog-h1 .gold { color: var(--gold); }
   .blog-lede { margin-top: 24px; }
+  .blog-lede a { color: var(--white); text-decoration: underline; text-underline-offset: 3px; }
 
   .blog-list-wrap { padding-block: var(--space-section); background: var(--ink-0); }
   .blog-empty { color: var(--mist); }
@@ -227,4 +233,5 @@ const breadcrumbJsonLd = {
     color: var(--gold);
     letter-spacing: 0.3px;
   }
+  .blog-conv { padding: 0 var(--wrap-pad, 0) clamp(8px, 2vw, 16px); }
 </style>

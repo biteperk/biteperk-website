@@ -1,0 +1,240 @@
+---
+import { pageTitle } from "@/data/site";
+/**
+ * /resources/ — Phase 1D authority library hub.
+ * Individual articles stay at /blog/{slug}/; this hub organises by type.
+ */
+import Base from "@/layouts/AuBase.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import Cta from "@/components/Cta.astro";
+import ConversionTrust from "@/components/conversion/ConversionTrust.astro";
+import { getCollection } from "astro:content";
+import { resourceTypes, type ResourceType } from "@/data/resources";
+import { buildCollectionPage } from "@/data/schema";
+import { u } from "@/data/locales";
+import { defaultCtaActions } from "@/data/conversion";
+
+const path = "/resources/";
+const cta = defaultCtaActions();
+const title = pageTitle("Resources — guides, comparisons & proof");
+const description =
+  "The BitePerk resources library: guides, comparisons, case studies, FAQs, product updates and industry reports on AI phone automation for hospitality.";
+
+const posts = await getCollection("blog", ({ data }) => !data.draft);
+const byType = (t: ResourceType) =>
+  posts
+    .filter((p) => p.data.type === t)
+    .sort(
+      (a, b) =>
+        b.data.publishDate.getTime() - a.data.publishDate.getTime() || a.id.localeCompare(b.id),
+    );
+
+const fmt = (d: Date) =>
+  new Intl.DateTimeFormat("en-AU", { day: "numeric", month: "short", year: "numeric" }).format(d);
+
+// The hub lists its populated categories (breadcrumbs via <Breadcrumbs>).
+const collectionJsonLd = buildCollectionPage({
+  path,
+  name: title,
+  description,
+  items: resourceTypes.filter((t) => byType(t.id).length > 0).map((t) => ({ name: t.plural, path: t.path })),
+  inLanguage: "en-AU",
+});
+---
+
+<Base title={title} description={description} path={path} ogImage="/og/resources/index.png">
+  <Fragment slot="jsonld">
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(collectionJsonLd)} />
+  </Fragment>
+
+  <header class="res-hero">
+    <div class="wrap">
+      <Breadcrumbs items={[{ label: "Home", href: u("/") }, { label: "Resources" }]} />
+      <span class="eyebrow">Resources</span>
+      <h1 class="res-h1">Authority library for phone automation.</h1>
+      <p class="lede res-lede">
+        Guides, comparisons and proof — written so operators (and search engines) can trust what we say about the phone.
+        Articles keep their stable <a href={u("/blog/")}>/blog/</a> URLs.
+      </p>
+    </div>
+  </header>
+
+  <section class="res-types">
+    <div class="wrap">
+      <div class="res-type-grid">
+        {resourceTypes.map((t) => {
+          const count = byType(t.id).length;
+          // An empty category has no page (see [type].astro) — so no link.
+          return count === 0 ? (
+            <div class="res-type-card is-empty" aria-disabled="true">
+              <h2>{t.plural}</h2>
+              <p>{t.description}</p>
+              <span class="res-type-meta">Coming soon</span>
+            </div>
+          ) : (
+            <a class="res-type-card" href={u(t.path)}>
+              <h2>{t.plural}</h2>
+              <p>{t.description}</p>
+              <span class="res-type-meta">{`${count} published`} →</span>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  {resourceTypes.map((t) => {
+    const list = byType(t.id).slice(0, 4);
+    if (list.length === 0) return null;
+    return (
+      <section class="res-section">
+        <div class="wrap">
+          <div class="res-section-head">
+            <h2 class="res-h2">{t.plural}</h2>
+            <a class="res-all" href={u(t.path)}>View all {t.plural.toLowerCase()} →</a>
+          </div>
+          <ul class="res-list">
+            {list.map((post) => (
+              <li>
+                <a href={u(`/blog/${post.id}/`)}>
+                  <span class="res-list-title">{post.data.title}</span>
+                  <span class="res-list-meta">
+                    <time datetime={post.data.publishDate.toISOString().slice(0, 10)}>{fmt(post.data.publishDate)}</time>
+                  </span>
+                  <span class="res-list-desc">{post.data.description}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    );
+  })}
+
+  <section class="res-conv">
+    <div class="wrap">
+      <ConversionTrust />
+    </div>
+  </section>
+  <Cta
+    eyebrow="Book a demo"
+    headline="Done reading — hear it on a real line."
+    lede="Bring the guide that matched your problem. We'll put Vox on a call and map the overflow."
+    primary={cta.primary}
+    secondary={cta.secondary}
+  />
+</Base>
+
+<style>
+  .res-type-card.is-empty { opacity: 0.6; cursor: default; }
+
+  .res-hero {
+    padding: clamp(120px, 16vw, 180px) 0 clamp(48px, 6vw, 72px);
+    border-bottom: 1px solid var(--line);
+  }
+  .res-h1 {
+    margin-top: 16px;
+    font-size: var(--fs-h2);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: var(--white);
+    max-width: 16ch;
+  }
+  .res-lede {
+    margin-top: 18px;
+    max-width: 62ch;
+  }
+  .res-lede a {
+    color: var(--white);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .res-types {
+    padding-block: var(--space-section);
+    border-bottom: 1px solid var(--line);
+  }
+  .res-type-grid {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+  .res-type-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    text-decoration: none;
+    color: inherit;
+    min-height: 100%;
+  }
+  .res-type-card:hover {
+    border-color: color-mix(in srgb, var(--white) 35%, var(--line));
+  }
+  .res-type-card h2 {
+    color: var(--white);
+    font-size: var(--fs-body);
+    font-weight: 700;
+  }
+  .res-type-card p {
+    color: var(--text);
+    flex: 1;
+  }
+  .res-type-meta {
+    color: var(--mist);
+    font-size: var(--fs-small);
+  }
+  .res-section {
+    padding-block: var(--space-section);
+    border-bottom: 1px solid var(--line);
+  }
+  .res-section-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: baseline;
+    flex-wrap: wrap;
+  }
+  .res-h2 {
+    color: var(--white);
+    font-size: var(--fs-h3);
+    font-weight: 800;
+  }
+  .res-all {
+    color: var(--mist);
+    text-decoration: none;
+  }
+  .res-all:hover { color: var(--white); }
+  .res-list {
+    margin-top: 24px;
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+  }
+  .res-list a {
+    display: grid;
+    gap: 6px;
+    padding: 18px 20px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+  }
+  .res-list a:hover {
+    border-color: color-mix(in srgb, var(--white) 35%, var(--line));
+  }
+  .res-list-title {
+    color: var(--white);
+    font-weight: 700;
+  }
+  .res-list-meta {
+    color: var(--mist);
+    font-size: var(--fs-small);
+  }
+  .res-list-desc {
+    color: var(--text);
+  }
+  .res-conv { padding-bottom: clamp(8px, 2vw, 16px); }
+</style>

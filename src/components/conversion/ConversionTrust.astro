@@ -1,0 +1,37 @@
+---
+/**
+ * Compact phone + trust line for pages that don't already show NAP in the hero.
+ * Keeps Phase 1E "every page has a contact number + trust" without repeating TrustRow.
+ */
+import { CONVERSION_TRUST } from "@/data/conversion";
+
+interface Props {
+  /** Extra class on the wrapper. */
+  class?: string;
+}
+const { class: className } = Astro.props;
+const { phone, line } = CONVERSION_TRUST;
+---
+
+<p class:list={["conv-trust", className]}>
+  <a href={phone.href}>{phone.display}</a>
+  <span aria-hidden="true">·</span>
+  <span>{line}</span>
+</p>
+
+<style>
+  .conv-trust {
+    margin-top: 22px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    color: var(--mist);
+    font-size: var(--fs-small);
+  }
+  .conv-trust a {
+    color: var(--white);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>

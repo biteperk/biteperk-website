@@ -53,11 +53,11 @@ test.describe("locale picker (desktop)", () => {
     const items = page.locator("[data-locale-picker-item]");
     await expect(items.filter({ hasText: "France — Français" })).toHaveAttribute(
       "href",
-      "https://biteperk.com/fr/contact/",
+      "/fr/contact/",
     );
     await expect(items.filter({ hasText: "Belgium — English" })).toHaveAttribute(
       "href",
-      "https://biteperk.com/be-en/contact/",
+      "/be-en/contact/",
     );
 
     // Product pages are SHARED as of the intl product tree — every locale emits
@@ -67,14 +67,20 @@ test.describe("locale picker (desktop)", () => {
     await page.goto(p("/products/voxtable/"));
     await expect(
       page.locator("[data-locale-picker-item]").filter({ hasText: "United Kingdom" }),
-    ).toHaveAttribute("href", "https://biteperk.com/gb-en/products/voxtable/");
+    ).toHaveAttribute("href", "/gb-en/products/voxtable/");
 
     // A genuinely AU-only page still falls back to the locale home — cities are
     // an Australian concept and exist in no global tree.
     await page.goto(p("/sydney/"));
     await expect(
       page.locator("[data-locale-picker-item]").filter({ hasText: "United Kingdom" }),
-    ).toHaveAttribute("href", "https://biteperk.com/gb-en/");
+    ).toHaveAttribute("href", "/gb-en/");
+
+    // Every region link is HOST-RELATIVE: on staging it must stay on staging
+    // (an absolute https://biteperk.com/… href sent reviewers to production).
+    for (const href of await page.locator("[data-locale-picker-item]").evaluateAll((as) => as.map((a) => a.getAttribute("href")))) {
+      expect(href, "region link must be host-relative").toMatch(/^\/[a-z-]+\//);
+    }
   });
 
   test("arrow keys open the menu and rove through items", async ({ page }) => {

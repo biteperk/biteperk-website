@@ -7,6 +7,7 @@
 
 import { site } from "./site";
 import { products, productUrl } from "./products";
+import { liveSolutions, solutionPath } from "./solutions";
 import { publishedCities, cityUrl } from "./cities";
 import { u, stripBase } from "./locales";
 
@@ -24,7 +25,7 @@ export interface NavColumn {
 /**
  * Header navigation — the single source for the desktop centre links AND
  * the mobile menu's Company section (Products is separate: megamenu on
- * desktop, its own section on mobile).
+ * desktop + Solutions megamenu, their own sections on mobile).
  *
  * `activeMatch: "never"` is for hash links (the server can't see the
  * fragment, and lighting them by base path causes double-active states —
@@ -38,11 +39,18 @@ export interface HeaderNavLink extends NavLink {
   readonly activeMatch?: "prefix" | "exact" | "never";
 }
 
+// Order is the Phase 1 IA — Products (mega-menu, rendered before this list) ·
+// Solutions · Resources · Pricing · About. Solutions is a plain link to the
+// /solutions/ hub (the mega-menu was dropped 14 Sep 2026 — it rendered
+// unstyled and a hub reads cleaner); Platform and How it works moved off the
+// desktop bar into the mobile menu + footer to let the five links breathe.
+// This array is the ONLY definition of the header order.
 export const headerNav: ReadonlyArray<HeaderNavLink> = [
+  { label: "Solutions", href: u("/solutions/") },
+  { label: "Resources", href: u("/resources/") },
   { label: "Pricing", href: u("/products/voxtable/#pricing"), activeMatch: "never" },
-  { label: "Platform", href: u("/platform/") },
-  { label: "How it works", href: u("/technology/") },
-  { label: "Guides", href: u("/blog/") },
+  { label: "Platform", href: u("/platform/"), desktop: false },
+  { label: "How it works", href: u("/technology/"), desktop: false },
   { label: "About", href: u("/about/") },
   // Desktop-hidden: Contact is already reachable from the visible phone
   // number, the "Book a demo" CTA (→ /contact/), and the footer. Keeping it
@@ -74,6 +82,13 @@ export const footerColumns: ReadonlyArray<NavColumn> = [
     links: products.map((p) => ({ label: p.name, href: productUrl(p) })),
   },
   {
+    heading: "Solutions",
+    links: [
+      { label: "All solutions", href: u("/solutions/") },
+      ...liveSolutions().map((s) => ({ label: s.name, href: u(solutionPath(s.slug)) })),
+    ],
+  },
+  {
     heading: "Locations",
     links: publishedCities.map((c) => ({
       label: `AI for ${c.name} restaurants`,
@@ -86,7 +101,7 @@ export const footerColumns: ReadonlyArray<NavColumn> = [
       { label: "About", href: u("/about/") },
       { label: "Platform", href: u("/platform/") },
       { label: "How it works", href: u("/technology/") },
-      { label: "Guides", href: u("/blog/") },
+      { label: "Resources", href: u("/resources/") },
       { label: "Contact", href: u("/contact/") },
       { label: "Careers", href: site.email.href },
     ],

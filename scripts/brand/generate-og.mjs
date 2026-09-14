@@ -335,6 +335,34 @@ async function buildGlobalCards() {
     }
   }
 
+  // Solution cards, keyed by LANGUAGE like the product cards (same prose across
+  // the English trees). The status pill is the eyebrow — three verticals sit
+  // on unshipped products and the card must say so.
+  const { intlSolutions, intlSolutionsOverview } = await loadTS(join(ROOT, "src/data/intl/solutions.ts"));
+  const { renderableSolutions } = await loadTS(join(ROOT, "src/data/solutions.ts"));
+  for (const lang of ["en", "fr"]) {
+    cards.push({ file: `solutions-index-${lang}.png`, eyebrow: intlSolutionsOverview[lang].eyebrow, headline: intlSolutionsOverview[lang].h1, showBella: false });
+    for (const s of renderableSolutions()) {
+      const copy = intlSolutions[lang][s.slug];
+      cards.push({ file: `solutions-${s.slug}-${lang}.png`, eyebrow: copy.statusLabel, headline: copy.h1, showBella: false });
+    }
+  }
+
+  // Resources cards (hub + populated categories), per language; articles use
+  // their category's card.
+  const { intlResources: rcAll } = await loadTS(join(ROOT, "src/data/intl/resources.ts"));
+  const { RESOURCE_TYPE_BY_SEGMENT } = await loadTS(join(ROOT, "src/data/resources.ts"));
+  const { intlResourcePosts } = await import("../build/content-index.mjs");
+  for (const lang of ["en", "fr"]) {
+    const posts = intlResourcePosts().filter((x) => !x.draft && x.lang === lang);
+    if (posts.length === 0) continue;
+    cards.push({ file: `resources-index-${lang}.png`, eyebrow: rcAll[lang].eyebrow, headline: rcAll[lang].h1, showBella: false });
+    for (const [seg, id] of Object.entries(RESOURCE_TYPE_BY_SEGMENT)) {
+      if (!posts.some((x) => x.type === id)) continue;
+      cards.push({ file: `resources-${seg}-${lang}.png`, eyebrow: rcAll[lang].eyebrow, headline: rcAll[lang].types[id].plural, showBella: false });
+    }
+  }
+
   // Market city cards, derived from intl/cities.ts — check-cities.mjs requires
   // public/og/intl/<slug><suffix>.png on disk for every published city, same
   // suffix rule as the core pages above. The eyebrow is the market hero pill
@@ -459,18 +487,53 @@ const auCards = [
   },
 ];
 
-// Every product page sets og:image=/og/<slug>.png (ProductLayout.astro), so a
-// product without an AU card here fails check-assets on the built page — but
-// only after a full build. Fail here instead, at the moment the card is missing.
-{
+// Solutions + resources cards are DERIVED from their registries (nine solution
+// pages shared /og/default.png until 13 Sep 2026). Namespaced directories so a
+// vertical slug can never collide with a product's.
+if (TARGET === "au") {
+  const { loadTS } = await import("../build/_load-ts.mjs");
+  const { renderableSolutions } = await loadTS(join(ROOT, "src/data/solutions.ts"));
+  const { resourceTypes } = await loadTS(join(ROOT, "src/data/resources.ts"));
+  for (const d of ["solutions", "resources"]) if (!existsSync(join(OG_DIR, d))) mkdirSync(join(OG_DIR, d), { recursive: true });
+  auCards.push({ file: "solutions/index.png", eyebrow: "Solutions by industry", headline: "Built for your kind of venue.", showBella: false });
+  for (const s of renderableSolutions()) {
+    auCards.push({ file: `solutions/${s.slug}.png`, eyebrow: s.name, headline: s.page.hero.headline, showBella: false });
+  }
+  auCards.push({ file: "resources/index.png", eyebrow: "Resources", headline: "Guides, comparisons and proof for a busy phone.", showBella: false });
+  for (const t of resourceTypes) {
+    auCards.push({ file: `resources/${t.path.replace(/^\/resources\/|\/$/g, "")}.png`, eyebrow: "Resources", headline: t.plural, showBella: false });
+  }
+  // One card per PUBLISHED post (W1): eyebrow = the type label, headline = the
+  // post title. blog/[...slug].astro prefers frontmatter `ogImage`, then this
+  // card, then /og/blog.png — so a post never shares the generic card once
+  // `npm run og` has run. Drafts get none (nothing links to them).
+  const { publishedPosts } = await import("../build/content-index.mjs");
+  const { resourceTypeMeta } = await loadTS(join(ROOT, "src/data/resources.ts"));
+  if (!existsSync(join(OG_DIR, "posts"))) mkdirSync(join(OG_DIR, "posts"), { recursive: true });
+  for (const p of publishedPosts()) {
+    auCards.push({ file: `posts/${p.slug}.png`, eyebrow: resourceTypeMeta(p.type).label, headline: p.title, showBella: false });
+  }
+}
+
+// Every product page sets og:image=/og/<slug>.png (ProductLayout.astro), every
+// solution page /og/solutions/<slug>.png, every resources page
+// /og/resources/<segment>.png — a missing card fails check-assets on the built
+// page, but only after a full build. Fail here instead, at the moment the card
+// is missing.
+if (TARGET === "au") {
   const { loadTS } = await import("../build/_load-ts.mjs");
   const { PRODUCT_SLUGS } = await loadTS(join(ROOT, "src/data/product-slugs.ts"));
+  const { renderableSolutions } = await loadTS(join(ROOT, "src/data/solutions.ts"));
+  const { resourceTypes } = await loadTS(join(ROOT, "src/data/resources.ts"));
   const have = new Set(auCards.map((c) => c.file));
-  const missing = PRODUCT_SLUGS.filter((slug) => !have.has(`${slug}.png`));
+  const missing = [
+    ...PRODUCT_SLUGS.map((s) => `${s}.png`),
+    ...renderableSolutions().map((s) => `solutions/${s.slug}.png`),
+    ...resourceTypes.map((t) => `resources/${t.path.replace(/^\/resources\/|\/$/g, "")}.png`),
+    ...(await import("../build/content-index.mjs")).publishedPosts().map((p) => `posts/${p.slug}.png`),
+  ].filter((f) => !have.has(f));
   if (missing.length) {
-    throw new Error(
-      `generate-og: no AU card for product(s) ${missing.join(", ")} — add an auCards entry.`,
-    );
+    throw new Error(`generate-og: no AU card for ${missing.join(", ")} — add an auCards entry.`);
   }
 }
 

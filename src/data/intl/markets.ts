@@ -140,8 +140,27 @@ export type MarketCities = {
  * the Ltd entity; and France). Before adding a third, re-run
  * `node scripts/gates/check-intl-similarity.mjs` and look at the pool it joins.
  */
+/**
+ * The region router — the one section only the x-default can carry.
+ *
+ * /en serves every visitor outside the five named markets, so it can neither
+ * claim a city band nor a market pill. What it CAN do, and no other tree can,
+ * is send a visitor to the tree that is actually theirs: the links derive from
+ * `locales` (every launched tree, the AU site included) and render each
+ * label in its own language with `lang`/`hreflang` set, so a French reader
+ * who landed on the x-default sees "France — Français" in French. Copy only;
+ * the list itself is never restated here.
+ */
+export type MarketRegions = {
+  eyebrow: string;
+  heading: string;
+  body: string;
+};
+
 export type MarketContent = {
   copy?: Override<CopyBundle>;
+  /** Absent → no region router. Only the x-default (/en) carries one. */
+  regions?: MarketRegions;
   /** Home carries the call simulation. See the note above before adding one. */
   callSim?: true;
   /** Absent (e.g. /en) → the home renders no market band. */
@@ -161,6 +180,38 @@ export type MarketContent = {
  * no imagery at all — zero images on every page — while being the x-default.
  */
 const enNeutral: MarketContent = {
+  // De-Europeanised 13 Sep 2026: the EN core no longer says "European pilots"
+  // / "France and Belgium" / GDPR-as-the-basis — that colour lives in the
+  // gb-en and be-en overrides. Two things are overridden HERE rather than
+  // neutralised in the core, because the core wording is the English reference
+  // column of the filed 7 Sep French review and must not drift:
+  //  - the facts strip says "transfers out of Europe" and names the GDPR as the
+  //    basis — right for /gb-en and /be-en, which share the core and are in
+  //    Europe; wrong for the worldwide tree;
+  //  - the cityPage furniture says "in the UK" (PR #71 on main neutralises it
+  //    and moves the UK wording to gbEn; on sync it supersedes this). No city
+  //    renders on /en, but the resolved bundle is what the tests read.
+  copy: {
+    // X3's orgDescription (the shared EN core, also the Organization JSON-LD
+    // description) says Europe — right for /gb-en and /be-en, wrong for the
+    // worldwide tree. Same rule as trustFacts below: override here, keep the
+    // core, so the filed French review's English column does not drift.
+    chrome: {
+      orgDescription:
+        "BitePerk builds Vox, the AI phone host for hospitality — it answers every call in a natural voice, takes bookings and orders, and hands over to the venue the moment a person is needed. Built in Sydney, live in Australia, and opening pilot partnerships in new markets.",
+    },
+    cityPage: {
+      districtsNote:
+        "Not on the list? The pilot programme isn't drawn by postcode — a venue anywhere else works exactly the same way.",
+      othersEyebrow: "Other cities",
+    },
+    trustFacts: {
+      records:
+        "Enquiry and booking records are stored on Google Cloud in Australia. Live calls are processed by our voice platform in the United States. For most venues both are transfers out of their own country, and the safeguards are set out plainly in our privacy notice.",
+      basis:
+        "Legitimate interests for answering the enquiry you send us — Article 6(1)(f) where the GDPR applies; consent for optional cookies, withdrawable at any time. Your rights are listed in the privacy notice.",
+    },
+  },
   hero: {
     slug: "table-set-neutral",
     alt: "Tables laid in warm light, ready for service",
@@ -174,6 +225,13 @@ const enNeutral: MarketContent = {
   support: {
     slug: "busy-service-night",
     alt: "A dining room mid-service, every table occupied",
+  },
+  // The neutral tree's replacement for a market band: point people at the site
+  // built for where they are.
+  regions: {
+    eyebrow: "Vox where you are",
+    heading: "Pick the site built for your market.",
+    body: "Each market site is written for its own venues — language, booking habits, the law that applies there. If yours is not listed yet, this page is the right place to start a conversation.",
   },
 };
 
@@ -233,7 +291,7 @@ const gbEn: MarketContent = {
         "Legitimate interests (Article 6(1)(f) UK GDPR) for answering the enquiry you send us; consent for optional cookies, withdrawable at any time. Your rights are listed in the privacy notice.",
     },
     home: {
-      title: "BitePerk — Vox, the AI phone host for UK restaurants",
+      title: "BitePerk — Vox, the AI phone host for UK restaurants and pubs",
       description:
         "Vox answers every restaurant call in a natural voice, checks real availability and books the table. Live in Australia today — now opening UK pilot partnerships.",
       h1: "The phone rings all through service. Let it be answered.",
@@ -247,6 +305,7 @@ const gbEn: MarketContent = {
           "Checks the real diary before it promises a table",
           "Every call kept with a transcript, so nothing is hearsay",
           "One place to see what the phone did all week",
+          "Books inside your rules — last orders, Sunday sittings, a deposit for the big party",
         ],
       },
       pilot: {
@@ -311,7 +370,7 @@ const gbEn: MarketContent = {
             a: "Not today. No UK booking integration is built, and which one comes first is decided by the venues who join early. Tell us what you run.",
           },
           {
-            q: "Is this UK GDPR compliant?",
+            q: "How do you handle the UK GDPR?",
             a: "That is a live piece of work, not a checkbox we have already ticked. The UK regime is separate from the EU one and we are treating it separately.",
           },
           {
@@ -569,6 +628,7 @@ const frFr: MarketContent = {
           "Consulte le registre avant de promettre une table",
           "Chaque appel conservé, avec sa transcription",
           "Une vue d'ensemble de ce que le téléphone a réellement produit",
+          "Réserve dans vos règles — service continu ou coupure, arrhes pour les grandes tablées",
         ],
       },
       pilot: {
@@ -698,6 +758,7 @@ const frFr: MarketContent = {
 
 // ── Belgium — English (/be-en) ──────────────────────────────────────
 const beEn: MarketContent = {
+  callSim: true,
   hero: {
     slug: "brasserie-banquette",
     alt: "A blue velvet banquette and marble tables laid for service",
@@ -728,6 +789,38 @@ const beEn: MarketContent = {
     body: "A pilot is a conversation with a particular room in a particular street, not a launch. This is where those conversations are open.",
   },
   copy: {
+    // The bilingual transcript — the ONE demo only Belgium can run, and unique
+    // per language pool, so it lowers the similarity score rather than raising
+    // it (measured before merging; see MarketContent.callSim). The caller
+    // starts in French and switches to English; the French lines carry lang
+    // tags. Illustrative by its own disclaimer: switching is what a Belgian
+    // pilot PROVES on a venue's line (the home FAQ says so) — this shows how
+    // Bella is designed to handle it, never that it has been proven here.
+    // Venue name matches the contact form placeholder; fictional.
+    callSim: {
+      eyebrow: "The bilingual test",
+      headingLead: "This is what a caller changing language",
+      headingAccent: "sounds like, handled.",
+      lede: "One number, two languages, and no way of knowing which arrives first. Bella follows the caller into whichever they use, checks what is genuinely free and records the booking.",
+      note: "And when she is unsure — a language she does not serve, a request that needs a person — she does not guess. She offers to put the caller through to your own team.",
+      ctaLabel: "See how VoxTable works",
+      status: "Incoming call · 18:52",
+      badge: "Answered <1s",
+      whoBella: "Bella",
+      whoCaller: "Caller",
+      written: "Booking written to the venue book",
+      replay: "Replay",
+      disclaimer: "Illustrative — a fictional venue, showing how Bella is designed to handle a call that changes language. Proving it on your own line is what a Belgian pilot is for.",
+      lines: [
+        { role: "bella", lang: "fr", text: "Bonsoir, vous êtes bien chez Maison Verte. Ici Bella, l'assistante IA — je vous écoute." },
+        { role: "caller", lang: "fr", text: "Bonsoir — une table pour deux ce soir, vers 19 h 30 ?" },
+        { role: "bella", lang: "fr", text: "Je regarde le registre… 19 h 30 est complet. Je peux vous proposer 19 h, ou 20 h 15." },
+        { role: "caller", text: "Ah — sorry, my colleague's joining us, so three, and English is fine?" },
+        { role: "bella", text: "Of course. Three people at 8:15 tonight — what name shall I put it under?" },
+        { role: "caller", text: "Okafor." },
+        { role: "bella", text: "Booked, Okafor — three at 8:15. If you'd rather speak to someone, I can put you through to the team at any point. A confirmation is on its way." },
+      ],
+    },
     // cityPage.en was written when cities were a /gb-en-only feature and says
     // "the UK" in two visible places. merge() recurses plain objects, so this
     // overrides three keys and inherits the rest.
@@ -742,7 +835,7 @@ const beEn: MarketContent = {
       othersHeading: "Also in pilot conversations with venues in",
     },
     home: {
-      title: "BitePerk — Vox, the AI phone host for restaurants in Belgium",
+      title: "BitePerk — Vox, the AI phone host for Belgian restaurants and horeca",
       description:
         "Vox answers every restaurant call in a natural voice, checks real availability and books the table. Live in Australia today — now opening pilot partnerships in Belgium.",
       h1: "One line. Two languages. Every booking taken.",
@@ -756,6 +849,7 @@ const beEn: MarketContent = {
           "Checks the real book before promising a table",
           "Every call kept, with a transcript to settle any dispute",
           "One view of what the phone actually did this week",
+          "Books inside your horeca rules — lunch service, closing day, a deposit for large tables",
         ],
       },
       pilot: {
@@ -881,6 +975,7 @@ const beEn: MarketContent = {
 
 // ── Belgique — Français (/be-fr) ────────────────────────────────────
 const beFr: MarketContent = {
+  callSim: true,
   hero: {
     slug: "brasserie-banquette",
     alt: "Banquette en velours bleu et tables en marbre dressées pour le service",
@@ -908,6 +1003,34 @@ const beFr: MarketContent = {
     body: "Le pilote se joue au téléphone d'une adresse précise, jamais dans une annonce. Ces pages parlent de la vôtre en particulier.",
   },
   copy: {
+    // Le pendant francophone du test bilingue (voir beEn.callSim) : l'appel
+    // commence en anglais et bascule vers le français ; les lignes anglaises
+    // portent lang="en". Français écrit le 13 sept. 2026 — NON relu ; prochain
+    // lot Ludovic (usage belge : « souper », etc.).
+    callSim: {
+      eyebrow: "Le test bilingue",
+      headingLead: "Voici ce qu'un appel qui change de langue",
+      headingAccent: "donne, bien géré.",
+      lede: "Un seul numéro, deux langues, et aucun moyen de savoir laquelle arrive en premier. Bella suit l'appelant dans celle qu'il choisit, vérifie ce qui est réellement libre et inscrit la réservation.",
+      note: "Et quand elle a un doute — une langue qu'elle ne sert pas, une demande qui exige une personne — elle ne devine pas. Elle propose de passer l'appel à votre propre équipe.",
+      ctaLabel: "Voir comment fonctionne VoxTable",
+      status: "Appel entrant · 18 h 52",
+      badge: "Décroché en <1 s",
+      whoBella: "Bella",
+      whoCaller: "Appelant",
+      written: "Réservation inscrite au registre de l'établissement",
+      replay: "Rejouer",
+      disclaimer: "À titre d'illustration — un établissement fictif, pour montrer comment Bella est conçue pour gérer un appel qui change de langue. Le prouver sur votre propre ligne, c'est précisément l'objet d'un pilote belge.",
+      lines: [
+        { role: "bella", lang: "en", text: "Good evening, you've reached Maison Verte. This is Bella, the AI assistant — how can I help?" },
+        { role: "caller", lang: "en", text: "Hi — a table for two tonight, around half past seven?" },
+        { role: "bella", lang: "en", text: "Let me check the book… 7:30 is full. I can offer 7:00, or 8:15." },
+        { role: "caller", text: "Euh… en fait on sera trois, et on peut continuer en français ?" },
+        { role: "bella", text: "Bien sûr. Trois personnes à 20 h 15 ce soir — à quel nom ?" },
+        { role: "caller", text: "Okafor." },
+        { role: "bella", text: "C'est noté, Okafor : trois couverts à 20 h 15. Si vous préférez parler à quelqu'un, je peux vous passer l'équipe à tout moment. Vous recevez une confirmation." },
+      ],
+    },
     // Same anchoring as be-en's override, in French. Written 13 Sep 2026 —
     // NOT yet reviewed; next Ludovic batch.
     cityPage: {
@@ -930,6 +1053,7 @@ const beFr: MarketContent = {
           "Vérifie la disponibilité réelle avant d'engager une table",
           "Conserve l'appel et sa transcription, utile en cas de contestation",
           "Restitue enfin ce que le téléphone rapporte, semaine après semaine",
+          "Réserve selon vos règles horeca — service du midi, jour de fermeture, acompte pour les grandes tablées",
         ],
       },
       pilot: {
