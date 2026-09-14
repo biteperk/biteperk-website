@@ -4,7 +4,7 @@ import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import { site, pageTitle } from "@/data/site";
 import {
   categories,
-  plausibleReady,
+  analyticsReady,
   linkedInPartnerId,
   googleAdsId,
   CONSENT_POLICY_LAST_UPDATED,
@@ -15,7 +15,7 @@ const title = pageTitle("Cookie policy");
 const description =
   "How Biteperk uses local storage, cookies and denied-by-default Google consent mode. Change your choice any time.";
 
-const analyticsLive = plausibleReady;
+const analyticsLive = analyticsReady;
 const marketingLive = linkedInPartnerId !== null || googleAdsId !== null;
 
 const necessary = categories.find((c) => c.id === "necessary")!;
@@ -39,12 +39,13 @@ const marketing = categories.find((c) => c.id === "marketing")!;
       <section>
         <h2>The short version</h2>
         <p>
-          We keep tracking to a minimum. Google Ads starts with every advertising consent signal denied and may
-          send limited cookieless measurement signals in that state. Ad storage and personalisation stay off until you choose
+          We keep tracking to a minimum. Our analytics are cookieless and hold no personal data, so they run by
+          default under audience-measurement rules — you can still switch them off in one click. Google Ads
+          starts with every advertising consent signal denied and may send limited cookieless measurement
+          signals in that state. Ad storage and personalisation stay off until you choose
           <strong>Accept</strong>, "Reject all" is one click, and you can change your mind any time from
           <button type="button" class="legal-inline-btn" data-cookie-settings>Cookie settings</button>
-          (also linked in the footer of every page). Our analytics are cookieless by design, and marketing
-          cookies only ever turn on if you switch them on.
+          (also linked in the footer of every page). Marketing cookies only ever turn on if you switch them on.
         </p>
       </section>
 
@@ -60,17 +61,20 @@ const marketing = categories.find((c) => c.id === "marketing")!;
           <tbody>
             <tr><td><code>bp-consent</code></td><td>Remembers your cookie choice so we don't ask twice.</td><td>localStorage</td></tr>
             <tr><td><code>bp-theme</code></td><td>Remembers light or dark mode.</td><td>localStorage</td></tr>
+            <tr><td><code>umami.disabled</code></td><td>Set only if you switch Analytics off — tells the analytics script to stay silent.</td><td>localStorage</td></tr>
           </tbody>
         </table>
       </section>
 
       <section>
-        <h2>{analytics.title} <span class="legal-status">{analyticsLive ? "Active — opt-in" : "Configured, not yet live"}</span></h2>
+        <h2>{analytics.title} <span class="legal-status">{analyticsLive ? "Active — on by default, opt-out" : "Configured, not yet live"}</span></h2>
         <p>{analytics.body}</p>
         <p>
-          We use <strong>Plausible</strong>, a privacy-friendly analytics tool. It is <strong>cookieless</strong>
-          — it sets no cookies and builds no cross-site profile of you — and we run it first-party through our
-          own server. It only records aggregate visits once you opt in to Analytics.
+          We use <strong>Umami</strong>, a privacy-friendly analytics tool that we <strong>host ourselves</strong>.
+          It is <strong>cookieless</strong> — it sets no cookies and builds no cross-site profile of you — and it
+          records only aggregate visits; IP addresses are hashed to count unique visitors and are never stored.
+          Because it holds no personal data it needs no consent to run, so it is on by default; switch
+          <strong>Analytics</strong> off and it stops immediately.
         </p>
       </section>
 
