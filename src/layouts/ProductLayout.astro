@@ -15,11 +15,12 @@
  */
 import Base from "@/layouts/AuBase.astro";
 import StatusPill from "@/components/StatusPill.astro";
+import SolutionCard from "@/components/SolutionCard.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import Cta from "@/components/Cta.astro";
 import { bookDemoHref, defaultCtaActions, CTA_LABELS } from "@/data/conversion";
 import type { Product } from "@/data/products";
-import { solutionsForProduct, solutionPath } from "@/data/solutions";
+import { solutionsForProduct } from "@/data/solutions";
 import { site, pageTitle } from "@/data/site";
 import { VOX_ID, voxEditionId, ORG_ID, buildFaqPage } from "@/data/schema";
 import { u } from "@/data/locales";
@@ -131,11 +132,9 @@ const faqJsonLd = product.faq && product.faq.length > 0 ? buildFaqPage(product.f
       <div class="wrap">
         <span class="eyebrow">Solutions using {product.name}</span>
         <h2 class="prod-solutions-h">Tuned for how your venue takes calls.</h2>
-        <ul class="prod-solutions-list" role="list">
-          {productSolutions.map((s) => (
-            <li><a class="pressable" href={u(solutionPath(s.slug))}>{s.name} →</a></li>
-          ))}
-        </ul>
+        <div class="prod-solutions-grid">
+          {productSolutions.map((s) => <SolutionCard solution={s} />)}
+        </div>
       </div>
     </section>
   )}
@@ -166,8 +165,9 @@ const faqJsonLd = product.faq && product.faq.length > 0 ? buildFaqPage(product.f
 <style>
   .prod-solutions { padding-block: var(--space-section); border-top: 1px solid var(--line); }
   .prod-solutions-h { margin-top: 12px; font-size: var(--fs-h2); font-weight: 800; letter-spacing: -0.02em; line-height: var(--lh-display); color: var(--white); max-width: 22ch; }
-  .prod-solutions-list { list-style: none; padding: 0; margin: 24px 0 0; display: flex; flex-wrap: wrap; gap: 10px; }
-  .prod-solutions-list a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border: 1px solid var(--line); border-radius: 999px; text-decoration: none; color: var(--white); font-weight: 600; }
+  .prod-solutions-grid { margin-top: 28px; display: grid; gap: 18px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  @media (max-width: 980px) { .prod-solutions-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 600px) { .prod-solutions-grid { grid-template-columns: 1fr; } }
   .prod-hero {
     position: relative;
     padding: clamp(120px, 16vw, 200px) 0 clamp(64px, 8vw, 96px);
