@@ -87,12 +87,19 @@ jobs:
       # The published forms depend on these endpoints. Deploy the backend
       # first so Hosting can never ship a newer form contract while an older
       # function is still serving /api/contact or /api/event.
+      # --force lets a NON-interactive deploy delete a function that was removed
+      # from source (e.g. analyticsEvent, dropped in the Umami migration). Without
+      # it, firebase aborts rather than delete, and the whole production deploy
+      # fails before hosting (seen 15 Sep 2026). The only functions this codebase
+      # deploys are ours (contactForm), so "delete what is not in source" is
+      # exactly the intent.
       - name: Deploy Firebase Functions
         run: |
           node --check functions/index.js
           npx --yes firebase-tools@13.35.1 deploy \
             --project "$FIREBASE_PROJECT_ID" \
             --only functions \
+            --force \
             --non-interactive
 
       - name: Deploy Firebase Hosting
