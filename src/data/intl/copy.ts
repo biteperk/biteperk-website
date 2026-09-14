@@ -416,7 +416,7 @@ export const chrome: Record<Lang, ChromeCopy> = {
     },
     consent: {
       region: "Cookie consent",
-      body: "We use privacy-first analytics and Google consent mode for ad measurement. Google may receive limited cookieless signals while consent is denied; ad storage and personalisation stay off unless you allow Marketing.",
+      body: "We use privacy-first, self-hosted, cookieless analytics (Umami) and Google consent mode for ad measurement. Google may receive limited cookieless signals while consent is denied; ad storage and personalisation stay off unless you allow Marketing.",
       policy: "Cookie Policy",
       settings: "Cookie settings",
       reject: "Reject all",
@@ -500,7 +500,7 @@ export const chrome: Record<Lang, ChromeCopy> = {
     // and are covered by the 7 Sep pass.
     consent: {
       region: "Consentement aux cookies",
-      body: "Nous utilisons des statistiques respectueuses de la vie privée et le mode consentement de Google pour la mesure publicitaire. Google peut recevoir des signaux limités, sans cookies, tant que le consentement est refusé ; le stockage publicitaire et la personnalisation restent désactivés sauf si vous autorisez le marketing.",
+      body: "Nous utilisons des statistiques respectueuses de la vie privée, sans cookie et que nous hébergeons nous-mêmes (Umami), ainsi que le mode consentement de Google pour la mesure publicitaire. Google peut recevoir des signaux limités, sans cookies, tant que le consentement est refusé ; le stockage publicitaire et la personnalisation restent désactivés sauf si vous autorisez le marketing.",
       policy: "Politique relative aux cookies",
       settings: "Paramètres des cookies",
       reject: "Tout refuser",
@@ -518,7 +518,7 @@ export const chrome: Record<Lang, ChromeCopy> = {
         },
         analytics: {
           title: "Statistiques",
-          body: "Statistiques sans cookies et respectueuses de la vie privée (Plausible), qui comptent les visites et les liens utiles aux visiteurs — agrégées, sans cookies, sans suivi entre sites, sans profil personnel.",
+          body: "Statistiques sans cookies et respectueuses de la vie privée (Umami, que nous hébergeons nous-mêmes), qui comptent les visites et les liens utiles aux visiteurs — agrégées, sans cookies, sans suivi entre sites, sans profil personnel, l'adresse IP étant hachée et jamais conservée. Sans données personnelles, elles ne nécessitent pas de consentement et sont activées par défaut ; désactivez-les ici et elles s'arrêtent aussitôt.",
         },
         marketing: {
           title: "Marketing",
@@ -1090,7 +1090,7 @@ export const privacy: Record<Lang, SimplePageCopy> = {
       {
         heading: "What we collect on this site",
         body: [
-          "The contact form asks for your name, work email, venue name, the product you are interested in, and your message. We use these to respond to your enquiry and, if you ask about a pilot, to organise it. We do not keep your IP address or browser details with your enquiry; a short-lived, hashed record of your connection is used only to limit repeat submissions. Google Ads consent mode may send limited cookieless measurement signals while advertising storage, user-data use and personalisation are denied. Analytics cookies do not run without consent.",
+          "The contact form asks for your name, work email, venue name, the product you are interested in, and your message. We use these to respond to your enquiry and, if you ask about a pilot, to organise it. We do not keep your IP address or browser details with your enquiry; a short-lived, hashed record of your connection is used only to limit repeat submissions. Google Ads consent mode may send limited cookieless measurement signals while advertising storage, user-data use and personalisation are denied. Our analytics (self-hosted Umami) are cookieless, set nothing on your device and keep no personal data; they run by default and you can switch them off from Cookie settings.",
         ],
       },
       {
@@ -1143,7 +1143,7 @@ export const privacy: Record<Lang, SimplePageCopy> = {
       {
         heading: "Ce que nous collectons sur ce site",
         body: [
-          "Le formulaire de contact demande votre nom, votre e-mail professionnel, le nom de votre établissement, le produit qui vous intéresse et votre message. Nous les utilisons pour répondre à votre demande et, si vous vous renseignez sur un pilote, pour l'organiser. Nous ne conservons ni votre adresse IP ni les caractéristiques de votre navigateur avec votre demande ; une empreinte hachée et temporaire de votre connexion sert uniquement à limiter les envois répétés. Le mode Consentement de Google Ads peut transmettre des signaux de mesure limités et sans cookie lorsque le stockage publicitaire, l'utilisation des données publicitaires et la personnalisation sont refusés. Aucun cookie de mesure d'audience ne fonctionne sans consentement.",
+          "Le formulaire de contact demande votre nom, votre e-mail professionnel, le nom de votre établissement, le produit qui vous intéresse et votre message. Nous les utilisons pour répondre à votre demande et, si vous vous renseignez sur un pilote, pour l'organiser. Nous ne conservons ni votre adresse IP ni les caractéristiques de votre navigateur avec votre demande ; une empreinte hachée et temporaire de votre connexion sert uniquement à limiter les envois répétés. Le mode Consentement de Google Ads peut transmettre des signaux de mesure limités et sans cookie lorsque le stockage publicitaire, l'utilisation des données publicitaires et la personnalisation sont refusés. Notre mesure d'audience (Umami, que nous hébergeons nous-mêmes) est sans cookie, ne dépose rien sur votre appareil et ne conserve aucune donnée personnelle ; elle fonctionne par défaut et vous pouvez la désactiver depuis « Paramètres des cookies ».",
         ],
       },
       {
@@ -1271,7 +1271,7 @@ export const cookies: Record<Lang, SimplePageCopy> = {
       {
         heading: "Analytics",
         body: [
-          "If and when we enable analytics, we use a cookieless product that records page views without cookies, without cross-site tracking and without building a profile of you. It stays off until you allow it, and you can withdraw that permission at any time.",
+          "We use Umami, a privacy-friendly analytics tool that we host ourselves. It is cookieless — it records page views without cookies, without cross-site tracking and without building a profile of you — and IP addresses are hashed to count unique visitors, never stored. Because it holds no personal data it needs no consent, so it runs by default; you can switch it off at any time from Cookie settings.",
         ],
       },
       {
@@ -1309,7 +1309,7 @@ export const cookies: Record<Lang, SimplePageCopy> = {
       {
         heading: "Mesure d'audience",
         body: [
-          "Si nous activons un jour la mesure d'audience, nous utiliserons un outil sans cookie, qui comptabilise les pages vues sans cookie, sans suivi inter-sites et sans constituer de profil. Elle reste désactivée tant que vous ne l'avez pas autorisée, et votre accord est révocable à tout moment.",
+          "Nous utilisons Umami, un outil de mesure d'audience que nous hébergeons nous-mêmes. Sans cookie, il comptabilise les pages vues sans suivi inter-sites et sans constituer de profil, et les adresses IP sont hachées pour compter les visiteurs uniques, jamais conservées. Comme il ne traite aucune donnée personnelle, il ne nécessite pas de consentement et fonctionne par défaut ; vous pouvez le désactiver à tout moment depuis « Paramètres des cookies ».",
         ],
       },
       {

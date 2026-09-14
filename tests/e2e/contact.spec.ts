@@ -1,4 +1,4 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect, type Page } from "../helpers/fixtures";
 import { p } from "../helpers/routes";
 import { googleAdsDemoContactConversionId } from "../../src/data/consent";
 
@@ -74,6 +74,34 @@ test.describe("contact form", () => {
         },
       ],
     ]);
+  });
+
+  test("fires the Umami contact_form_submitted event once on a confirmed submission", async ({ page }) => {
+    // The real tracker is a no-op on 127.0.0.1 (data-domains); install a fake
+    // so we can assert the bridge (bp:event → window.umami.track) fires. Opt
+    // out of analytics to prove the goal still fires through the bridge — the
+    // real umami honours the opt-out itself, our bridge always calls track().
+    await page.addInitScript(() => {
+      localStorage.setItem(
+        "bp-consent",
+        JSON.stringify({ v: 3, analytics: false, marketing: false, ts: Date.now() }),
+      );
+      const w = window as unknown as { __umami: unknown[][] };
+      w.__umami = [];
+      (window as unknown as { umami: { track: (n: string) => void; identify: () => void } }).umami = {
+        track: (n: string) => w.__umami.push([n]),
+        identify: () => {},
+      };
+    });
+    await page.route("**/api/contact", (route) => route.fulfill({ status: 200, json: { ok: true } }));
+
+    await page.goto(p("/contact/"));
+    await fillForm(page);
+    await submitAndWaitForContactResponse(page);
+    await expect(page.locator(".contact-success")).toBeVisible();
+
+    const events = await page.evaluate(() => (window as unknown as { __umami: unknown[][] }).__umami);
+    expect(events).toEqual([["contact_form_submitted"]]);
   });
 
   test("sends the documented JSON payload and shows success state", async ({ page }) => {

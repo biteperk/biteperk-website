@@ -27,6 +27,7 @@ import SEO from "@/components/SEO.astro";
 import ConsentBanner from "@/components/ConsentBanner.astro";
 import { siteGraphWith } from "@/data/schema";
 import { u, buildHreflang, currentTarget, stripBase, isSharedPage, localeFromPath, INTL_LAUNCHED } from "@/data/locales";
+import { analyticsReady, UMAMI_SCRIPT_URL, UMAMI_WEBSITE_ID, ANALYTICS_HOSTS } from "@/data/consent";
 import { ClientRouter } from "astro:transitions";
 
 interface Props {
@@ -80,6 +81,13 @@ const {
 // Which locale tree this page belongs to — drives the per-locale manifest.
 const manifestLoc = localeFromPath(Astro.url.pathname).base.replace(/^\//, "");
 
+// Umami analytics: one tag per page, tagged with the locale base so reports
+// segment per market (au-en, gb-en, fr, … and any locale added later) with no
+// per-market code. `data-domains` limits tracking to the production host, so
+// localhost, Playwright and staging-vs-prod never cross-contaminate.
+const umamiTag = localeFromPath(Astro.url.pathname).base.slice(1);
+const umamiDomains = ANALYTICS_HOSTS.join(",");
+
 // Cross-domain hreflang for AU shared pages (home, about, contact, legal) is
 // emitted automatically once the international site launches. The intl /en+/fr
 // pages compute their own cluster in [...intl].astro. Pages that pass explicit
@@ -132,9 +140,18 @@ if (!alternates && INTL_LAUNCHED && currentTarget() === "au") {
       (function () {
         try {
           var raw = localStorage.getItem("bp-consent");
-          var ok = false;
-          if (raw) { var c = JSON.parse(raw); ok = !!(c && typeof c === "object" && "v" in c); }
+          var ok = false, optedOut = false;
+          if (raw) {
+            var c = JSON.parse(raw);
+            ok = !!(c && typeof c === "object" && "v" in c);
+            optedOut = !!(c && c.analytics === false);
+          }
           document.documentElement.dataset.consent = ok ? "set" : "unset";
+          // Apply the Umami opt-out BEFORE its deferred tracker runs, so an
+          // opted-out returning visitor leaks no pageview. analytics.ts keeps
+          // this in sync when the choice changes at runtime.
+          if (optedOut) localStorage.setItem("umami.disabled", "1");
+          else localStorage.removeItem("umami.disabled");
         } catch (e) { document.documentElement.dataset.consent = "unset"; }
       })();
     </script>
@@ -147,6 +164,23 @@ if (!alternates && INTL_LAUNCHED && currentTarget() === "au") {
     {/* Per-locale manifest so an install from /gb-en/ opens on the UK site,
         not the international one. See src/pages/manifest/[loc].webmanifest.ts */}
     <link rel="manifest" href={u(`/manifest/${manifestLoc}.webmanifest`)} />
+
+    {/* Self-hosted Umami analytics — cookieless, no personal data, exempt from
+        consent (opt-out via the banner, honoured through localStorage
+        "umami.disabled"). `data-tag` segments reports per locale; `data-domains`
+        keeps it a no-op off the production host (localhost, Playwright, and the
+        staging-vs-prod split). Plain deferred tag: Umami needs
+        document.currentScript, which is null in a module. */}
+    {analyticsReady && (
+      <script
+        is:inline
+        defer
+        src={UMAMI_SCRIPT_URL}
+        data-website-id={UMAMI_WEBSITE_ID}
+        data-domains={umamiDomains}
+        data-tag={umamiTag}
+      />
+    )}
 
     {preloadImage && <link rel="preload" as="image" href={u(preloadImage)} fetchpriority="high" />}
     {preloadSlug && (
