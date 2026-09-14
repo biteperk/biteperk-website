@@ -460,7 +460,7 @@ const gbEn: MarketContent = {
         {
           heading: "What we collect on this site",
           body: [
-            "The contact form asks for your name, work email, venue name, the product you are interested in, and your message. We use these to respond to your enquiry and, if you ask about a pilot, to organise it. We do not keep your IP address or browser details with your enquiry; a short-lived, hashed record of your connection is used only to limit repeat submissions. Google Ads consent mode may send limited cookieless measurement signals while advertising storage, user-data use and personalisation are denied. Analytics cookies do not run without consent.",
+            "The contact form asks for your name, work email, venue name, the product you are interested in, and your message. We use these to respond to your enquiry and, if you ask about a pilot, to organise it. We do not keep your IP address or browser details with your enquiry; a short-lived, hashed record of your connection is used only to limit repeat submissions. Google Ads consent mode may send limited cookieless measurement signals while advertising storage, user-data use and personalisation are denied. Our analytics (self-hosted Umami) are cookieless, set nothing on your device and keep no personal data; they run by default and you can switch them off from Cookie settings.",
           ],
         },
         {
@@ -506,7 +506,7 @@ const gbEn: MarketContent = {
         {
           heading: "Analytics",
           body: [
-            "If and when we enable analytics, we use a cookieless product that records page views without cookies, without cross-site tracking and without building a profile of you. It stays off until you allow it, and you can withdraw that permission at any time.",
+            "We use Umami, a privacy-friendly analytics tool that we host ourselves. It is cookieless — it records page views without cookies, without cross-site tracking and without building a profile of you — and IP addresses are hashed to count unique visitors, never stored. Because it holds no personal data it needs no consent, so it runs by default; you can switch it off at any time from Cookie settings.",
           ],
         },
         {
