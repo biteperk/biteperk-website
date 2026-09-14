@@ -1,0 +1,317 @@
+---
+/**
+ * Products dropdown for the intl nav bar — the international counterpart of the
+ * AU Products mega-menu (src/components/NavDropdown.astro), rebuilt from scratch
+ * for the global tree. It may NOT reuse the AU one: check-truthful bans every
+ * `.megamenu*`/`.mm*`/`.nav*`/`.foot*` selector on global pages, and NavDropdown
+ * imports @/data/site (the AU phone) which is banned here too.
+ *
+ * Built on the CityNav pattern: native <details> (works with no JS; the script
+ * src/scripts/intl-prodnav.ts adds hover-intent, keyboard and close-on-outside-
+ * click). Own attribute namespace (data-intl-prodnav*) so it never collides with
+ * the picker / city-nav strict-mode locators in chrome.spec.
+ *
+ * Data:
+ *   - `products` (@/data/products) gives catalogue ORDER, `wordmark.{prefix,
+ *     suffix}` (the Vox·Table split), `slug` and `status` (for the pill colour).
+ *     IntlLayout already imports it for the footer, so it is a permitted import.
+ *   - localised text comes from the intl copy: `statusLabel` (per language) and
+ *     the one-line `outcome` per slug. NO AU copy, NO phone, NO price.
+ *
+ * The menu title/eyebrow are <span>/<p>, never headings: the a11y sweep counts
+ * every heading in DOM order and the nav renders before the page h1.
+ *
+ * `is:inline` UNSCOPED style — this component is in IntlLayout's import graph, so
+ * a scoped <style> would inline on all ~100 global pages. Keep every selector in
+ * the intl-prodnav* namespace (and .status-pill is page-scoped elsewhere, so the
+ * pill is restyled here as .intl-prodnav-pill).
+ *
+ * Panel is position:absolute anchored to the row (.intl-nav-row is position:
+ * relative) — never fixed, so no backdrop-filter/transform ancestor can trap it,
+ * and left:0 + width:min(680px,100%) can never overflow the row at any viewport.
+ */
+import { products } from "@/data/products";
+import { intlProducts, intlProductsOverview } from "@/data/intl/products";
+import type { Locale } from "@/data/locales";
+import type { ChromeCopy } from "@/data/intl/copy";
+
+interface Props {
+  locale: Locale;
+  /** Page path within the locale ("" home, "products", "products/voxtable"…). */
+  page: string;
+  /** The chrome copy bundle (resolveCopy(locale).chrome). */
+  chrome: ChromeCopy;
+}
+const { locale, page, chrome } = Astro.props;
+const lang = locale.copyLang;
+const copy = intlProducts[lang];
+const caps = intlProductsOverview[lang].capabilities;
+const pm = chrome.productMenu;
+const onProducts = page === "products" || page.startsWith("products/");
+---
+
+<details class="intl-prodnav" data-intl-prodnav>
+  <summary
+    class:list={["intl-prodnav-trigger", { "is-active": onProducts }]}
+    data-intl-prodnav-trigger
+    aria-current={onProducts ? "true" : undefined}
+  >
+    <span>{chrome.nav.products}</span>
+    <svg class="intl-prodnav-caret" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+  </summary>
+
+  <div class="intl-prodnav-menu" data-intl-prodnav-menu aria-label={pm.menuLabel}>
+    <div class="intl-prodnav-head">
+      <span class="intl-prodnav-eyebrow">{pm.eyebrow}</span>
+      <p class="intl-prodnav-lede">{pm.lede}</p>
+    </div>
+
+    <div class="intl-prodnav-grid">
+      {products.map((prod) => (
+        <a
+          class:list={["intl-prodnav-card", { "is-current": page === `products/${prod.slug}` }]}
+          href={`${locale.base}/products/${prod.slug}/`}
+          aria-current={page === `products/${prod.slug}` ? "page" : undefined}
+          data-intl-prodnav-item
+        >
+          <div class="intl-prodnav-card-head">
+            <span class="intl-prodnav-name">
+              <span class="kicker">{prod.wordmark.prefix}</span><span class="cap">{prod.wordmark.suffix}</span>
+            </span>
+            <span class="intl-prodnav-pill" data-status={prod.status}>{copy[prod.slug].statusLabel}</span>
+          </div>
+          <p class="intl-prodnav-tag">{caps[prod.slug].outcome}</p>
+          <span class="intl-prodnav-arrow" aria-hidden="true">→</span>
+        </a>
+      ))}
+    </div>
+
+    <div class="intl-prodnav-foot">
+      <a class="intl-prodnav-foot-link" href={`${locale.base}/products/`} data-intl-prodnav-item>
+        <span>{pm.overview}</span><span aria-hidden="true">→</span>
+      </a>
+      <a class="intl-prodnav-foot-link is-cta" href={`${locale.base}/contact/`} data-intl-prodnav-item>
+        <span>{chrome.cta}</span><span aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+</details>
+
+<style is:inline>
+  /* UNSCOPED (is:inline) — keep the intl-prodnav* namespace on every selector.
+     Values mirror .intl-citynav-* so the bar reads as one family. */
+  .intl-prodnav { position: static; line-height: 1; }
+
+  .intl-prodnav-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--text);
+    font-size: var(--fs-small);
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    list-style: none;
+  }
+  .intl-prodnav-trigger::-webkit-details-marker { display: none; }
+  @media (hover: hover) {
+    .intl-prodnav-trigger:hover { color: var(--gold); }
+  }
+  .intl-prodnav-trigger:focus-visible { outline: none; box-shadow: var(--ring-focus); border-radius: var(--r-sm); }
+  .intl-prodnav-trigger.is-active { color: var(--gold); }
+  .intl-prodnav-caret { transition: transform var(--dur-fast) var(--ease-out); }
+  .intl-prodnav[open] .intl-prodnav-caret { transform: rotate(180deg); }
+
+  /* Anchored to the ROW, not the trigger: .intl-nav-row is position:relative
+     (set in IntlLayout). left:0 + width:min(680px,100%) can never exceed the
+     row width, so no viewport overflows — even at 768 where the links block
+     starts ~200px in. */
+  .intl-prodnav-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: auto;
+    z-index: 60; /* > --z-nav (50) */
+    width: min(680px, 100%);
+    box-sizing: border-box;
+    padding: 22px 14px 12px;
+    background: color-mix(in srgb, var(--ink-1) 96%, transparent);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    border: 1px solid var(--line);
+    border-radius: var(--r-xl);
+    box-shadow:
+      0 18px 44px -12px rgba(0, 0, 0, 0.5),
+      0 2px 8px -2px rgba(0, 0, 0, 0.28);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .intl-prodnav[open] .intl-prodnav-menu { animation: intl-prodnav-in 180ms var(--ease-soft) backwards; }
+  }
+  @keyframes intl-prodnav-in {
+    from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .intl-prodnav-head { padding: 0 8px 12px; }
+  .intl-prodnav-eyebrow {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .intl-prodnav-lede {
+    margin: 8px 0 0;
+    max-width: 60ch;
+    font-size: var(--fs-small);
+    line-height: var(--lh-body);
+    color: var(--mist-2);
+  }
+
+  .intl-prodnav-grid {
+    display: grid;
+    /* minmax(0,1fr), not 1fr: a bare 1fr track's min is its content's
+       min-content, which here blows the two tracks past the panel width and
+       overflows the viewport at the 768 pill tier. minmax(0,…) lets the
+       tracks shrink and the copy wrap instead. */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 8px;
+  }
+  .intl-prodnav-grid > .intl-prodnav-card:first-child { grid-column: 1 / -1; }
+
+  .intl-prodnav-card {
+    position: relative;
+    display: block;
+    min-width: 0; /* grid items default to min-width:auto — let it shrink to the track */
+    padding: 14px 15px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--fill-subtle);
+    text-decoration: none;
+  }
+  @media (hover: hover) {
+    .intl-prodnav-card:hover {
+      background: var(--fill-hover);
+      border-color: color-mix(in srgb, var(--gold) 45%, var(--line));
+    }
+  }
+  .intl-prodnav-card:focus-visible {
+    outline: none;
+    box-shadow: var(--ring-focus);
+    border-color: color-mix(in srgb, var(--gold) 45%, var(--line));
+  }
+  .intl-prodnav-card.is-current { border-color: color-mix(in srgb, var(--gold) 55%, var(--line)); }
+  @media (prefers-reduced-motion: no-preference) {
+    .intl-prodnav-card { transition: background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out); }
+  }
+
+  .intl-prodnav-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .intl-prodnav-name { display: inline-flex; align-items: baseline; gap: 1px; }
+  .intl-prodnav-name .kicker {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .intl-prodnav-name .cap { font-size: 18px; font-weight: 800; letter-spacing: -0.01em; color: var(--white); }
+  .intl-prodnav-tag {
+    margin: 6px 0 0;
+    font-size: var(--fs-small);
+    line-height: var(--lh-body);
+    color: var(--mist-2);
+    overflow-wrap: anywhere;
+  }
+  .intl-prodnav-arrow {
+    position: absolute;
+    top: 14px;
+    right: 15px;
+    color: var(--mist-2);
+    opacity: 0;
+    transform: translateX(-4px);
+    transition: opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+  }
+  @media (hover: hover) {
+    .intl-prodnav-card:hover .intl-prodnav-arrow { opacity: 1; transform: none; color: var(--gold); }
+  }
+
+  .intl-prodnav-pill {
+    flex: none;
+    padding: 3px 9px;
+    border: 1px solid currentColor;
+    border-radius: var(--r-pill);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    color: var(--mist-2);
+  }
+  .intl-prodnav-pill[data-status="live"] { color: var(--success); }
+  .intl-prodnav-pill[data-status="in-development"] { color: var(--gold); }
+
+  .intl-prodnav-foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+  }
+  .intl-prodnav-foot-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 0 14px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--line);
+    background: var(--fill-subtle);
+    color: var(--text);
+    font-size: var(--fs-small);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .intl-prodnav-foot-link.is-cta {
+    margin-inline-start: auto;
+    background: var(--gold-fill);
+    border-color: var(--gold-fill);
+    color: var(--gold-fill-text);
+  }
+  @media (hover: hover) {
+    .intl-prodnav-foot-link:hover { border-color: var(--line-strong); color: var(--white); }
+    .intl-prodnav-foot-link.is-cta:hover { color: var(--gold-fill-text); filter: brightness(1.05); }
+  }
+  .intl-prodnav-foot-link:focus-visible { outline: none; box-shadow: var(--ring-focus); }
+
+  /* Pill tiers: the trigger sits inside .intl-links, which becomes a wrapped
+     row of 44px pills at these widths (see IntlLayout). Match the siblings so
+     the Products control reads as one of them. Mirrors the two .intl-links a
+     pill blocks there (all-trees ≤940, city-trees 721–1080). */
+  @media (min-width: 721px) and (max-width: 1080px) {
+    .intl-nav[data-has-cities="true"] .intl-prodnav-trigger {
+      min-height: 44px;
+      padding-inline: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--r-pill);
+      background: var(--fill-subtle);
+    }
+  }
+  @media (max-width: 940px) {
+    .intl-prodnav-trigger {
+      min-height: 44px;
+      padding-inline: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--r-pill);
+      background: var(--fill-subtle);
+    }
+  }
+  @media (max-width: 760px) {
+    .intl-prodnav-grid { grid-template-columns: 1fr; }
+  }
+</style>
