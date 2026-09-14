@@ -1,31 +1,31 @@
 /**
- * Cities nav dropdown enhancement — drives <details data-city-nav> in
- * src/components/intl/CityNav.astro.
+ * Products nav dropdown enhancement — drives <details data-intl-prodnav> in
+ * src/components/intl/IntlProductNav.astro.
  *
- * A structural clone of locale-picker.ts with its own data-attribute
- * namespace: chrome.spec's [data-locale-picker-trigger]/-item locators are
- * strict-mode, so the two dropdowns must never share attributes. Same
- * progressive-enhancement contract — native <details> carries the
- * behaviour, this only adds polish — and the same behaviours:
+ * A structural clone of city-nav.ts (own data-attribute namespace so it never
+ * collides with the picker / city-nav strict-mode locators in chrome.spec),
+ * plus the AU mega-menu's hover intent: on a fine pointer that supports hover,
+ * the menu opens shortly after the pointer enters and closes shortly after it
+ * leaves, so moving into the panel keeps it open. Progressive enhancement —
+ * native <details> carries click/keyboard even with no JS.
  *
- *   - Esc — close + return focus to the trigger
- *   - Outside click / focus leaving — close
+ * Behaviours:
+ *   - hover intent (fine pointer only): open after 60ms, close 220ms after leave
+ *   - Enter/Space stay native on the summary
  *   - ArrowDown / ArrowUp on the trigger — open + focus first / last item
- *   - Inside the menu: ↑ / ↓ cycle (wrap), Home / End jump, Esc closes
+ *   - Inside the menu: ↑/↓ cycle (wrap), Home/End jump, Esc close + refocus
+ *   - Outside click / focus leaving — close
  *   - Click an item — close immediately
+ *   - closeOthers() sweeps the city nav and region picker so one bar menu is
+ *     open at a time (they sweep this one in return)
  *   - astro:before-swap force-close; astro:page-load idempotent re-bind
  *
- * One extra: closeOthers() also sweeps [data-locale-picker][open] so a
- * keyboard-opened Cities menu closes an open region picker (the reverse
- * direction is covered by locale-picker's own outside-click/focusin
- * listeners — clicking this trigger IS an outside click for that one).
- *
- * Loads sitewide via Base.astro's shared bundle and no-ops on every page
- * without [data-city-nav] (all AU pages, all city-less market trees).
+ * Loaded from IntlLayout.astro (NOT Base.astro — that would ship it to every
+ * AU page, which has its own megamenu.ts). No-ops on any page without the root.
  */
 
 // IIFE so these top-level declarations don't collide with the other inline
-// scripts Base.astro loads into the same project during type-check.
+// scripts loaded into the same project during type-check.
 (() => {
 
 interface Refs {
@@ -34,9 +34,14 @@ interface Refs {
   menu: HTMLElement;
 }
 
+const HOVER_OPEN_DELAY = 60;
+const CLOSE_DELAY = 220;
+const canHover = (): boolean =>
+  window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
 function items(refs: Refs): HTMLAnchorElement[] {
   return Array.from(
-    refs.menu.querySelectorAll<HTMLAnchorElement>("[data-city-nav-item]"),
+    refs.menu.querySelectorAll<HTMLAnchorElement>("[data-intl-prodnav-item]"),
   );
 }
 
@@ -49,7 +54,7 @@ function close(refs: Refs, returnFocus = false): void {
 function closeOthers(except: HTMLDetailsElement): void {
   document
     .querySelectorAll<HTMLDetailsElement>(
-      "[data-city-nav][open], [data-locale-picker][open], [data-intl-prodnav][open]",
+      "[data-intl-prodnav][open], [data-city-nav][open], [data-locale-picker][open]",
     )
     .forEach((el) => {
       if (el !== except) el.open = false;
@@ -65,19 +70,36 @@ function focusByOffset(refs: Refs, from: Element | null, offset: 1 | -1): void {
 }
 
 function attach(root: HTMLDetailsElement): void {
-  if (root.dataset.cityNavBound === "1") return;
-  root.dataset.cityNavBound = "1";
+  if (root.dataset.intlProdnavBound === "1") return;
+  root.dataset.intlProdnavBound = "1";
 
-  const trigger = root.querySelector<HTMLElement>("[data-city-nav-trigger]");
-  const menu = root.querySelector<HTMLElement>("[data-city-nav-menu]");
+  const trigger = root.querySelector<HTMLElement>("[data-intl-prodnav-trigger]");
+  const menu = root.querySelector<HTMLElement>("[data-intl-prodnav-menu]");
   if (!trigger || !menu) return;
 
   const refs: Refs = { root, trigger, menu };
-  const scrim = root.querySelector<HTMLElement>("[data-city-nav-scrim]");
-  const closeBtn = root.querySelector<HTMLElement>("[data-city-nav-close]");
+  let openTimer: number | undefined;
+  let closeTimer: number | undefined;
+  const clearTimers = (): void => {
+    if (openTimer) { clearTimeout(openTimer); openTimer = undefined; }
+    if (closeTimer) { clearTimeout(closeTimer); closeTimer = undefined; }
+  };
 
   root.addEventListener("toggle", () => {
     if (root.open) closeOthers(root);
+  });
+
+  // Hover intent — fine pointers only (touch keeps the click-to-open <details>
+  // behaviour, or the menu would flicker open under a tap).
+  root.addEventListener("mouseenter", () => {
+    if (!canHover()) return;
+    clearTimers();
+    openTimer = window.setTimeout(() => { root.open = true; }, HOVER_OPEN_DELAY);
+  });
+  root.addEventListener("mouseleave", () => {
+    if (!canHover()) return;
+    clearTimers();
+    closeTimer = window.setTimeout(() => { root.open = false; }, CLOSE_DELAY);
   });
 
   // Enter/Space stay native — overriding them breaks the no-JS contract.
@@ -123,31 +145,26 @@ function attach(root: HTMLDetailsElement): void {
     if ((e.target as HTMLElement).closest("a")) close(refs);
   });
 
-  // Mobile-sheet scrim tap / X button — see locale-picker.ts for why these
-  // need their own listener instead of falling out of the outside-click check.
-  scrim?.addEventListener("click", () => close(refs, true));
-  closeBtn?.addEventListener("click", () => close(refs, true));
-
-  // Outside click / focus-out live at module scope below — see
-  // locale-picker.ts for why binding them per attach() leaked a pair of
-  // permanent document listeners on every View Transition.
+  // Outside click / focus-out live at module scope below — binding them per
+  // attach() would leak a pair of permanent document listeners on every View
+  // Transition (see city-nav.ts / locale-picker.ts).
 }
 
 document.addEventListener("click", (e) => {
-  for (const root of document.querySelectorAll<HTMLDetailsElement>("[data-city-nav][open]")) {
+  for (const root of document.querySelectorAll<HTMLDetailsElement>("[data-intl-prodnav][open]")) {
     if (!root.contains(e.target as Node)) root.open = false;
   }
 });
 
 document.addEventListener("focusin", (e) => {
-  for (const root of document.querySelectorAll<HTMLDetailsElement>("[data-city-nav][open]")) {
+  for (const root of document.querySelectorAll<HTMLDetailsElement>("[data-intl-prodnav][open]")) {
     if (!root.contains(e.target as Node)) root.open = false;
   }
 });
 
 function init(): void {
   document
-    .querySelectorAll<HTMLDetailsElement>("[data-city-nav]")
+    .querySelectorAll<HTMLDetailsElement>("[data-intl-prodnav]")
     .forEach((root) => attach(root));
 }
 
@@ -155,7 +172,7 @@ init();
 
 document.addEventListener("astro:before-swap", () => {
   document
-    .querySelectorAll<HTMLDetailsElement>("[data-city-nav][open]")
+    .querySelectorAll<HTMLDetailsElement>("[data-intl-prodnav][open]")
     .forEach((el) => {
       el.open = false;
     });
