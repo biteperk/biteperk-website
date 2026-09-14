@@ -25,6 +25,7 @@ import IntlProductNav from "@/components/intl/IntlProductNav.astro";
 import IntlMobileMenu from "@/components/intl/IntlMobileMenu.astro";
 import { INTL_NAV } from "@/data/intl/nav";
 import { products } from "@/data/products";
+import { intlProducts } from "@/data/intl/products";
 import { entities, ukEmail } from "@/data/site";
 import { ukEntityGraph } from "@/data/schema";
 import { intlCitiesForBase } from "@/data/intl/cities";
@@ -71,6 +72,17 @@ const navItems = INTL_NAV.filter((item) => pageExistsInLocale(item.path, locale)
 // The header bar renders Products as a dropdown (IntlProductNav), so drop it
 // from the plain-link loop. The drawer and footer keep the full navItems list.
 const barLinks = navItems.filter((item) => item.key !== "products");
+// The Vox editions for the phone drawer's products section — built here so the
+// drawer stays data-agnostic (props only). ORDER + name/status from the AU
+// catalogue (already imported for the footer); the pill text is localised.
+const intlProductCopy = intlProducts[locale.copyLang];
+const productLinks = products.map((prod) => ({
+  slug: prod.slug,
+  name: prod.name,
+  href: `${locale.base}/products/${prod.slug}/`,
+  status: prod.status,
+  statusLabel: intlProductCopy[prod.slug].statusLabel,
+}));
 const hasCities = footerCities.length > 0;
 // Past ~6, a single vertical list towers over the 4–5-item sibling columns
 // (10 French cities = ~440px). Split those into two sub-columns so the footer
@@ -174,7 +186,7 @@ const isUk = locale.market === "gb";
 
     {/* Sibling of the header, not a child: the panel is position:fixed and a
         future filter/transform on the bar would otherwise trap it. */}
-    <IntlMobileMenu locale={locale} page={page} chrome={c} nav={navItems} cities={footerCities} />
+    <IntlMobileMenu locale={locale} page={page} chrome={c} nav={navItems} cities={footerCities} products={productLinks} />
   </div>
 
   <div class="intl">

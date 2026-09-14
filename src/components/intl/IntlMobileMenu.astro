@@ -45,9 +45,18 @@ interface Props {
   nav: ReadonlyArray<{ key: keyof ChromeCopy["nav"]; path: string }>;
   /** Published cities for this tree; empty on the four trees without any. */
   cities: ReadonlyArray<IntlCity>;
+  /** The Vox editions, built in IntlLayout (props only — no AU/intl imports
+   *  reach this component). `statusLabel` is already localised. */
+  products: ReadonlyArray<{
+    readonly slug: string;
+    readonly name: string;
+    readonly href: string;
+    readonly status: string;
+    readonly statusLabel: string;
+  }>;
 }
 
-const { locale, page, chrome: c, nav, cities } = Astro.props;
+const { locale, page, chrome: c, nav, cities, products } = Astro.props;
 const p = (seg: string) => `${locale.base}/${seg ? `${seg}/` : ""}`;
 ---
 
@@ -84,6 +93,24 @@ const p = (seg: string) => `${locale.base}/${seg ? `${seg}/` : ""}`;
           {c.nav[item.key]}
         </a>
       ))}
+
+      {products.length > 0 && (
+        <div class="imm-section">
+          <p class="imm-section-title">{c.footerProducts}</p>
+          <div class="imm-products">
+            {products.map((prod) => (
+              <a
+                class:list={["imm-product", { "is-current": `products/${prod.slug}` === page }]}
+                href={prod.href}
+                aria-current={`products/${prod.slug}` === page ? "page" : undefined}
+              >
+                <span class="imm-product-name">{prod.name}</span>
+                <span class="imm-product-pill" data-status={prod.status}>{prod.statusLabel}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
 
       {cities.length > 0 && (
         <div class="imm-section">
@@ -200,6 +227,33 @@ const p = (seg: string) => `${locale.base}/${seg ? `${seg}/` : ""}`;
     color: var(--mist-2);
     text-decoration: none;
   }
+
+  .imm-products { display: flex; flex-direction: column; }
+  .imm-product {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    min-height: 52px;
+    color: var(--white);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line);
+  }
+  .imm-product-name { font-size: var(--fs-h4, 1.0625rem); font-weight: 600; }
+  .imm-product.is-current .imm-product-name { color: var(--gold); }
+  .imm-product-pill {
+    flex: none;
+    padding: 3px 10px;
+    border-radius: var(--r-pill);
+    border: 1px solid currentColor;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--mist-2);
+    white-space: nowrap;
+  }
+  .imm-product-pill[data-status="live"] { color: var(--success); }
+  .imm-product-pill[data-status="in-development"] { color: var(--gold); }
 
   .imm-foot {
     margin-top: auto;

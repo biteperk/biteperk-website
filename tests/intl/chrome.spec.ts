@@ -2,6 +2,8 @@ import { test, expect, type Page } from "@playwright/test";
 import { INTL_NAV } from "../../src/data/intl/nav";
 import { localesForTarget, locales, pageExistsInLocale, localeFromPath } from "../../src/data/locales";
 import { intlCitiesForBase } from "../../src/data/intl/cities";
+import { PRODUCT_SLUGS } from "../../src/data/product-slugs";
+import { intlProducts } from "../../src/data/intl/products";
 
 /**
  * Device contracts for the international chrome (IntlLayout + LocalePicker).
@@ -316,6 +318,28 @@ test.describe("intl chrome — cities on a phone live in the drawer", () => {
       expect(box.height, "city chip must be a 44px touch target").toBeGreaterThanOrEqual(44);
       expect(box.x + box.width).toBeLessThanOrEqual(PHONE.width);
     }
+  });
+
+  test("every Vox edition is reachable from the drawer with its localised pill on /fr/", async ({ page }) => {
+    await page.goto("/fr/");
+    await page.locator("[data-mobile-menu-trigger]").click();
+    await settle(page, ".imm-panel");
+    const items = page.locator(".imm-product");
+    // Derived from the same registry the drawer renders from — a sixth edition
+    // must not need a test edit. Products are core pages, present on every tree.
+    await expect(items).toHaveCount(PRODUCT_SLUGS.length);
+    // The plain nav links must be untouched by the new section.
+    await expect(page.locator(".imm-link")).toHaveCount(
+      INTL_NAV.filter((item) => pageExistsInLocale(item.path, localeFromPath("/fr/"))).length,
+    );
+    for (const item of await items.all()) {
+      const box = (await item.boundingBox())!;
+      expect(box.height, "product row must be a 44px touch target").toBeGreaterThanOrEqual(44);
+      expect(box.x + box.width).toBeLessThanOrEqual(PHONE.width);
+    }
+    // Pills carry the French status text, not the English catalogue label.
+    await expect(page.locator('.imm-product[href$="/fr/products/voxtable/"] .imm-product-pill'))
+      .toHaveText(intlProducts.fr.voxtable.statusLabel);
   });
 
   test("no city section on a tree without cities", async ({ page }) => {
