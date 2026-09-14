@@ -1,24 +1,29 @@
 ---
 import Base from "@/layouts/AuBase.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import SolutionCard from "@/components/SolutionCard.astro";
+import ConversionTrust from "@/components/conversion/ConversionTrust.astro";
+import FAQ from "@/components/FAQ.astro";
 import Cta from "@/components/Cta.astro";
-import { solutions, solutionPath } from "@/data/solutions";
+import { solutions, solutionPath, HUB_FAQ } from "@/data/solutions";
 import { site, pageTitle } from "@/data/site";
-import { buildCollectionPage } from "@/data/schema";
+import { buildCollectionPage, buildFaqPage } from "@/data/schema";
 import { u } from "@/data/locales";
 import { bookDemoHref, CTA_LABELS, defaultCtaActions } from "@/data/conversion";
 
 const path = "/solutions/";
+// The verticals worth linking: live pages (live/draft status). Grouped by sector.
 const live = solutions.filter((s) => s.status === "live" || s.status === "draft");
-const hospitality = live.filter((s) => s.sector === "hospitality");
-const services = live.filter((s) => s.sector === "services");
-const enterprise = live.filter((s) => s.sector === "enterprise");
+const groups = [
+  { key: "hospitality", heading: "Hospitality", lede: "Where the phone rings mid-service and a missed call is a table gone.", items: live.filter((s) => s.sector === "hospitality") },
+  { key: "services", heading: "Services", lede: "After-hours and overflow lines that a person cannot always reach in time.", items: live.filter((s) => s.sector === "services") },
+  { key: "enterprise", heading: "Multi-site", lede: "One voice standard and central visibility across every venue you run.", items: live.filter((s) => s.sector === "enterprise") },
+].filter((g) => g.items.length > 0);
 
-const title = pageTitle("Industry solutions");
+const title = pageTitle("Solutions by industry");
 const description =
-  "AI phone automation by industry — restaurants, hotels, cafes, takeaway, drive-thru, medical, professional services, and enterprise groups.";
+  "AI phone answering by industry — restaurants, hotels, cafes, takeaway, drive-thru, medical, professional services and multi-site groups. Live in Australia.";
 
-// A listing page: CollectionPage + ItemList of the verticals (breadcrumbs via <Breadcrumbs>).
 const collectionJsonLd = buildCollectionPage({
   path,
   name: title,
@@ -26,152 +31,139 @@ const collectionJsonLd = buildCollectionPage({
   items: live.map((s) => ({ name: s.name, path: solutionPath(s.slug) })),
   inLanguage: "en-AU",
 });
-
+const faqJsonLd = buildFaqPage(HUB_FAQ, "en-AU");
 const cta = defaultCtaActions();
 ---
 
 <Base title={title} description={description} path={path} ogImage="/og/solutions/index.png">
   <Fragment slot="jsonld">
     <script is:inline type="application/ld+json" set:html={JSON.stringify(collectionJsonLd)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
   </Fragment>
 
-  <header class="sol-index-hero">
+  <header class="sol-hero">
     <div class="wrap">
-      <Breadcrumbs items={[{ label: "Home", href: u("/") }, { label: "Solutions" }]} />
-      <h1 class="sol-index-h">Solutions by industry</h1>
-      <p class="sol-index-sub">
-        People search for the job to be done — AI receptionist for restaurants, hotel phone overflow,
-        takeaway ordering — not product codenames. Start with your vertical.
+      <Breadcrumbs items={[{ label: "Home", href: u("/") }, { label: "Solutions" }]} label="Breadcrumb" />
+      <p class="sol-eyebrow">Solutions</p>
+      <h1 class="sol-h1">Built for your kind of venue.</h1>
+      <p class="sol-sub">
+        One AI phone host, framed for how your calls actually come in — bookings during
+        the dinner rush, the after-hours hotel line, takeaway at the pass. Pick your
+        vertical, or talk to us about your own.
       </p>
-      <div class="sol-index-cta">
+      <div class="sol-hero-cta">
         <a class="btn" href={bookDemoHref()} data-cta="book-demo">{CTA_LABELS.bookDemo}</a>
-        <a class="btn-ghost" href={u("/products/")}>See products</a>
+        <a class="btn-ghost" href={u("/technology/")}>See how it works</a>
       </div>
+      <ConversionTrust class="sol-hero-trust" />
     </div>
   </header>
 
-  <section class="sol-index-section">
-    <div class="wrap">
-      <h2 class="sol-index-h2">Hospitality</h2>
-      <div class="sol-index-grid">
-        {hospitality.map((s) => (
-          <a class="sol-card" href={u(`/solutions/${s.slug}/`)}>
-            <h3>{s.name}</h3>
-            <p>{s.shortDescription}</p>
-            <span class="sol-card-go">View solution →</span>
-          </a>
-        ))}
+  {groups.map((g) => (
+    <section class="sol-section">
+      <div class="wrap">
+        <div class="sol-section-head">
+          <h2>{g.heading}</h2>
+          <p>{g.lede}</p>
+        </div>
+        <div class="sol-grid">
+          {g.items.map((s) => <SolutionCard solution={s} />)}
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+  ))}
 
-  <section class="sol-index-section sol-index-band">
-    <div class="wrap">
-      <h2 class="sol-index-h2">Services</h2>
-      <div class="sol-index-grid">
-        {services.map((s) => (
-          <a class="sol-card" href={u(`/solutions/${s.slug}/`)}>
-            <h3>{s.name}</h3>
-            <p>{s.shortDescription}</p>
-            <span class="sol-card-go">View solution →</span>
-          </a>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <section class="sol-index-section">
-    <div class="wrap">
-      <h2 class="sol-index-h2">Enterprise</h2>
-      <div class="sol-index-grid">
-        {enterprise.map((s) => (
-          <a class="sol-card" href={u(`/solutions/${s.slug}/`)}>
-            <h3>{s.name}</h3>
-            <p>{s.shortDescription}</p>
-            <span class="sol-card-go">View solution →</span>
-          </a>
-        ))}
-      </div>
+  <section class="sol-faq">
+    <div class="wrap wrap-narrow">
+      <h2 class="sol-faq-h">Questions before you pick one</h2>
+      <FAQ items={HUB_FAQ} />
     </div>
   </section>
 
   <Cta
-    eyebrow="Not sure which vertical?"
+    eyebrow="Not sure where you fit?"
     headline="Book a demo and we will map your calls."
-    lede="Bring a real overflow story — dinner rush, after-hours hotel line, multi-site group — and we will put the right Vox product on the conversation."
+    lede="Bring a real overflow story — the dinner rush, an after-hours hotel line, a multi-site group — and we will put the right Vox product on the conversation."
     primary={cta.primary}
     secondary={{ label: `Call ${site.phone.display}`, href: site.phone.href }}
   />
 </Base>
 
 <style>
-  .sol-index-hero {
-    padding: clamp(120px, 16vw, 180px) 0 clamp(56px, 7vw, 88px);
+  .sol-hero {
+    padding: clamp(120px, 16vw, 180px) 0 clamp(48px, 6vw, 72px);
     border-bottom: 1px solid var(--line);
   }
-  .sol-index-h {
+  .sol-eyebrow {
     margin-top: 28px;
-    font-size: var(--fs-h2);
-    font-weight: 800;
-    letter-spacing: -0.025em;
-    color: var(--white);
-    max-width: 14ch;
+    color: var(--gold);
+    font-size: var(--fs-small);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
-  .sol-index-sub {
+  .sol-h1 {
+    margin-top: 12px;
+    font-size: var(--fs-h1);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    color: var(--white);
+    max-width: 16ch;
+  }
+  .sol-sub {
     margin-top: 20px;
-    max-width: 60ch;
+    max-width: 58ch;
     color: var(--text);
     font-size: var(--fs-lede);
     line-height: var(--lh-lede);
   }
-  .sol-index-cta {
+  .sol-hero-cta {
     margin-top: 32px;
     display: flex;
     gap: 14px;
     flex-wrap: wrap;
   }
-  .sol-index-section {
-    padding-block: var(--space-section);
+  .sol-hero-trust { margin-top: 24px; }
+
+  .sol-section {
+    padding-block: clamp(48px, 7vw, 88px);
     border-bottom: 1px solid var(--line);
   }
-  .sol-index-band {
-    background: color-mix(in srgb, var(--ink) 92%, var(--white));
-  }
-  .sol-index-h2 {
+  .sol-section-head h2 {
     font-size: var(--fs-h3);
     font-weight: 800;
+    letter-spacing: -0.02em;
     color: var(--white);
   }
-  .sol-index-grid {
+  .sol-section-head p {
+    margin-top: 8px;
+    max-width: 52ch;
+    color: var(--text);
+  }
+  .sol-grid {
     margin-top: 28px;
     display: grid;
-    gap: 16px;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-  .sol-card {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 22px;
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    text-decoration: none;
-    color: inherit;
-    min-height: 100%;
+  @media (max-width: 980px) {
+    .sol-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
-  .sol-card:hover {
-    border-color: color-mix(in srgb, var(--white) 35%, var(--line));
+  @media (max-width: 600px) {
+    .sol-grid { grid-template-columns: 1fr; }
   }
-  .sol-card h3 {
+
+  .sol-faq {
+    padding-block: clamp(48px, 7vw, 88px);
+    border-bottom: 1px solid var(--line);
+  }
+  .wrap-narrow { max-width: 760px; }
+  .sol-faq-h {
+    font-size: var(--fs-h3);
+    font-weight: 800;
+    letter-spacing: -0.02em;
     color: var(--white);
-    font-weight: 700;
-  }
-  .sol-card p {
-    color: var(--text);
-    flex: 1;
-  }
-  .sol-card-go {
-    color: var(--mist);
-    font-size: var(--fs-small);
+    margin-bottom: 24px;
   }
 </style>
