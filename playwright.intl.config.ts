@@ -44,8 +44,8 @@ export default defineConfig({
     { name: "intl-desktop", testIgnore: /a11y\.spec\.ts/, use: { ...devices["Desktop Chrome"] } },
     // Real device emulation — touch, DPR and mobile UA, not just a narrow
     // viewport. Touch-vs-hover branches only behave correctly under this.
-    { name: "intl-mobile", testIgnore: /a11y\.spec\.ts/, use: { ...devices["Pixel 7"] } },
-    { name: "intl-mobile-safari", testIgnore: /a11y\.spec\.ts/, use: { ...devices["iPhone 14"] } },
+    { name: "intl-mobile", testIgnore: /(a11y|analytics)\.spec\.ts/, use: { ...devices["Pixel 7"] } },
+    { name: "intl-mobile-safari", testIgnore: /(a11y|analytics)\.spec\.ts/, use: { ...devices["iPhone 14"] } },
     // Mirrors the `a11y` project in playwright.config.ts: one browser, both
     // themes, driven by the spec.
     //

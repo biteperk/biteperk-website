@@ -1,20 +1,24 @@
 /**
  * Cookie-consent + tracking config — the single source of truth.
  *
- * The website ships privacy-first. Google Ads uses advanced consent mode:
- * it initializes with advertising storage, user-data use and personalisation
- * denied, and may send limited cookieless measurement signals in that state.
- * Optional storage and all other marketing trackers remain opt-in.
+ * The website ships privacy-first. Analytics is self-hosted Umami: cookieless,
+ * no cross-site tracking, no personal profiles, IP addresses hashed and not
+ * stored. It qualifies for the CNIL/ICO audience-measurement exemption, so it
+ * loads for every visitor by default and is NOT gated behind consent — the
+ * Analytics category is an OPT-OUT (honoured via Umami's own `umami.disabled`
+ * localStorage switch; see src/scripts/analytics.ts). Google Ads uses advanced
+ * consent mode; all marketing trackers remain opt-in.
  *
  * Go-live checklist (one edit each):
- *   - `plausibleReady = true`  ← once the Plausible site for biteperk.com.au exists
+ *   - `UMAMI_SITES.production.websiteId`  ← the Umami website id (already set)
  *   - `googleAdsId = "AW-..."`  ← once the Google Ads account exists
  *   - `linkedInPartnerId = "1234567"`  ← once the LinkedIn ads account exists
  *   - (optional) fill platform conversion maps to fire ad conversions on goals
  *
- * `TRACKING_ARMED` is derived: while it's false NOTHING is armed, so the
- * banner does not show at all (nothing to consent to). The banner
- * auto-appears the moment the first tracker is armed.
+ * `TRACKING_ARMED` is derived from the MARKETING trackers only: while it's
+ * false NOTHING is armed that needs consent, so the banner does not show at
+ * all. Analytics never arms it (exempt, opt-out). The banner auto-appears the
+ * moment the first marketing tracker is armed.
  */
 
 /** Bump to invalidate stored choices and re-prompt everyone. */
@@ -26,8 +30,66 @@ export const CONSENT_POLICY_LAST_UPDATED = "2026-08-28";
 /** localStorage key holding the visitor's choice. Necessary, first-party. */
 export const CONSENT_KEY = "bp-consent";
 
-/** Analytics: flip true once the Plausible account is live. */
-export const plausibleReady = false;
+/**
+ * Analytics — self-hosted Umami (Postgres + Valkey) on Railway.
+ *
+ * `UMAMI_ENV` selects which Umami website receives the data so staging never
+ * pollutes production. It is read at BUILD time from the environment (guarded
+ * `globalThis.process` — undefined in the browser, where these values are
+ * never consumed) and parsed strictly, exactly like INTL_LAUNCHED:
+ *   - unset            → "production" (the safe default: CI and prod builds)
+ *   - "staging"        → the staging website (deploy-staging.yml sets this)
+ *   - "production"     → the production website
+ *   - anything else    → throws, so a typo can't silently ship prod ids to
+ *                        staging (or vice-versa).
+ *
+ * `data-domains` (ANALYTICS_HOSTS) also makes the tracker a no-op anywhere off
+ * the intended host — localhost, 127.0.0.1 (Playwright) and the wrong Firebase
+ * origin — so tests never send and staging never counts as production.
+ *
+ * To move to stats.biteperk.com later: change UMAMI_HOST here and the two CSP
+ * hosts in firebase.json (biteperk-global block), then re-run
+ * scripts/build/sync-staging-hosting.mjs. Nothing else changes.
+ */
+export const UMAMI_HOST = "https://umami-production-0b8d2.up.railway.app";
+export const UMAMI_SCRIPT_URL = `${UMAMI_HOST}/script.js`;
+
+const UMAMI_SITES = {
+  production: {
+    websiteId: "471c7ab9-3f85-40c8-8064-8b24339a0201",
+    hosts: ["biteperk.com"] as const,
+  },
+  staging: {
+    websiteId: "413bd928-5ae5-4250-9435-894741b178aa",
+    hosts: ["biteperk-staging.web.app"] as const,
+  },
+} as const;
+
+export type UmamiEnv = keyof typeof UMAMI_SITES;
+
+function parseUmamiEnv(raw: string | undefined): UmamiEnv {
+  if (raw === undefined || raw === "") return "production";
+  const v = raw.trim().toLowerCase();
+  if (v === "production" || v === "staging") return v;
+  throw new Error(
+    `UMAMI_ENV=${JSON.stringify(raw)} is not valid. ` +
+      `Use "production" or "staging", or leave it unset for the default (production).`,
+  );
+}
+
+export const UMAMI_ENV: UmamiEnv = parseUmamiEnv(
+  (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env
+    ?.UMAMI_ENV,
+);
+
+/** The Umami website id that receives this build's data. */
+export const UMAMI_WEBSITE_ID: string = UMAMI_SITES[UMAMI_ENV].websiteId;
+
+/** Hosts the tracker will report for (`data-domains`); everything else is a no-op. */
+export const ANALYTICS_HOSTS: readonly string[] = UMAMI_SITES[UMAMI_ENV].hosts;
+
+/** True once a real Umami website id is configured. Gates the head tag. */
+export const analyticsReady: boolean = /^[0-9a-f-]{36}$/.test(UMAMI_WEBSITE_ID);
 
 /** Marketing: LinkedIn Partner ID, e.g. "1234567". null = dormant. */
 export const linkedInPartnerId: string | null = null;
@@ -61,11 +123,11 @@ export const googleAdsGlobalDemoContactConversionId: string | null = googleAdsId
 /**
  * LinkedIn conversion IDs keyed by our goal name (see GOALS). Dormant
  * until both a partner ID and an entry here exist. Only the mapped goals
- * fire a conversion; the rest are Plausible-only.
+ * fire a conversion; the rest are Umami-only.
  */
 export const linkedInConversions: Partial<Record<GoalName, string>> = {
   // book_demo: "12345",
-  // submit_contact: "12346",
+  // contact_form_submitted: "12346",
 };
 
 /**
@@ -73,13 +135,13 @@ export const linkedInConversions: Partial<Record<GoalName, string>> = {
  * are dormant (not even rendered visible) until this is true, so shipping
  * before any account exists puts NO cookie notice on a tracker-free site.
  */
-export const TRACKING_ARMED = plausibleReady || linkedInPartnerId !== null || googleAdsId !== null;
+export const TRACKING_ARMED = linkedInPartnerId !== null || googleAdsId !== null;
 
 /**
- * Canonical marketing goal taxonomy. Every conversion-worthy interaction
- * maps to one of these names so Plausible Goals and LinkedIn Conversions
- * line up 1:1. The values are the `data-cta`/`bp:event` names used in
- * markup; `consent.ts`/`analytics.ts` normalise legacy names to these.
+ * Canonical goal taxonomy. Every conversion-worthy interaction maps to one of
+ * these names so Umami Events and LinkedIn Conversions line up 1:1. The values
+ * are the `data-cta`/`bp:event` names used in markup; `consent.ts`/
+ * `analytics.ts` normalise legacy names to these.
  */
 export const GOALS = {
   book_demo: "book_demo",
@@ -87,7 +149,7 @@ export const GOALS = {
   free_trial_click: "free_trial_click",
   view_pricing: "view_pricing",
   view_platform: "view_platform",
-  submit_contact: "submit_contact",
+  contact_form_submitted: "contact_form_submitted",
   outbound_voxtable: "outbound_voxtable",
   audio_demo: "audio_demo",
 } as const;
@@ -102,7 +164,7 @@ export const GOAL_ALIASES: Record<string, GoalName> = {
   "call-nav": "call_click",
   "platform-trial": "free_trial_click",
   "audio-demo": "audio_demo",
-  "form-success": "submit_contact",
+  "form-success": "contact_form_submitted",
 };
 
 export type ConsentCategory = "analytics" | "marketing";
@@ -134,7 +196,7 @@ export const categories: ReadonlyArray<{
     id: "analytics",
     title: "Analytics",
     locked: false,
-    body: "Privacy-first, cookieless analytics (Plausible) that counts page visits and which links help visitors — aggregated, no cookies, no cross-site tracking, no personal profiles.",
+    body: "Privacy-first, cookieless analytics (self-hosted Umami) that counts page visits and which links help visitors — aggregated, no cookies, no cross-site tracking, no personal profiles, IP addresses hashed and never stored. It needs no consent under audience-measurement rules, so it is on by default; switch it off here and it stops immediately.",
   },
   {
     id: "marketing",

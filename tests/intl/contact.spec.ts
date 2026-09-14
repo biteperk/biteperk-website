@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "../helpers/fixtures";
 import { googleAdsGlobalDemoContactConversionId } from "../../src/data/consent";
 
 /**
@@ -40,9 +40,16 @@ for (const { base, venue, success } of LOCALES) {
       const w = window as unknown as {
         __gtagCalls: unknown[][];
         gtag: (...args: unknown[]) => void;
+        __umami: unknown[][];
       };
       w.__gtagCalls = [];
       w.gtag = (...args: unknown[]) => w.__gtagCalls.push(args);
+      // Fake Umami so we can assert the goal fires on this locale too.
+      w.__umami = [];
+      (window as unknown as { umami: { track: (n: string) => void; identify: () => void } }).umami = {
+        track: (n: string) => w.__umami.push([n]),
+        identify: () => {},
+      };
     });
 
     page.on("request", (request) => {
@@ -93,6 +100,10 @@ for (const { base, venue, success } of LOCALES) {
     });
     expect(submittedBody).not.toHaveProperty("g-recaptcha-response");
     expect(recaptchaRequests).toEqual([]);
+
+    // The confirmed submission fires exactly one Umami goal on every locale.
+    const umamiEvents = await page.evaluate(() => (window as unknown as { __umami: unknown[][] }).__umami);
+    expect(umamiEvents).toEqual([["contact_form_submitted"]]);
 
     const conversions = await page.evaluate(() => {
       const calls = (window as unknown as { __gtagCalls: unknown[][] }).__gtagCalls;

@@ -1,4 +1,4 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect, type Page } from "../helpers/fixtures";
 import AxeBuilder from "@axe-core/playwright";
 import { localesForTarget, pagesForLocale } from "../../src/data/locales";
 import { intlCityPaths } from "../../src/data/intl/cities";

@@ -1,4 +1,5 @@
-import { test, expect, type Browser, type Page } from "@playwright/test";
+import { test, expect, type Browser, type Page } from "../helpers/fixtures";
+import { UMAMI_SCRIPT_URL } from "../../src/data/consent";
 
 /**
  * Locale suggestion chip (LocaleSuggest.astro + scripts/locale-suggest.ts).
@@ -16,6 +17,12 @@ import { test, expect, type Browser, type Page } from "@playwright/test";
 
 async function pageWithLanguages(browser: Browser, languages: string[]): Promise<Page> {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  // These pages are built from a raw browser context, so they bypass the
+  // shared fixture that stubs the tracker — stub it here too, or `networkidle`
+  // waits on the real Railway request.
+  await ctx.route(UMAMI_SCRIPT_URL, (route) =>
+    route.fulfill({ status: 200, contentType: "application/javascript", body: "" }),
+  );
   await ctx.addInitScript((langs) => {
     Object.defineProperty(navigator, "languages", { get: () => langs });
     Object.defineProperty(navigator, "language", { get: () => langs[0] });
