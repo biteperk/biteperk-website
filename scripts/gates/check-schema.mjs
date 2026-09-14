@@ -266,7 +266,7 @@ if (TARGET === "global") {
       ["index.html", ["Organization", "WebSite", "FAQPage"]],
       ["products/index.html", ["BreadcrumbList", "FAQPage", "SoftwareApplication"]],
       ...PRODUCT_SLUGS.map((s) => [`products/${s}/index.html`, ["BreadcrumbList", "SoftwareApplication"]]),
-      ["solutions/index.html", ["BreadcrumbList", "CollectionPage", "ItemList"]],
+      ["solutions/index.html", ["BreadcrumbList", "CollectionPage", "ItemList", "FAQPage"]],
       ...renderableSolutions().map((s) => [`solutions/${s.slug}/index.html`, ["BreadcrumbList", "WebPage", "FAQPage"]]),
       ...publishedCities.map((c) => [`${c.slug}/index.html`, ["BreadcrumbList", "Service", "FAQPage"]]),
       ["resources/index.html", ["BreadcrumbList", "CollectionPage", "ItemList"]],

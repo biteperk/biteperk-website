@@ -36,7 +36,7 @@ function bodyWords(page) {
 }
 
 describe("solutions registry", async () => {
-  const { solutions, SOLUTION_SLUGS, renderableSolutions, RENDERABLE_SOLUTION_SLUGS, liveSolutions } = await ts("src/data/solutions.ts");
+  const { solutions, SOLUTION_SLUGS, renderableSolutions, RENDERABLE_SOLUTION_SLUGS, liveSolutions, HUB_FAQ } = await ts("src/data/solutions.ts");
   const { getProduct } = await ts("src/data/products.ts");
   const { PRODUCT_SLUGS } = await ts("src/data/product-slugs.ts");
 
@@ -73,6 +73,15 @@ describe("solutions registry", async () => {
   it("the route predicate and the nav predicate agree with the registry", () => {
     assert.deepEqual(RENDERABLE_SOLUTION_SLUGS, renderableSolutions().map((s) => s.slug));
     for (const s of liveSolutions()) assert.ok(RENDERABLE_SOLUTION_SLUGS.includes(s.slug), `${s.slug} is live but not renderable`);
+  });
+
+  it("HUB_FAQ is a real, truthful hub FAQ", () => {
+    assert.ok(HUB_FAQ.length >= 3, "hub needs at least three Q/A");
+    for (const item of HUB_FAQ) {
+      assert.ok(words(item.q) >= 3 && item.q.trim().endsWith("?"), `bad hub question: ${item.q}`);
+      assert.ok(words(item.a) >= 12, `hub answer too short: ${item.q}`);
+      assert.doesNotMatch(`${item.q} ${item.a}`, /\$\d|\bper month\b|\bcertifi/i, `hub FAQ makes a price/cert claim: ${item.q}`);
+    }
   });
 });
 

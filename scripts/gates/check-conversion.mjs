@@ -50,7 +50,7 @@ const { site } = await loadTS(join(ROOT, "src/data/site.ts"));
 
 const populated = populatedResourceTypes();
 const pages = [
-  { path: "solutions", faq: false, solution: null },
+  { path: "solutions", faq: true, solution: null },
   ...renderableSolutions().map((s) => ({ path: `solutions/${s.slug}`, faq: true, solution: s })),
   { path: "products", faq: true, solution: null },
   // A FAQ is required on LIVE product pages. In-development / concept pages
