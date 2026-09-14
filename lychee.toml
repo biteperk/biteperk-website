@@ -6,8 +6,10 @@ no_progress = true
 # The product app / legacy subdomains and the form backend are not part of the marketing tree.
 exclude = [
   # Form actions are Firebase Hosting rewrites to the Cloud Function, not files in the tree.
-  '/api/(contact|event)$',
+  '/api/contact$',
   '^https://((voco|vox)table\.biteperk|formspree)',
+  # Self-hosted Umami analytics tracker (Railway) — external, report-only; keep it quiet.
+  '^https://umami-production-[a-z0-9]+\.up\.railway\.app',
   # Social hosts bot-block CI runners (LinkedIn 999, Instagram 403).
   '^https://(www\.)?(linkedin|instagram|facebook|youtube)\.com',
 ]

@@ -1,4 +1,4 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect, type Page } from "../helpers/fixtures";
 import { INTL_NAV } from "../../src/data/intl/nav";
 import { localesForTarget, locales, pageExistsInLocale, localeFromPath } from "../../src/data/locales";
 import { intlCitiesForBase } from "../../src/data/intl/cities";
