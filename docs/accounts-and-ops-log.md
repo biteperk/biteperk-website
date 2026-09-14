@@ -10,6 +10,45 @@ existing records*), so "after = before + this entry" always holds.
 
 ---
 
+## 2026-09-14 — Self-hosted Umami analytics (replaces Plausible)
+
+Replaced the dormant Plausible proxy path with a self-hosted **Umami** stack, to
+remove a monthly SaaS cost while staying cookieless and privacy-first.
+
+**Infrastructure (Railway):**
+- Railway project **`motivated-enthusiasm`** (project id `d58761bd-8e6d-4f18-9635-4758c08e5b8c`),
+  environment `production`. Three services: `umami` (image `umamisoftware/umami:postgresql-latest`),
+  `Postgres` (`ghcr.io/railwayapp-templates/postgres-ssl:16`, `postgres-volume`),
+  `Valkey` (`valkey/valkey:latest`, `valkey-volume`). Railway default region (US).
+- Public tracker origin: `https://umami-production-0b8d2.up.railway.app` (`/script.js`,
+  `/api/send`). Custom domain `stats.biteperk.com` is a **future** option (one constant +
+  one CSP line); not set up yet.
+- Two Umami **websites** (dashboard → Settings → Websites):
+  - `BitePerk` — domain `biteperk.com`, website id `471c7ab9-3f85-40c8-8064-8b24339a0201` (production).
+  - `BitePerk staging` — domain `biteperk-staging.web.app`, website id `413bd928-5ae5-4250-9435-894741b178aa`.
+- Admin account is `admin`. **TODO (Sam):** confirm the admin password is not the default,
+  enable Postgres volume backups, and set `DISABLE_TELEMETRY=1`.
+
+**Privacy decision:** Umami is cookieless, sets nothing on the device, stores no personal
+data and hashes IPs. It qualifies for the CNIL/ICO audience-measurement exemption, so it
+loads for **every** visitor by default; the consent banner's Analytics toggle is an
+**opt-out** (honoured via `localStorage["umami.disabled"]`, applied pre-paint). Analytics
+no longer arms `TRACKING_ARMED` — only marketing trackers do.
+
+**In-repo (PR #101, #102):** config SSOT `src/data/consent.ts` (`UMAMI_*`, `UMAMI_ENV`);
+tracker tag in `Base.astro` (per-locale `data-tag`); `analytics.ts` rewritten as a Umami
+bridge (fires `contact_form_submitted` on contact success, all trees); `env.d.ts`
+(`window.umami`); CSP host added to `firebase.json` (`script-src`+`connect-src`); the
+`analyticsEvent` Cloud Function and `/api/event` rewrite removed; `check-analytics` gate;
+`deploy-staging.yml` sets `UMAMI_ENV=staging`. Staging verified end-to-end
+(pageviews + a custom event landed in the `BitePerk staging` website; production untouched).
+
+**Security follow-up (Sam):** the Railway account token and an OAuth client secret were
+pasted into a chat during setup — rotate both (Railway → Account → Tokens; Workspace →
+Settings → Developer → Client Secrets).
+
+---
+
 ## 2026-09-14 — Production release v2.1.0 (Phase 1 live) + Search Console sitemap resubmit
 
 First production deploy of the full **Phase 1** site, promoting `integration` → `main`.

@@ -123,11 +123,11 @@ export const googleAdsGlobalDemoContactConversionId: string | null = googleAdsId
 /**
  * LinkedIn conversion IDs keyed by our goal name (see GOALS). Dormant
  * until both a partner ID and an entry here exist. Only the mapped goals
- * fire a conversion; the rest are Plausible-only.
+ * fire a conversion; the rest are Umami-only.
  */
 export const linkedInConversions: Partial<Record<GoalName, string>> = {
   // book_demo: "12345",
-  // submit_contact: "12346",
+  // contact_form_submitted: "12346",
 };
 
 /**
