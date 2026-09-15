@@ -10,6 +10,27 @@ existing records*), so "after = before + this entry" always holds.
 
 ---
 
+## 2026-09-15 — Ludovic's French pass on the 15 Sep batch lands (verbal)
+
+Sam notified Ludovic and he **reviewed and passed everything** in the 15 Sep review
+batch, **no corrections**. The batch (`docs/ops-records/2026-09-15-french-review-ludovic.md`,
+31 rows) re-sent the not-yet-passed 13 Sep set plus one added string —
+`chrome.languageRegion` ("Langue et région"), the MobileDrawer "Language & region" row
+label from the unified mobile chrome work. On the pass landing, the `DRAFT`/"NOT yet
+reviewed" flags on the covered strings were dropped in `src/data/intl/copy.ts`
+(chrome `a11y` + `languageRegion` + contact-form `runtime` + city `Service` block) and
+`src/data/intl/markets.ts` (`/fr` and `/be-fr` `cityPage` anchoring). Carried by PR #111.
+
+As with the 7 Sep and 13 Sep passes, this was **verbal** — no email backs it. Standing
+rule unchanged: French written **after 15 Sep 2026** needs its own native pass.
+
+**Still unreviewed (a gap this batch surfaced):** French flagged "next Ludovic batch"
+that never made it into a cluster of the review document — `TrustFactsCopy` fr
+`authorityLabel`/`authorityBody`/`teamLabel` (`copy.ts`), and all of `intl/solutions.ts`
+and `intl/resources.ts`. These were **not** in what Ludovic saw, so they remain
+unreviewed and must go in the next batch (add to `CLUSTERS` in `extract-fr-review.mjs`,
+regenerate, send) before they are prospect-facing.
+
 ## 2026-09-15 — Git history rewritten to remove AI co-author attribution
 
 GitHub listed a `claude` account under **Contributors** because ~324 commits on `main`

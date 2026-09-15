@@ -447,9 +447,9 @@ export const chrome: Record<Lang, ChromeCopy> = {
     cookies: "Cookies",
     cookieSettings: "Paramètres des cookies",
     regionTitle: "Choisissez votre région",
-    // French written for the unified mobile chrome (MobileDrawer row label) —
-    // NOT yet reviewed; goes in the next Ludovic batch (extract-fr-review.mjs
-    // cluster 1). Standard French, matches Airbnb/Google usage.
+    // French DISCHARGED — Ludovic verbal pass 15 Sep 2026 (the 15 Sep batch,
+    // docs/ops-records/2026-09-15-french-review-ludovic.md, cluster 1). The
+    // MobileDrawer row label; standard French, matches Airbnb/Google usage.
     languageRegion: "Langue et région",
     // French DISCHARGED — verbal pass from Ludovic, confirmed by Sam 7 Sep 2026;
     // see this file's header. footerExplore and footerRegions render on /fr and
@@ -474,8 +474,8 @@ export const chrome: Record<Lang, ChromeCopy> = {
     suggestDismiss: "Fermer",
     email: "sales@biteperk.com",
     rights: "Tous droits réservés.",
-    // French written 13 Sep 2026 — NOT yet reviewed; next Ludovic batch
-    // (extract-fr-review.mjs --since lists every key below).
+    // French DISCHARGED — Ludovic verbal pass 15 Sep 2026 (the 15 Sep batch,
+    // docs/ops-records/2026-09-15-french-review-ludovic.md, cluster 1).
     a11y: {
       skipToContent: "Aller au contenu",
       brandHome: "Accueil BitePerk",
@@ -1056,8 +1056,8 @@ export const contact: Record<Lang, ContactCopy> = {
       messagePlaceholder: "Couverts, adresses, à quoi ressemble le téléphone un soir de service…",
       submit: "Demander un pilote",
       note: "Pas de grille tarifaire à ce stade — les conditions commerciales sont convenues par pilote. Réponse sous un jour ouvré.",
-      // French written 13 Sep 2026 — NOT yet reviewed. Goes in the next
-      // Ludovic batch (extract-fr-review.mjs --since lists it).
+      // French DISCHARGED — Ludovic verbal pass 15 Sep 2026 (the 15 Sep batch,
+      // docs/ops-records/2026-09-15-french-review-ludovic.md, cluster 2).
       runtime: {
         sending: "Envoi…",
         successTitle: "Merci — nous revenons vers vous.",
@@ -1389,7 +1389,8 @@ export const cityPage: Record<Lang, CityPageCopy> = {
     closingHeading: "Mettez Vox sur une ligne à {city}",
     closingBody:
       "Décrivez-nous un service chargé dans votre établissement et nous vous montrerons Vox au téléphone sur un appel semblable — en direct, avant tout engagement.",
-    // French written 13 Sep 2026 — NOT yet reviewed; next Ludovic batch.
+    // French DISCHARGED — Ludovic verbal pass 15 Sep 2026 (the 15 Sep batch,
+    // docs/ops-records/2026-09-15-french-review-ludovic.md, cluster 3).
     serviceName: "Hôte téléphonique IA pour les restaurants de {city}",
     serviceAltName: "Réceptionniste IA pour les restaurants de {city}",
     serviceTypes: ["Réponse téléphonique IA et prise de réservations", "Réceptionniste IA pour restaurants"],

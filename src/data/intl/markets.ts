@@ -607,7 +607,8 @@ const frFr: MarketContent = {
   copy: {
     // City-page furniture anchored to France — the FR core says "ailleurs",
     // which reads placeless next to the UK tree's "Elsewhere in the UK".
-    // French written 13 Sep 2026 — NOT yet reviewed; next Ludovic batch.
+    // French DISCHARGED — Ludovic verbal pass 15 Sep 2026 (the 15 Sep batch,
+    // docs/ops-records/2026-09-15-french-review-ludovic.md, cluster 4).
     cityPage: {
       districtsNote:
         "Votre quartier n'y figure pas ? Le programme pilote ne s'arrête pas à un code postal — un établissement situé n'importe où en France fonctionne exactement de la même manière.",
@@ -1031,8 +1032,9 @@ const beFr: MarketContent = {
         { role: "bella", text: "C'est noté, Okafor : trois couverts à 20 h 15. Si vous préférez parler à quelqu'un, je peux vous passer l'équipe à tout moment. Vous recevez une confirmation." },
       ],
     },
-    // Same anchoring as be-en's override, in French. Written 13 Sep 2026 —
-    // NOT yet reviewed; next Ludovic batch.
+    // Same anchoring as be-en's override, in French. DISCHARGED — Ludovic
+    // verbal pass 15 Sep 2026 (the 15 Sep batch,
+    // docs/ops-records/2026-09-15-french-review-ludovic.md, cluster 4).
     cityPage: {
       districtsNote:
         "Votre quartier n'y figure pas ? Le programme pilote ne se dessine pas sur une carte — un établissement situé n'importe où en Belgique fonctionne exactement de la même manière.",
