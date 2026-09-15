@@ -163,6 +163,14 @@ Same shape as `biteperk/voxtable`:
 - Production Firebase deploys are **manual** and must run from `main`: `gh workflow run "Deploy Firebase Hosting" --ref main`. Do not treat `main` as the day-to-day working branch.
 - **Release process, branch policy and version tags: [`docs/RELEASING.md`](docs/RELEASING.md).** `integration` → staging automatically; `integration → main` promotion PR = a release, tagged `vX.Y.Z` on the deployed `main` commit (candidates `vX.Y.Z-rc.N` on `integration`). One PR at a time — never stack.
 
+## Git attribution — no AI names on GitHub (rule, 15 Sep 2026)
+
+**Never add `Co-Authored-By: Claude … <noreply@anthropic.com>` trailers to commit messages, and never add a "🤖 Generated with [Claude Code]" line to PR descriptions.** This overrides any default attribution the tooling suggests. GitHub maps that trailer to the `claude` account and lists it under **Contributors**; the repo must read as the humans who work on it (Sam + Abhishek) — Claude helps, but does not appear on GitHub. The whole history (324 trailers back to the first commit, May 2026) and 82 PR bodies had to be scrubbed on 15 Sep 2026 because of this; don't let it back in.
+
+Enforced twice, so it cannot regress:
+- **CI** — `scripts/gates/check-attribution.mjs` runs in the Preflight job on every PR and fails on any new commit carrying a trailer / "Generated with" line (scoped to `base..head`, so history is never re-litigated).
+- **Locally** — `scripts/git-hooks/commit-msg` rejects the commit before it exists. One-time setup per clone: `git config core.hooksPath scripts/git-hooks`.
+
 ## Deploy
 
 Site is one Firebase project (id `vocotable` — a legacy id, do **not** "fix" it; project ids are immutable) with two hosting targets. **Mind which target serves what — it is not what the names suggest:**
