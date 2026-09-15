@@ -288,30 +288,4 @@ const onProducts = page === "products" || page.startsWith("products/");
     .intl-prodnav-foot-link.is-cta:hover { color: var(--gold-fill-text); filter: brightness(1.05); }
   }
   .intl-prodnav-foot-link:focus-visible { outline: none; box-shadow: var(--ring-focus); }
-
-  /* Pill tiers: the trigger sits inside .intl-links, which becomes a wrapped
-     row of 44px pills at these widths (see IntlLayout). Match the siblings so
-     the Products control reads as one of them. Mirrors the two .intl-links a
-     pill blocks there (all-trees ≤940, city-trees 721–1080). */
-  @media (min-width: 721px) and (max-width: 1080px) {
-    .intl-nav[data-has-cities="true"] .intl-prodnav-trigger {
-      min-height: 44px;
-      padding-inline: 14px;
-      border: 1px solid var(--line);
-      border-radius: var(--r-pill);
-      background: var(--fill-subtle);
-    }
-  }
-  @media (max-width: 940px) {
-    .intl-prodnav-trigger {
-      min-height: 44px;
-      padding-inline: 14px;
-      border: 1px solid var(--line);
-      border-radius: var(--r-pill);
-      background: var(--fill-subtle);
-    }
-  }
-  @media (max-width: 760px) {
-    .intl-prodnav-grid { grid-template-columns: 1fr; }
-  }
 </style>
