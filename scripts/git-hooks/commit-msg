@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+# commit-msg hook — blocks AI attribution before a commit is even created.
+#
+# Rule (Sam, 15 Sep 2026): the repo's history must read as the humans who work
+# on it. No `Co-Authored-By: … <noreply@anthropic.com>` trailers, no
+# "Generated with …" lines. GitHub turns such a trailer into a listed
+# Contributor, which is what this prevents. CI enforces the same rule on every
+# PR (scripts/gates/check-attribution.mjs); this hook just catches it earlier.
+#
+# One-time setup per clone:
+#   git config core.hooksPath scripts/git-hooks
+if grep -qiE 'co-authored-by:.*(claude|anthropic)|noreply@anthropic\.com|generated with \[?claude|claude code' "$1"; then
+  echo "commit-msg: AI attribution is not allowed in this repo — remove the Co-Authored-By / 'Generated with' line (see CLAUDE.md § Git attribution)." >&2
+  exit 1
+fi

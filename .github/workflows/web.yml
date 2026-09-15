@@ -74,6 +74,20 @@ jobs:
       - name: Install
         run: npm ci
 
+      # No AI attribution in commit messages — the history must read as the
+      # humans who work on it (CLAUDE.md § Git attribution). GitHub turns a
+      # `Co-Authored-By: … <noreply@anthropic.com>` trailer into a listed
+      # Contributor, which is what this blocks. Judges only the PR's NEW
+      # commits (base..head), so history is never re-litigated. The local
+      # scripts/git-hooks/commit-msg catches it earlier; this is the one that
+      # cannot be skipped.
+      - name: Attribution gate (no AI co-author trailers)
+        if: github.event_name == 'pull_request'
+        run: |
+          git fetch --no-tags --prune --unshallow origin 2>/dev/null || git fetch --no-tags --prune origin
+          git fetch --no-tags origin "${{ github.base_ref }}"
+          ATTRIBUTION_RANGE="origin/${{ github.base_ref }}..HEAD" node scripts/gates/check-attribution.mjs
+
       - name: Type-check
         run: npm run check
 
