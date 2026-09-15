@@ -95,8 +95,6 @@ export type ChromeCopy = {
   /** Compact-chrome burger trigger + close (shared MobileBar/MobileDrawer). */
   menu: string;
   menuClose: string;
-  /** Drawer row that opens the region/language sheet (shared MobileDrawer). */
-  languageRegion: string;
   /** Locale-suggestion chip: shown in the TARGET locale's language. */
   suggest: string;
   suggestDismiss: string;
@@ -386,7 +384,6 @@ export const chrome: Record<Lang, ChromeCopy> = {
     footerFollow: "Follow us",
     menu: "Menu",
     menuClose: "Close menu",
-    languageRegion: "Language & region",
     suggest: "There's a BitePerk site for your region.",
     suggestDismiss: "Dismiss",
     // International correspondence lives on @biteperk.com (CLAUDE.md, sender
@@ -473,7 +470,6 @@ export const chrome: Record<Lang, ChromeCopy> = {
     // chrome.menu is in FR_SHARED_WITH_EN.
     menu: "Menu",
     menuClose: "Fermer le menu",
-    languageRegion: "Langue et région",
     suggest: "Un site BitePerk existe pour votre région.",
     suggestDismiss: "Fermer",
     email: "sales@biteperk.com",
