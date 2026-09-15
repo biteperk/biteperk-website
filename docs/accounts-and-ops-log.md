@@ -10,6 +10,37 @@ existing records*), so "after = before + this entry" always holds.
 
 ---
 
+## 2026-09-15 — Git history rewritten to remove AI co-author attribution
+
+GitHub listed a `claude` account under **Contributors** because ~324 commits on `main`
+(277 on `integration`), back to the first commit (May 2026), carried a
+`Co-Authored-By: … <noreply@anthropic.com>` trailer, and squash commits carried a
+"Generated with …" line. The whole history was rewritten to strip those lines so the
+repo reads as its two humans (Sam + Abhishek).
+
+**What changed:** commit and lightweight-tag messages only — the attribution lines were
+removed. **File contents, authors, committers and dates are byte-identical** (verified:
+every tree hash at both branch tips and all 5 tags matched the pre-rewrite backup; the
+author/committer/date and subject digests were unchanged). Because messages changed,
+**every commit SHA changed** — SHAs cited in earlier entries of this log (e.g. the
+v2.1.0/v2.2.0 release commits) refer to the pre-rewrite history and no longer resolve.
+
+**How:** `git filter-repo --message-callback` on a fresh bare clone; force-pushed `main`
+(via admin ruleset bypass) and `integration` (its ruleset `22972708` was set
+`enforcement: disabled` for the push, then restored to `active` and diff-verified). The
+5 release tags were force-updated; all 4 GitHub Releases stayed attached to their tag
+names. A full backup of the pre-rewrite history was kept at `~/biteperk-scrub/backup.git`
+until the result was confirmed.
+
+**Not covered (unavoidable):** each merged PR's "Commits" tab keeps its original old-SHA
+commits (GitHub `refs/pull/*` are immutable), so the old text survives only in those
+per-PR views. The 82 PR **descriptions** were separately scrubbed via `gh pr edit`.
+
+**Prevention (already live, PR #107):** `scripts/gates/check-attribution.mjs` (CI
+Preflight) and `scripts/git-hooks/commit-msg` reject any new commit/PR carrying the
+trailer or line; the rule is in CLAUDE.md § Git attribution. Collaborators reset their
+clones to the rewritten history (`git fetch --prune && git reset --hard`).
+
 ## 2026-09-14 — Self-hosted Umami analytics (replaces Plausible)
 
 Replaced the dormant Plausible proxy path with a self-hosted **Umami** stack, to
