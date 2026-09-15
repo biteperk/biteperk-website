@@ -47,7 +47,6 @@ const ALLOW = {
   "src/components/intl/CityNav.astro": [],
   "src/components/intl/IntlProductNav.astro": [],
   "src/styles/megamenu.css": [720],
-  "src/components/MobileMenu.astro": [768],
 };
 
 function mediaWidths(src) {
