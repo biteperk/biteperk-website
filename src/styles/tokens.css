@@ -93,12 +93,22 @@
   --dur-slow:   600ms;
   --dur-reveal: 800ms;
 
-  /* ── Layered z-index scale ───────────────────────────────────── */
-  /* Nav heights — the bar compresses slightly once scrolled. */
+  /* ── Nav & bar heights ───────────────────────────────────────── */
+  /* The desktop bar compresses slightly once scrolled. */
   --nav-h: 76px;
   --nav-h-scrolled: 68px;
   --nav-h-mobile: 68px;
+  /* Shared compact chrome (MobileBar) — the one bar height for phones AND
+     tablets on both trees, ≤ COMPACT_MAX (src/data/chrome.ts). Kept in sync
+     with BAR_H_COMPACT there by tests/unit/chrome-breakpoints.test.mjs. */
+  --bar-h-compact: 56px;
 
+  /* ── Layered z-index scale ───────────────────────────────────── */
+  /* nav 50  <  dropdown 60  <  overlay 80 (consent bar, LocaleSuggest, the
+     picker/city-nav scrims)  <  picker sheet 81 (calc(--z-overlay + 1))  <
+     modal 100 (the mobile drawer, the consent modal). The drawer and the
+     picker sheet never coexist — the drawer's "Language & region" row closes
+     the drawer before opening the sheet. */
   --z-nav: 50;
   --z-dropdown: 60;
   --z-overlay: 80;
