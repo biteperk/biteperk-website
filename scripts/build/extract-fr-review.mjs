@@ -40,7 +40,7 @@ const INTL = (f) => resolve(ROOT, "src/data/intl", f);
 
 export const META = {
   preparedFor: "Ludovic",
-  date: "13 September 2026",
+  date: "15 September 2026",
   requestedBy: "Sam Kalaliya",
   /** The pass that this batch is measured against — everything written since. */
   sincePass: "7 September 2026",
@@ -55,12 +55,19 @@ export const META = {
  * than language-scoped: there is no EN counterpart to pair against, so the
  * English column is a hand-written gloss and only the French is read live.
  *
- * ── The 13 Sep 2026 batch ────────────────────────────────────────────────────
- * Everything French written between Ludovic's 7 Sep verbal pass and 13 Sep,
- * found with `--since origin/main` rather than from memory: the accessible
- * names that were hardcoded English on every French page, the 404 page, the
- * Organization description, the contact form's runtime strings, the city
- * Service JSON-LD strings, and the France/Belgium city-page anchoring lines.
+ * ── The 15 Sep 2026 batch ────────────────────────────────────────────────────
+ * The 13 Sep batch (below) had not yet been passed when the unified mobile
+ * chrome work added one more French chrome string — `chrome.languageRegion`
+ * ("Langue et région"), the MobileDrawer row label that opens the region-picker
+ * sheet. It joins cluster 1, the date moves to 15 Sep, and the doc is re-sent as
+ * one batch; the 13 Sep file stays as filed evidence (it was sent).
+ *
+ * The batch is everything French written between Ludovic's 7 Sep verbal pass and
+ * now, found with `--since origin/main` rather than from memory: the accessible
+ * names that were hardcoded English on every French page, the MobileDrawer
+ * "Language & region" label, the 404 page, the Organization description, the
+ * contact form's runtime strings, the city Service JSON-LD strings, and the
+ * France/Belgium city-page anchoring lines.
  * The French city TITLES (eleven, "Répondeur" → "Hôte téléphonique IA") and two
  * Brussels lines live in intl/cities.ts and are reviewed through
  * extract-city-fr-review.mjs — see docs/ops-records/2026-09-13-french-review-
@@ -80,6 +87,7 @@ export const CLUSTERS = [
       "a11y.skipToContent", "a11y.brandHome", "a11y.siteNav", "a11y.breadcrumb",
       "a11y.closeCities", "a11y.regionCurrent", "a11y.closeRegion",
       "a11y.themeToggle", "a11y.themeToLight", "a11y.themeToDark",
+      "languageRegion",
       "orgDescription",
       "notFound.eyebrow", "notFound.title", "notFound.body", "notFound.home", "notFound.contact",
     ],

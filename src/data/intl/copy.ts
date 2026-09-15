@@ -71,6 +71,10 @@ export type ChromeCopy = {
   cookieSettings: string;
   /** Region picker menu heading. */
   regionTitle: string;
+  /** "Language & region" row label in the shared MobileDrawer (≤720px), the row
+      that opens the region-picker sheet. A visible label, not an accessible name,
+      so it lives here rather than in a11y. */
+  languageRegion: string;
   /** Cities nav trigger label + footer Cities column title. Renders only on
       trees with published cities (gb-en today). */
   cities: string;
@@ -370,6 +374,7 @@ export const chrome: Record<Lang, ChromeCopy> = {
     cookies: "Cookies",
     cookieSettings: "Cookie settings",
     regionTitle: "Choose your region",
+    languageRegion: "Language & region",
     cities: "Cities",
     citiesTitle: "Choose a city",
     footerExplore: "Explore",
@@ -442,6 +447,10 @@ export const chrome: Record<Lang, ChromeCopy> = {
     cookies: "Cookies",
     cookieSettings: "Paramètres des cookies",
     regionTitle: "Choisissez votre région",
+    // French written for the unified mobile chrome (MobileDrawer row label) —
+    // NOT yet reviewed; goes in the next Ludovic batch (extract-fr-review.mjs
+    // cluster 1). Standard French, matches Airbnb/Google usage.
+    languageRegion: "Langue et région",
     // French DISCHARGED — verbal pass from Ludovic, confirmed by Sam 7 Sep 2026;
     // see this file's header. footerExplore and footerRegions render on /fr and
     // /be-fr immediately; cities/citiesTitle stay dormant until a French city
