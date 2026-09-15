@@ -45,7 +45,7 @@ const candidates = localesForTarget("global").map((l) => {
 });
 ---
 
-<div class="ls" id="locale-suggest" data-locale-suggest data-current={current.base} hidden>
+<div class="ls" id="locale-suggest" data-locale-suggest data-current={current.base} data-current-codes={current.hreflang.join(",")} hidden>
   <p class="ls-text" data-ls-text></p>
   <a class="ls-go" data-ls-go href={`${current.base}/`}>
     <span class="ls-chip" data-ls-chip aria-hidden="true"></span>
@@ -93,6 +93,12 @@ const candidates = localesForTarget("global").map((l) => {
      (caught on a real iPhone, where both are bottom sheets). The picker is the
      deliberate action, so it wins — the offer steps aside while it's open. */
   :global(html:has([data-locale-picker][open])) .ls { display: none; }
+  /* And never stack under the consent bar or an open drawer — both own the
+     bottom of the screen. Keyed on the element actually showing (its `hidden`
+     is toggled by the consent/menu scripts), not on a consent-state attribute,
+     which would suppress the offer for the whole pre-consent life of the page. */
+  :global(html:has([data-consent-bar]:not([hidden]))) .ls { display: none; }
+  :global(html:has([data-mobile-menu]:not([hidden]))) .ls { display: none; }
   @media (prefers-reduced-motion: no-preference) {
     .ls { animation: ls-in 220ms var(--ease-soft) backwards; }
   }

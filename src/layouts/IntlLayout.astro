@@ -19,7 +19,6 @@ import LocalePicker from "@/components/LocalePicker.astro";
 import ThemeToggle from "@/components/ThemeToggle.astro";
 import StarMark from "@/components/StarMark.astro";
 import SocialLinks from "@/components/SocialLinks.astro";
-import LocaleSuggest from "@/components/LocaleSuggest.astro";
 import CityNav from "@/components/intl/CityNav.astro";
 import IntlProductNav from "@/components/intl/IntlProductNav.astro";
 import MobileBar from "@/components/chrome/MobileBar.astro";
@@ -350,9 +349,6 @@ const isUk = locale.market === "gb";
       </div>
     </footer>
 
-    {/* Offers the visitor's own market if they landed on another one. Never
-        redirects; see the component + scripts/locale-suggest.ts. */}
-    <LocaleSuggest />
   </div>
 </Base>
 
