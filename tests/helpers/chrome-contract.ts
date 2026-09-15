@@ -22,10 +22,25 @@ async function overflow(page: Page): Promise<number> {
 }
 
 async function settle(page: Page, selector: string): Promise<void> {
+  // Wait for entrance/exit animations to finish, but NEVER hang: on WebKit a
+  // cancelled transition's `finished` promise can reject or never settle (the
+  // drawer's close transition is cancelled when the panel is hidden), which
+  // aborted the evaluate at the test timeout. Swallow per-animation rejections
+  // and cap the wait; the assertions that follow (toBeVisible / toBeHidden /
+  // toBeFocused) do the real waiting.
   await page
     .locator(selector)
     .first()
-    .evaluate((el) => Promise.all(el.getAnimations({ subtree: true }).map((a) => a.finished)));
+    .evaluate(
+      (el) =>
+        Promise.race([
+          Promise.all(
+            el.getAnimations({ subtree: true }).map((a) => a.finished.catch(() => {})),
+          ),
+          new Promise((r) => setTimeout(r, 1500)),
+        ]),
+    )
+    .catch(() => {});
 }
 
 export interface ChromeContractOpts {
@@ -90,12 +105,17 @@ export function registerChromeContract(opts: ChromeContractOpts): void {
       const burger = page.locator("[data-mobile-menu-trigger]");
       const panel = page.locator("[data-mobile-menu]");
       await burger.click();
-      await settle(page, "[data-mobile-menu] .mdrawer-panel");
       await expect(panel).toBeVisible();
       await expect(burger).toHaveAttribute("aria-expanded", "true");
-      // Panel is fully within the viewport (no off-screen right edge).
-      const box = await panel.locator(".mdrawer-panel").boundingBox();
-      expect(box!.x + box!.width).toBeLessThanOrEqual(390 + 1);
+      await settle(page, "[data-mobile-menu] .mdrawer-panel");
+      // Panel is fully within the viewport once it has slid in (poll so the
+      // check never depends on animation timing).
+      await expect
+        .poll(async () => {
+          const b = await panel.locator(".mdrawer-panel").boundingBox();
+          return b ? Math.round(b.x + b.width) : Number.MAX_SAFE_INTEGER;
+        })
+        .toBeLessThanOrEqual(390 + 1);
       // Page behind the dialog is inert.
       await expect(page.locator("#main")).toHaveAttribute("inert", "");
       // Every actionable row is ≥44px.
