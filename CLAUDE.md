@@ -95,17 +95,35 @@ Key facts:
 The international pages had never had a device pass; the fixes and the guards
 that keep them fixed:
 
-- **Intl chrome is responsive below 720px** — `.intl-nav-row` wraps into two
-  rows (brand + picker + theme toggle, then the links as 44px pills). It was
-  `display:none` with no replacement, i.e. NO mobile navigation at all. The bar
-  is non-sticky and drops its header CTA there (it scrolls away instantly, and
-  the hero repeats it) — that's what buys room for the controls.
-- **The bar also drops its `backdrop-filter` on mobile**, deliberately: a
-  filtered ancestor becomes the containing block for `position:fixed`
-  descendants, which would trap the locale picker's bottom sheet inside it.
-  If you re-add a filter there, the picker breaks on phones.
-- **LocalePicker is a viewport-anchored bottom sheet ≤720px.** Neither `left:0`
-  nor `right:0` can work — the trigger sits mid-bar and the menu is 276px wide.
+- **One shared compact chrome on BOTH trees, ≤1180px (rev. 15 Sep 2026).** The
+  AU tree and the five international trees render the SAME
+  `src/components/chrome/MobileBar.astro` + `MobileDrawer.astro` for phones and
+  tablets; each tree's own desktop bar takes over at ≥1181. The single
+  breakpoint (`COMPACT_MAX`), the CTA-visible floor (`CTA_MIN=400`) and the bar
+  height (`BAR_H_COMPACT`) live in **`src/data/chrome.ts`**, and
+  `tests/unit/chrome-breakpoints.test.mjs` fails on any `@media` width in the
+  chrome files that is not derived from them or allowlisted. Before this, AU
+  handed over to a wordmark-only bar at 1180 (region switch buried in a
+  hand-rolled `.mm-region` list) while intl handed over at 720 — a tablet got a
+  different chrome per region. `MobileMenu.astro` and `IntlMobileMenu.astro` are
+  gone; the drawer is data-driven (sections as `DrawerSection[]` props), and the
+  AU-only phone/email/sign-in ride in the drawer's `foot` slot (intl never fills
+  it, so no AU NAP can leak).
+- **The bar carries NO `backdrop-filter`, transform or entrance animation** —
+  any of those makes the fixed bar the containing block for the LocalePicker's
+  `position:fixed` bottom sheet (a descendant) and traps it. Enforced by the
+  breakpoint unit test's grep over `MobileBar`'s `.mbar`/`.mbar-actions` rules.
+  The bar is solid-background instead.
+- **Region switching is one control everywhere: the globe chip.** It stays in
+  the bar at every width and every locale; ≤1180 it opens a viewport-anchored
+  **bottom sheet** (centred as a card on tablets), ≥1181 a dropdown. In the
+  drawer, a **"Language & region" row** (`[data-mobile-menu-picker]`) closes the
+  drawer and hands off to that same sheet — it does NOT embed the picker,
+  because the drawer panel is transform-animated and would trap the fixed sheet.
+  A deliberate choice writes `localStorage["bp-locale"]`, which suppresses
+  LocaleSuggest. `LocaleSuggest` now renders on both trees (from `Base.astro`),
+  so an en-GB visitor on `/au-en/` is offered `/gb-en/`; it steps aside for the
+  consent bar and an open drawer.
 - **The hero must fit a 900px-tall laptop fold** (rev. 28 Jul 2026). Top padding is `clamp(40px, 8vh, 104px)` — it was a fixed 154px, which with the uncapped 84px h1 wrapping UK/FR headlines to five lines put the primary CTA at y=939 on a 1440×900 screen, entirely below the fold. The hero h1 is capped at `min(var(--fs-h1), 68px)` in a 24ch column (mirrors the AU hero's 76px cap). Measured after: CTA at 712 (gb-en), 781 (fr, the longest headline) on 900h; fully visible at 1366×768. If a future headline pushes the CTA below ~850 at 1440×900, shorten the headline rather than shrinking the type again.
 - **Short viewports** (`max-height: 620px` — phone landscape) compress the hero;
   it was 681px tall on a 844×390 screen with the CTA 200px below the fold.
@@ -135,9 +153,10 @@ that keep them fixed:
   Audit outcome: the nav, mini-CTA and LocaleSuggest had already shipped
   (6 Sep); the UK statutory display is satisfied by the gate-enforced footer +
   `legal/company-details` (an address in the trust strip would break the
-  deliberate `no address strings` test); the market-switcher-in-drawer idea is
-  **rejected** (the drawer is a transformed ancestor — it would trap the
-  picker's fixed bottom sheet); the spec's French "supervision humaine
+  deliberate `no address strings` test); the market switcher does NOT live
+  inside the drawer (the drawer is a transformed ancestor — it would trap the
+  picker's fixed bottom sheet); instead the drawer's "Language & region" row
+  hands off to the bar's picker sheet (shipped 15 Sep 2026, shared chrome); the spec's French "supervision humaine
   permanente" and Paris/europe-west9 trust framing are **banned by
   `check-truthful`** (no EU staff; only VoxStay's own page may cite EU
   hosting). What shipped from it: the formal AI Act citation "(article 50,
@@ -211,7 +230,7 @@ The Cloud Function needs the `ZOHO_SMTP_PASS` secret (`firebase functions:secret
 ### Layouts & routing
 
 - `src/layouts/Base.astro` — every page on both trees extends this. Owns `<head>`, the **pre-paint inline theme script**, View Transitions (`ClientRouter`), `<SEO>` component, sitewide JSON-LD graph, the font layer (`src/styles/fonts.css` + the Inter-latin preload), `nav`/`footer` **named slots** around `<main>`, and the deferred scripts **both trees use**. Pages pass `title`, `description?`, `path?` (canonical override), `preloadImage?`, `ogImage?`.
-- `src/layouts/AuBase.astro` — **what AU pages actually import** (`import Base from "@/layouts/AuBase.astro"`): Base + `<Nav>`/`<Footer>` in the slots, `megamenu.css`, and the AU-only scripts (`nav`, `mobile-menu`, `megamenu`, `counter`, `call-sim`). This split exists because Astro inlines the CSS of every component in a page's **import graph** whether or not it renders — Base's old `{!hideNav && <Nav />}` still shipped ~20 KB of AU nav/mega-menu/mobile-menu/footer CSS and 22 KB of AU scripts into every international page (rev. 6 Sep 2026, part of the `/fr/` LCP fix). **Never import `AuBase`, `Nav`, `Footer` or `megamenu.css` from anything an intl page reaches**; `check-truthful` fails a global page that carries those selectors.
+- `src/layouts/AuBase.astro` — **what AU pages actually import** (`import Base from "@/layouts/AuBase.astro"`): Base + `<Nav>`/`<Footer>` in the slots, `megamenu.css`, and the AU-only desktop scripts (`nav`, `megamenu`, `counter`). Note: `mobile-menu`, `call-sim`, `locale-picker` and `locale-suggest` moved to `Base.astro` (shared) on 6 Sep 2026 — both trees run them, since the compact bar/drawer are shared. This split exists because Astro inlines the CSS of every component in a page's **import graph** whether or not it renders — Base's old `{!hideNav && <Nav />}` still shipped ~20 KB of AU nav/mega-menu/mobile-menu/footer CSS and 22 KB of AU scripts into every international page (rev. 6 Sep 2026, part of the `/fr/` LCP fix). **Never import `AuBase`, `Nav`, `Footer` or `megamenu.css` from anything an intl page reaches**; `check-truthful` fails a global page that carries those selectors.
 - `src/styles/fonts.css` — the only `@font-face` rules: Inter latin + latin-ext (`optional`), Source Serif 4 latin 400/500 (`swap`). Hand-written rather than the fontsource index import, which shipped 20 subset blocks per page **and** a latin-ext `unicode-range` overlapping `Œ/œ` — Chrome fetched the 85 KB latin-ext file on `/fr/` for one `œ` that the file does not even contain. Don't re-add `import "@fontsource-variable/inter"`.
 - `src/layouts/ProductLayout.astro` — wraps Base for product pages.
 - AU city pages have no separate layout — `src/pages/[city].astro` builds directly on Base with inline sections. (A `CityLayout.astro` was documented here for a while; it never existed.)

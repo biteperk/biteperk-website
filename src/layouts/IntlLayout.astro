@@ -19,10 +19,11 @@ import LocalePicker from "@/components/LocalePicker.astro";
 import ThemeToggle from "@/components/ThemeToggle.astro";
 import StarMark from "@/components/StarMark.astro";
 import SocialLinks from "@/components/SocialLinks.astro";
-import LocaleSuggest from "@/components/LocaleSuggest.astro";
 import CityNav from "@/components/intl/CityNav.astro";
 import IntlProductNav from "@/components/intl/IntlProductNav.astro";
-import IntlMobileMenu from "@/components/intl/IntlMobileMenu.astro";
+import MobileBar from "@/components/chrome/MobileBar.astro";
+import MobileDrawer from "@/components/chrome/MobileDrawer.astro";
+import type { DrawerSection } from "@/data/chrome";
 import { INTL_NAV } from "@/data/intl/nav";
 import { products } from "@/data/products";
 import { intlProducts } from "@/data/intl/products";
@@ -84,6 +85,45 @@ const productLinks = products.map((prod) => ({
   statusLabel: intlProductCopy[prod.slug].statusLabel,
 }));
 const hasCities = footerCities.length > 0;
+
+// Shared compact-drawer sections (MobileDrawer). Products get their own
+// section; the remaining nav links (Solutions hub, Resources, How it works,
+// About, Contact) form Pages; cities are chips where the tree has them.
+// A per-vertical Solutions section is deferred until each vertical has a
+// reviewed French short label — the Solutions hub link covers it for now.
+const drawerSections: DrawerSection[] = [
+  {
+    id: "products",
+    title: c.footerProducts,
+    links: productLinks.map((prod) => ({
+      label: prod.name,
+      href: prod.href,
+      current: `products/${prod.slug}` === page,
+      pill: { text: prod.statusLabel, status: prod.status },
+    })),
+  },
+  {
+    id: "pages",
+    title: c.footerExplore,
+    links: barLinks.map((item) => ({
+      label: c.nav[item.key],
+      href: p(item.path),
+      current: item.path === page,
+    })),
+  },
+  ...(hasCities
+    ? [{
+        id: "cities",
+        title: c.cities,
+        layout: "chips" as const,
+        links: footerCities.map((city) => ({
+          label: city.name,
+          href: `${locale.base}/${city.slug}/`,
+          current: city.slug === page,
+        })),
+      }]
+    : []),
+];
 // Past ~6, a single vertical list towers over the 4–5-item sibling columns
 // (10 French cities = ~440px). Split those into two sub-columns so the footer
 // stays balanced; gb-en's 8 benefits too. Below the threshold it stays a
@@ -163,30 +203,32 @@ const isUk = locale.market === "gb";
           <LocalePicker title={c.regionTitle} currentLabel={c.a11y.regionCurrent} closeLabel={c.a11y.closeRegion} />
           <ThemeToggle label={c.a11y.themeToggle} labelToLight={c.a11y.themeToLight} labelToDark={c.a11y.themeToDark} />
           <a class="btn intl-cta-btn" href={p("contact")}>{c.cta}</a>
-          {/* ≤720px only. Placed after the picker so the tab order in the bar
-              reads brand → picker → menu, and OUTSIDE the drawer so the
-              picker's fixed bottom sheet never sits inside a transformed
-              ancestor. aria-controls/-expanded are the contract
-              src/scripts/mobile-menu.ts drives. */}
-          <button
-            class="intl-burger"
-            type="button"
-            data-mobile-menu-trigger
-            aria-controls="mobile-menu"
-            aria-expanded="false"
-            aria-label={c.menu}
-          >
-            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
-              <path d="M4 7h16M4 12h16M4 17h16"></path>
-            </svg>
-          </button>
+{/* Burger moved to the shared MobileBar (rendered below the header). */}
         </div>
       </div>
     </header>
 
-    {/* Sibling of the header, not a child: the panel is position:fixed and a
-        future filter/transform on the bar would otherwise trap it. */}
-    <IntlMobileMenu locale={locale} page={page} chrome={c} nav={navItems} cities={footerCities} products={productLinks} />
+    {/* Shared compact chrome — the same bar + drawer the AU tree uses, ≤1180.
+        Siblings of the desktop header, not children: the drawer is
+        transform-animated and would trap the picker's fixed sheet. */}
+    <MobileBar
+      homeHref={p("")}
+      brandLabel={c.a11y.brandHome}
+      cta={{ label: c.cta, href: p("contact"), dataCta: "book-pilot" }}
+      menuLabel={c.menu}
+      picker={{ title: c.regionTitle, currentLabel: c.a11y.regionCurrent, closeLabel: c.a11y.closeRegion }}
+      spacer
+    />
+    <MobileDrawer
+      homeHref={p("")}
+      brandLabel={c.a11y.brandHome}
+      closeLabel={c.menuClose}
+      navLabel={c.a11y.siteNav}
+      sections={drawerSections}
+      languageRegion={{ label: c.languageRegion, current: locale.label }}
+      cta={{ label: c.cta, href: p("contact"), dataCta: "book-pilot" }}
+      theme={{ label: c.a11y.themeToggle, toLight: c.a11y.themeToLight, toDark: c.a11y.themeToDark }}
+    />
   </div>
 
   <div class="intl">
@@ -307,9 +349,6 @@ const isUk = locale.market === "gb";
       </div>
     </footer>
 
-    {/* Offers the visitor's own market if they landed on another one. Never
-        redirects; see the component + scripts/locale-suggest.ts. */}
-    <LocaleSuggest />
   </div>
 </Base>
 
@@ -602,142 +641,18 @@ const isUk = locale.market === "gb";
   .intl-footer-legal { color: var(--mist); font-size: var(--fs-small); margin-top: var(--space-7); }
   .intl-footer-legal a { color: inherit; }
 
-  /* ── Phones & small tablets: a real two-row header ──────────────────
-     Until now `.intl-links` was simply `display:none` here with nothing to
-     replace it — the international pages had NO mobile navigation at all;
-     a phone visitor on /gb-en could only move around via the footer.
-
-     Three links don't justify a hamburger + overlay + focus trap, so the row
-     just wraps: brand + controls on top, links as 44px pills underneath. */
-  /* The links drop to their own row BEFORE they can be squeezed. Measured on
-     the live French tree: brand (91) + links (398) + actions (309) + gaps and
-     padding needs ~910px, but the phone treatment below only started at 720px
-     — so 721–909px rendered every label over three lines. English needs ~833px,
-     so this band was broken on all five trees, just at different widths.
-     Sticky bar and the header CTA are kept here: this is tablet/small-laptop,
-     not phone. The phone-only changes stay in the 720px block underneath. */
-  /* City-bearing trees carry the Cities trigger (~105px) in the actions
-     row, which pushes the measured single-row need from ~833px (EN) to
-     ~950px — past the 940px band below. Wrap EARLIER on those trees only:
-     this block restates the 940px ruleset at 1080px, scoped to
-     [data-has-cities="true"], so /fr and the other city-less trees keep
-     today's exact bands. Keep the two blocks' rules in lockstep.
-
-     The ="true" is load-bearing, and it was missing until 6 Sep 2026.
-     `data-has-cities={hasCities}` renders the string "false" on a city-less
-     tree, and a bare [data-has-cities] is an attribute-PRESENCE selector, so
-     it matched "false" too — every tree wrapped at 1080px and the sentence
-     above was simply untrue. Measured on /fr: 121px bar between 940 and 1080
-     where 65px fits. Found while /be-en became the first tree to cross the
-     city-bearing line, which is exactly when the distinction first mattered.
-
-     Lower bound 721px is load-bearing (added 7 Sep 2026): this is the
-     tablet/small-laptop band, and the phone block below owns ≤720px with a
-     single non-wrapping 56px row. Without the bound, `flex-wrap: wrap` here —
-     specificity (0,2,1) — outranks the phone block's `.intl-nav-row` nowrap
-     (0,1,0) regardless of source order, so every city-bearing tree wrapped to a
-     ~91px two-row bar on phones. Latent on /gb-en and /be-en (no 412px test);
-     surfaced the day /be-fr published its first city. */
-  @media (min-width: 721px) and (max-width: 1080px) {
-    .intl-nav[data-has-cities="true"] .intl-nav-row { flex-wrap: wrap; }
-    .intl-nav[data-has-cities="true"] .intl-links {
-      order: 3;
-      flex-basis: 100%;
-      flex-wrap: wrap;
-      margin-inline-start: 0;
-      gap: var(--space-2);
-    }
-    .intl-nav[data-has-cities="true"] .intl-links > a {
-      display: inline-flex;
-      align-items: center;
-      min-height: 44px;
-      padding-inline: 14px;
-      border: 1px solid var(--line);
-      border-radius: var(--r-pill);
-      background: var(--fill-subtle);
-    }
-    .intl-nav[data-has-cities="true"] .intl-actions { margin-inline-start: auto; }
+  /* ── Compact chrome hand-off ─────────────────────────────────────
+     Both trees hide their desktop bar at COMPACT_MAX and show the shared
+     MobileBar + MobileDrawer (src/components/chrome/). This replaces the old
+     intl-only two-row wrap bands (940 / 721–1080) and the ≤720 single-row
+     sticky bar — the shared bar now owns every width ≤1180 on all six trees. */
+  @media (max-width: 1180px) {
+    .intl-nav { display: none; }
   }
 
-  @media (max-width: 940px) {
-    .intl-nav-row { flex-wrap: wrap; }
-    .intl-links {
-      order: 3;
-      flex-basis: 100%; /* forces the links onto their own row */
-      flex-wrap: wrap;
-      margin-inline-start: 0;
-      gap: var(--space-2);
-    }
-    .intl-links > a {
-      display: inline-flex;
-      align-items: center;
-      min-height: 44px;
-      padding-inline: 14px;
-      border: 1px solid var(--line);
-      border-radius: var(--r-pill);
-      background: var(--fill-subtle);
-    }
-    .intl-actions { margin-inline-start: auto; }
-  }
-
-  /* The hamburger exists only below 720px; above it the bar shows real links. */
-  .intl .intl-burger { display: none; }
-
+  /* Footer stacks to one column on phones — independent of the nav hand-off. */
   @media (max-width: 720px) {
-    /* ONE 56px sticky row, replacing the two-row wrap (rev. 6 Sep 2026).
-       The old design was not sticky and dropped its CTA because a wrapped
-       two-row sticky bar cost ~105px — 12% of an iPhone viewport. A single
-       row costs 56px, which is worth sticking: the nav is now behind a
-       hamburger, so it has to travel with the reader. */
-    .intl-nav {
-      position: sticky;
-      top: 0;
-      /* Still NO backdrop-filter here, and this is load-bearing: a filtered
-         ancestor becomes the containing block for position:fixed descendants,
-         which would trap BOTH the locale picker's bottom sheet and the drawer
-         inside this bar. Solid background instead. */
-      backdrop-filter: none;
-      -webkit-backdrop-filter: none;
-      background: var(--ink-0);
-    }
-    .intl-nav-row {
-      flex-wrap: nowrap;
-      gap: var(--space-2);
-      padding-block: 0;
-      min-height: 56px;
-    }
-    /* Links, cities and the theme toggle all move into the drawer. */
-    .intl-links { display: none; }
-    .intl-actions [data-city-nav] { display: none; }
-    .intl-actions .theme-toggle { display: none; }
-    .intl-actions { margin-inline-start: auto; gap: var(--space-2); }
-    .intl .intl-burger {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 44px;
-      height: 44px;
-      border: 1px solid var(--line);
-      border-radius: var(--r-pill);
-      background: var(--fill-subtle);
-      color: var(--white);
-      cursor: pointer;
-    }
-    /* The CTA survives on phones now that the bar sticks — but only where
-       there is room for it beside the brand, picker and burger. Below 400px
-       it is the first item in the drawer instead. */
-    .intl-cta-btn { display: none; }
     .intl-footer-grid { grid-template-columns: 1fr; }
-  }
-
-  @media (max-width: 720px) and (min-width: 400px) {
-    .intl-cta-btn {
-      display: inline-flex;
-      min-height: 40px;
-      padding-inline: 14px;
-      font-size: var(--fs-small);
-      white-space: nowrap;
-    }
   }
 </style>
 

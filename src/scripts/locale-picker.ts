@@ -122,9 +122,14 @@ function attach(root: HTMLDetailsElement): void {
     }
   });
 
-  // Choosing a region closes immediately, then navigation proceeds.
+  // Choosing a region closes immediately, then navigation proceeds. Record the
+  // choice so LocaleSuggest never second-guesses a deliberate pick.
   menu.addEventListener("click", (e) => {
-    if ((e.target as HTMLElement).closest("a")) close(refs);
+    const a = (e.target as HTMLElement).closest<HTMLAnchorElement>("a[data-locale-base]");
+    if (a) {
+      try { localStorage.setItem("bp-locale", a.dataset.localeBase!); } catch { /* private mode */ }
+      close(refs);
+    }
   });
 
   // Mobile-sheet scrim tap / X button. Both live INSIDE <details>, so the

@@ -92,7 +92,7 @@ export type ChromeCopy = {
   footerLegal: string;
   /** Label for the social-profile row. Renders as a <p>, never a heading. */
   footerFollow: string;
-  /** Slide-over menu trigger + close, ≤720px (IntlMobileMenu). */
+  /** Compact-chrome burger trigger + close (shared MobileBar/MobileDrawer). */
   menu: string;
   menuClose: string;
   /** Locale-suggestion chip: shown in the TARGET locale's language. */

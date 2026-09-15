@@ -1,0 +1,151 @@
+---
+/**
+ * Shared compact header bar — phones AND tablets, on BOTH trees (≤ COMPACT_MAX).
+ *
+ * Rendered by Nav.astro (AU) and IntlLayout.astro (intl); each tree's own
+ * desktop bar takes over at ≥ COMPACT_MAX+1. Slots left→right: brand · globe
+ * chip (LocalePicker) · CTA (≥ CTA_MIN) · burger. The burger is the contract
+ * src/scripts/mobile-menu.ts drives (aria-controls="mobile-menu").
+ *
+ * IMPORTS ONLY StarMark, LocalePicker and types — no data modules. Everything
+ * comes through props so the AU catalogue never enters the global build and no
+ * AU phone/NAP can leak onto an international page.
+ *
+ * NO backdrop-filter, transform or entrance animation, ever: any of those makes
+ * this fixed bar the containing block for the LocalePicker's position:fixed
+ * bottom sheet (a descendant) and traps it. Enforced by
+ * tests/unit/chrome-breakpoints.test.mjs. Solid background instead.
+ *
+ * Class namespace .mbar-* (never the .nav- .mm- .foot- .megamenu- families —
+ * check-truthful bans those on global pages).
+ */
+import StarMark from "@/components/StarMark.astro";
+import LocalePicker from "@/components/LocalePicker.astro";
+import type { MobileBarProps } from "@/data/chrome";
+
+type Props = MobileBarProps;
+const { homeHref, brandLabel, cta, menuLabel, picker, spacer = false } = Astro.props;
+---
+
+<header class="mbar" data-mobile-bar>
+  <a class="mbar-brand" href={homeHref} aria-label={brandLabel}>
+    <StarMark size={30} />
+    <span class="brand-name">bite<span class="perk">perk</span></span>
+  </a>
+
+  <div class="mbar-actions">
+    <LocalePicker title={picker.title} currentLabel={picker.currentLabel} closeLabel={picker.closeLabel} />
+    <a class="btn mbar-cta" href={cta.href} data-cta={cta.dataCta}>{cta.label}</a>
+    <button
+      type="button"
+      class="mbar-burger"
+      data-mobile-menu-trigger
+      aria-controls="mobile-menu"
+      aria-expanded="false"
+      aria-label={menuLabel}
+    >
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+{spacer && <div class="mbar-spacer" aria-hidden="true"></div>}
+
+<style>
+  .mbar {
+    display: none; /* desktop bars own ≥ COMPACT_MAX+1 */
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: var(--z-nav);
+    align-items: center;
+    gap: 8px;
+    height: calc(var(--bar-h-compact) + env(safe-area-inset-top));
+    padding-top: env(safe-area-inset-top);
+    padding-inline: max(16px, env(safe-area-inset-left)) max(16px, env(safe-area-inset-right));
+    background: var(--ink-0);
+    border-bottom: 1px solid var(--line);
+  }
+  @media (max-width: 1180px) {
+    .mbar { display: flex; }
+  }
+
+  .mbar-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    margin-inline-end: auto; /* pushes the actions cluster to the trailing edge */
+  }
+  .mbar-brand .brand-name {
+    font-size: 18px;
+    letter-spacing: -0.01em;
+  }
+
+  .mbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .mbar-cta {
+    display: none; /* < CTA_MIN: the CTA is the first item in the drawer instead */
+    min-height: 40px;
+    padding-inline: 14px;
+    font-size: var(--fs-small);
+    font-weight: 700;
+    white-space: nowrap;
+    touch-action: manipulation;
+  }
+  @media (min-width: 400px) and (max-width: 1180px) {
+    .mbar-cta { display: inline-flex; }
+  }
+
+  .mbar-burger {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 44px;
+    height: 44px;
+    gap: 5px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-pill);
+    background: var(--fill-subtle);
+    color: var(--white);
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  @media (hover: hover) {
+    .mbar-burger:hover { background: var(--fill-hover); border-color: var(--line-strong); }
+  }
+  .mbar-burger:focus-visible { outline: none; box-shadow: var(--ring-focus); }
+  .mbar-burger span {
+    width: 20px;
+    height: 1.6px;
+    background: currentColor;
+    border-radius: 2px;
+    transition:
+      transform var(--dur-base) var(--ease-out),
+      opacity var(--dur-base) var(--ease-out);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mbar-burger span { transition: none; }
+  }
+  .mbar-burger[aria-expanded="true"] span:nth-child(1) { transform: translateY(6.6px) rotate(45deg); }
+  .mbar-burger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+  .mbar-burger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-6.6px) rotate(-45deg); }
+
+  /* In-flow spacer the height of the fixed bar. Intl passes spacer because its
+     sticky desktop header used to contribute this space; AU pages clear the
+     fixed bar with their own hero/section top padding, so they render none. */
+  .mbar-spacer { display: none; }
+  @media (max-width: 1180px) {
+    .mbar-spacer { display: block; height: calc(var(--bar-h-compact) + env(safe-area-inset-top)); }
+  }
+
+  @media print {
+    .mbar, .mbar-spacer { display: none; }
+  }
+</style>

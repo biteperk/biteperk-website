@@ -17,6 +17,7 @@
  */
 (() => {
   const KEY = "bp-locale-suggest-dismissed";
+  const CHOICE = "bp-locale";       // set when a region is picked deliberately
 
   type Candidate = {
     base: string;
@@ -30,7 +31,8 @@
 
   function dismissed(): boolean {
     try {
-      return localStorage.getItem(KEY) === "1";
+      // A deliberate region choice is a decision — never nag after it.
+      return localStorage.getItem(KEY) === "1" || localStorage.getItem(CHOICE) !== null;
     } catch {
       return false; // private mode — just show it; dismissing still hides it for the session
     }
@@ -52,6 +54,18 @@
     }
 
     const current = el.dataset.current;
+    // "Already home": if the visitor's own languages point at the tree they are
+    // ON (its hreflang codes, exact or by primary subtag), never offer anything.
+    // Without this, an en-AU visitor on /au-en matched the /en x-default via
+    // their secondary "en" and got offered International.
+    // Only REGIONAL current codes (those with a dash) count as "home": the /en
+    // x-default's code is bare "en", and every English visitor carries "en" —
+    // suppressing on that would silence the offer for the whole x-default tree,
+    // which is exactly the tree that exists to redirect people onward.
+    const currentCodes = (el.dataset.currentCodes ?? "")
+      .split(",")
+      .map((c) => c.trim().toLowerCase())
+      .filter((c) => c.includes("-"));
     // Browser order is preference order — first match wins, so a visitor whose
     // list is [fr-BE, fr, en] gets Belgium-French, not generic French.
     const langs = (navigator.languages && navigator.languages.length
@@ -60,6 +74,10 @@
     )
       .filter(Boolean)
       .map((l) => l.toLowerCase());
+
+    if (currentCodes.some((code) => langs.includes(code))) {
+      return; // already in this market — no offer
+    }
 
     // Exact tag first (fr-BE → /be-fr, en-GB → /gb-en). Then the primary
     // subtag on its own: Safari and several mobile browsers report a single
