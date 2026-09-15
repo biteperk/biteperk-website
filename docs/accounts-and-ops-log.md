@@ -24,12 +24,17 @@ reviewed" flags on the covered strings were dropped in `src/data/intl/copy.ts`
 As with the 7 Sep and 13 Sep passes, this was **verbal** — no email backs it. Standing
 rule unchanged: French written **after 15 Sep 2026** needs its own native pass.
 
-**Still unreviewed (a gap this batch surfaced):** French flagged "next Ludovic batch"
-that never made it into a cluster of the review document — `TrustFactsCopy` fr
-`authorityLabel`/`authorityBody`/`teamLabel` (`copy.ts`), and all of `intl/solutions.ts`
-and `intl/resources.ts`. These were **not** in what Ludovic saw, so they remain
-unreviewed and must go in the next batch (add to `CLUSTERS` in `extract-fr-review.mjs`,
-regenerate, send) before they are prospect-facing.
+**The gap this batch surfaced — now closed (batch B, same day).** French flagged "next
+Ludovic batch" that never made it into a cluster of the batch-A document — `TrustFactsCopy`
+fr `authorityLabel`/`authorityBody`/`teamLabel` (`copy.ts`), and all of `intl/solutions.ts`
+and `intl/resources.ts` — was assembled as **batch B** (405 rows;
+`docs/ops-records/2026-09-15-french-review-ludovic-batch-b.md`) and **passed by Ludovic,
+verbal, no corrections**. Its `DRAFT` / "not yet reviewed" markers are now dropped in the
+source; the solution and resource pages and the trust-panel authority/team lines are cleared
+for prospect-facing use. `extract-fr-review.mjs` gained a `leafRows` mode (pairs every en/fr
+leaf of a module) so a whole-module batch needn't hand-list keys; batch A is now frozen
+evidence and no longer regenerable from `CLUSTERS`, as the 7 and 13 Sep batches already are.
+Carried by PR #111.
 
 ## 2026-09-15 — Git history rewritten to remove AI co-author attribution
 

@@ -42,8 +42,24 @@ export const META = {
   preparedFor: "Ludovic",
   date: "15 September 2026",
   requestedBy: "Sam Kalaliya",
-  /** The pass that this batch is measured against — everything written since. */
-  sincePass: "7 September 2026",
+  /** The pass this batch is measured against. */
+  sincePass: "15 September 2026",
+  /**
+   * Batch-specific narrative. render() reads these so the document speaks to the
+   * batch in front of it rather than a hard-coded earlier one — the 15 Sep (A)
+   * batch was chrome/contact/city framing with a VoxStay note; this one is not.
+   */
+  whatThisIs:
+    "BitePerk's international site (biteperk.com) ships in five trees — `/en`, `/gb-en` (UK), `/fr` (France), `/be-en` and `/be-fr` (Belgium). This batch collects French that was written for the site earlier but never made it into a review document: the industry **solution** pages, the **resources** section furniture, and the trust panel's **supervisory-authority** and **team** lines. None of it has had a native pass.",
+  stakes:
+    "Everything below already renders on the French trees, so a correction here changes what a French prospect reads. There is no hard deploy-blocker in this batch — but until it is signed off, these strings carry `DRAFT` / \"not yet reviewed\" markers in the source and should not be treated as prospect-ready.",
+  /** Optional mid-document callout (batch A used one for VoxStay). null = none. */
+  midNote: null,
+  nextSteps: [
+    "We drop the `DRAFT` / \"not yet reviewed\" markers on these strings in the source.",
+    "The industry solution pages and the resources section go from draft to prospect-ready across `/fr` and `/be-fr`.",
+    "The trust panel's supervisory-authority and team lines are cleared for every French page.",
+  ],
 };
 
 /**
@@ -51,103 +67,58 @@ export const META = {
  * returned by `pick`; `[n]` indexes arrays. Order is the reading order in the
  * document, so group related keys together deliberately.
  *
- * `rows` (cluster 4) is the escape hatch for copy that is market-scoped rather
- * than language-scoped: there is no EN counterpart to pair against, so the
- * English column is a hand-written gloss and only the French is read live.
+ * Two escape hatches from `keys`:
+ *   - `rows(mods)` returns hand-built rows — for market-scoped copy with no EN
+ *     counterpart (the English column is then a gloss).
+ *   - `leafRows(en, fr)` pairs EVERY leaf of an en/fr object by path, for a
+ *     cluster that reviews a whole module rather than a hand-picked key list.
  *
- * ── The 15 Sep 2026 batch ────────────────────────────────────────────────────
- * The 13 Sep batch (below) had not yet been passed when the unified mobile
- * chrome work added one more French chrome string — `chrome.languageRegion`
- * ("Langue et région"), the MobileDrawer row label that opens the region-picker
- * sheet. It joins cluster 1, the date moves to 15 Sep, and the doc is re-sent as
- * one batch; the 13 Sep file stays as filed evidence (it was sent).
+ * ── The 15 Sep 2026 batch (B) ────────────────────────────────────────────────
+ * The gap that the 15 Sep batch (A) surfaced: French flagged "next Ludovic
+ * batch" that never actually made it into a cluster of any review document — the
+ * trust panel's supervisory-authority + "where the team is" lines (copy.ts
+ * trustFacts), and the whole of intl/solutions.ts and intl/resources.ts. This
+ * batch reviews exactly those.
  *
- * The batch is everything French written between Ludovic's 7 Sep verbal pass and
- * now, found with `--since origin/main` rather than from memory: the accessible
- * names that were hardcoded English on every French page, the MobileDrawer
- * "Language & region" label, the 404 page, the Organization description, the
- * contact form's runtime strings, the city Service JSON-LD strings, and the
- * France/Belgium city-page anchoring lines.
- * The French city TITLES (eleven, "Répondeur" → "Hôte téléphonique IA") and two
- * Brussels lines live in intl/cities.ts and are reviewed through
- * extract-city-fr-review.mjs — see docs/ops-records/2026-09-13-french-review-
- * city-titles.md. The 7 Sep batch is filed at 2026-09-07-french-review-
- * ludovic.md and is no longer regenerable from this config (by design: a new
- * batch replaces CLUSTERS; the filed document is the record).
+ * Batch A (chrome + contact + city + market lines, incl. `languageRegion`) is
+ * filed and PASSED at 2026-09-15-french-review-ludovic.md and, like the 7 Sep
+ * and 13 Sep batches, is no longer regenerable from this config (by design: a
+ * new batch replaces CLUSTERS; the filed document is the record). This batch's
+ * document is 2026-09-15-french-review-ludovic-batch-b.md.
  */
 export const CLUSTERS = [
   {
     n: "1",
-    title: "chrome: accessible names, the 404 page, the organisation description",
-    summaryTitle: "Chrome — accessible names, 404, organisation description",
-    where: "Every French page (screen-reader names + the one 404 page for all trees)",
+    title: "trust panel — supervisory-authority and \"where the team is\" lines",
+    summaryTitle: "Trust panel — supervisory authority + team line",
+    where: "The trust strip (TrustPanel) on every French page",
     source: "copy.ts",
-    pick: (m) => [m.copy.chrome.en, m.copy.chrome.fr],
-    keys: [
-      "a11y.skipToContent", "a11y.brandHome", "a11y.siteNav", "a11y.breadcrumb",
-      "a11y.closeCities", "a11y.regionCurrent", "a11y.closeRegion",
-      "a11y.themeToggle", "a11y.themeToLight", "a11y.themeToDark",
-      "languageRegion",
-      "orgDescription",
-      "notFound.eyebrow", "notFound.title", "notFound.body", "notFound.home", "notFound.contact",
-    ],
+    pick: (m) => [m.copy.trustFacts.en, m.copy.trustFacts.fr],
+    keys: ["authorityLabel", "authorityBody", "teamLabel"],
   },
   {
     n: "2",
-    title: "contact form — what the visitor reads after pressing the button ⚠️ BLOCKING",
-    summaryTitle: "**Contact form runtime strings**",
-    where: "`/fr` and `/be-fr` contact pages, after submit",
-    blocking: "**Yes — gates deploying the French contact-form fix**",
-    note: "Until now a French visitor who submitted the pilot form read an English confirmation. These five strings replace it; nothing French ships on that form until they are signed off.",
-    source: "copy.ts",
-    pick: (m) => [m.copy.contact.en, m.copy.contact.fr],
-    keys: [
-      "form.runtime.sending", "form.runtime.successTitle", "form.runtime.successBody",
-      "form.runtime.error", "form.runtime.networkError",
-    ],
+    title: "solutions overview — the industry index page",
+    summaryTitle: "Solutions overview page",
+    where: "`/fr/solutions/` and `/be-fr/solutions/` — the industry index",
+    source: "solutions.ts",
+    rows: (m) => leafRows(m.solutions.intlSolutionsOverview.en, m.solutions.intlSolutionsOverview.fr),
   },
   {
     n: "3",
-    title: "city pages — the structured-data service description",
-    summaryTitle: "City pages — Service description (structured data)",
-    where: "Every French city page, in the JSON-LD search engines and answer engines read; {city} is replaced by the city name",
-    source: "copy.ts",
-    pick: (m) => [m.copy.cityPage.en, m.copy.cityPage.fr],
-    keys: ["serviceName", "serviceAltName", "serviceTypes[0]", "serviceTypes[1]", "audienceName"],
+    title: "solutions by industry — every industry solution page",
+    summaryTitle: "Solution pages (8 industries)",
+    where: "Each French industry page: restaurants, hotels, cafés, takeaway, drive-thru, medical, professional services, groups",
+    source: "solutions.ts",
+    rows: (m) => leafRows(m.solutions.intlSolutions.en, m.solutions.intlSolutions.fr),
   },
   {
     n: "4",
-    title: "market lines — France and Belgium city-page anchoring",
-    summaryTitle: "Market lines (France / Belgium)",
-    where: "French city pages: the note under the district chips, and the 'other cities' eyebrow",
-    source: "markets.ts",
-    whereHeader: "Where",
-    englishHeader: "English (reference / gloss)",
-    rows: (m) => {
-      const at = (base, path) => get(m.markets.marketContent[base], path);
-      return [
-        {
-          key: "`/fr` city pages — note under the district chips",
-          en: "Not on the list? The pilot programme isn't drawn by postcode — a venue anywhere in France works exactly the same way.",
-          fr: at("/fr", "copy.cityPage.districtsNote"),
-        },
-        {
-          key: "`/fr` city pages — 'other cities' eyebrow",
-          en: "Elsewhere in France",
-          fr: at("/fr", "copy.cityPage.othersEyebrow"),
-        },
-        {
-          key: "`/be-fr` city pages — note under the district chips",
-          en: "Not on the list? The pilot programme isn't drawn on a map — a venue anywhere in Belgium works exactly the same way.",
-          fr: at("/be-fr", "copy.cityPage.districtsNote"),
-        },
-        {
-          key: "`/be-fr` city pages — 'other cities' eyebrow",
-          en: "Elsewhere in Belgium",
-          fr: at("/be-fr", "copy.cityPage.othersEyebrow"),
-        },
-      ];
-    },
+    title: "resources — index labels and type descriptions",
+    summaryTitle: "Resources furniture",
+    where: "`/fr/resources/` index, article furniture and the six resource-type labels",
+    source: "resources.ts",
+    rows: (m) => leafRows(m.resources.intlResources.en, m.resources.intlResources.fr),
   },
 ];
 
@@ -173,6 +144,23 @@ export function get(obj, path) {
 /** Markdown table cells cannot contain a raw pipe or newline. */
 const cell = (s) => String(s).replace(/\|/g, "\\|").replace(/\s*\n\s*/g, " ").trim();
 
+/**
+ * Pair EVERY leaf of an en/fr object by path — for a cluster that reviews a
+ * whole module rather than a hand-picked key list. Both sides are the same
+ * shape (TypeScript enforces it), so an fr leaf with no en counterpart is a bug
+ * and throws, rather than silently emitting a half-empty row. Uses `leaves`
+ * (hoisted, from the discovery section) so the flattening is shared, not
+ * re-implemented.
+ */
+function leafRows(enRoot, frRoot) {
+  const en = leaves(enRoot, "");
+  const fr = leaves(frRoot, "");
+  return [...fr.keys()].sort().map((path) => {
+    if (!en.has(path)) throw new Error(`extract-fr-review: fr leaf "${path}" has no en counterpart`);
+    return { key: `\`${path}\``, en: en.get(path), fr: fr.get(path) };
+  });
+}
+
 function rowsFor(cluster, mods) {
   if (cluster.rows) return cluster.rows(mods);
   const [en, fr] = cluster.pick(mods);
@@ -194,15 +182,17 @@ function rowsFor(cluster, mods) {
  * Language-scoped modules expose `{ en, fr }`; markets.ts is market-scoped, so
  * the whole /fr and /be-fr subtrees are French by construction.
  */
+// Language-scoped modules all expose their bundles as `{ en, fr }` exports;
+// one picker serves them. markets.ts is market-scoped and needs its own.
+const byEnFr = (m) =>
+  Object.entries(m)
+    .filter(([, v]) => v && typeof v === "object" && typeof v.fr === "object" && v.en)
+    .map(([name, v]) => [name, v.fr]);
 const FR_ROOTS = {
-  "copy.ts": (m) =>
-    Object.entries(m)
-      .filter(([, v]) => v && typeof v === "object" && typeof v.fr === "object" && v.en)
-      .map(([name, v]) => [name, v.fr]),
-  "products.ts": (m) =>
-    Object.entries(m)
-      .filter(([, v]) => v && typeof v === "object" && typeof v.fr === "object" && v.en)
-      .map(([name, v]) => [name, v.fr]),
+  "copy.ts": byEnFr,
+  "products.ts": byEnFr,
+  "solutions.ts": byEnFr,
+  "resources.ts": byEnFr,
   "markets.ts": (m) =>
     ["/fr", "/be-fr"].map((base) => [base, m.marketContent?.[base] ?? {}]),
 };
@@ -275,7 +265,6 @@ export async function frChangesSince(ref) {
 function render(mods) {
   const clusters = CLUSTERS.map((c) => ({ ...c, data: rowsFor(c, mods) }));
   const total = clusters.reduce((n, c) => n + c.data.length, 0);
-  const blocking = clusters.filter((c) => c.blocking?.startsWith("**Yes"));
 
   const summary = clusters
     .filter((c) => !c.skipSummary)
@@ -297,9 +286,9 @@ function render(mods) {
 
 ## What this is
 
-BitePerk's international site (biteperk.com) ships in five trees — \`/en\`, \`/gb-en\` (UK), \`/fr\` (France), \`/be-en\` and \`/be-fr\` (Belgium). The French you reviewed on **${META.sincePass}** is live and unchanged; this document collects **only the French written since then**, which is marked \`DRAFT\` in the source and has never had a native pass.
+${META.whatThisIs}
 
-Everything below is already on the site or is one merge away from it, so a correction here changes what prospects read. One item is a hard blocker: the **city-page furniture** gates every future French city page (Paris, Brussels-FR) — nothing French can launch in a city until it is signed off.
+${META.stakes}
 
 ## How to use it
 
@@ -322,18 +311,14 @@ Marking up this file directly, or replying with just the rows you'd change, both
 | # | Cluster | Where it appears | Blocking? |
 |---|---|---|---|
 ${summary}
-
-**On VoxStay (cluster 6):** this is the hotel receptionist product, in development. It's the one we'd most like your eye on as an operator as well as a native speaker — if a claim reads as overpromising in French, say so.
-
+${META.midNote ? `\n${META.midNote}\n` : ""}
 
 ${body}
 ---
 
 ## What happens after you send this back
 
-1. We apply your corrections and drop the \`DRAFT\` markers.
-2. The French city-page furniture (cluster ${blocking.map((c) => c.n).join(", ")}) unblocks Paris and Brussels-FR — those pages get written next.
-3. VoxStay's French goes from draft to prospect-ready.
+${META.nextSteps.map((s, i) => `${i + 1}. ${s}`).join("\n")}
 
 Thank you — this is the pass that lets the French side of the site grow.
 ` + `<!-- ${total} rows -->\n`;
@@ -346,10 +331,11 @@ const stripFiled = (s) => {
 };
 
 async function loadModules() {
-  const [copy, products, markets] = await Promise.all([
+  const [copy, products, markets, solutions, resources] = await Promise.all([
     loadTS(INTL("copy.ts")), loadTS(INTL("products.ts")), loadTS(INTL("markets.ts")),
+    loadTS(INTL("solutions.ts")), loadTS(INTL("resources.ts")),
   ]);
-  return { copy, products, markets };
+  return { copy, products, markets, solutions, resources };
 }
 
 /**

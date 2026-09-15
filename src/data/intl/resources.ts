@@ -4,7 +4,8 @@
  * CopyBundle (like intl/solutions.ts) so a market cannot fork it.
  *
  * Type ids/segments come from src/data/resources.ts; only the LABELS are here.
- * French written 13 Sep 2026 — NOT yet reviewed (next Ludovic batch).
+ * French DISCHARGED — Ludovic verbal pass 15 Sep 2026 (the 15 Sep batch B,
+ * docs/ops-records/2026-09-15-french-review-ludovic-batch-b.md, cluster 4).
  */
 import type { Lang } from "../locales";
 import type { ResourceType } from "../resources";

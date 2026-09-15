@@ -560,7 +560,8 @@ export const trustFacts: Record<Lang, TrustFactsCopy> = {
   },
   // French DISCHARGED — verbal pass from Ludovic, confirmed by Sam 7 Sep 2026;
   // see this file's header. authorityLabel/authorityBody/teamLabel written
-  // 13 Sep 2026 — NOT yet reviewed (next batch).
+  // 13 Sep 2026 and DISCHARGED — Ludovic verbal pass 15 Sep 2026 (the 15 Sep
+  // batch B, docs/ops-records/2026-09-15-french-review-ludovic-batch-b.md, cl. 1).
   fr: {
     heading: "Où vous en êtes avec nous",
     entityLabel: "Votre cocontractant",
