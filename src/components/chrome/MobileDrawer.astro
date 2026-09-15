@@ -1,0 +1,307 @@
+---
+/**
+ * Shared compact navigation drawer — phones AND tablets, on BOTH trees
+ * (≤ COMPACT_MAX). Right slide-over. Rendered by Nav.astro (AU) and
+ * IntlLayout.astro (intl), a SIBLING of the header — never a child of the bar,
+ * because this panel animates with transform and would become the containing
+ * block for the LocalePicker's fixed sheet.
+ *
+ * Open/close, focus trap, scroll lock, inert-behind and the drawer→region-sheet
+ * hand-off all live in src/scripts/mobile-menu.ts. Contract:
+ *   #mobile-menu[data-mobile-menu][hidden] · [data-mobile-menu-backdrop] ·
+ *   [data-mobile-menu-close] · [data-mobile-menu-picker] · .is-open
+ * The script waits for transitionend before hiding, so the panel MUST keep a
+ * transform transition (reduced motion gets 1ms, never `none`).
+ *
+ * IMPORTS ONLY StarMark, ThemeToggle and types. Sections, links and every
+ * label arrive as props — no @/data/* imports, so the AU catalogue and phone
+ * number can never reach the global build.
+ *
+ * Class namespace .mdrawer-* (never the .nav- .mm- .foot- .megamenu- families).
+ */
+import StarMark from "@/components/StarMark.astro";
+import ThemeToggle from "@/components/ThemeToggle.astro";
+import type { MobileDrawerProps } from "@/data/chrome";
+
+type Props = MobileDrawerProps;
+const { homeHref, brandLabel, closeLabel, navLabel, sections, languageRegion, cta, theme } = Astro.props;
+---
+
+<div
+  id="mobile-menu"
+  class="mdrawer"
+  data-mobile-menu
+  hidden
+  role="dialog"
+  aria-modal="true"
+  aria-label={navLabel}
+>
+  <div class="mdrawer-backdrop" data-mobile-menu-backdrop aria-hidden="true"></div>
+  <div class="mdrawer-panel">
+    <div class="mdrawer-header">
+      <a class="mdrawer-brand" href={homeHref} aria-label={brandLabel}>
+        <StarMark size={28} />
+        <span class="brand-name">bite<span class="perk">perk</span></span>
+      </a>
+      <div class="mdrawer-header-actions">
+        <ThemeToggle label={theme.label} labelToLight={theme.toLight} labelToDark={theme.toDark} />
+        <button class="mdrawer-close" data-mobile-menu-close type="button" aria-label={closeLabel}>
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+            <path d="M6 6l12 12M18 6L6 18"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <nav class="mdrawer-body" aria-label={navLabel}>
+      {sections.map((section) => (
+        <div class="mdrawer-section" data-drawer-section={section.id}>
+          <p class="mdrawer-section-title">{section.title}</p>
+          {section.lede && <p class="mdrawer-section-lede">{section.lede}</p>}
+          <div class:list={["mdrawer-links", section.layout === "chips" ? "is-chips" : "is-list"]}>
+            {section.links.map((link) => (
+              <a
+                class:list={["mdrawer-link", { "is-current": link.current }]}
+                href={link.href}
+                aria-current={link.current ? "page" : undefined}
+                data-cta={link.dataCta}
+              >
+                <span class="mdrawer-link-label">{link.label}</span>
+                {link.pill && (
+                  <span class:list={["mdrawer-pill", `is-${link.pill.status}`]}>{link.pill.text}</span>
+                )}
+              </a>
+            ))}
+          </div>
+          {section.more && (
+            <a
+              class:list={["mdrawer-more", { "is-current": section.more.current }]}
+              href={section.more.href}
+            >
+              {section.more.label}
+            </a>
+          )}
+        </div>
+      ))}
+    </nav>
+
+    <button type="button" class="mdrawer-region" data-mobile-menu-picker>
+      <svg class="mdrawer-region-globe" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6">
+        <circle cx="12" cy="12" r="9"></circle>
+        <path d="M3 12h18M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18"></path>
+      </svg>
+      <span class="mdrawer-region-text">
+        <span class="mdrawer-region-label">{languageRegion.label}</span>
+        <span class="mdrawer-region-current">{languageRegion.current}</span>
+      </span>
+      <svg class="mdrawer-region-caret" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
+    </button>
+
+    <div class="mdrawer-foot">
+      <a class="btn mdrawer-cta" href={cta.href} data-cta={cta.dataCta}>{cta.label}</a>
+      <slot name="foot" />
+    </div>
+  </div>
+</div>
+
+<style>
+  .mdrawer {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-modal);
+    contain: layout paint;
+  }
+  .mdrawer[hidden] { display: none; }
+  /* Desktop bars own ≥ COMPACT_MAX+1 — the drawer must be unreachable there. */
+  @media (min-width: 1181px) {
+    .mdrawer { display: none; }
+  }
+
+  .mdrawer-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 11, 13, 0.6);
+    opacity: 0;
+    transition: opacity var(--dur-base) var(--ease-out);
+  }
+  .mdrawer.is-open .mdrawer-backdrop { opacity: 1; }
+
+  .mdrawer-panel {
+    position: absolute;
+    inset: 0 0 0 auto;
+    width: min(100%, 420px);
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    padding: 14px var(--space-5) calc(var(--space-5) + env(safe-area-inset-bottom));
+    padding-inline-end: max(var(--space-5), env(safe-area-inset-right));
+    background: var(--ink-0);
+    border-inline-start: 1px solid var(--line);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    transform: translateX(100%);
+    /* transitionend on transform is what un-hides the panel — the script relies
+       on it. Keep a transition here even if the design changes. */
+    transition: transform var(--dur-base) var(--ease-soft);
+  }
+  .mdrawer.is-open .mdrawer-panel {
+    transform: translateX(0);
+    will-change: transform;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mdrawer-panel, .mdrawer-backdrop { transition-duration: 1ms; }
+  }
+
+  .mdrawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+  .mdrawer-brand { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; }
+  .mdrawer-brand .brand-name { font-size: 18px; letter-spacing: -0.01em; }
+  .mdrawer-header-actions { display: flex; align-items: center; gap: 8px; }
+  .mdrawer-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-pill);
+    background: var(--fill-subtle);
+    color: var(--white);
+    cursor: pointer;
+  }
+  @media (hover: hover) {
+    .mdrawer-close:hover { background: var(--fill-hover); border-color: var(--line-strong); }
+  }
+  .mdrawer-close:focus-visible { outline: none; box-shadow: var(--ring-focus); }
+
+  .mdrawer-body { display: flex; flex-direction: column; gap: var(--space-5); }
+  .mdrawer-section { display: flex; flex-direction: column; }
+  .mdrawer-section-title {
+    margin: 0 0 var(--space-2);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--mist-2);
+  }
+  .mdrawer-section-lede {
+    margin: 0 0 var(--space-3);
+    color: var(--mist);
+    font-size: var(--fs-small);
+    line-height: 1.5;
+  }
+
+  .mdrawer-links.is-list { display: flex; flex-direction: column; }
+  .mdrawer-links.is-chips {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .mdrawer-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 48px;
+    color: var(--white);
+    text-decoration: none;
+    font-size: 17px;
+    font-weight: 600;
+  }
+  .mdrawer-links.is-list .mdrawer-link {
+    justify-content: space-between;
+    border-bottom: 1px solid var(--line);
+  }
+  .mdrawer-links.is-list .mdrawer-link:last-child { border-bottom: 0; }
+  .mdrawer-link.is-current .mdrawer-link-label { color: var(--gold); }
+
+  /* Chips: centred city pills, 2-up. */
+  .mdrawer-links.is-chips .mdrawer-link {
+    justify-content: center;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-pill);
+    background: var(--ink-1);
+    color: var(--text);
+    font-size: 14px;
+  }
+  .mdrawer-links.is-chips .mdrawer-link.is-current {
+    color: var(--gold);
+    border-color: color-mix(in srgb, var(--gold) 35%, var(--line));
+  }
+
+  .mdrawer-pill {
+    flex: none;
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: var(--r-pill);
+    border: 1px solid currentColor;
+    color: var(--mist-2);
+    white-space: nowrap;
+  }
+  .mdrawer-pill.is-live {
+    background: var(--gold-fill);
+    border-color: var(--gold-fill);
+    color: var(--gold-fill-text);
+  }
+  .mdrawer-pill.is-in-development { color: var(--gold); border-color: color-mix(in srgb, var(--gold) 30%, transparent); }
+  .mdrawer-pill.is-concept { color: var(--mist-2); border-color: var(--line); }
+
+  .mdrawer-more {
+    margin-top: var(--space-3);
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    color: var(--gold);
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  /* Language & region — opens the LocalePicker sheet via the script hand-off. */
+  .mdrawer-region {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 56px;
+    padding: 10px 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--ink-1);
+    color: var(--white);
+    cursor: pointer;
+    text-align: start;
+  }
+  @media (hover: hover) {
+    .mdrawer-region:hover { border-color: var(--line-strong); background: var(--fill-hover); }
+  }
+  .mdrawer-region:focus-visible { outline: none; box-shadow: var(--ring-focus); }
+  .mdrawer-region-globe { flex: none; color: var(--gold); }
+  .mdrawer-region-text { display: flex; flex-direction: column; gap: 2px; flex: 1 1 auto; min-width: 0; }
+  .mdrawer-region-label { font-size: 15px; font-weight: 600; }
+  .mdrawer-region-current { font-size: 13px; color: var(--mist-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mdrawer-region-caret { flex: none; color: var(--mist-2); }
+
+  .mdrawer-foot {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding-top: var(--space-2);
+  }
+  .mdrawer-cta { width: 100%; justify-content: center; min-height: 48px; }
+</style>

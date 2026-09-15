@@ -43,12 +43,11 @@ const ALLOW = {
   "src/components/chrome/MobileDrawer.astro": [],
   "src/components/LocalePicker.astro": [],
   "src/components/Nav.astro": [1220, 1340, 1379],
-  "src/layouts/IntlLayout.astro": [561, 720, 721, 760, 940, 980, 1080],
-  "src/components/intl/CityNav.astro": [720, 721],
-  "src/components/intl/IntlProductNav.astro": [721, 760, 940, 1080],
+  "src/layouts/IntlLayout.astro": [561, 720, 760, 980],
+  "src/components/intl/CityNav.astro": [],
+  "src/components/intl/IntlProductNav.astro": [],
   "src/styles/megamenu.css": [720],
   "src/components/MobileMenu.astro": [768],
-  "src/components/intl/IntlMobileMenu.astro": [721],
 };
 
 function mediaWidths(src) {
@@ -77,16 +76,25 @@ test("every @media width in the chrome files is derived from chrome.ts or allowl
   }
 });
 
-test("the shared MobileBar traps nothing — no backdrop-filter / transform / animation", () => {
+test("the MobileBar's picker-ancestor rules create no containing block for the sheet", () => {
   const abs = join(ROOT, "src/components/chrome/MobileBar.astro");
   if (!existsSync(abs)) return; // arrives in a later PR
   const css = readFileSync(abs, "utf8");
-  // Only the <style> block matters, but the whole file is a safe superset.
-  for (const banned of [/backdrop-filter\s*:/, /\btransform\s*:/, /\banimation\s*:/]) {
-    assert.ok(
-      !banned.test(css),
-      `MobileBar.astro must not use ${banned} — it becomes the containing block ` +
-        `for the region picker's position:fixed bottom sheet and traps it.`,
-    );
+  // Only elements that ANCESTOR the LocalePicker matter — the bar root and the
+  // actions wrapper it sits in. A transform/filter/animation/perspective or a
+  // containing `contain`/`will-change` on either makes it the containing block
+  // for the picker's position:fixed sheet and traps it. (The burger's own
+  // transform is fine: the burger is not an ancestor of the picker.)
+  const banned = /(backdrop-filter|filter|transform|animation|perspective|will-change|contain)\s*:/;
+  for (const sel of ["\\.mbar", "\\.mbar-actions"]) {
+    const re = new RegExp(sel + "\\s*\\{([^}]*)\\}", "g");
+    for (const m of css.matchAll(re)) {
+      assert.ok(
+        !banned.test(m[1]),
+        `MobileBar.astro: rule for ${sel.replace(/\\\\/g, "")} must not set a ` +
+          `containing-block property (transform/filter/animation/…) — it would ` +
+          `trap the region picker's position:fixed bottom sheet.\n  ${m[1].trim()}`,
+      );
+    }
   }
 });
