@@ -10,6 +10,32 @@ existing records*), so "after = before + this entry" always holds.
 
 ---
 
+## 2026-09-15 — Ludovic's French pass on the 15 Sep batch lands (verbal)
+
+Sam notified Ludovic and he **reviewed and passed everything** in the 15 Sep review
+batch, **no corrections**. The batch (`docs/ops-records/2026-09-15-french-review-ludovic.md`,
+31 rows) re-sent the not-yet-passed 13 Sep set plus one added string —
+`chrome.languageRegion` ("Langue et région"), the MobileDrawer "Language & region" row
+label from the unified mobile chrome work. On the pass landing, the `DRAFT`/"NOT yet
+reviewed" flags on the covered strings were dropped in `src/data/intl/copy.ts`
+(chrome `a11y` + `languageRegion` + contact-form `runtime` + city `Service` block) and
+`src/data/intl/markets.ts` (`/fr` and `/be-fr` `cityPage` anchoring). Carried by PR #111.
+
+As with the 7 Sep and 13 Sep passes, this was **verbal** — no email backs it. Standing
+rule unchanged: French written **after 15 Sep 2026** needs its own native pass.
+
+**The gap this batch surfaced — now closed (batch B, same day).** French flagged "next
+Ludovic batch" that never made it into a cluster of the batch-A document — `TrustFactsCopy`
+fr `authorityLabel`/`authorityBody`/`teamLabel` (`copy.ts`), and all of `intl/solutions.ts`
+and `intl/resources.ts` — was assembled as **batch B** (405 rows;
+`docs/ops-records/2026-09-15-french-review-ludovic-batch-b.md`) and **passed by Ludovic,
+verbal, no corrections**. Its `DRAFT` / "not yet reviewed" markers are now dropped in the
+source; the solution and resource pages and the trust-panel authority/team lines are cleared
+for prospect-facing use. `extract-fr-review.mjs` gained a `leafRows` mode (pairs every en/fr
+leaf of a module) so a whole-module batch needn't hand-list keys; batch A is now frozen
+evidence and no longer regenerable from `CLUSTERS`, as the 7 and 13 Sep batches already are.
+Carried by PR #111.
+
 ## 2026-09-15 — Git history rewritten to remove AI co-author attribution
 
 GitHub listed a `claude` account under **Contributors** because ~324 commits on `main`
