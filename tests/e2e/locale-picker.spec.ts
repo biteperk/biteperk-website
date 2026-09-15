@@ -23,7 +23,7 @@ test.describe("locale picker (desktop)", () => {
 
   test("6 locales, current marked, opens and closes cleanly", async ({ page }) => {
     await page.goto(p());
-    const picker = page.locator("[data-locale-picker]");
+    const picker = page.locator("#nav [data-locale-picker]");
     const trigger = picker.locator("[data-locale-picker-trigger]");
 
     await trigger.click();
@@ -50,7 +50,7 @@ test.describe("locale picker (desktop)", () => {
   }) => {
     // /contact/ exists in every locale → every alternate carries it.
     await page.goto(p("/contact/"));
-    const items = page.locator("[data-locale-picker-item]");
+    const items = page.locator("#nav [data-locale-picker-item]");
     await expect(items.filter({ hasText: "France — Français" })).toHaveAttribute(
       "href",
       "/fr/contact/",
@@ -66,29 +66,29 @@ test.describe("locale picker (desktop)", () => {
     // to expect the fallback, back when products were AU-only.)
     await page.goto(p("/products/voxtable/"));
     await expect(
-      page.locator("[data-locale-picker-item]").filter({ hasText: "United Kingdom" }),
+      page.locator("#nav [data-locale-picker-item]").filter({ hasText: "United Kingdom" }),
     ).toHaveAttribute("href", "/gb-en/products/voxtable/");
 
     // A genuinely AU-only page still falls back to the locale home — cities are
     // an Australian concept and exist in no global tree.
     await page.goto(p("/sydney/"));
     await expect(
-      page.locator("[data-locale-picker-item]").filter({ hasText: "United Kingdom" }),
+      page.locator("#nav [data-locale-picker-item]").filter({ hasText: "United Kingdom" }),
     ).toHaveAttribute("href", "/gb-en/");
 
     // Every region link is HOST-RELATIVE: on staging it must stay on staging
     // (an absolute https://biteperk.com/… href sent reviewers to production).
-    for (const href of await page.locator("[data-locale-picker-item]").evaluateAll((as) => as.map((a) => a.getAttribute("href")))) {
+    for (const href of await page.locator("#nav [data-locale-picker-item]").evaluateAll((as) => as.map((a) => a.getAttribute("href")))) {
       expect(href, "region link must be host-relative").toMatch(/^\/[a-z-]+\//);
     }
   });
 
   test("arrow keys open the menu and rove through items", async ({ page }) => {
     await page.goto(p());
-    const trigger = page.locator("[data-locale-picker-trigger]");
+    const trigger = page.locator("#nav [data-locale-picker-trigger]");
     await trigger.focus();
     await page.keyboard.press("ArrowDown");
-    const items = page.locator("[data-locale-picker-item]");
+    const items = page.locator("#nav [data-locale-picker-item]");
     await expect(items.first()).toBeFocused();
     await page.keyboard.press("ArrowDown");
     await expect(items.nth(1)).toBeFocused();
@@ -99,19 +99,22 @@ test.describe("locale picker (desktop)", () => {
   });
 });
 
-test.describe("locale picker (mobile overlay)", () => {
+test.describe("locale picker (mobile — drawer hand-off)", () => {
   test.use({ viewport: { width: 390, height: 844 }, contextOptions: { reducedMotion: "reduce" } });
 
-  test("the overlay menu carries a Region section with all 6 locales", async ({ page }) => {
+  test("the drawer's Language & region row opens the shared picker sheet", async ({ page }) => {
     await page.goto(p());
     await page.locator("[data-mobile-menu-trigger]").click();
-    const regions = page.locator(".mm-region");
-    // Derived — see above.
-    await expect(regions).toHaveCount(locales.length);
-    await expect(regions.filter({ hasText: "Australia — English" })).toHaveAttribute(
-      "aria-current",
-      "true",
-    );
-    await expect(regions.filter({ hasText: "Belgique — Français" })).toBeVisible();
+    // No inline region list any more — one region control, the shared picker.
+    await expect(page.locator(".mm-region")).toHaveCount(0);
+    await page.locator("[data-mobile-menu-picker]").click();
+    const picker = page.locator("[data-mobile-bar] [data-locale-picker]");
+    await expect(picker).toHaveAttribute("open", "");
+    const items = picker.locator("[data-locale-picker-item]");
+    await expect(items).toHaveCount(locales.length);
+    await expect(
+      picker.locator('[data-locale-picker-item][aria-current="true"]'),
+    ).toContainText("Australia — English");
+    await expect(items.filter({ hasText: "Belgique — Français" })).toBeVisible();
   });
 });

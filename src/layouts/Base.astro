@@ -25,6 +25,7 @@ import "@/styles/global.css";
 import interLatinUrl from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
 import SEO from "@/components/SEO.astro";
 import ConsentBanner from "@/components/ConsentBanner.astro";
+import LocaleSuggest from "@/components/LocaleSuggest.astro";
 import { siteGraphWith } from "@/data/schema";
 import { u, buildHreflang, currentTarget, stripBase, isSharedPage, localeFromPath, INTL_LAUNCHED } from "@/data/locales";
 import { analyticsReady, UMAMI_SCRIPT_URL, UMAMI_WEBSITE_ID, ANALYTICS_HOSTS } from "@/data/consent";
@@ -245,6 +246,10 @@ if (!alternates && INTL_LAUNCHED && currentTarget() === "au") {
       <slot />
     </main>
     <slot name="footer" />
+    {/* Offers the visitor's own market if they landed on another one — on BOTH
+        trees now, so an en-GB visitor on /au-en/ is offered /gb-en/. Never
+        redirects; suppressed once a region is deliberately chosen. */}
+    <LocaleSuggest />
     {/* Persisted across View Transitions so its shown/animated state never
         replays on soft navigation. */}
     <ConsentBanner transition:persist />

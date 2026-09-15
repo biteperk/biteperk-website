@@ -161,7 +161,7 @@ test.describe("mobile menu", () => {
     const panel = page.locator("[data-mobile-menu]");
     await expect(panel.getByText("Solutions", { exact: true }).first()).toBeVisible();
     await expect(panel.locator(`a[href="${p("/solutions/restaurants/")}"]`)).toBeVisible();
-    await expect(panel.locator(`a.mm-all[href="${p("/solutions/")}"]`)).toBeVisible();
+    await expect(panel.locator(`.mdrawer-more[href="${p("/solutions/")}"]`)).toBeVisible();
   });
 });
 

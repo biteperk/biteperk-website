@@ -71,6 +71,10 @@ export type ChromeCopy = {
   cookieSettings: string;
   /** Region picker menu heading. */
   regionTitle: string;
+  /** "Language & region" row label in the shared MobileDrawer (≤720px), the row
+      that opens the region-picker sheet. A visible label, not an accessible name,
+      so it lives here rather than in a11y. */
+  languageRegion: string;
   /** Cities nav trigger label + footer Cities column title. Renders only on
       trees with published cities (gb-en today). */
   cities: string;
@@ -88,7 +92,7 @@ export type ChromeCopy = {
   footerLegal: string;
   /** Label for the social-profile row. Renders as a <p>, never a heading. */
   footerFollow: string;
-  /** Slide-over menu trigger + close, ≤720px (IntlMobileMenu). */
+  /** Compact-chrome burger trigger + close (shared MobileBar/MobileDrawer). */
   menu: string;
   menuClose: string;
   /** Locale-suggestion chip: shown in the TARGET locale's language. */
@@ -370,6 +374,7 @@ export const chrome: Record<Lang, ChromeCopy> = {
     cookies: "Cookies",
     cookieSettings: "Cookie settings",
     regionTitle: "Choose your region",
+    languageRegion: "Language & region",
     cities: "Cities",
     citiesTitle: "Choose a city",
     footerExplore: "Explore",
@@ -442,6 +447,10 @@ export const chrome: Record<Lang, ChromeCopy> = {
     cookies: "Cookies",
     cookieSettings: "Paramètres des cookies",
     regionTitle: "Choisissez votre région",
+    // French DISCHARGED — Ludovic verbal pass 15 Sep 2026 (the 15 Sep batch,
+    // docs/ops-records/2026-09-15-french-review-ludovic.md, cluster 1). The
+    // MobileDrawer row label; standard French, matches Airbnb/Google usage.
+    languageRegion: "Langue et région",
     // French DISCHARGED — verbal pass from Ludovic, confirmed by Sam 7 Sep 2026;
     // see this file's header. footerExplore and footerRegions render on /fr and
     // /be-fr immediately; cities/citiesTitle stay dormant until a French city
@@ -465,8 +474,8 @@ export const chrome: Record<Lang, ChromeCopy> = {
     suggestDismiss: "Fermer",
     email: "sales@biteperk.com",
     rights: "Tous droits réservés.",
-    // French written 13 Sep 2026 — NOT yet reviewed; next Ludovic batch
-    // (extract-fr-review.mjs --since lists every key below).
+    // French DISCHARGED — Ludovic verbal pass 15 Sep 2026 (the 15 Sep batch,
+    // docs/ops-records/2026-09-15-french-review-ludovic.md, cluster 1).
     a11y: {
       skipToContent: "Aller au contenu",
       brandHome: "Accueil BitePerk",
@@ -551,7 +560,8 @@ export const trustFacts: Record<Lang, TrustFactsCopy> = {
   },
   // French DISCHARGED — verbal pass from Ludovic, confirmed by Sam 7 Sep 2026;
   // see this file's header. authorityLabel/authorityBody/teamLabel written
-  // 13 Sep 2026 — NOT yet reviewed (next batch).
+  // 13 Sep 2026 and DISCHARGED — Ludovic verbal pass 15 Sep 2026 (the 15 Sep
+  // batch B, docs/ops-records/2026-09-15-french-review-ludovic-batch-b.md, cl. 1).
   fr: {
     heading: "Où vous en êtes avec nous",
     entityLabel: "Votre cocontractant",
@@ -1047,8 +1057,8 @@ export const contact: Record<Lang, ContactCopy> = {
       messagePlaceholder: "Couverts, adresses, à quoi ressemble le téléphone un soir de service…",
       submit: "Demander un pilote",
       note: "Pas de grille tarifaire à ce stade — les conditions commerciales sont convenues par pilote. Réponse sous un jour ouvré.",
-      // French written 13 Sep 2026 — NOT yet reviewed. Goes in the next
-      // Ludovic batch (extract-fr-review.mjs --since lists it).
+      // French DISCHARGED — Ludovic verbal pass 15 Sep 2026 (the 15 Sep batch,
+      // docs/ops-records/2026-09-15-french-review-ludovic.md, cluster 2).
       runtime: {
         sending: "Envoi…",
         successTitle: "Merci — nous revenons vers vous.",
@@ -1380,7 +1390,8 @@ export const cityPage: Record<Lang, CityPageCopy> = {
     closingHeading: "Mettez Vox sur une ligne à {city}",
     closingBody:
       "Décrivez-nous un service chargé dans votre établissement et nous vous montrerons Vox au téléphone sur un appel semblable — en direct, avant tout engagement.",
-    // French written 13 Sep 2026 — NOT yet reviewed; next Ludovic batch.
+    // French DISCHARGED — Ludovic verbal pass 15 Sep 2026 (the 15 Sep batch,
+    // docs/ops-records/2026-09-15-french-review-ludovic.md, cluster 3).
     serviceName: "Hôte téléphonique IA pour les restaurants de {city}",
     serviceAltName: "Réceptionniste IA pour les restaurants de {city}",
     serviceTypes: ["Réponse téléphonique IA et prise de réservations", "Réceptionniste IA pour restaurants"],

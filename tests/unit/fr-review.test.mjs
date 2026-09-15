@@ -9,8 +9,8 @@
  * keeps them able to do the job they were rebuilt for.
  *
  * The load-bearing assertion is the first one: the extractor must reproduce the
- * filed review byte for byte (the 13 Sep 2026 batch today; the 7 Sep one is
- * filed evidence that this config no longer regenerates — by design). That proves two things at once — the tool
+ * filed review byte for byte (the 15 Sep 2026 batch B today; batch A, 13 Sep and
+ * 7 Sep are filed evidence that this config no longer regenerates — by design). That proves two things at once — the tool
  * still works, and the French in src/ has not moved since he approved it. When
  * it fails because copy changed, that is CORRECT and the fix is a new dated
  * review, never editing the filed one.
@@ -26,7 +26,7 @@ import { buildReview, collectClusters, get, frChangesSince } from "../../scripts
 import { buildPage } from "../../scripts/build/build-review-page.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
-const FILED = join(ROOT, "docs/ops-records/2026-09-13-french-review-ludovic.md");
+const FILED = join(ROOT, "docs/ops-records/2026-09-15-french-review-ludovic-batch-b.md");
 
 /** Drop the evidence preamble and the trailing row-count comment. */
 const body = (s) => {
@@ -34,7 +34,7 @@ const body = (s) => {
   return (i === -1 ? s : s.slice(i)).replace(/\n<!-- \d+ rows -->\n?$/, "").trimEnd();
 };
 
-test("the extractor reproduces the filed 13 Sep review exactly", async () => {
+test("the extractor reproduces the filed 15 Sep batch-B review exactly", async () => {
   assert.ok(existsSync(FILED), `${FILED} is missing — it is cited evidence, restore it`);
   assert.equal(
     body(await buildReview()),
@@ -48,7 +48,7 @@ test("the extractor reproduces the filed 13 Sep review exactly", async () => {
 test("every row carries both languages and they differ", async () => {
   const clusters = await collectClusters();
   const total = clusters.reduce((n, c) => n + c.data.length, 0);
-  assert.equal(total, 30, "the filed batch is 30 rows");
+  assert.equal(total, 405, "the filed batch is 405 rows");
 
   for (const c of clusters) {
     assert.ok(c.data.length > 0, `cluster ${c.n} extracted no rows`);
@@ -91,8 +91,11 @@ test("the page renders every extracted row, with the blocker marked", async () =
   const total = clusters.reduce((n, c) => n + c.data.length, 0);
   assert.equal((html.match(/class="row"/g) ?? []).length, total);
   assert.equal((html.match(/class="key"/g) ?? []).length, total);
-  assert.equal((html.match(/class="badge"/g) ?? []).length, 1, "exactly one blocking badge");
-  assert.match(html, /class="cluster is-blocking"/);
+  // Badge/blocking markup is driven by how many clusters are flagged blocking —
+  // batch A had one (the contact form); batch B has none.
+  const blockers = clusters.filter((c) => c.blocking?.startsWith("**Yes")).length;
+  assert.equal((html.match(/class="badge"/g) ?? []).length, blockers, `${blockers} blocking badge(s)`);
+  assert.equal((html.match(/class="cluster is-blocking"/g) ?? []).length, blockers);
 });
 
 /* ---------------------------------------------------------------- discovery */
@@ -111,7 +114,7 @@ test("--since finds no change when diffed against the current tree", async () =>
 
 test("--since walks all three copy modules, not just the ones that load easily", async () => {
   const { now } = await frChangesSince("HEAD");
-  for (const file of ["copy.ts", "products.ts", "markets.ts"]) {
+  for (const file of ["copy.ts", "products.ts", "markets.ts", "solutions.ts", "resources.ts"]) {
     const n = [...now.keys()].filter((k) => k.startsWith(`${file}:`)).length;
     assert.ok(n > 0, `no French leaves collected from ${file}`);
   }

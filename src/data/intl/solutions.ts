@@ -17,9 +17,9 @@
  * products.ts: bookings and takeaway ship, concierge and hotel reception are
  * in development, drive-thru is a concept — and the copy says so.
  *
- * French written 13 Sep 2026 — NOT yet reviewed. It goes in the next Ludovic
- * batch (extract-fr-review.mjs --since lists it); nothing French here ships to
- * prospects before that pass is filed under docs/ops-records/.
+ * French DISCHARGED — Ludovic verbal pass 15 Sep 2026 (the 15 Sep batch B,
+ * docs/ops-records/2026-09-15-french-review-ludovic-batch-b.md, clusters 2-3).
+ * Cleared for prospect-facing use.
  */
 import type { Lang } from "../locales";
 import type { SolutionSector, SolutionSlug } from "../solutions";
