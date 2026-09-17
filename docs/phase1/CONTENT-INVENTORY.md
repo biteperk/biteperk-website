@@ -4,13 +4,13 @@
 >
 > Templates for each type, with the truthfulness checklist, live in `docs/phase1/templates/`. Cadence: `docs/marketing-engine.md`.
 
-### Australia (`/au-en`) — 34 piece(s) to Definition of Done
+### Australia (`/au-en`) — 33 piece(s) to Definition of Done
 
 | Type              | Published | Drafts | DoD  | Gap  | Last published |
 |---|---|---|---|---|---|
 | Guides            | 12        | 0      | 20   | 8    | 2026-07-16 |
 | Comparisons       | 1         | 0      | 10   | 9    | 2026-05-30 |
-| Case studies      | 0         | 0      | 5    | 5    | — |
+| Case studies      | 1         | 0      | 5    | 4    | 2026-09-17 |
 | FAQs              | 0         | 0      | 10   | 10   | — |
 | Product updates   | 0         | 0      | 1    | 1    | — |
 | Industry reports  | 0         | 0      | 1    | 1    | — |
