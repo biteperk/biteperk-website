@@ -584,6 +584,79 @@ const catalogue = [
     url: "https://unsplash.com/photos/photo-1531973968078-9bb02785f13d",
     brief: "Bar-side dining room, warm light along the counter — dockside feel",
   },
+
+  // ── /gb-en photo upgrade (PR 2): the home food gallery + service photos for
+  // the steps band and the British sub-page overrides (page-images.ts). Food
+  // (6) fills the gallery mosaic; service/rooms (3: chef pass, wine pour, set
+  // room) dress about / how-it-works / solutions / products / contact. All
+  // plates and rooms — no faces, no legible menus/prices/logos. Dropped in
+  // review from the graded output: a "pub" frame (legible bottle brands /
+  // poster text on every clean stock option), a "plates carried" shot (visible
+  // face, black-and-white) and a "café counter" (legible menu boards) — the
+  // table and chef shots cover those sub-pages honestly.
+  {
+    slug: "uk-sunday-roast",
+    id: "photo-1734477000841-66cf5beebc1f",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1734477000841-66cf5beebc1f",
+    brief: "A classic Sunday roast — sliced roast, roast potatoes, sprouts, pigs-in-blankets and gravy",
+  },
+  {
+    slug: "uk-fish-and-chips",
+    id: "photo-1611599538235-128e54f1250f",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1611599538235-128e54f1250f",
+    brief: "Fish and chips on a checked-paper plate — pub classic",
+  },
+  {
+    slug: "uk-sharing-plates",
+    id: "photo-1681219916726-036039b9b20d",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1681219916726-036039b9b20d",
+    brief: "A table of small sharing plates with glasses of wine",
+  },
+  {
+    slug: "uk-afternoon-tea",
+    id: "photo-1774963502564-a242c1462b51",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1774963502564-a242c1462b51",
+    brief: "Assorted pastries and cakes in a display",
+  },
+  {
+    slug: "uk-brunch-plate",
+    id: "photo-1710533788728-800be38530a8",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1710533788728-800be38530a8",
+    brief: "Brunch plate — eggs and toast",
+  },
+  {
+    slug: "uk-curry-table",
+    id: "photo-1788601988466-9f361c34c6cb",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1788601988466-9f361c34c6cb",
+    brief: "A curry-house spread — dal, rice, salad and flatbread on a table",
+  },
+  {
+    slug: "uk-chef-pass",
+    id: "photo-1681270543584-8e541a1bb056",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1681270543584-8e541a1bb056",
+    brief: "Hands finishing a dish at the pass (no identifiable face)",
+  },
+  {
+    slug: "uk-wine-pour",
+    id: "photo-1638186095578-7e58f9f16d0d",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1638186095578-7e58f9f16d0d",
+    brief: "A hand pouring red wine into a glass",
+  },
+  {
+    slug: "uk-table-window",
+    id: "photo-1578474846511-04ba529f0b88",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1578474846511-04ba529f0b88",
+    brief: "A warm bistro dining room, tables set with linen and glasses before service",
+  },
 ];
 
 const FETCH_W = 2000;

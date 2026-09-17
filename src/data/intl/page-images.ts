@@ -78,7 +78,8 @@ export const intlPageImages: Readonly<Record<string, PageImage>> = {
   // plain answers.
 };
 
-export const pageImageFor = (page: string): PageImage | undefined => intlPageImages[page];
+export const pageImageFor = (page: string, base: string): PageImage | undefined =>
+  intlPageImageOverrides[base]?.[page] ?? intlPageImages[page];
 
 /**
  * One photo per product detail page, keyed by product slug. Same rules as
@@ -130,7 +131,8 @@ export const intlProductImages: Readonly<Record<string, PageImage>> = {
   },
 };
 
-export const productImageFor = (slug: string): PageImage | undefined => intlProductImages[slug];
+export const productImageFor = (slug: string, base: string): PageImage | undefined =>
+  intlProductImageOverrides[base]?.[slug] ?? intlProductImages[slug];
 
 /**
  * One photo per solution vertical — the same geography-neutral rules as the
@@ -146,4 +148,46 @@ export const intlSolutionImages: Readonly<Record<string, PageImage>> = {
   "professional-services": { slug: "phone-on-bar", alt: { en: "A phone resting on a counter", fr: "Un téléphone posé sur un comptoir" }, aspect: "16 / 9" },
   enterprise: { slug: "empty-tables-evening", alt: { en: "Tables set and waiting for evening service", fr: "Des tables dressées, en attente du service du soir" }, aspect: "16 / 9" },
 };
-export const solutionImageFor = (slug: string): PageImage | undefined => intlSolutionImages[slug];
+export const solutionImageFor = (slug: string, base: string): PageImage | undefined =>
+  intlSolutionImageOverrides[base]?.[slug] ?? intlSolutionImages[slug];
+
+/**
+ * Per-market OVERRIDES (rev. PR 2). The maps above are geography-neutral and
+ * shared by all five trees; these replace a chosen slug on ONE tree where a
+ * market-specific photo earns its place. Only /gb-en is populated: the UK photo
+ * upgrade added British food and service frames, and a market page localises
+ * the imagery the same way it localises the copy. Keyed base → page/slug →
+ * PageImage; `*For(key, base)` consults the override first, else the shared map,
+ * so a base with no entry (every tree but gb-en) is byte-unchanged. The `fr`
+ * alt is filled for type-completeness only — gb-en is English and never serves
+ * it, and no French tree is keyed here, so these British photos never reach
+ * /fr or /be-fr.
+ *
+ * British food doubles onto the product/solution pages it fits (fish & chips →
+ * takeaway, brunch → cafés), so the six gallery photos and these overrides draw
+ * from one small graded set rather than adding more.
+ */
+const GB = "/gb-en";
+export const intlPageImageOverrides: Readonly<Record<string, Record<string, PageImage>>> = {
+  [GB]: {
+    about: { slug: "uk-table-window", alt: { en: "A warm dining room, tables set before service", fr: "Une salle chaleureuse, tables dressées avant le service" }, aspect: "16 / 9" },
+    "how-it-works": { slug: "uk-chef-pass", alt: { en: "Hands finishing a dish at the pass during service", fr: "Des mains dressant une assiette au passe pendant le service" }, aspect: "16 / 9" },
+    solutions: { slug: "uk-sharing-plates", alt: { en: "Sharing plates and wine on a restaurant table", fr: "Des plats à partager et du vin sur une table de restaurant" }, aspect: "16 / 9" },
+    products: { slug: "uk-chef-pass", alt: { en: "Hands plating at the pass in a working kitchen", fr: "Des mains au passe dans une cuisine en service" }, aspect: "16 / 9" },
+    contact: { slug: "uk-wine-pour", alt: { en: "Red wine being poured into a glass", fr: "Du vin rouge versé dans un verre" }, aspect: "16 / 9" },
+  },
+};
+export const intlProductImageOverrides: Readonly<Record<string, Record<string, PageImage>>> = {
+  [GB]: {
+    voxtable: { slug: "uk-table-window", alt: { en: "A restaurant dining room set for service", fr: "Une salle de restaurant dressée pour le service" }, aspect: "16 / 9" },
+    voxorder: { slug: "uk-fish-and-chips", alt: { en: "Fish and chips, a takeaway classic", fr: "Fish and chips, un classique à emporter" }, aspect: "16 / 9" },
+    voxconcierge: { slug: "uk-sharing-plates", alt: { en: "Sharing plates and wine on a table", fr: "Des plats à partager et du vin sur une table" }, aspect: "16 / 9" },
+  },
+};
+export const intlSolutionImageOverrides: Readonly<Record<string, Record<string, PageImage>>> = {
+  [GB]: {
+    restaurants: { slug: "uk-sunday-roast", alt: { en: "A Sunday roast plated with gravy", fr: "Un rôti du dimanche nappé de sauce" }, aspect: "16 / 9" },
+    cafes: { slug: "uk-brunch-plate", alt: { en: "A cooked brunch plate with coffee", fr: "Une assiette de brunch avec un café" }, aspect: "16 / 9" },
+    takeaway: { slug: "uk-fish-and-chips", alt: { en: "Fish and chips ready to take away", fr: "Fish and chips prêts à emporter" }, aspect: "16 / 9" },
+  },
+};

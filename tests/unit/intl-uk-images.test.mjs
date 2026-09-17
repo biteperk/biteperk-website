@@ -25,6 +25,12 @@ import { loadTS } from "../../scripts/build/_load-ts.mjs";
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const { intlCities } = await loadTS(join(ROOT, "src/data/intl/cities.ts"));
 const { marketContent } = await loadTS(join(ROOT, "src/data/intl/markets.ts"));
+const {
+  intlPageImageOverrides, intlProductImageOverrides, intlSolutionImageOverrides,
+} = await loadTS(join(ROOT, "src/data/intl/page-images.ts"));
+const { pagesForLocale, ALL_LOCALES } = await loadTS(join(ROOT, "src/data/locales.ts"));
+const { PRODUCT_SLUGS } = await loadTS(join(ROOT, "src/data/product-slugs.ts"));
+const { renderableSolutions } = await loadTS(join(ROOT, "src/data/solutions.ts"));
 const placeholders = (
   await import(join(ROOT, "src/data/image-placeholders.json"), { with: { type: "json" } })
 ).default;
@@ -82,5 +88,48 @@ test("every UK storyImage alt is present, bounded and free of NAP-banned words",
     assert.ok(alt && alt.trim().length > 0, `${c.slug}: empty storyImageAlt`);
     assert.ok(alt.length <= 125, `${c.slug}: storyImageAlt is ${alt.length} chars (max 125)`);
     assert.ok(!BANNED.test(alt), `${c.slug}: storyImageAlt contains a NAP-banned word`);
+  }
+});
+
+// ── PR 2: home gallery + per-market sub-page image overrides ──────────────────
+
+test("gb-en home gallery has ≥4 items, each with slug/alt/caption, files and LQIP", () => {
+  const g = gb.gallery;
+  assert.ok(g && Array.isArray(g.items) && g.items.length >= 4, "gb-en gallery needs ≥4 items");
+  for (const it of g.items) {
+    assert.ok(it.slug && it.alt?.trim() && it.caption?.trim(), `gallery item incomplete: ${JSON.stringify(it)}`);
+    assert.ok(it.alt.length <= 125 && !BANNED.test(it.alt), `gallery alt bad: ${it.alt}`);
+    for (const rel of variants(it.slug)) assert.ok(existsSync(join(ROOT, rel)), `missing ${rel}`);
+    for (const w of [768, 1280]) {
+      const bytes = statSync(join(ROOT, `public/images/${it.slug}-${w}.avif`)).size;
+      assert.ok(bytes <= AVIF_CAP[w], `${it.slug}-${w}.avif is ${bytes}b (cap ${AVIF_CAP[w]}b)`);
+    }
+    assert.ok(placeholders[it.slug], `no LQIP for ${it.slug}`);
+  }
+});
+
+test("image overrides are gb-en-only, so the other four trees are unchanged", () => {
+  for (const [name, map] of [
+    ["page", intlPageImageOverrides], ["product", intlProductImageOverrides], ["solution", intlSolutionImageOverrides],
+  ]) {
+    assert.deepEqual(Object.keys(map), ["/gb-en"], `${name} overrides must key only /gb-en`);
+  }
+});
+
+test("every gb-en override entry is a real key with slug/alt and graded files", () => {
+  const gbLocale = ALL_LOCALES.find((l) => l.base === "/gb-en");
+  const pages = new Set(pagesForLocale(gbLocale));
+  const solSlugs = new Set(renderableSolutions().map((s) => s.slug));
+  const cases = [
+    ["page", intlPageImageOverrides["/gb-en"], (k) => pages.has(k)],
+    ["product", intlProductImageOverrides["/gb-en"], (k) => PRODUCT_SLUGS.includes(k)],
+    ["solution", intlSolutionImageOverrides["/gb-en"], (k) => solSlugs.has(k)],
+  ];
+  for (const [name, map, keyOk] of cases) {
+    for (const [key, img] of Object.entries(map)) {
+      assert.ok(keyOk(key), `${name} override key "${key}" is not a real gb-en ${name}`);
+      assert.ok(img.slug && img.alt?.en?.trim() && img.alt?.fr?.trim(), `${name} override "${key}" missing slug/alt`);
+      for (const rel of variants(img.slug)) assert.ok(existsSync(join(ROOT, rel)), `missing ${rel}`);
+    }
   }
 });

@@ -1,0 +1,139 @@
+---
+/**
+ * Home-page food/room mosaic for a market tree (rev. PR 2). The photographic
+ * counterpart to the text sections around it: it shows the kinds of tables a
+ * market's phone rings for, rather than describing them. Only /gb-en carries
+ * one today (MarketGallery in markets.ts); every other home renders nothing.
+ *
+ * Built on ImageBlock (lazy, LQIP, fixed aspect → zero CLS) with plain CSS on
+ * shared tokens — none of the AU helper classes/scripts, same as CityCards.
+ *
+ * The `is:inline` style is load-bearing, exactly as in CityCards/CityBody:
+ * Astro inlines processed component CSS by IMPORT GRAPH, not by what renders,
+ * so a normal scoped <style> would ship these rules onto all five market homes
+ * — including the four with no gallery. `is:inline` renders the tag in place,
+ * only where this component renders. Every selector is namespaced intl-gallery*
+ * and UNSCOPED; keep it that way.
+ *
+ * A11y: the section heading is a real <h2> in the PARENT (mirrors CityCards);
+ * captions here are <figcaption>, never headings, so the one-h1-then-no-jumps
+ * sweep in tests/intl/a11y.spec.ts stays green. Every image has real alt text
+ * (compressHTML collapses alt="" into a flagged missing-alt). No `priority`,
+ * no preload — the LCP element on these trees is text. The lead cell is marked
+ * with an explicit `is-lead` class, not a scoped :first-child (Astro's scoped
+ * :first-child is a known foot-gun).
+ */
+import ImageBlock from "@/components/ImageBlock.astro";
+import type { MarketGalleryItem } from "@/data/intl";
+
+interface Props {
+  items: readonly MarketGalleryItem[];
+}
+const { items } = Astro.props;
+---
+
+<ul class="intl-gallery">
+  {items.map((item, i) => (
+    <li class={`intl-gallery-cell${i === 0 ? " is-lead" : ""}`}>
+      <figure class="intl-gallery-figure">
+        <ImageBlock
+          slug={item.slug}
+          alt={item.alt}
+          aspect={i === 0 ? "4 / 3" : "1 / 1"}
+          widths={i === 0 ? "(min-width: 981px) 46vw, 100vw" : "(min-width: 981px) 31vw, 50vw"}
+          rounded={false}
+          class="intl-gallery-photo"
+        />
+        <span class="intl-gallery-scrim" aria-hidden="true"></span>
+        <figcaption class="intl-gallery-caption">{item.caption}</figcaption>
+      </figure>
+    </li>
+  ))}
+</ul>
+
+<style is:inline>
+  /* UNSCOPED (is:inline skips the scoping pass) — keep the intl-gallery*
+     namespace on every selector. */
+  .intl-gallery {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-6) 0 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-flow: dense;
+    gap: 14px;
+  }
+  /* The lead cell spans a 2×2 block; the other five fill around it. On a 3-col
+     grid that is 4 (lead) + 5 = 9 units = a clean 3×3 mosaic for six tiles. */
+  .intl-gallery-cell.is-lead {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+  @media (max-width: 980px) {
+    .intl-gallery { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .intl-gallery-cell.is-lead { grid-column: span 2; grid-row: span 1; }
+  }
+
+  .intl-gallery-figure {
+    position: relative;
+    margin: 0;
+    height: 100%;
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: var(--ink-1);
+    box-shadow: var(--shadow-card);
+    isolation: isolate;
+  }
+  .intl-gallery-cell { min-width: 0; }
+  .intl-gallery-figure .intl-gallery-photo,
+  .intl-gallery-figure .image-block {
+    height: 100%;
+    border-radius: 0;
+  }
+  .intl-gallery-figure .image-block img {
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--dur-slow) var(--ease-soft);
+  }
+  @media (hover: hover) {
+    .intl-gallery-figure:hover .image-block img { transform: scale(1.05); }
+  }
+
+  /* Theme-invariant dark scrim so the --on-image caption reads in both themes,
+     same stops as the city cards. */
+  .intl-gallery-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      rgba(10, 11, 13, 0.02) 45%,
+      rgba(10, 11, 13, 0.58) 82%,
+      rgba(10, 11, 13, 0.82) 100%
+    );
+  }
+  .intl-gallery-caption {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 12px;
+    z-index: 2;
+    color: var(--on-image);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+  }
+  .intl-gallery-cell.is-lead .intl-gallery-caption { font-size: 17px; }
+  @media (max-width: 560px) {
+    .intl-gallery-caption { font-size: 13px; left: 11px; right: 11px; bottom: 10px; }
+    .intl-gallery-cell.is-lead .intl-gallery-caption { font-size: 15px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .intl-gallery-figure .image-block img { transition: none; }
+    .intl-gallery-figure:hover .image-block img { transform: none; }
+  }
+</style>
