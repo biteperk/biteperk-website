@@ -26,12 +26,12 @@
 | Product updates   | 0         | 0      | 0    | ✓    | — |
 | Industry reports  | 0         | 0      | 0    | ✓    | — |
 
-### United Kingdom — English (`/gb-en`) — 11 piece(s) to Definition of Done
+### United Kingdom — English (`/gb-en`) — 6 piece(s) to Definition of Done
 
 | Type              | Published | Drafts | DoD  | Gap  | Last published |
 |---|---|---|---|---|---|
-| Guides            | 1         | 0      | 5    | 4    | 2026-09-13 |
-| Comparisons       | 1         | 0      | 3    | 2    | 2026-09-13 |
+| Guides            | 5         | 0      | 5    | ✓    | 2026-09-18 |
+| Comparisons       | 2         | 0      | 3    | 1    | 2026-09-18 |
 | Case studies      | 0         | 0      | 0    | ✓    | — |
 | FAQs              | 0         | 0      | 5    | 5    | — |
 | Product updates   | 0         | 0      | 0    | ✓    | — |
@@ -79,3 +79,6 @@
 - `src/content/blog/why-an-australian-voice-matters.md`: 509 words (thin: want ≥600)
 - `src/content/intl-resources/en/ai-receptionist-vs-answering-service-vs-voicemail.md`: description 179 chars (want 120–170); 477 words (thin: want ≥600)
 - `src/content/intl-resources/en/do-diners-want-to-talk-to-an-ai.md`: 505 words (thin: want ≥600)
+- `src/content/intl-resources/en/missed-calls-during-service.md`: description 171 chars (want 120–170)
+- `src/content/intl-resources/en/peak-season-phone-demand.md`: description 183 chars (want 120–170); 578 words (thin: want ≥600)
+- `src/content/intl-resources/en/reducing-no-shows-by-phone.md`: 595 words (thin: want ≥600)

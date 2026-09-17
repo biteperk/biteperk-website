@@ -53,6 +53,13 @@ const enResources = intlResourcePosts().filter((x) => !x.draft && x.lang === "en
 const resourceLines = enResources.map((x) => `- ${x.title}: https://biteperk.com/en/resources/${segOf(x.type)}/${x.slug}/`).join("\n");
 const resourceSection = enResources.length ? `\n## Resources (guides and comparisons)\n- Hub: https://biteperk.com/en/resources/\n${resourceLines}\n` : "";
 
+// UK-only guides (markets = ["/gb-en"], not on the x-default): listed at their
+// /gb-en URL so an answer engine can find the market-specific advice, since the
+// section above is keyed to /en and would otherwise drop them.
+const gbEnResources = intlResourcePosts().filter((x) => !x.draft && x.lang === "en" && x.markets.includes("/gb-en") && !x.markets.includes("/en"));
+const gbEnResourceLines = gbEnResources.map((x) => `- ${x.title}: https://biteperk.com/gb-en/resources/${segOf(x.type)}/${x.slug}/`).join("\n");
+const gbEnResourceSection = gbEnResources.length ? `\n## UK guides (United Kingdom pilot programme)\n${gbEnResourceLines}\n` : "";
+
 // Market city pages, derived from intl/cities.ts — check-cities requires every
 // published city's URL to appear in this file, byte-exact. Framed as pilot
 // conversations, never as local operations (Europe-truthful).
@@ -91,7 +98,7 @@ ${productLines}
 
 ## Solutions by industry (same status rule)
 ${solutionLines}
-${citySection}${resourceSection}
+${citySection}${resourceSection}${gbEnResourceSection}
 ## Product facts (keep answers accurate)
 - Vox is BitePerk's AI phone host. It answers restaurant calls in a natural
   voice, checks real availability and writes bookings to the venue's dashboard.

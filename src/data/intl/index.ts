@@ -31,7 +31,7 @@ import {
 } from "./copy";
 import {
   marketContent,
-  type MarketContent, type MarketMedia, type MarketHero, type MarketSupport, type MarketCities, type MarketRegions,
+  type MarketContent, type MarketMedia, type MarketHero, type MarketSupport, type MarketCities, type MarketRegions, type MarketGallery, type MarketGalleryItem,
 } from "./markets";
 
 export type CopyBundle = {
@@ -127,6 +127,15 @@ export function resolveRegions(locale: Locale): MarketRegions | undefined {
 }
 
 /**
+ * The locale home's food/room mosaic, if the market has one. Only /gb-en today
+ * (the UK photo upgrade); every other tree returns undefined and renders no
+ * gallery. See MarketGallery in markets.ts.
+ */
+export function resolveGallery(locale: Locale): MarketGallery | undefined {
+  return marketContent[locale.base]?.gallery;
+}
+
+/**
  * The locale home's city-links strip copy, if the market has one. Only
  * meaningful alongside a non-empty intlCitiesForBase(locale.base) — the home
  * renders the strip when BOTH exist, so a market can stage the copy before
@@ -145,5 +154,5 @@ export function resolveShowCallSim(locale: Locale): boolean {
   return marketContent[locale.base]?.callSim === true;
 }
 
-export type { MarketContent, MarketMedia, MarketHero, MarketSupport, MarketCities, MarketRegions };
+export type { MarketContent, MarketMedia, MarketHero, MarketSupport, MarketCities, MarketRegions, MarketGallery, MarketGalleryItem };
 export type { ChromeCopy, HomeCopy, SimplePageCopy, ContactCopy, CityPageCopy, TrustFactsCopy, CallSimCopy, Lang };

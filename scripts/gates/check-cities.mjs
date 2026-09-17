@@ -193,26 +193,34 @@ for (const c of published) {
     fail(`${id}: not listed in dist-site/llms.txt — merge-dist dropped the global sections`);
 }
 
-// Cityscape image-weight cap — the fast-on-weak-connections guardrail. The
-// cityscape is a city's one unique establishing shot (also its card in the
-// home strip and every other city's cross-link grid), so a heavy export
-// multiplies across the tree. AVIF byte caps are loose enough that every shot
-// graded to date passes (the current worst, london-skyline, is 79KB/203KB)
-// and tight enough to fail a careless 300KB+ export. Enforced on disk here
-// rather than as a Lighthouse aggregate: deterministic, and it fires in the
-// gate step, before a bloated image can ever reach a perf run.
+// Image-weight cap — the fast-on-weak-connections guardrail. Applies to BOTH
+// of a city's photos: the cityscape (its one unique establishing shot, also
+// its card in the home strip and every other city's cross-link grid) and the
+// storyImage (its hospitality scene). A heavy export multiplies across the
+// tree, and the storyImage is exactly where it slipped through before — the UK
+// shared `bar-brass-evening` shipped at 172KB/352KB, over both caps, because
+// only the cityscape was checked. AVIF byte caps are loose enough that every
+// shot graded to date passes and tight enough to fail a careless 300KB+
+// export. Enforced on disk here rather than as a Lighthouse aggregate:
+// deterministic, and it fires in the gate step, before a bloated image can
+// ever reach a perf run.
 const AVIF_CAP = { 768: 120_000, 1280: 280_000 };
 for (const c of published) {
-  for (const w of [768, 1280]) {
-    const rel = `public/images/${c.cityscapeImage}-${w}.avif`;
-    const abs = join(ROOT, rel);
-    if (!existsSync(abs)) continue; // check-assets owns "must exist"; this owns "must be light"
-    const bytes = statSync(abs).size;
-    if (bytes > AVIF_CAP[w])
-      fail(
-        `${c.base}/${c.slug}: cityscape ${rel} is ${(bytes / 1024).toFixed(0)}KB ` +
-          `(cap ${AVIF_CAP[w] / 1024}KB) — crop or blur it (fetch-images.mjs rect/params)`,
-      );
+  for (const [kind, slug] of [
+    ["cityscape", c.cityscapeImage],
+    ["storyImage", c.storyImage],
+  ]) {
+    for (const w of [768, 1280]) {
+      const rel = `public/images/${slug}-${w}.avif`;
+      const abs = join(ROOT, rel);
+      if (!existsSync(abs)) continue; // check-assets owns "must exist"; this owns "must be light"
+      const bytes = statSync(abs).size;
+      if (bytes > AVIF_CAP[w])
+        fail(
+          `${c.base}/${c.slug}: ${kind} ${rel} is ${(bytes / 1024).toFixed(0)}KB ` +
+            `(cap ${AVIF_CAP[w] / 1024}KB) — crop or blur it (fetch-images.mjs rect/params)`,
+        );
+    }
   }
 }
 

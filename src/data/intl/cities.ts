@@ -23,10 +23,15 @@
  *    separates. English: gb-en + be-en. French: fr + be-fr.
  *
  * 3. Two image slugs per city, not the AU engine's three: a cityscape unique to
- *    the city, plus a hospitality shot SHARED across the market (so `storyImage`
- *    repeating within a market is expected and fine). public/images is already
- *    74MB and binaries never delta-compress in git; a third unique slug per city
- *    would roughly treble the addition for no editorial gain.
+ *    the city, plus a hospitality `storyImage`. The FR and BE trees SHARE one
+ *    hospitality shot across the market (FR_STORY / BE_STORY below — repeating
+ *    within a market is expected and fine there) to keep public/images small,
+ *    since binaries never delta-compress in git. The UK tree (gb-en) instead
+ *    gives every city its OWN storyImage: eight cities all showing the single
+ *    `bar-brass-evening` frame read as templated on the market's front doors, so
+ *    the /gb-en photo upgrade (PR 1) traded ~2MB of graded variants for eight
+ *    distinct interiors. Both the cityscape and the storyImage are weight-capped
+ *    by check-cities (120KB@768 / 280KB@1280).
  *
  * Populated Jul 2026 with the eight UK cities (gb-en). Writing rules learned
  * doing it, for whoever adds the next market:
@@ -93,13 +98,8 @@ export interface IntlCity {
   readonly storyImageAlt: string;
 }
 
-// The shared UK hospitality shot (rule 3: storyImage repeats within a market).
-const UK_STORY = {
-  storyImage: "bar-brass-evening",
-  storyImageAlt: "A bar mid-service, glassware and spirits lit under filament bulbs",
-} as const;
-
-// The shared Belgian hospitality shot, same contract as UK_STORY. Already
+// The shared Belgian hospitality shot (rule 3: storyImage repeats within a
+// market on the FR/BE trees). Already
 // graded and already this market's `media.hospitality` slug (markets.ts), so a
 // Belgian city costs no new photography — rule 3 again.
 const BE_STORY = {
@@ -107,7 +107,7 @@ const BE_STORY = {
   storyImageAlt: "A relaxed continental café interior between services",
 } as const;
 
-// The shared French hospitality shot, same contract as UK_STORY / BE_STORY.
+// The shared French hospitality shot, same contract as BE_STORY.
 // Already graded and already frFr's `media.hospitality` slug (markets.ts), so a
 // French city costs no new photography — rule 3 again.
 // Canada is PLANNED: no photography has been chosen, so the stubs below point
@@ -211,7 +211,8 @@ export const intlCities: readonly IntlCity[] = [
     relatedGuides: [],
     cityscapeImage: "london-skyline",
     cityscapeImageAlt: "Aerial view of London — Tower Bridge and the Thames winding toward the City",
-    ...UK_STORY,
+    storyImage: "london-soho-room",
+    storyImageAlt: "A softly lit London dining room in the evening, tables set and waiting for service",
   },
 
   // ── Manchester ────────────────────────────────────────────────────────
@@ -302,7 +303,8 @@ export const intlCities: readonly IntlCity[] = [
     relatedGuides: [],
     cityscapeImage: "manchester-skyline",
     cityscapeImageAlt: "Manchester skyline at golden hour, glass towers rising above the city",
-    ...UK_STORY,
+    storyImage: "manchester-nq-bar",
+    storyImageAlt: "A Northern Quarter bar mid-evening, bottles backlit along the counter",
   },
 
   // ── Birmingham ────────────────────────────────────────────────────────
@@ -393,7 +395,8 @@ export const intlCities: readonly IntlCity[] = [
     relatedGuides: [],
     cityscapeImage: "birmingham-skyline",
     cityscapeImageAlt: "The Birmingham skyline across open water on a bright day",
-    ...UK_STORY,
+    storyImage: "birmingham-dining",
+    storyImageAlt: "A warm, low-lit dining room dressed with greenery",
   },
 
   // ── Edinburgh ─────────────────────────────────────────────────────────
@@ -484,7 +487,8 @@ export const intlCities: readonly IntlCity[] = [
     relatedGuides: [],
     cityscapeImage: "edinburgh-old-town",
     cityscapeImageAlt: "Edinburgh's Old Town skyline in golden haze — clock tower and monument spires",
-    ...UK_STORY,
+    storyImage: "edinburgh-parlour",
+    storyImageAlt: "A traditional room lit by table lamps, warm and unhurried between services",
   },
 
   // ── Glasgow ───────────────────────────────────────────────────────────
@@ -575,7 +579,8 @@ export const intlCities: readonly IntlCity[] = [
     relatedGuides: [],
     cityscapeImage: "glasgow-clyde",
     cityscapeImageAlt: "Glasgow along the River Clyde on a bright day, bridges leading into the city",
-    ...UK_STORY,
+    storyImage: "glasgow-cafe",
+    storyImageAlt: "An ornate traditional bar interior in carved mahogany and brass, quiet between services",
   },
 
   // ── Leeds ─────────────────────────────────────────────────────────────
@@ -666,7 +671,8 @@ export const intlCities: readonly IntlCity[] = [
     relatedGuides: [],
     cityscapeImage: "leeds-dock",
     cityscapeImageAlt: "Leeds Dock — narrowboats on still water between brick and glass buildings",
-    ...UK_STORY,
+    storyImage: "leeds-coffee",
+    storyImageAlt: "A bright, airy café with a long communal table and greenery, between services",
   },
 
   // ── Bristol ───────────────────────────────────────────────────────────
@@ -757,7 +763,8 @@ export const intlCities: readonly IntlCity[] = [
     relatedGuides: [],
     cityscapeImage: "bristol-balloons",
     cityscapeImageAlt: "Hot-air balloons drifting over the Clifton Suspension Bridge and the Avon Gorge",
-    ...UK_STORY,
+    storyImage: "bristol-harbour-room",
+    storyImageAlt: "A bright dining room with tall windows and daylight, near the water",
   },
 
   // ── Liverpool ─────────────────────────────────────────────────────────
@@ -848,7 +855,8 @@ export const intlCities: readonly IntlCity[] = [
     relatedGuides: [],
     cityscapeImage: "liverpool-pier-head",
     cityscapeImageAlt: "The Three Graces on Liverpool's Pier Head under a blue sky",
-    ...UK_STORY,
+    storyImage: "liverpool-dock-room",
+    storyImageAlt: "A dockside dining room with warm light running along the bar and counter",
   },
 
   // ── Brussels (/be-en) — the first non-UK market city ───────────────────
