@@ -603,10 +603,10 @@ const catalogue = [
   },
   {
     slug: "uk-fish-and-chips",
-    id: "photo-1611599538235-128e54f1250f",
+    id: "photo-1722105344016-0df8537c1799",
     photographer: "Unsplash",
-    url: "https://unsplash.com/photos/photo-1611599538235-128e54f1250f",
-    brief: "Fish and chips on a checked-paper plate — pub classic",
+    url: "https://unsplash.com/photos/photo-1722105344016-0df8537c1799",
+    brief: "British fish and chips — battered fish, chunky chips, mushy peas and tartare on a plate",
   },
   {
     slug: "uk-sharing-plates",

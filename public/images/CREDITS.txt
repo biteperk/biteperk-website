@@ -332,8 +332,8 @@ uk-sunday-roast
 
 uk-fish-and-chips
   Photographer: Unsplash
-  Original:     https://unsplash.com/photos/photo-1611599538235-128e54f1250f
-  Brief:        Fish and chips on a checked-paper plate — pub classic
+  Original:     https://unsplash.com/photos/photo-1722105344016-0df8537c1799
+  Brief:        British fish and chips — battered fish, chunky chips, mushy peas and tartare on a plate
 
 uk-sharing-plates
   Photographer: Unsplash
