@@ -27,6 +27,7 @@ import FAQ from "@/components/FAQ.astro";
 import PullQuote from "@/components/PullQuote.astro";
 import Illustration from "@/components/Illustration.astro";
 import CityCards from "@/components/intl/CityCards.astro";
+import TrustPanel from "@/components/intl/TrustPanel.astro";
 
 interface Props {
   locale: Locale;
@@ -40,6 +41,12 @@ const p = (seg: string) => `${locale.base}/${seg ? `${seg}/` : ""}`;
 const c = resolveCopy(locale);
 const hero = resolveHero(locale);
 const h = c.home;
+
+// The trust-facts strip on city pages is gb-en-only for now: the UK carries the
+// Biteperk Ltd entity, the ICO and a UK-GDPR lawful basis — the strongest
+// truthful trust signal we can put on a local landing page. Gating to gb-en
+// keeps the FR/BE city pages byte-unchanged (no re-review of French output).
+const isUk = locale.market === "gb";
 
 // "{city}" in the shared labels → this city's name.
 const cl = (s: string) => s.replaceAll("{city}", city.name);
@@ -183,6 +190,17 @@ const otherCities = intlCitiesForBase(locale.base).filter((x) => x.slug !== city
     <FAQ items={[...city.faqs]} stagger />
   </div>
 </section>
+
+{/* ── UK trust facts: who contracts, who regulates, where records go. The
+    same strip the gb-en home and contact page carry, on every UK city page.
+    gb-en only (isUk) so the FR/BE city trees are unchanged. ── */}
+{isUk && (
+  <section class="intl-band">
+    <div class="wrap">
+      <TrustPanel locale={locale} copy={c} variant="facts" />
+    </div>
+  </section>
+)}
 
 {/* ── Cross-links to the market's other city pages — same card grid as
     the locale home, so the cluster reads as one product surface. ── */}

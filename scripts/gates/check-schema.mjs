@@ -9,8 +9,8 @@
  * Run after a build: node scripts/gates/check-schema.mjs
  * (set BUILD_TARGET=global for the global pass).
  */
-import { readFileSync } from "node:fs";
-import { join, dirname } from "node:path";
+import { readFileSync, readdirSync, existsSync } from "node:fs";
+import { join, dirname, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
@@ -195,6 +195,46 @@ if (TARGET === "global") {
       }
     }
   }
+
+  // Every JSON-LD `image` on a global page must resolve on disk. check-assets
+  // sweeps HTML attributes only (src/srcset/og:image), never structured-data
+  // strings, so a renamed or mistyped photo would 404 silently inside a
+  // Service / SoftwareApplication / BlogPosting `image` (PR 3: image SEO).
+  const htmlFiles = [];
+  (function collect(dir) {
+    for (const e of readdirSync(dir, { withFileTypes: true })) {
+      const fp = join(dir, e.name);
+      if (e.isDirectory()) collect(fp);
+      else if (e.name.endsWith(".html")) htmlFiles.push(fp);
+    }
+  })(join(ROOT, DIST));
+  const imageUrls = new Set();
+  const collectImages = (o) => {
+    if (!o || typeof o !== "object") return;
+    for (const [k, v] of Object.entries(o)) {
+      if (k === "image") [].concat(v).forEach((s) => typeof s === "string" && imageUrls.add(s));
+      else if (typeof v === "object") collectImages(v);
+    }
+  };
+  for (const fp of htmlFiles) {
+    for (const node of graphOf(relative(join(ROOT, DIST), fp))) collectImages(node);
+  }
+  // Only the GLOBAL tree's own asset dirs are present in dist-global; an image
+  // that points into the AU tree (/au-en/og/…) resolves on the merged dist-site
+  // and is the AU pass's / check-assets' job, not this standalone build's.
+  let imgMissing = 0;
+  let imgChecked = 0;
+  for (const url of imageUrls) {
+    const rel = url.startsWith(GLOBAL) ? url.slice(GLOBAL.length).replace(/^\//, "") : null;
+    if (!rel || !/^(images|og\/intl)\//.test(rel)) continue;
+    imgChecked++;
+    if (!existsSync(join(ROOT, DIST, rel))) {
+      console.error(`FAIL  JSON-LD image does not resolve on disk: ${url}`);
+      failed++;
+      imgMissing++;
+    }
+  }
+  if (!imgMissing) console.log(`PASS  ${imgChecked} global JSON-LD image URL(s) resolve on disk`);
 
   // The sitewide Organization description follows the document's language.
   for (const l of locales) {
