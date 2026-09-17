@@ -324,3 +324,48 @@ liverpool-dock-room
   Photographer: Unsplash
   Original:     https://unsplash.com/photos/photo-1531973968078-9bb02785f13d
   Brief:        Bar-side dining room, warm light along the counter — dockside feel
+
+uk-sunday-roast
+  Photographer: Unsplash
+  Original:     https://unsplash.com/photos/photo-1734477000841-66cf5beebc1f
+  Brief:        A classic Sunday roast — sliced roast, roast potatoes, sprouts, pigs-in-blankets and gravy
+
+uk-fish-and-chips
+  Photographer: Unsplash
+  Original:     https://unsplash.com/photos/photo-1611599538235-128e54f1250f
+  Brief:        Fish and chips on a checked-paper plate — pub classic
+
+uk-sharing-plates
+  Photographer: Unsplash
+  Original:     https://unsplash.com/photos/photo-1681219916726-036039b9b20d
+  Brief:        A table of small sharing plates with glasses of wine
+
+uk-afternoon-tea
+  Photographer: Unsplash
+  Original:     https://unsplash.com/photos/photo-1774963502564-a242c1462b51
+  Brief:        Assorted pastries and cakes in a display
+
+uk-brunch-plate
+  Photographer: Unsplash
+  Original:     https://unsplash.com/photos/photo-1710533788728-800be38530a8
+  Brief:        Brunch plate — eggs and toast
+
+uk-curry-table
+  Photographer: Unsplash
+  Original:     https://unsplash.com/photos/photo-1788601988466-9f361c34c6cb
+  Brief:        A curry-house spread — dal, rice, salad and flatbread on a table
+
+uk-chef-pass
+  Photographer: Unsplash
+  Original:     https://unsplash.com/photos/photo-1681270543584-8e541a1bb056
+  Brief:        Hands finishing a dish at the pass (no identifiable face)
+
+uk-wine-pour
+  Photographer: Unsplash
+  Original:     https://unsplash.com/photos/photo-1638186095578-7e58f9f16d0d
+  Brief:        A hand pouring red wine into a glass
+
+uk-table-window
+  Photographer: Unsplash
+  Original:     https://unsplash.com/photos/photo-1578474846511-04ba529f0b88
+  Brief:        A warm bistro dining room, tables set with linen and glasses before service

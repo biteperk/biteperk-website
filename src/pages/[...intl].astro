@@ -16,7 +16,7 @@
 import IntlLayout from "@/layouts/IntlLayout.astro";
 import { localesForTarget, pagesForLocale, currentTarget, localeHomePath, ORIGIN, type Locale } from "@/data/locales";
 import {
-  resolveCopy, resolveMedia, resolveHero, resolveSupport, resolveCityStrip, resolveShowCallSim, resolveRegions,
+  resolveCopy, resolveMedia, resolveHero, resolveSupport, resolveCityStrip, resolveGallery, resolveShowCallSim, resolveRegions,
   type CopyBundle, type SimplePageCopy,
 } from "@/data/intl";
 import { intlCitiesForBase } from "@/data/intl/cities";
@@ -43,6 +43,7 @@ import PullQuote from "@/components/PullQuote.astro";
 // CSS by import graph, dynamic imports included, not by what renders.)
 import CityBody from "@/components/intl/CityBody.astro";
 import CityCards from "@/components/intl/CityCards.astro";
+import PhotoGallery from "@/components/intl/PhotoGallery.astro";
 // Same `is:inline` contract as the city components — see its header.
 import TrustPanel from "@/components/intl/TrustPanel.astro";
 // Same is:inline contract — its 6.6KB stylesheet renders with the
@@ -108,7 +109,7 @@ const isUk = locale.market === "gb";
 const simple = SIMPLE_PAGES[page]?.(c) ?? null;
 // Supporting photo for sub-pages. undefined on the home (it has a hero) and on
 // the legal pages (deliberately text-only — see page-images.ts).
-const pageImage = pageImageFor(page);
+const pageImage = pageImageFor(page, locale.base);
 
 // `cv-auto` (content-visibility:auto, global.css) is on every section below
 // the proof band: the browser skips style/layout/paint for them until they
@@ -122,7 +123,7 @@ const productSlug = page.startsWith("products/") ? page.slice("products/".length
 const overview = intlProductsOverview[locale.copyLang];
 const product = productSlug ? intlProducts[locale.copyLang][productSlug] : null;
 // Product detail pages key their photo off the product, not the path.
-const productImage = productSlug ? productImageFor(productSlug) : undefined;
+const productImage = productSlug ? productImageFor(productSlug, locale.base) : undefined;
 const catalogue = productSlug ? products.find((x) => x.slug === productSlug) : null;
 
 // Solution pages: STRUCTURE (slug, sector, primaryProduct, status) from
@@ -131,7 +132,7 @@ const solutionSlug = page.startsWith("solutions/") ? page.slice("solutions/".len
 const solutionsOverview = intlSolutionsOverview[locale.copyLang];
 const solutionEntry = solutionSlug ? renderableSolutions().find((x) => x.slug === solutionSlug) ?? null : null;
 const solution = solutionEntry ? intlSolutions[locale.copyLang][solutionEntry.slug as SolutionSlug] : null;
-const solutionImage = solutionSlug ? solutionImageFor(solutionSlug) : undefined;
+const solutionImage = solutionSlug ? solutionImageFor(solutionSlug, locale.base) : undefined;
 const solutionProduct = solutionEntry ? getProduct(solutionEntry.primaryProduct) : null;
 const solutionSiblings = (solutionEntry?.relatedSolutions ?? [])
   .map((slug) => renderableSolutions().find((x) => x.slug === slug))
@@ -165,6 +166,8 @@ const city = intlCitiesForBase(locale.base).find((x) => x.slug === page) ?? null
 // anti-doorway similarity score, so it is not on all five homes.
 const showCallSim = page === "" && resolveShowCallSim(locale);
 const cityStrip = page === "" ? resolveCityStrip(locale) : undefined;
+// Home food/room mosaic — only the market that carries one (gb-en today).
+const gallery = page === "" ? resolveGallery(locale) : undefined;
 const homeCities = page === "" ? intlCitiesForBase(locale.base) : [];
 
 // A path in pagesForLocale() that no branch here can render used to reach
@@ -444,6 +447,17 @@ const appJsonLd =
                 <ImageBlock slug={media.hospitality.slug} alt={media.hospitality.alt} aspect="16 / 10" widths="(min-width: 721px) 50vw, 100vw" rounded />
               </div>
             )}
+          </div>
+        </section>
+      )}
+
+      {gallery && (
+        <section class="cv-auto intl-gallery-section">
+          <div class="wrap">
+            <p class="eyebrow">{gallery.eyebrow}</p>
+            <h2>{gallery.heading}</h2>
+            <p class="lede">{gallery.body}</p>
+            <PhotoGallery items={gallery.items} />
           </div>
         </section>
       )}
