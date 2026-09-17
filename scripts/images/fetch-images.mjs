@@ -617,10 +617,10 @@ const catalogue = [
   },
   {
     slug: "uk-afternoon-tea",
-    id: "photo-1774963502564-a242c1462b51",
+    id: "photo-1635232350223-7b8699845d25",
     photographer: "Unsplash",
-    url: "https://unsplash.com/photos/photo-1774963502564-a242c1462b51",
-    brief: "Assorted pastries and cakes in a display",
+    url: "https://unsplash.com/photos/photo-1635232350223-7b8699845d25",
+    brief: "A three-tiered afternoon tea stand — scones, cakes and finger sandwiches by a window",
   },
   {
     slug: "uk-brunch-plate",

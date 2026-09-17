@@ -342,8 +342,8 @@ uk-sharing-plates
 
 uk-afternoon-tea
   Photographer: Unsplash
-  Original:     https://unsplash.com/photos/photo-1774963502564-a242c1462b51
-  Brief:        Assorted pastries and cakes in a display
+  Original:     https://unsplash.com/photos/photo-1635232350223-7b8699845d25
+  Brief:        A three-tiered afternoon tea stand — scones, cakes and finger sandwiches by a window
 
 uk-brunch-plate
   Photographer: Unsplash

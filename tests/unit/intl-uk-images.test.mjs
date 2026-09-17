@@ -42,6 +42,12 @@ const FORMATS = ["avif", "webp", "jpg"];
 // Same caps check-cities enforces on disk; asserted here too so a heavy export
 // fails in the fast unit run, not only in the gate step.
 const AVIF_CAP = { 768: 120_000, 1280: 280_000 };
+// Gallery tiles get a slightly looser cap than city photos: a cityscape/story
+// image multiplies across the tree (home strip + every city's cross-link grid),
+// so it earns the tight 120K/280K bound; a gallery tile renders once, lazy and
+// below the fold, so a rich food frame up to these sizes is fine. Still tight
+// enough to fail a careless 400K+ export.
+const GALLERY_CAP = { 768: 170_000, 1280: 320_000 };
 // check-truthful bans these words anywhere on a global page; a storyImage alt
 // ships into the HTML, so guard the alt text here as well.
 const BANNED = /haymarket|elizabeth street|477 pitt|surry hills/i;
@@ -102,7 +108,7 @@ test("gb-en home gallery has ≥4 items, each with slug/alt/caption, files and L
     for (const rel of variants(it.slug)) assert.ok(existsSync(join(ROOT, rel)), `missing ${rel}`);
     for (const w of [768, 1280]) {
       const bytes = statSync(join(ROOT, `public/images/${it.slug}-${w}.avif`)).size;
-      assert.ok(bytes <= AVIF_CAP[w], `${it.slug}-${w}.avif is ${bytes}b (cap ${AVIF_CAP[w]}b)`);
+      assert.ok(bytes <= GALLERY_CAP[w], `${it.slug}-${w}.avif is ${bytes}b (gallery cap ${GALLERY_CAP[w]}b)`);
     }
     assert.ok(placeholders[it.slug], `no LQIP for ${it.slug}`);
   }
