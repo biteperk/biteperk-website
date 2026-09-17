@@ -259,6 +259,13 @@ const breadcrumbJsonLd = buildBreadcrumb(
 // city, never located in it (PLAN.md §8, enforced by check-truthful +
 // check-schema). provider @id keeps the entity merge with the AU-anchored org.
 const cityUrl = city ? `${ORIGIN}${locale.base}/${city.slug}/` : "";
+// Absolute URL of a graded photo, for JSON-LD `image`. Images live at
+// /images/<slug>-1280.jpg (public/, root — u() is a no-op on the global build),
+// so this is origin + that path. check-schema (global) asserts every emitted
+// `image` resolves on disk, so a renamed photo can't 404 silently in the
+// structured data the way it would never be caught by check-assets (which only
+// sweeps HTML attributes, not JSON-LD strings).
+const imgAbs = (slug: string) => `${ORIGIN}/images/${slug}-1280.jpg`;
 // Every string in the language of the document (c.cityPage) — these were
 // English template literals on the French trees until 13 Sep 2026.
 const withCity = (s: string) => s.replace("{city}", city?.name ?? "");
@@ -273,6 +280,10 @@ const cityServiceJsonLd = city && {
   description: city.seoDescription,
   provider: { "@id": ORG_ID },
   audience: { "@type": "BusinessAudience", name: c.cityPage.audienceName },
+  // The city's establishing shot — an image on the Service node, not an
+  // address/geo (those stay off, PLAN.md §8). Helps the service card in image
+  // and answer surfaces without asserting a local premises.
+  image: imgAbs(city.cityscapeImage),
   url: cityUrl,
 };
 const cityBreadcrumbJsonLd =
@@ -331,21 +342,31 @@ const resArticleJsonLd = resPost
       publisher: { "@id": ORG_ID },
       mainEntityOfPage: { "@type": "WebPage", "@id": `${ORIGIN}${p(page)}` },
       isPartOf: { "@id": WEBSITE_ID },
+      // The article's representative image — its own photo when it has one
+      // (page-images/PR 4), else the shared per-type OG card. Absolute, and
+      // check-schema asserts it resolves.
+      image: pageImage ? imgAbs(pageImage.slug) : `${ORIGIN}${ogImage}`,
       keywords: resPost.data.tags.join(", "),
     }
   : null;
 const appJsonLd =
   page === "products"
-    ? buildVoxApplication({
-        description: overview.lede,
-        // LIVE capabilities only — structured data must never claim unshipped
-        // work, and three of the five are in-development/concept. No `prices`:
-        // AU tiers are an Australian fact (Europe-truthful, PLAN.md §8).
-        featureList: products
-          .filter((x) => x.status === "live")
-          .map((x) => overview.capabilities[x.slug].outcome),
-        editionIds: products.map((x) => voxEditionId(x.slug)),
-      })
+    ? {
+        ...buildVoxApplication({
+          description: overview.lede,
+          // LIVE capabilities only — structured data must never claim unshipped
+          // work, and three of the five are in-development/concept. No `prices`:
+          // AU tiers are an Australian fact (Europe-truthful, PLAN.md §8).
+          featureList: products
+            .filter((x) => x.status === "live")
+            .map((x) => overview.capabilities[x.slug].outcome),
+          editionIds: products.map((x) => voxEditionId(x.slug)),
+        }),
+        // The products page's own photo (gb-en overrides it to a British shot);
+        // spread AFTER so it augments the shared builder without touching it or
+        // the AU tree. check-schema asserts it resolves.
+        ...(pageImage ? { image: imgAbs(pageImage.slug) } : {}),
+      }
     : null;
 ---
 
