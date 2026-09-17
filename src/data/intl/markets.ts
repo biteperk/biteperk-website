@@ -315,7 +315,7 @@ const gbEn: MarketContent = {
       { slug: "uk-sharing-plates", alt: "Sharing plates and two glasses of wine on a restaurant table", caption: "Small plates, long evenings" },
       { slug: "uk-brunch-plate", alt: "A cooked brunch of eggs, bacon, toast and potatoes with coffee", caption: "Brunch that runs late" },
       { slug: "uk-fish-and-chips", alt: "Fish and chips with tartare sauce and a wedge of lemon", caption: "Takeaway, off the same phone" },
-      { slug: "uk-afternoon-tea", alt: "A display of cakes, tarts and pastries", caption: "Afternoon tea, booked ahead" },
+      { slug: "uk-afternoon-tea", alt: "A three-tiered afternoon tea stand of scones, cakes and finger sandwiches", caption: "Afternoon tea, booked ahead" },
     ],
   },
   copy: {
