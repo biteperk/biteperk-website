@@ -178,6 +178,7 @@ export const cities: readonly City[] = [
     },
     relatedGuides: [
       "ai-phone-answering-for-sydney-restaurants",
+      "mazcina-resto-bar-case-study",
       "what-missed-calls-cost-your-restaurant",
       "why-an-australian-voice-matters",
     ],

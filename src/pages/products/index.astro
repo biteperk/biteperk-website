@@ -193,6 +193,7 @@ const cta = defaultCtaActions();
                   <span>{v.name}</span>
                 )}
                 {v.location && <span class="vx-founding-loc">{v.location}</span>}
+                {v.caseStudy && <a class="vx-founding-loc" href={u(`/blog/${v.caseStudy}/`)}>Case study →</a>}
               </li>
             ))}
           </ul>

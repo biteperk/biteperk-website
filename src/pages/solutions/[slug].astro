@@ -101,6 +101,9 @@ const siblings = solution.relatedSolutions
             <strong>{page.proof.author}</strong> · {page.proof.role}
           </footer>
         </blockquote>
+        {page.proof.caseStudy && (
+          <p class="sol-proof-link"><a href={u(`/blog/${page.proof.caseStudy}/`)}>Read the full case study →</a></p>
+        )}
       </div>
     </section>
   )}
@@ -145,6 +148,8 @@ const siblings = solution.relatedSolutions
 </SolutionLayout>
 
 <style>
+  .sol-proof-link { margin: 18px 0 0; }
+  .sol-proof-link a { color: var(--gold); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
   .sol-siblings { list-style: none; padding: 0; margin: 18px 0 0; display: flex; flex-wrap: wrap; gap: 10px; }
   .sol-siblings a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border: 1px solid var(--line); border-radius: 999px; text-decoration: none; color: var(--white); font-weight: 600; }
   .sol-quote {

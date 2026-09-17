@@ -89,6 +89,12 @@ const blog = defineCollection({
     cities,
     sources,
     customer,
+    /**
+     * Optional on-page FAQ — rendered under the article and emitted as
+     * FAQPage JSON-LD from the same array, so the markup can never describe
+     * questions the page does not show.
+     */
+    faq: z.array(z.object({ q: z.string(), a: z.string() })).default([]),
   }).superRefine(proofRules),
 });
 
