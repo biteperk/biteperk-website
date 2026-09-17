@@ -279,3 +279,48 @@ hotel-reception
   Photographer: Luca Discenza
   Original:     https://unsplash.com/photos/95Bc9REy-w8
   Brief:        Brass reception bell on a pale stone hotel front desk
+
+uk-dining-room
+  Photographer: Unsplash
+  Original:     https://unsplash.com/photos/photo-1551530241-1ccbaa7a9a84
+  Brief:        Elegant restaurant dining room, tables set for evening service under soft chandeliers
+
+london-soho-room
+  Photographer: Unsplash
+  Original:     https://unsplash.com/photos/photo-1709548145082-04d0cde481d4
+  Brief:        Dimly lit London dining room in the evening, tables set
+
+manchester-nq-bar
+  Photographer: Adam Jaime
+  Original:     https://unsplash.com/photos/photo-1512805147242-c3e79caf64bf
+  Brief:        Bar interior, bottles backlit — a Northern Quarter feel
+
+birmingham-dining
+  Photographer: Unsplash
+  Original:     https://unsplash.com/photos/photo-1680209668002-924ffe3f1952
+  Brief:        Warm dimly lit dining room with plants
+
+edinburgh-parlour
+  Photographer: Unsplash
+  Original:     https://unsplash.com/photos/photo-1552960226-639240203497
+  Brief:        Traditional room lit by table lamps, warm and low-key
+
+glasgow-cafe
+  Photographer: Unsplash
+  Original:     https://unsplash.com/photos/photo-1576316840262-0eb956562081
+  Brief:        Cosy warm-toned café interior between services
+
+leeds-coffee
+  Photographer: Unsplash
+  Original:     https://unsplash.com/photos/photo-1762087577613-978bf9066d39
+  Brief:        Bright, airy modern café with a long communal table and greenery
+
+bristol-harbour-room
+  Photographer: Unsplash
+  Original:     https://unsplash.com/photos/photo-1583354608715-177553a4035e
+  Brief:        Bright dining room with round tables and daylight — harbourside feel
+
+liverpool-dock-room
+  Photographer: Unsplash
+  Original:     https://unsplash.com/photos/photo-1531973968078-9bb02785f13d
+  Brief:        Bar-side dining room, warm light along the counter — dockside feel

@@ -256,15 +256,15 @@ const gbEn: MarketContent = {
       alt: "Aerial view of London — Tower Bridge and the Thames winding toward the City",
     },
     hospitality: {
-      // Was `bar-moody`: a US craft-beer bar with legible DOLLAR prices on its
-      // chalkboard, on the tree that serves the UK. Signage is worse than a
-      // stray vehicle in shot — it is readable, and it prices the venue in the
-      // wrong currency. This frame is expensive to encode (Edison bulbs and
-      // backlit bottles are worst-case for AVIF) and was rejected for the hero
-      // for that reason; it is fine here because the band is below the fold and
-      // lazy, so it never competes with the text LCP.
-      slug: "bar-brass-evening",
-      alt: "A bar mid-service, glassware and spirits lit under filament bulbs",
+      // The /gb-en photo upgrade (PR 1) retired `bar-brass-evening` here: it was
+      // ALSO every UK city's storyImage (eight pages plus this band on one frame,
+      // which read as templated), and at 172KB/352KB it broke the storyImage
+      // weight cap check-cities now enforces. This velvet dining room reads
+      // premium and mid-service — "Built for the pace of UK hospitality" — is
+      // lighter to encode, and no longer collides with any city page. Still
+      // below the fold and lazy, so it never competes with the text LCP.
+      slug: "uk-dining-room",
+      alt: "An elegant restaurant dining room set for service, warm low light",
     },
     eyebrow: "For UK venues",
     heading: "Built for the pace of UK hospitality.",

@@ -510,6 +510,80 @@ const catalogue = [
     url: "https://unsplash.com/photos/95Bc9REy-w8",
     brief: "Brass reception bell on a pale stone hotel front desk",
   },
+
+  // ── /gb-en photo upgrade (PR 1): eight DISTINCT per-city hospitality
+  // interiors + one dining-room band shot, so the market stops repeating the
+  // single `bar-brass-evening` frame (it was the home band AND all eight city
+  // storyImages). All signage-free, face-free interiors; assigned by vibe, not
+  // real venue (art-direction bans identifiable venues). See
+  // src/data/intl/cities.ts rule 3 and check-cities' storyImage weight cap.
+  {
+    // gb-en home band — replaces bar-brass-evening (a US bar with legible
+    // dollar prices was its predecessor; the bar frame itself is 344KB/1280,
+    // over the story cap). This velvet dining room reads premium and mid-service
+    // without night-and-shady, matching "Built for the pace of UK hospitality".
+    slug: "uk-dining-room",
+    id: "photo-1551530241-1ccbaa7a9a84",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1551530241-1ccbaa7a9a84",
+    brief: "Elegant restaurant dining room, tables set for evening service under soft chandeliers",
+  },
+  {
+    slug: "london-soho-room",
+    id: "photo-1709548145082-04d0cde481d4",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1709548145082-04d0cde481d4",
+    brief: "Dimly lit London dining room in the evening, tables set",
+  },
+  {
+    slug: "manchester-nq-bar",
+    id: "photo-1512805147242-c3e79caf64bf",
+    photographer: "Adam Jaime",
+    url: "https://unsplash.com/photos/photo-1512805147242-c3e79caf64bf",
+    brief: "Bar interior, bottles backlit — a Northern Quarter feel",
+  },
+  {
+    slug: "birmingham-dining",
+    id: "photo-1680209668002-924ffe3f1952",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1680209668002-924ffe3f1952",
+    brief: "Warm dimly lit dining room with plants",
+  },
+  {
+    slug: "edinburgh-parlour",
+    id: "photo-1552960226-639240203497",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1552960226-639240203497",
+    brief: "Traditional room lit by table lamps, warm and low-key",
+  },
+  {
+    slug: "glasgow-cafe",
+    id: "photo-1576316840262-0eb956562081",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1576316840262-0eb956562081",
+    brief: "Cosy warm-toned café interior between services",
+  },
+  {
+    slug: "leeds-coffee",
+    id: "photo-1762087577613-978bf9066d39",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1762087577613-978bf9066d39",
+    brief: "Bright, airy modern café with a long communal table and greenery",
+  },
+  {
+    slug: "bristol-harbour-room",
+    id: "photo-1583354608715-177553a4035e",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1583354608715-177553a4035e",
+    brief: "Bright dining room with round tables and daylight — harbourside feel",
+  },
+  {
+    slug: "liverpool-dock-room",
+    id: "photo-1531973968078-9bb02785f13d",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1531973968078-9bb02785f13d",
+    brief: "Bar-side dining room, warm light along the counter — dockside feel",
+  },
 ];
 
 const FETCH_W = 2000;
