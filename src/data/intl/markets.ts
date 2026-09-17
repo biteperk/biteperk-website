@@ -108,6 +108,32 @@ export type MarketSupport = {
 };
 
 /**
+ * A home-page photo mosaic — the market's food and room, shown rather than
+ * described (rev. PR 2). Lives in the market layer, NOT CopyBundle, for the
+ * same reason as `cities`/`media`: the bundle-parity unit test asserts all five
+ * trees resolve one shape, and a gallery only some markets carry belongs beside
+ * media/hero/cities. As things stand only /gb-en is populated — the UK photo
+ * upgrade — so the other four homes render no gallery and are byte-unchanged.
+ *
+ * Each item carries its own alt (real, non-empty — compressHTML collapses
+ * alt="" into a flagged missing-alt) and a short caption. The section heading
+ * is a real <h2>; captions are <p>/<figcaption>, never headings, so the
+ * one-h1-then-no-jumps sweep in tests/intl/a11y.spec.ts stays green. Never
+ * `priority`/preloaded: the LCP element on these trees is text.
+ */
+export type MarketGalleryItem = {
+  slug: string;
+  alt: string;
+  caption: string;
+};
+export type MarketGallery = {
+  eyebrow: string;
+  heading: string;
+  body: string;
+  items: readonly MarketGalleryItem[];
+};
+
+/**
  * The city-links strip on the locale home — the intl analogue of the AU
  * CityStrip. Copy only; the links themselves derive from
  * intlCitiesForBase(locale.base), and the home renders the section only when
@@ -171,6 +197,8 @@ export type MarketContent = {
   support?: MarketSupport;
   /** Absent → no city strip on the home. See MarketCities above. */
   cities?: MarketCities;
+  /** Absent → no food/room mosaic on the home. Only /gb-en carries one. */
+  gallery?: MarketGallery;
 };
 
 /**
@@ -256,15 +284,15 @@ const gbEn: MarketContent = {
       alt: "Aerial view of London — Tower Bridge and the Thames winding toward the City",
     },
     hospitality: {
-      // Was `bar-moody`: a US craft-beer bar with legible DOLLAR prices on its
-      // chalkboard, on the tree that serves the UK. Signage is worse than a
-      // stray vehicle in shot — it is readable, and it prices the venue in the
-      // wrong currency. This frame is expensive to encode (Edison bulbs and
-      // backlit bottles are worst-case for AVIF) and was rejected for the hero
-      // for that reason; it is fine here because the band is below the fold and
-      // lazy, so it never competes with the text LCP.
-      slug: "bar-brass-evening",
-      alt: "A bar mid-service, glassware and spirits lit under filament bulbs",
+      // The /gb-en photo upgrade (PR 1) retired `bar-brass-evening` here: it was
+      // ALSO every UK city's storyImage (eight pages plus this band on one frame,
+      // which read as templated), and at 172KB/352KB it broke the storyImage
+      // weight cap check-cities now enforces. This velvet dining room reads
+      // premium and mid-service — "Built for the pace of UK hospitality" — is
+      // lighter to encode, and no longer collides with any city page. Still
+      // below the fold and lazy, so it never competes with the text LCP.
+      slug: "uk-dining-room",
+      alt: "An elegant restaurant dining room set for service, warm low light",
     },
     eyebrow: "For UK venues",
     heading: "Built for the pace of UK hospitality.",
@@ -276,6 +304,19 @@ const gbEn: MarketContent = {
     eyebrow: "Where we're starting",
     heading: "Pilot conversations, city by city.",
     body: "Vox works the same anywhere a phone rings, but hospitality doesn't sound the same in every city. These pages talk about yours specifically.",
+  },
+  gallery: {
+    eyebrow: "The rooms we answer for",
+    heading: "Every kind of UK table, one calm voice on the phone.",
+    body: "Sunday lunch, a curry house on a Friday, brunch that runs past noon — the phone rings through all of it. Vox picks up while the floor keeps moving.",
+    items: [
+      { slug: "uk-sunday-roast", alt: "A Sunday roast plated with roast potatoes, sprouts, pigs-in-blankets and gravy", caption: "Sunday lunch, fully booked" },
+      { slug: "uk-curry-table", alt: "A curry-house spread of dal, rice, salad and flatbreads on a table", caption: "The Friday curry house" },
+      { slug: "uk-sharing-plates", alt: "Sharing plates and two glasses of wine on a restaurant table", caption: "Small plates, long evenings" },
+      { slug: "uk-brunch-plate", alt: "A cooked brunch of eggs, bacon, toast and potatoes with coffee", caption: "Brunch that runs late" },
+      { slug: "uk-fish-and-chips", alt: "Fish and chips with tartare sauce and a wedge of lemon", caption: "Takeaway, off the same phone" },
+      { slug: "uk-afternoon-tea", alt: "A three-tiered afternoon tea stand of scones, cakes and finger sandwiches", caption: "Afternoon tea, booked ahead" },
+    ],
   },
   copy: {
     // City-page furniture anchored to the UK; the EN core is market-neutral.

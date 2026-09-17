@@ -510,6 +510,153 @@ const catalogue = [
     url: "https://unsplash.com/photos/95Bc9REy-w8",
     brief: "Brass reception bell on a pale stone hotel front desk",
   },
+
+  // ── /gb-en photo upgrade (PR 1): eight DISTINCT per-city hospitality
+  // interiors + one dining-room band shot, so the market stops repeating the
+  // single `bar-brass-evening` frame (it was the home band AND all eight city
+  // storyImages). All signage-free, face-free interiors; assigned by vibe, not
+  // real venue (art-direction bans identifiable venues). See
+  // src/data/intl/cities.ts rule 3 and check-cities' storyImage weight cap.
+  {
+    // gb-en home band — replaces bar-brass-evening (a US bar with legible
+    // dollar prices was its predecessor; the bar frame itself is 344KB/1280,
+    // over the story cap). This velvet dining room reads premium and mid-service
+    // without night-and-shady, matching "Built for the pace of UK hospitality".
+    slug: "uk-dining-room",
+    id: "photo-1551530241-1ccbaa7a9a84",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1551530241-1ccbaa7a9a84",
+    brief: "Elegant restaurant dining room, tables set for evening service under soft chandeliers",
+  },
+  {
+    slug: "london-soho-room",
+    id: "photo-1709548145082-04d0cde481d4",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1709548145082-04d0cde481d4",
+    brief: "Dimly lit London dining room in the evening, tables set",
+  },
+  {
+    slug: "manchester-nq-bar",
+    id: "photo-1512805147242-c3e79caf64bf",
+    photographer: "Adam Jaime",
+    url: "https://unsplash.com/photos/photo-1512805147242-c3e79caf64bf",
+    brief: "Bar interior, bottles backlit — a Northern Quarter feel",
+  },
+  {
+    slug: "birmingham-dining",
+    id: "photo-1680209668002-924ffe3f1952",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1680209668002-924ffe3f1952",
+    brief: "Warm dimly lit dining room with plants",
+  },
+  {
+    slug: "edinburgh-parlour",
+    id: "photo-1552960226-639240203497",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1552960226-639240203497",
+    brief: "Traditional room lit by table lamps, warm and low-key",
+  },
+  {
+    slug: "glasgow-cafe",
+    id: "photo-1576316840262-0eb956562081",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1576316840262-0eb956562081",
+    brief: "Cosy warm-toned café interior between services",
+  },
+  {
+    slug: "leeds-coffee",
+    id: "photo-1762087577613-978bf9066d39",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1762087577613-978bf9066d39",
+    brief: "Bright, airy modern café with a long communal table and greenery",
+  },
+  {
+    slug: "bristol-harbour-room",
+    id: "photo-1583354608715-177553a4035e",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1583354608715-177553a4035e",
+    brief: "Bright dining room with round tables and daylight — harbourside feel",
+  },
+  {
+    slug: "liverpool-dock-room",
+    id: "photo-1531973968078-9bb02785f13d",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1531973968078-9bb02785f13d",
+    brief: "Bar-side dining room, warm light along the counter — dockside feel",
+  },
+
+  // ── /gb-en photo upgrade (PR 2): the home food gallery + service photos for
+  // the steps band and the British sub-page overrides (page-images.ts). Food
+  // (6) fills the gallery mosaic; service/rooms (3: chef pass, wine pour, set
+  // room) dress about / how-it-works / solutions / products / contact. All
+  // plates and rooms — no faces, no legible menus/prices/logos. Dropped in
+  // review from the graded output: a "pub" frame (legible bottle brands /
+  // poster text on every clean stock option), a "plates carried" shot (visible
+  // face, black-and-white) and a "café counter" (legible menu boards) — the
+  // table and chef shots cover those sub-pages honestly.
+  {
+    slug: "uk-sunday-roast",
+    id: "photo-1734477000841-66cf5beebc1f",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1734477000841-66cf5beebc1f",
+    brief: "A classic Sunday roast — sliced roast, roast potatoes, sprouts, pigs-in-blankets and gravy",
+  },
+  {
+    slug: "uk-fish-and-chips",
+    id: "photo-1722105344016-0df8537c1799",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1722105344016-0df8537c1799",
+    brief: "British fish and chips — battered fish, chunky chips, mushy peas and tartare on a plate",
+  },
+  {
+    slug: "uk-sharing-plates",
+    id: "photo-1681219916726-036039b9b20d",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1681219916726-036039b9b20d",
+    brief: "A table of small sharing plates with glasses of wine",
+  },
+  {
+    slug: "uk-afternoon-tea",
+    id: "photo-1635232350223-7b8699845d25",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1635232350223-7b8699845d25",
+    brief: "A three-tiered afternoon tea stand — scones, cakes and finger sandwiches by a window",
+  },
+  {
+    slug: "uk-brunch-plate",
+    id: "photo-1710533788728-800be38530a8",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1710533788728-800be38530a8",
+    brief: "Brunch plate — eggs and toast",
+  },
+  {
+    slug: "uk-curry-table",
+    id: "photo-1788601988466-9f361c34c6cb",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1788601988466-9f361c34c6cb",
+    brief: "A curry-house spread — dal, rice, salad and flatbread on a table",
+  },
+  {
+    slug: "uk-chef-pass",
+    id: "photo-1681270543584-8e541a1bb056",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1681270543584-8e541a1bb056",
+    brief: "Hands finishing a dish at the pass (no identifiable face)",
+  },
+  {
+    slug: "uk-wine-pour",
+    id: "photo-1638186095578-7e58f9f16d0d",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1638186095578-7e58f9f16d0d",
+    brief: "A hand pouring red wine into a glass",
+  },
+  {
+    slug: "uk-table-window",
+    id: "photo-1578474846511-04ba529f0b88",
+    photographer: "Unsplash",
+    url: "https://unsplash.com/photos/photo-1578474846511-04ba529f0b88",
+    brief: "A warm bistro dining room, tables set with linen and glasses before service",
+  },
 ];
 
 const FETCH_W = 2000;
