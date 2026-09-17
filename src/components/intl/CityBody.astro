@@ -28,6 +28,8 @@ import PullQuote from "@/components/PullQuote.astro";
 import Illustration from "@/components/Illustration.astro";
 import CityCards from "@/components/intl/CityCards.astro";
 import TrustPanel from "@/components/intl/TrustPanel.astro";
+import { getCollection } from "astro:content";
+import { RESOURCE_TYPE_BY_SEGMENT } from "@/data/resources";
 
 interface Props {
   locale: Locale;
@@ -47,6 +49,24 @@ const h = c.home;
 // truthful trust signal we can put on a local landing page. Gating to gb-en
 // keeps the FR/BE city pages byte-unchanged (no re-review of French output).
 const isUk = locale.market === "gb";
+
+// Further-reading: guides in THIS tree that name this city in their frontmatter
+// `cities`. Derived, not hand-maintained — dropping a guide with the city in its
+// `cities` list surfaces it here, and a tree with no matching guide (every FR/BE
+// city today) renders nothing, so those pages stay unchanged. The reverse link
+// (guide → city) is the guide's own prose; cities.ts `relatedGuides` is unused.
+const segmentOf = (type: string) =>
+  Object.entries(RESOURCE_TYPE_BY_SEGMENT).find(([, id]) => id === type)?.[0] ?? type;
+const cityGuides = (
+  await getCollection(
+    "intlResources",
+    ({ data }) =>
+      !data.draft &&
+      data.lang === locale.copyLang &&
+      data.markets.includes(locale.base) &&
+      (data.cities ?? []).includes(city.slug),
+  )
+).slice(0, 4);
 
 // "{city}" in the shared labels → this city's name.
 const cl = (s: string) => s.replaceAll("{city}", city.name);
@@ -199,6 +219,69 @@ const otherCities = intlCitiesForBase(locale.base).filter((x) => x.slug !== city
     <div class="wrap">
       <TrustPanel locale={locale} copy={c} variant="facts" />
     </div>
+  </section>
+)}
+
+{/* ── Further reading: UK guides that name this city. gb-en only (isUk) so the
+    section chrome stays English and the FR/BE city pages are unchanged; the
+    list itself is already language/market-filtered. Renders nothing when a
+    city has no matching guide. ── */}
+{isUk && cityGuides.length > 0 && (
+  <section class="intl-band">
+    <div class="wrap">
+      <p class="eyebrow">Further reading</p>
+      <h2>Guides for {city.name} operators</h2>
+      <ul class="intl-city-guides">
+        {cityGuides.map((g) => (
+          <li>
+            <a class="intl-city-guide" href={p(`resources/${segmentOf(g.data.type)}/${g.id.split("/")[1]}`)}>
+              <span class="intl-city-guide-title">{g.data.title}</span>
+              <span class="intl-city-guide-desc">{g.data.description}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+    {/* Scoped to this conditional so the CSS ships ONLY on gb-en city pages that
+        render guides — keeps the FR/BE city pages byte-unchanged. Namespaced
+        intl-city-guide*, unscoped (is:inline). */}
+    <style is:inline>
+      .intl-city-guides {
+        list-style: none;
+        padding: 0;
+        margin: var(--space-6) 0 0;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+      }
+      @media (max-width: 720px) {
+        .intl-city-guides { grid-template-columns: 1fr; }
+      }
+      .intl-city-guide {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        height: 100%;
+        padding: 18px 20px;
+        border-radius: var(--r-lg);
+        border: 1px solid var(--line);
+        background: var(--ink-1);
+        text-decoration: none;
+        transition:
+          transform var(--dur-base) var(--ease-out),
+          border-color var(--dur-base) var(--ease-out);
+      }
+      @media (hover: hover) {
+        .intl-city-guide:hover { border-color: var(--gold); transform: translateY(-2px); }
+      }
+      .intl-city-guide:focus-visible { outline: none; box-shadow: var(--ring-focus); }
+      .intl-city-guide-title { font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
+      .intl-city-guide-desc { font-size: 14px; color: var(--mist-2); line-height: 1.5; }
+      @media (prefers-reduced-motion: reduce) {
+        .intl-city-guide { transition: none; }
+        .intl-city-guide:hover { transform: none; }
+      }
+    </style>
   </section>
 )}
 
