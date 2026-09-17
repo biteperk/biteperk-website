@@ -56,7 +56,7 @@ export type SolutionPageCopy = {
    * Never fabricate: the wording must be the venue's own, on record
    * (products.ts voxProof / marketing collateral approvals).
    */
-  readonly proof?: { readonly quote: string; readonly author: string; readonly role: string };
+  readonly proof?: { readonly quote: string; readonly author: string; readonly role: string; /** Blog slug of the venue's published case study, when there is one. */ readonly caseStudy?: string };
   readonly faq: readonly FaqItem[];
 };
 
@@ -107,7 +107,7 @@ export const solutions: readonly Solution[] = [
     status: "live",
     primaryProduct: "voxtable",
     shortDescription: "AI phone host that answers booking calls during service.",
-    relatedGuides: ["what-missed-calls-cost-your-restaurant", "how-to-reduce-no-shows-at-your-restaurant", "do-diners-want-to-talk-to-an-ai"],
+    relatedGuides: ["mazcina-resto-bar-case-study", "what-missed-calls-cost-your-restaurant", "how-to-reduce-no-shows-at-your-restaurant", "do-diners-want-to-talk-to-an-ai"],
     relatedSolutions: ["cafes", "takeaway"],
     page: {
       seo: {
@@ -324,6 +324,7 @@ export const solutions: readonly Solution[] = [
         quote: "Bella picks up the calls we used to miss. Bookings and takeaway orders just land on our screen.",
         author: "Camilo & Mauro",
         role: "Owners · Mazcina Resto-Bar, Darlinghurst",
+        caseStudy: "mazcina-resto-bar-case-study",
       },
       faq: [
         {
@@ -345,7 +346,7 @@ export const solutions: readonly Solution[] = [
     status: "live",
     primaryProduct: "voxorder",
     shortDescription: "Phone ordering that keeps the pass moving.",
-    relatedGuides: ["how-to-forward-your-restaurant-phone-to-an-ai-host", "how-much-does-ai-phone-answering-cost-for-a-restaurant", "do-diners-want-to-talk-to-an-ai"],
+    relatedGuides: ["mazcina-resto-bar-case-study", "how-to-forward-your-restaurant-phone-to-an-ai-host", "how-much-does-ai-phone-answering-cost-for-a-restaurant", "do-diners-want-to-talk-to-an-ai"],
     relatedSolutions: ["restaurants", "cafes", "drive-thru"],
     page: {
       seo: {
@@ -402,6 +403,7 @@ export const solutions: readonly Solution[] = [
         quote: "Bella picks up the calls we used to miss. Bookings and takeaway orders just land on our screen.",
         author: "Camilo & Mauro",
         role: "Owners · Mazcina Resto-Bar, Darlinghurst",
+        caseStudy: "mazcina-resto-bar-case-study",
       },
       faq: [
         {

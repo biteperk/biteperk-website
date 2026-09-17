@@ -525,9 +525,11 @@ export const foundingVenues: ReadonlyArray<{
   readonly name: string;
   readonly location?: string;
   readonly url?: string;
+  /** Blog slug of this venue's published case study. */
+  readonly caseStudy?: string;
 }> = [
   { name: "Natalia's Bistro", location: "Sydney" },
-  { name: "Mazcina Resto-Bar", url: "https://mazcina.com" },
+  { name: "Mazcina Resto-Bar", url: "https://mazcina.com", caseStudy: "mazcina-resto-bar-case-study" },
 ];
 
 /**
