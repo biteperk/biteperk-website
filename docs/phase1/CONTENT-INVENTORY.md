@@ -4,7 +4,7 @@
 >
 > Templates for each type, with the truthfulness checklist, live in `docs/phase1/templates/`. Cadence: `docs/marketing-engine.md`.
 
-### Australia (`/au-en`) — 22 piece(s) to Definition of Done
+### Australia (`/au-en`) — 21 piece(s) to Definition of Done
 
 | Type              | Published | Drafts | DoD  | Gap  | Last published |
 |---|---|---|---|---|---|
@@ -13,7 +13,7 @@
 | Case studies      | 1         | 0      | 5    | 4    | 2026-09-17 |
 | FAQs              | 10        | 0      | 10   | ✓    | 2026-09-18 |
 | Product updates   | 3         | 0      | 1    | ✓    | 2026-09-18 |
-| Industry reports  | 0         | 0      | 1    | 1    | — |
+| Industry reports  | 1         | 0      | 1    | ✓    | 2026-09-18 |
 
 ### International — English (`/en`) — 11 piece(s) to Definition of Done
 
@@ -89,6 +89,7 @@
 - `src/content/blog/product-update-august-2026.md`: 315 words (thin: want ≥600)
 - `src/content/blog/product-update-july-2026.md`: 437 words (thin: want ≥600)
 - `src/content/blog/product-update-september-2026.md`: 376 words (thin: want ≥600)
+- `src/content/blog/state-of-the-restaurant-phone-australia-2026.md`: 596 words (thin: want ≥600)
 - `src/content/blog/why-an-australian-voice-matters.md`: 509 words (thin: want ≥600)
 - `src/content/intl-resources/en/ai-receptionist-vs-answering-service-vs-voicemail.md`: description 179 chars (want 120–170); 477 words (thin: want ≥600)
 - `src/content/intl-resources/en/do-diners-want-to-talk-to-an-ai.md`: 505 words (thin: want ≥600)
