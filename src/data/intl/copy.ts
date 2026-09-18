@@ -970,7 +970,7 @@ export const about: Record<Lang, SimplePageCopy> = {
         ],
       },
     ],
-    cta: { label: "Talk to us", sub: "hello@biteperk.com.au — or use the contact form." },
+    cta: { label: "Talk to us", sub: "sales@biteperk.com — or use the contact form." },
   },
   fr: {
     title: "À propos de BitePerk — l'équipe derrière Vox",
@@ -1017,7 +1017,7 @@ export const contact: Record<Lang, ContactCopy> = {
       name: "Your name",
       email: "Work email",
       venue: "Venue or group",
-      venuePlaceholder: "e.g. Brasserie Lumière, Paris",
+      venuePlaceholder: "e.g. The Copper Larder",
       product: "Product",
       productPlaceholder: "Select a product…",
       message: "Tell us about your venue",
