@@ -4,14 +4,14 @@
 >
 > Templates for each type, with the truthfulness checklist, live in `docs/phase1/templates/`. Cadence: `docs/marketing-engine.md`.
 
-### Australia (`/au-en`) — 33 piece(s) to Definition of Done
+### Australia (`/au-en`) — 23 piece(s) to Definition of Done
 
 | Type              | Published | Drafts | DoD  | Gap  | Last published |
 |---|---|---|---|---|---|
 | Guides            | 12        | 0      | 20   | 8    | 2026-07-16 |
 | Comparisons       | 1         | 0      | 10   | 9    | 2026-05-30 |
 | Case studies      | 1         | 0      | 5    | 4    | 2026-09-17 |
-| FAQs              | 0         | 0      | 10   | 10   | — |
+| FAQs              | 10        | 0      | 10   | ✓    | 2026-09-18 |
 | Product updates   | 0         | 0      | 1    | 1    | — |
 | Industry reports  | 0         | 0      | 1    | 1    | — |
 
@@ -74,6 +74,16 @@
 
 - `src/content/blog/ai-receptionist-vs-answering-service-vs-voicemail.md`: 502 words (thin: want ≥600)
 - `src/content/blog/do-diners-want-to-talk-to-an-ai.md`: 479 words (thin: want ≥600)
+- `src/content/blog/faq-after-hours-and-public-holidays.md`: 341 words (thin: want ≥600)
+- `src/content/blog/faq-can-ai-answer-my-restaurant-phone.md`: 385 words (thin: want ≥600)
+- `src/content/blog/faq-can-hotels-use-it.md`: 324 words (thin: want ≥600)
+- `src/content/blog/faq-can-it-take-takeaway-orders.md`: 316 words (thin: want ≥600)
+- `src/content/blog/faq-does-it-work-with-my-phone-and-booking-system.md`: 327 words (thin: want ≥600)
+- `src/content/blog/faq-how-long-does-setup-take.md`: 348 words (thin: want ≥600)
+- `src/content/blog/faq-is-there-a-lock-in-contract.md`: 342 words (thin: want ≥600)
+- `src/content/blog/faq-large-groups-and-function-enquiries.md`: 320 words (thin: want ≥600)
+- `src/content/blog/faq-what-happens-when-ai-doesnt-understand.md`: 386 words (thin: want ≥600)
+- `src/content/blog/faq-where-are-call-recordings-and-guest-records-kept.md`: 325 words (thin: want ≥600)
 - `src/content/blog/how-much-does-ai-phone-answering-cost-for-a-restaurant.md`: 590 words (thin: want ≥600)
 - `src/content/blog/how-to-reduce-no-shows-at-your-restaurant.md`: 512 words (thin: want ≥600)
 - `src/content/blog/why-an-australian-voice-matters.md`: 509 words (thin: want ≥600)

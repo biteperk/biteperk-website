@@ -41,12 +41,14 @@ const sources = z.array(z.object({ title: z.string(), url: z.string().url(), acc
 /** City slugs (cities.ts / intl/cities.ts) a piece supports — rendered as city links and counted per market. */
 const cities = z.array(z.string()).default([]);
 
-const proofRules = (post: { type: string; customer?: { approved: boolean } | undefined; sources: unknown[]; draft: boolean }, ctx: z.RefinementCtx) => {
+const proofRules = (post: { type: string; customer?: { approved: boolean } | undefined; sources: unknown[]; faq?: unknown[]; draft: boolean }, ctx: z.RefinementCtx) => {
   if (post.draft) return; // drafts may be incomplete; the inventory reports what blocks them
   if (post.type === "case-study" && !post.customer?.approved)
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: "A published case study needs `customer.approved: true` with the approval recorded (approvedOn/approvedVia)." });
   if (post.type === "industry-report" && post.sources.length === 0)
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: "A published industry report needs at least one entry in `sources`." });
+  if (post.type === "faq" && (post.faq?.length ?? 0) < 3)
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: "A published FAQ needs at least 3 entries in `faq` (they render as the accordion and the FAQPage schema)." });
 };
 
 const blog = defineCollection({
