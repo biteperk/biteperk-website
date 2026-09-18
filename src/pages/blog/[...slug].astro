@@ -60,6 +60,11 @@ const articleJsonLd = {
   mainEntityOfPage: { "@type": "WebPage", "@id": abs(path) },
   isPartOf: { "@id": WEBSITE_ID },
   keywords: post.data.tags.join(", "),
+  // Sourced figures → citation[] (an industry report cannot publish without at
+  // least one source; content.config enforces it). Guides may carry them too.
+  ...(post.data.sources.length > 0
+    ? { citation: post.data.sources.map((s) => ({ "@type": "CreativeWork", name: s.title, url: s.url })) }
+    : {}),
   // A case study is ABOUT the product and MENTIONS the venue. Deliberately no
   // Review/AggregateRating: a business marking up praise of itself is
   // self-serving review markup under Google's guidelines.
@@ -123,6 +128,20 @@ const typeMeta = resourceTypeMeta(post.data.type);
         </section>
       )}
 
+      {post.data.sources.length > 0 && (
+        <section class="post-sources reveal" aria-labelledby="post-sources-title">
+          <h2 id="post-sources-title">Sources</h2>
+          <ol>
+            {post.data.sources.map((s) => (
+              <li>
+                <a href={s.url} rel="nofollow noopener" target="_blank">{s.title}</a>
+                {s.accessed && <span class="post-source-date"> — accessed {fmt(s.accessed)}</span>}
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
+
       <div class="post-foot reveal">
         <div class="post-foot-card">
           <h2>See it in action</h2>
@@ -163,6 +182,11 @@ const typeMeta = resourceTypeMeta(post.data.type);
 <style>
   .post-faq { margin: 48px 0 0; }
   .post-faq h2 { font-family: var(--font-serif, inherit); font-size: var(--fs-h3, 1.5rem); margin: 0 0 18px; }
+  .post-sources { margin: 48px 0 0; }
+  .post-sources h2 { font-family: var(--font-serif, inherit); font-size: var(--fs-h3, 1.5rem); margin: 0 0 14px; }
+  .post-sources ol { margin: 0; padding-left: 1.3em; color: var(--text); font-size: 0.95rem; line-height: 1.7; }
+  .post-sources a { color: var(--white); text-decoration: underline; text-underline-offset: 3px; }
+  .post-source-date { color: var(--mist); }
   .post-built-for { margin: 18px 0 0; display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; color: var(--mist); font-size: var(--fs-small); }
   .post-built-for a { color: var(--white); text-decoration: underline; text-underline-offset: 3px; }
 
