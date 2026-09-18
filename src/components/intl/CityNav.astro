@@ -155,7 +155,11 @@ const cities = intlCitiesForBase(locale.base);
   .intl-citynav-trigger:focus-visible { outline: none; box-shadow: var(--ring-focus); }
   .intl-citynav[open] > .intl-citynav-trigger { background: var(--fill-hover); border-color: var(--line-strong); }
   .intl-citynav-pin { color: var(--gold); flex: none; }
-  .intl-citynav-caret { transition: transform var(--dur-fast) var(--ease-out); }
+  /* flex: none — the pin above already has it; the caret was missed and so
+     collapsed to width:0 under the longer FR/BE labels (same SVG-in-flexbox
+     shrink as the product caret), hiding the Cities dropdown arrow on /fr,
+     /be-fr and /be-en. */
+  .intl-citynav-caret { flex: none; transition: transform var(--dur-fast) var(--ease-out); }
   .intl-citynav[open] .intl-citynav-caret { transform: rotate(180deg); }
 
   .intl-citynav-menu {
