@@ -505,7 +505,7 @@ export const intlCities: readonly IntlCity[] = [
     intro: [
       "Nobody books dinner in Glasgow without a conversation. It's a city that phones — to ask, to haggle over the time, to mention it's a birthday, to check the band finishes before last orders. Finnieston's strip, the West End's institutions, the Southside's new rooms: all of them live on a ringing phone that service keeps them from answering.",
       "And Glasgow's nights surge. An arena show tips thousands of people into the same postcode wanting fed at the same hour; a big match does it twice in a weekend. The venues that capture those surges are the ones whose phones get picked up — which, mid-service, with a lean crew, is nobody's guarantee.",
-      "Vox makes it a guarantee. Every call answered on the first ring in a voice that can hold a Glasgow conversation, every booking checked against the actual diary, every unusual call handed to a human with its context. Live in Australia; Glasgow pilots now open.",
+      "Vox is built to change that: every call answered on the first ring in a voice that can hold a Glasgow conversation, every booking checked against the actual diary, every unusual call handed to a human with its context. Live in Australia; Glasgow pilots now open.",
     ],
     districts: [
       "Finnieston", "West End", "Merchant City", "Southside", "Shawlands",

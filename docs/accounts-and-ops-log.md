@@ -10,6 +10,60 @@ existing records*), so "after = before + this entry" always holds.
 
 ---
 
+## 2026-09-18 — Production release v2.5.0 (UK market upgrade for `/gb-en`)
+
+Promoted the UK photography / trust / SEO upgrade `integration` → `main`. Everything
+reviewed on staging (biteperk-staging.web.app) went live at biteperk.com. Deployed
+commit **`1e05387`** (`release: v2.5.0`).
+
+**What shipped** (PRs #118–#122, all merged to `integration` first):
+- Eight distinct per-city hospitality photos + a lighter home band; `check-cities`
+  weight cap extended to cover `storyImage`, not just the cityscape (#118).
+- A six-tile British food gallery on the gb-en home + British photos on the sub-pages
+  via a base-scoped page-image override system (#119).
+- The UK trust-facts strip (Biteperk Ltd + company number, ICO, UK-GDPR lawful basis)
+  on every gb-en city page + JSON-LD `image` on the city Service / products
+  SoftwareApplication / resource BlogPosting, with a new `check-schema` assertion that
+  every emitted `image` resolves on disk (#120).
+- Five UK guide articles (cited to GOV.UK National Living Wage £12.71 and ICO
+  legitimate-interests guidance) + a derived city→guide "Further reading" block + a
+  "UK guides" section in the global `llms.txt` (#121).
+- A properly British fish-and-chips and afternoon-tea photo in the gallery (#122).
+
+The five non-UK trees (`/en /fr /be-en /be-fr`) and the AU tree are unchanged.
+
+**Release mechanics:**
+- Promotion PR **#123** `release: v2.5.0` (`release/v2.5.0` → `main`), package.json
+  `2.4.0` → `2.5.0`. Squash-merged.
+- **Deliberately a single clean commit, not a normal merge.** `main` and `integration`
+  had diverged by squash-release, and `integration` carried one commit with an AI
+  co-author trailer (`52787c3`, PR #111) that `check-attribution` rejects when it lands
+  in a PR's `base..head`. So instead of a conflicted merge, the release tree was set
+  **equal to `integration`** (proven: `integration` is a complete content-superset of
+  `main` — `git diff --diff-filter=A origin/integration origin/main` empty, i.e. no
+  main-only files; only the version differed) and committed as one clean commit on top
+  of `main`. `check-attribution` on `origin/main..HEAD` = one clean commit, passes.
+- Deploy order (per `docs/RELEASING.md`): **hosting only** — no `functions/` or
+  `firebase.json` change in this release, so no functions-first step. `gh workflow run
+  "Deploy Firebase Hosting" --ref main` (run `35281413708`).
+- Tags: **`v2.5.0-rc.1`** pre-release on `integration` (`808a538`, the commit that was on
+  staging); **`v2.5.0`** release on the deployed `main` commit.
+
+**Edge verification (biteperk.com, post-deploy):** `/gb-en/` → `200` with
+`cache-control: public,max-age=300,must-revalidate` and `content-language: en-GB`.
+*Propagation note:* the first `curl` immediately after dispatching the workflow returned
+`x-cache: MISS` with a stale `last-modified` (the previous build) — the deploy had not
+finished propagating. Re-verify once the Actions run completes.
+
+**No OG cards changed** in this release (the UK photos are page/gallery images, not OG
+cards — `npm run og` was not run), so no LinkedIn/Facebook share-cache re-scrape is
+needed this time.
+
+**Post-release TODO (owner: Sam):** resubmit the sitemap in Search Console
+(`sc-domain:biteperk.com`; use the full URL `https://biteperk.com/sitemap-index.xml`,
+not a relative path) and URL-inspect the five new `/gb-en/resources/…` guide URLs so
+they enter the crawl queue.
+
 ## 2026-09-15 — Ludovic's French pass on the 15 Sep batch lands (verbal)
 
 Sam notified Ludovic and he **reviewed and passed everything** in the 15 Sep review
