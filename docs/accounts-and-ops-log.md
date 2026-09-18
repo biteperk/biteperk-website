@@ -10,6 +10,39 @@ existing records*), so "after = before + this entry" always holds.
 
 ---
 
+## 2026-09-18 — Production release v2.6.0 (Resources content wave)
+
+Promoted the completed Resources hub content `integration` → `main`. Deployed
+commit **`ab31c98`** (`release: v2.6.0`), hosting-only (`functions/` untouched):
+`hosting:biteperk-global`. **All six `/resources/` categories are now populated —
+the "Coming soon" state is gone.**
+
+**What shipped** (PRs #129–#131, all merged to `integration` first):
+- **Product updates** — three backfilled monthly roundups (Jul–Sep 2026),
+  customer-facing changes only (#129).
+- **FAQs** — 10 answer-first pages, each with a single `FAQPage` node, plus a new
+  `check-faq-unique.mjs` gate (in `gates:au`, fault-injected) that blocks a
+  question/answer duplicated from anywhere else on the site (#130).
+- **Industry reports** — the first report, *The state of the restaurant phone in
+  Australia, 2026*, fully sourced (SevenRooms 2025 AU Trends, CommBank iQ 2026
+  Table to Turnover), with a visible Sources list + `citation[]` on the article
+  schema. `content.config.ts` refuses a report with empty `sources` (#131).
+
+**Verified live at the edge:** `/au-en/resources/{faq,product-updates,industry-reports}/`
+return 200; hub shows zero "Coming soon"; one `FAQPage` node per FAQ page;
+`citation` on the report; 11 new `/blog/` URLs in `sitemap-0.xml`; `llms.txt` gained
+the FAQs / Product updates / Industry reports sections.
+
+**Release-engineering note (for next time):** `integration`'s `package.json`
+version had lagged at 2.3.0 while `main` was 2.5.1, and `integration`↔`main` had
+diverged (v2.4.0/2.5.0/2.5.1 fixes landed on both under different SHAs — trees
+converged, histories didn't). A merge-based promotion branch surfaced a legacy
+`Co-authored-by: Claude` trailer from old `integration` history and failed the
+Preflight attribution gate. The clean fix was to rebuild the promotion as a
+**single squashed commit on top of `main`** (net 35 content/code files). This
+sync PR bumps `integration` to **2.6.0** to stop the version string drifting
+again.
+
 ## 2026-09-18 — Production release v2.5.0 (UK market upgrade for `/gb-en`)
 
 Promoted the UK photography / trust / SEO upgrade `integration` → `main`. Everything
