@@ -1,5 +1,5 @@
 /**
- * Biteperk product catalogue.
+ * BitePerk product catalogue.
  *
  * Single source of truth. Drives the nav dropdown, footer column,
  * products index page, individual product pages, and the JSON-LD on
@@ -338,7 +338,7 @@ const voxorder: Product = {
   seo: {
     title: "VoxOrder — AI phone ordering for hospitality",
     description:
-      "VoxOrder is Biteperk's AI voice agent for takeaway and pickup — clean tickets straight to your POS, so no order is lost to a busy line. Live now; book a demo.",
+      "VoxOrder is BitePerk's AI voice agent for takeaway and pickup — clean tickets straight to your POS, so no order is lost to a busy line. Live now; book a demo.",
   },
 };
 

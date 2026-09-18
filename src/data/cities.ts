@@ -91,7 +91,7 @@ export const cities: readonly City[] = [
     heroHeadline: "AI phone answering for Sydney restaurants.",
     intro: [
       "Every night, Sydney venues lose tables to a phone nobody can reach during service. At 7:30 on a Friday in Surry Hills or the CBD, your floor staff are carrying plates, not picking up the phone — and in a city with this much choice, callers rarely ring back. A handful of missed calls a week quietly adds up to thousands of dollars a month in lost covers.",
-      "Biteperk is built, hosted and supported right here in Sydney. Bella answers every call in a warm Australian voice, checks your live availability, and books the table — 24/7, including the public-holiday Monday your voicemail usually eats. Voicemail doesn't fix the problem; diners want an answer now, not a callback after the kitchen has closed.",
+      "BitePerk is built, hosted and supported right here in Sydney. Bella answers every call in a warm Australian voice, checks your live availability, and books the table — 24/7, including the public-holiday Monday your voicemail usually eats. Voicemail doesn't fix the problem; diners want an answer now, not a callback after the kitchen has closed.",
       "From harbourside fine dining to a Newtown wine bar doing forty covers, the pattern is the same: the phone rings most exactly when nobody can answer it. That's the gap VoxTable closes — and being in the same time zone, we're on the phone ourselves when you need a human.",
     ],
     suburbs: [
@@ -140,7 +140,7 @@ export const cities: readonly City[] = [
       },
       {
         q: "Where is my call and booking data stored?",
-        a: "Your booking records stay in Australia (Sydney), and call recordings auto-delete after 30 days — never used to train AI models. Biteperk is Privacy Act compliant and your bookings always stay yours.",
+        a: "Your booking records stay in Australia (Sydney), and call recordings auto-delete after 30 days — never used to train AI models. BitePerk is Privacy Act compliant and your bookings always stay yours.",
       },
       {
         q: "What does it cost?",
@@ -236,7 +236,7 @@ export const cities: readonly City[] = [
     ],
     faqs: [
       {
-        q: "Does Biteperk have a Melbourne office?",
+        q: "Does BitePerk have a Melbourne office?",
         a: "Our team is based in Sydney — same time zone, one hour of the year excepted. VoxTable itself is fully remote to set up: you forward your existing Melbourne number, and support is a phone call or email away during Australian business hours.",
       },
       {
