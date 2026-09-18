@@ -156,6 +156,9 @@ export default defineConfig({
         else if (item.url === `${HOME}/solutions/`) item.priority = 0.8;
         else if (item.url.includes("/solutions/")) item.priority = 0.9;
         else if (item.url === `${HOME}/resources/`) item.priority = 0.8;
+        // Resources category indexes (/resources/<segment>/) — hub-level, above
+        // the 0.7 fallback they fell to before Sep 2026.
+        else if (item.url.includes("/resources/")) item.priority = 0.8;
         // City landing pages — derived from cities.ts (was a hardcoded regex,
         // the last hand-maintained list in this file).
         else if (publishedCities.some((c) => item.url === `${HOME}/${c.slug}/`)) item.priority = 0.9;
