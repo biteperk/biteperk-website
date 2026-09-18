@@ -1,0 +1,900 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2870
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\froman\fcharset0 Times-Roman;\f1\fmodern\fcharset0 Courier;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat0\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid1}
+{\list\listtemplateid2\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat0\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid101\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid2}
+{\list\listtemplateid3\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat0\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid201\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid3}
+{\list\listtemplateid4\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat0\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid301\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid4}
+{\list\listtemplateid5\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat0\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid401\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid5}
+{\list\listtemplateid6\listhybrid{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{decimal\}}{\leveltext\leveltemplateid501\'01\'00;}{\levelnumbers\'01;}\fi-360\li720\lin720 }{\listname ;}\listid6}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}{\listoverride\listid2\listoverridecount0\ls2}{\listoverride\listid3\listoverridecount0\ls3}{\listoverride\listid4\listoverridecount0\ls4}{\listoverride\listid5\listoverridecount0\ls5}{\listoverride\listid6\listoverridecount0\ls6}}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Yep mate. I checked the actual `integration` branch and the recent PR history rather than just relying on our earlier plan. The good news is you\'92re actually **further through Phase 1 than the original plan suggests**. The main structure is in place now.\
+\
+## Where you are now\
+\
+Think of Phase 1 as **8 waves**.\
+\
+| Wave | Area | Status |\
+| ---- | ------------------------------------- | ---------------------------- |\
+| 0 | Decision lock + foundation registries | \uc0\u9989  Done |\
+| 1 | Platform / localisation architecture | \uc0\u9989  Largely done |\
+| 2 | AU Solutions engine | \uc0\u9989  Done |\
+| 3 | Navigation | \uc0\u9989  Done |\
+| 4 | Resources hub | \uc0\u9989  Done |\
+| 5 | Conversion system | \uc0\u9989  Done |\
+| 6 | SEO foundation | \uc0\u55357 \u57313  **Currently in progress** |\
+| 7 | Canada readiness | \uc0\u9203  Next |\
+| 8 | Content production + inventory | \uc0\u9203  Final |\
+\
+The repository's own Phase 1 plan confirms that Waves 0 through 5 are complete, with Wave 6 being the current step.\
+\
+### What you've actually completed\
+\
+**Wave 0, Foundation**\
+\
+You've already codified the Phase 1 plan, locale mapping, navigation IA and the Solutions registry. Importantly, the codebase has also locked the existing live locale structure rather than blindly renaming things. For example, the repo deliberately keeps `/gb-en`, `/fr`, `/be-en`, etc., because changing those would unnecessarily risk SEO and routing.\
+\
+**Wave 2, Solutions**\
+\
+The AU Solutions engine is done. You have the `/au-en/solutions/` index and eight vertical solution pages, using the shared commercial page structure.\
+\
+**Wave 3, Navigation**\
+\
+This is also done. Solutions is now in desktop, mobile and footer navigation, and Resources has replaced the old Guides entry. The Playwright issue you mentioned was a test-selector problem caused by having both Products and Solutions mega menus, not a fundamental navigation failure. PR #65 was fixed and merged.\
+\
+**Wave 4, Resources**\
+\
+Done. `/resources/` exists with category indexes for guides, comparisons, case studies, FAQ, product updates and industry reports. Your existing `/blog/\{slug\}/` URLs were deliberately preserved, which is the safer SEO move for now. You currently have 12 guides and 1 comparison classified.\
+\
+**Wave 5, Conversion**\
+\
+Done. You now have a shared conversion source of truth, Book Demo as the primary CTA, See How It Works as secondary, trust/phone treatment, and demo intent continuity. It's been wired across solutions, products, cities, blog and resources.\
+\
+---\
+\
+# Where you are right now\
+\
+## \uc0\u55357 \u57313  Wave 6, SEO Foundation\
+\
+This is **exactly where the team should be working now**.\
+\
+The next job is not to make more pages.\
+\
+It's to make sure the pages you've just built are technically excellent for search.\
+\
+The current plan says Wave 6 needs to:\
+\
+**1. Audit existing schema**\
+\
+Check the existing `schema.ts` and SEO components against:\
+\
+```text\
+Organization\
+FAQ\
+Article\
+Breadcrumb\
+SoftwareApplication\
+```\
+\
+**2. Ensure the new templates emit the correct schema**\
+\
+Especially:\
+\
+```text\
+/au-en/solutions/*\
+/au-en/resources/*\
+```\
+\
+**3. Fix breadcrumb hierarchy**\
+\
+For example:\
+\
+```text\
+Home\
+\uc0\u8594  Solutions\
+\uc0\u8594  Restaurants\
+```\
+\
+and:\
+\
+```text\
+Home\
+\uc0\u8594  Resources\
+\uc0\u8594  Guides\
+\uc0\u8594  Article\
+```\
+\
+**4. Ensure hub linking is correct**\
+\
+Resources should naturally link to relevant solutions.\
+\
+Solutions should naturally link back to relevant resources.\
+\
+That internal-linking graph is going to matter more as your content library grows.\
+\
+---\
+\
+# Then comes Wave 7, Canada Readiness\
+\
+This is **not a Canada launch yet**.\
+\
+It's architecture.\
+\
+The plan specifically calls for:\
+\
+```text\
+ca-en\
+ca-fr\
+```\
+\
+to exist as **planned locales**, without appearing publicly, entering the sitemap, or appearing in the country picker until they're explicitly published.\
+\
+And your planned city slots are:\
+\
+### Canada English\
+\
+```text\
+Ontario\
+British Columbia\
+Alberta\
+```\
+\
+### Canada French\
+\
+```text\
+Montr\'e9al\
+Qu\'e9bec\
+Laval\
+Longueuil\
+```\
+\
+The important bit is this:\
+\
+**There should be no template rewrite when Canada launches.**\
+\
+You should just add properly localised content and turn the publishing flags on. That's exactly the right architecture.\
+\
+---\
+\
+# Then Wave 8, the big one\
+\
+This is where the website becomes an actual **content authority engine**.\
+\
+Your target is:\
+\
+```text\
+20+ Guides\
+10+ Comparisons\
+10+ FAQs\
+5+ Case Studies\
+Industry Reports\
+```\
+\
+And critically, the repo doesn't yet have the proper **content inventory tracker**. The plan explicitly calls for:\
+\
+```text\
+docs/phase1/CONTENT-INVENTORY.md\
+```\
+\
+to track progress against the Definition of Done.\
+\
+That's something I'd definitely build before going crazy producing content.\
+\
+---\
+\
+# So your actual Phase 1 roadmap from today is\
+\
+```text\
+\uc0\u9989  Wave 0\
+Foundation\
+\
+\uc0\u9989  Wave 1\
+Global/localisation architecture\
+\
+\uc0\u9989  Wave 2\
+AU Solutions\
+\
+\uc0\u9989  Wave 3\
+Navigation\
+\
+\uc0\u9989  Wave 4\
+Resources\
+\
+\uc0\u9989  Wave 5\
+Conversion\
+\
+\uc0\u55357 \u57313  Wave 6\
+SEO foundation\
+\uc0\u8595 \
+\uc0\u9203  Wave 7\
+Canada readiness\
+\uc0\u8595 \
+\uc0\u9203  Wave 8\
+Content system + inventory\
+\uc0\u8595 \
+\uc0\u55356 \u57281  PHASE 1 COMPLETE\
+```\
+\
+And there's one important distinction:\
+\
+## Phase 1 is NOT finished when the code is finished.\
+\
+It's finished when **Australia itself is strong enough to be the master template**.\
+\
+The current Definition of Done still has outstanding items around the AU content volume, internal linking, schema/metadata, Canada reservation, and ensuring every new page has the conversion/trust/FAQ pattern.\
+\
+### My recommendation\
+\
+**Don't start Canada content yet.**\
+\
+Finish **Wave 6 SEO first**, then **Wave 7 Canada architecture**, then build the **Wave 8 content inventory and production system**.\
+\
+At that point, we'll have a proper "Australia Master" and can take the same system into Canada, France, Belgium and the UK without rebuilding the website again.\
+\
+And honestly, mate, this is a much cleaner position than where you started this morning. The core skeleton is now there. We're moving from **building the house** to **making the house rank, convert and scale**.\
+I would actually simplify and tighten the whole thing.\
+The biggest mistake I see in startup websites is trying to build 20 things at once.\
+Your goal for Phase 1 should be:\
+Build the BitePerk Australia website into a complete, scalable, SEO-driven authority platform that can be cloned and localised into any future market without architectural changes.\
+Not:\
+Build Australia, Canada, France, Belgium, UK all at the same time.\
+BITEPERK PHASE 1\
+Australia Authority & Global Foundation\
+Vision\
+Australia becomes the master market.\
+Every page, template, component, content type, SEO pattern, and conversion flow is perfected in Australia first.\
+Future countries inherit this framework.\
+Strategic Principles\
+Principle 1\
+Build once.\
+Reuse everywhere.\
+Principle 2\
+No country-specific code.\
+All localisation must be configuration-driven.\
+Principle 3\
+Content before expansion.\
+Authority before localisation.\
+Principle 4\
+Every page must either:\
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sa240\partightenfactor0
+\ls1\ilvl0\cf0 \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Generate traffic\
+\ls1\ilvl0\kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Generate trust\
+\ls1\ilvl0\kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Generate conversions\
+\pard\pardeftab720\sa240\partightenfactor0
+\cf0 If it does none of these, it should not exist.\
+PHASE 1A\
+Platform Architecture\
+Goal\
+Prepare the platform for global expansion before adding content.\
+Locale Structure\
+Supported now:\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 /au-en/\
+/uk-en/\
+/fr-fr/\
+/be-fr/\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 Reserved:\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 /ca-en/\
+/ca-fr/\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 Future:\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 /au-en/\
+/uk-en/\
+/fr-fr/\
+/be-fr/\
+/ca-en/\
+/ca-fr/\
+/de-de/\
+/nl-nl/\
+/es-es/\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 Global Configuration System\
+Every page must be driven by configuration.\
+Example:\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 \{\
+  "locale": "au-en",\
+  "country": "Australia",\
+  "language": "English",\
+  "currency": "AUD",\
+  "phone": "+61",\
+  "city": "Sydney"\
+\}\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 No hardcoded country information.\
+PHASE 1B\
+Navigation System\
+Final Navigation\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 Products\
+Solutions\
+Resources\
+Pricing\
+Platform\
+About\
+Book Demo\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 Products\
+Current Vox products remain.\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 Table\
+Order\
+Stay\
+Concierge\
+Drive\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 Solutions\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 Restaurants\
+Hotels\
+Cafes\
+Takeaway\
+Drive-Thru\
+Medical\
+Professional Services\
+Enterprise\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 Resources\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 Guides\
+Case Studies\
+Comparisons\
+FAQ\
+Product Updates\
+Industry Reports\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 PHASE 1C\
+Industry Solution Engine\
+Objective\
+Capture commercial intent.\
+People search:\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 AI receptionist for restaurants\
+AI phone answering for hotels\
+Restaurant booking automation\
+Hotel reservation assistant\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 They rarely search product names.\
+Required Solution Pages\
+Hospitality\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 /solutions/restaurants\
+/solutions/hotels\
+/solutions/cafes\
+/solutions/takeaway\
+/solutions/drive-thru\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 Services\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 /solutions/medical\
+/solutions/professional-services\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 Enterprise\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 /solutions/enterprise\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 Standard Layout\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 Hero\
+\
+Business Problem\
+\
+Lost Revenue\
+\
+How BitePerk Solves It\
+\
+Features\
+\
+Benefits\
+\
+Customer Story\
+\
+FAQ\
+\
+Book Demo\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 Every solution page follows the same structure.\
+PHASE 1D\
+Resources Authority Hub\
+Objective\
+Turn BitePerk into the authority in phone automation.\
+Resources Homepage\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 /resources\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 Acts as a central library.\
+Content Types\
+Guides\
+Educational content.\
+Examples:\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 Why Restaurants Miss Calls During Peak Hours\
+\
+How AI Receptionists Improve Reservations\
+\
+How Hotels Handle Overflow Calls\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 Comparisons\
+Buyer intent.\
+Examples:\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 AI Receptionist vs Voicemail\
+\
+AI Receptionist vs Call Centre\
+\
+AI Receptionist vs Answering Service\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 Case Studies\
+Proof.\
+Examples:\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 Restaurant Success Story\
+\
+Hotel Success Story\
+\
+Cafe Success Story\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 FAQ\
+Support and SEO.\
+Product Updates\
+Transparency and product growth.\
+Industry Reports\
+Quarterly authority content.\
+PHASE 1E\
+Conversion System\
+Objective\
+Make every page sell.\
+CTA Hierarchy\
+Primary:\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 Book Demo\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 Secondary:\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 See How It Works\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 Every Page Must Include\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 Book Demo CTA\
+\
+Contact Number\
+\
+Trust Indicators\
+\
+Customer Story\
+\
+FAQ\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 PHASE 1F\
+SEO Foundation\
+Technical SEO\
+Every page requires:\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 Meta Title\
+\
+Meta Description\
+\
+Canonical URL\
+\
+Open Graph\
+\
+Twitter Card\
+\
+Structured Data\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 Schema\
+Implement:\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 Organization\
+\
+FAQ\
+\
+Article\
+\
+Breadcrumb\
+\
+Software Application\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 Internal Linking\
+Every page links to:\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 Solutions\
+\
+Resources\
+\
+Pricing\
+\
+Book Demo\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 PHASE 1G\
+Canada Readiness\
+Objective\
+Prepare Canada now.\
+Launch later.\
+Canada English\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 /ca-en/\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 Focus:\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 Ontario\
+British Columbia\
+Alberta\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 Canada French\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 /ca-fr/\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 Focus:\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 Montreal\
+Quebec City\
+Laval\
+Longueuil\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 Required Readiness\
+Templates support:\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 Language\
+\
+Country\
+\
+Currency\
+\
+Phone\
+\
+Address\
+\
+Testimonials\
+\
+Metadata\
+\
+Schema\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 No development work should be required when Canada launches.\
+Only content creation.\
+PHASE 1H\
+Content Production System\
+Weekly\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 1 Guide\
+\
+1 Comparison\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 Monthly\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 1 Case Study\
+\
+1 Product Update\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 Quarterly\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 1 Industry Report\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 Definition of Done\
+Australia is complete when:\
+Platform\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 \uc0\u10003  Localisation-ready architecture\
+\
+\uc0\u10003  Global configuration system\
+\
+\uc0\u10003  Reusable templates\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 Content\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 \uc0\u10003  20+ Guides\
+\
+\uc0\u10003  10+ Comparisons\
+\
+\uc0\u10003  10+ FAQs\
+\
+\uc0\u10003  5+ Case Studies\
+\
+\uc0\u10003  Industry Reports\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 SEO\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 \uc0\u10003  Metadata complete\
+\
+\uc0\u10003  Schema complete\
+\
+\uc0\u10003  Internal linking complete\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 Conversion\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 \uc0\u10003  Every page has CTA\
+\
+\uc0\u10003  Every page has FAQ\
+\
+\uc0\u10003  Every page has trust signals\
+\
+\uc0\u10003  Mobile optimised\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 Expansion Readiness\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 \uc0\u10003  Canada structure ready\
+\
+\uc0\u10003  UK structure aligned\
+\
+\uc0\u10003  France structure aligned\
+\
+\uc0\u10003  Belgium structure aligned\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 This version is more efficient because it follows a strict order:\
+1. Architecture \uc0\u8594  2. Navigation \u8594  3. Solution Pages \u8594  4. Resources Hub \u8594  5. Conversion \u8594  6. SEO \u8594  7. Canada Readiness \u8594  8. Content Production\
+That order prevents rework, keeps AI coding agents focused, and ensures you're building a scalable platform rather than continuously restructuring the site as new countries are added.\
+Yep, I actually think that's the right order.\
+Looking at your navbar screenshot, you're already in a pretty good place:\
+Current\
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sa240\partightenfactor0
+\ls2\ilvl0\cf0 \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Products\
+\ls2\ilvl0\kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Pricing\
+\ls2\ilvl0\kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Platform\
+\ls2\ilvl0\kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 How it works\
+\ls2\ilvl0\kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Guides\
+\ls2\ilvl0\kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 About\
+\pard\pardeftab720\sa240\partightenfactor0
+\cf0 Before touching France, Belgium, UK, or Canada, I'd make Australia the gold standard.\
+Phase 1 (Australia First)\
+Navbar\
+I'd evolve it to:\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 Products\
+Solutions\
+Pricing\
+Resources\
+Platform\
+About\
+Book Demo\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 Then under Resources:\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 Guides\
+Case Studies\
+Comparisons\
+Product Updates\
+FAQ\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 And under Solutions:\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 Restaurants\
+Hotels\
+Cafes\
+Takeaway\
+Drive-Thru\
+Medical\
+Professional Services\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 Why Australia First?\
+Because Australia becomes your:\
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sa240\partightenfactor0
+\ls3\ilvl0\cf0 \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Content template\
+\ls3\ilvl0\kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Design template\
+\ls3\ilvl0\kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 SEO template\
+\ls3\ilvl0\kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Conversion template\
+\ls3\ilvl0\kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Product messaging template\
+\pard\pardeftab720\sa240\partightenfactor0
+\cf0 Instead of asking:\
+What should France look like?\
+You ask:\
+How do we adapt Australia's best-performing content to France?\
+That's much easier.\
+What I'd Build Next on Australia\
+1. Case Studies\
+You don't have enough of these yet.\
+Examples:\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 Bella Vista Restaurant\
+Sydney\
+\
+35% more bookings captured\
+after deploying Vox\
+Melbourne Cafe\
+\
+Answered 100% of after-hours calls\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 These are sales assets and SEO assets.\
+2. Comparison Pages\
+These are gold.\
+Examples:\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 AI Receptionist vs Voicemail\
+\
+AI Receptionist vs Answering Service\
+\
+AI Receptionist vs Reception Staff\
+\
+Restaurant Phone AI vs Missed Calls\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 These convert extremely well.\
+3. Industry Pages\
+Right now Vox is the hero.\
+I'd also build pages around use cases.\
+Examples:\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 AI Receptionist for Restaurants\
+\
+AI Receptionist for Hotels\
+\
+AI Receptionist for Cafes\
+\
+AI Receptionist for Takeaway Shops\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 These rank better than product pages.\
+4. Resources Hub\
+Instead of just Guides:\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 Resources\
+ \uc0\u9500 \u9472 \u9472  Guides\
+ \uc0\u9500 \u9472 \u9472  Case Studies\
+ \uc0\u9500 \u9472 \u9472  Comparisons\
+ \uc0\u9500 \u9472 \u9472  FAQ\
+ \uc0\u9492 \u9472 \u9472  Product Updates\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 This becomes your SEO engine.\
+Then Move Internationally\
+Phase 2\
+France\
+Copy only the best-performing Australian pages.\
+Not everything.\
+Maybe:\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs26 \cf0 Top 10 Guides\
+Top 5 Industry Pages\
+Top 3 Case Studies\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 Localise them properly.\
+Phase 3\
+Belgium\
+Reuse 80% of France.\
+Phase 4\
+UK\
+Adapt messaging:\
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sa240\partightenfactor0
+\ls4\ilvl0\cf0 \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Labour shortages\
+\ls4\ilvl0\kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Staff costs\
+\ls4\ilvl0\kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Reliability\
+\ls4\ilvl0\kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Customer service\
+\pard\pardeftab720\sa240\partightenfactor0
+\cf0 Phase 5\
+Canada\
+Split:\
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sa240\partightenfactor0
+\ls5\ilvl0\cf0 \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 English Canada\
+\ls5\ilvl0\kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Qu\'e9bec French\
+\pard\pardeftab720\sa240\partightenfactor0
+\cf0 If I Were Prioritising Next Month\
+I'd focus on only these 5 items:\
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sa240\partightenfactor0
+\ls6\ilvl0\cf0 \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	1	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Resources Hub\
+\ls6\ilvl0\kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	2	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Case Studies\
+\ls6\ilvl0\kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	3	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Comparison Pages\
+\ls6\ilvl0\kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	4	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Industry Pages\
+\ls6\ilvl0\kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	5	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 FAQ Centre\
+\pard\pardeftab720\sa240\partightenfactor0
+\cf0 Once Australia has those, you've effectively built the blueprint for every other market.\
+The biggest mistake would be spending the next three months expanding countries while the Australian site still has authority gaps. Make Australia exceptional first, then use it as the master template for France, Belgium, UK, and Canada. That's usually faster, cheaper, and produces much better quality across all regions.\
+}
