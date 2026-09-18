@@ -64,14 +64,13 @@ const collectionJsonLd = buildCollectionPage({
       <div class="res-type-grid">
         {resourceTypes.map((t) => {
           const count = byType(t.id).length;
-          // An empty category has no page (see [type].astro) — so no link.
-          return count === 0 ? (
-            <div class="res-type-card is-empty" aria-disabled="true">
-              <h2>{t.plural}</h2>
-              <p>{t.description}</p>
-              <span class="res-type-meta">Coming soon</span>
-            </div>
-          ) : (
+          // An empty category has no page (see [type].astro), so it gets no
+          // card at all — a greyed "Coming soon" tile is a dead end for the
+          // visitor and reads as unfinished. Once every type is populated this
+          // branch never fires; it stays as the correct behaviour for any type
+          // added later before its first post lands.
+          if (count === 0) return null;
+          return (
             <a class="res-type-card" href={u(t.path)}>
               <h2>{t.plural}</h2>
               <p>{t.description}</p>
