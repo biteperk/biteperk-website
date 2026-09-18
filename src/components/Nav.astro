@@ -103,7 +103,7 @@ const drawerSections: DrawerSection[] = [
 
 <nav class="nav" id="nav" aria-label="Primary" transition:persist>
   <div class="wrap nav-inner">
-    <a class="brand nav-brand" href={u("/")} aria-label="Biteperk home">
+    <a class="brand nav-brand" href={u("/")} aria-label="BitePerk home">
       <StarMark size={34} />
       <span class="brand-name">bite<span class="perk">perk</span></span>
     </a>
@@ -128,7 +128,7 @@ const drawerSections: DrawerSection[] = [
       <a
         class="nav-phone"
         href={site.phone.href}
-        aria-label={`Call Biteperk on ${site.phone.display}`}
+        aria-label={`Call BitePerk on ${site.phone.display}`}
         title={site.phone.display}
         data-cta="call-nav"
       >
@@ -161,14 +161,14 @@ const drawerSections: DrawerSection[] = [
     region hrefs) and are never trapped by a transformed ancestor. */}
 <MobileBar
   homeHref={u("/")}
-  brandLabel="Biteperk home"
+  brandLabel="BitePerk home"
   cta={{ label: "Book a demo", href: bookDemoHref(), dataCta: "book-demo" }}
   menuLabel="Open menu"
   picker={{ title: "Choose your region", currentLabel: "Region and language — currently {label}", closeLabel: "Close region picker" }}
 />
 <MobileDrawer
   homeHref={u("/")}
-  brandLabel="Biteperk home"
+  brandLabel="BitePerk home"
   closeLabel="Close menu"
   navLabel="Site navigation"
   sections={drawerSections}

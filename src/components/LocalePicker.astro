@@ -152,7 +152,11 @@ const chip = shortIsShared ? `${current.short} · ${current.copyLang.toUpperCase
     background: var(--fill-hover);
     border-color: var(--line-strong);
   }
-  .lp-globe { color: var(--gold); }
+  /* flex: none on both icons — they are flex children of the chip and the
+     default flex-shrink:1 squeezes their width under label pressure (the globe
+     and caret rendered ~9px/3px wide instead of full size on the longer-label
+     trees). Pinning the flex basis keeps them at their intrinsic size. */
+  .lp-globe { color: var(--gold); flex: none; }
   .lp-chip {
     font-size: 12.5px;
     font-weight: 700;
@@ -160,6 +164,7 @@ const chip = shortIsShared ? `${current.short} · ${current.copyLang.toUpperCase
     font-variant-numeric: tabular-nums;
   }
   .lp-caret {
+    flex: none;
     opacity: 0.55;
     transition: transform var(--dur-fast) var(--ease-out);
   }

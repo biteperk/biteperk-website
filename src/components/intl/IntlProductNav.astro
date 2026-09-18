@@ -119,7 +119,12 @@ const onProducts = page === "products" || page.startsWith("products/");
   }
   .intl-prodnav-trigger:focus-visible { outline: none; box-shadow: var(--ring-focus); border-radius: var(--r-sm); }
   .intl-prodnav-trigger.is-active { color: var(--gold); }
-  .intl-prodnav-caret { transition: transform var(--dur-fast) var(--ease-out); }
+  /* flex: none — the caret is a flex child of the inline-flex trigger, and the
+     default flex-shrink:1 lets it collapse to width:0 when the nav row is under
+     pressure. That only bit the longer-label trees (FR/BE: "Le produit" vs the
+     shorter EN "Product"), so the dropdown arrow silently vanished on /fr and
+     /be-fr while /gb-en kept it. Pinning the flex basis stops the shrink. */
+  .intl-prodnav-caret { flex: none; transition: transform var(--dur-fast) var(--ease-out); }
   .intl-prodnav[open] .intl-prodnav-caret { transform: rotate(180deg); }
 
   /* Anchored to the ROW, not the trigger: .intl-nav-row is position:relative
