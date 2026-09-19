@@ -1,8 +1,8 @@
-# Directory & citation plan (Biteperk)
+# Directory & citation plan (BitePerk)
 
 Goal: build **NAP citations** (Name, Address, Phone) across trusted directories. Two payoffs:
 1. **Local SEO** — consistent citations are a top-3 local ranking signal; they tell Google the business is real and where it is.
-2. **Backlinks + AI discovery** — software/review directories give Biteperk backlinks and are exactly the sources ChatGPT/Gemini/Perplexity read when someone asks "what AI phone tools exist for restaurants?".
+2. **Backlinks + AI discovery** — software/review directories give BitePerk backlinks and are exactly the sources ChatGPT/Gemini/Perplexity read when someone asks "what AI phone tools exist for restaurants?".
 
 > ⚠️ THE #1 RULE: use the **exact same** details everywhere, character-for-character. "Street" not "St". "Level 1" every time. Same phone format. Inconsistent NAP *hurts* more than no citation.
 
@@ -11,8 +11,8 @@ Goal: build **NAP citations** (Name, Address, Phone) across trusted directories.
 ## Paste-ready NAP block (copy this everywhere)
 
 ```
-Business name:   Biteperk
-Legal name:      Biteperk Pty Ltd            (use only where a legal/registered name is asked)
+Business name:   BitePerk
+Legal name:      BITEPERK PTY LTD            (registered ASIC form; use only where a legal/registered name is asked)
 Address line 1:  Level 1/457-459 Elizabeth Street
 Suburb:          Surry Hills
 State:           NSW
@@ -33,12 +33,27 @@ Instagram:       https://www.instagram.com/biteperk/
 ```
 
 **Short description (≤160 chars):**
-> Biteperk builds voice AI for Australian hospitality. VoxTable answers every restaurant call in a warm Australian voice and books the table, 24/7.
+> BitePerk builds voice AI for Australian hospitality. VoxTable answers every restaurant call in a warm Australian voice and books the table, 24/7.
 
 **Medium description (~300 chars):**
-> Biteperk is a Sydney-based voice/AI company for hospitality. Our flagship, VoxTable, is an AI phone host that answers every restaurant call in a warm Australian voice, checks live availability and books the table 24/7 — from $80/month, no per-call fees. Built, hosted and supported in Sydney.
+> BitePerk is a Sydney-based voice/AI company for hospitality. Our flagship, VoxTable, is an AI phone host that answers every restaurant call in a warm Australian voice, checks live availability and books the table 24/7 — from $80/month, no per-call fees. Built and supported in Sydney.
+
+*(Casing is now **BitePerk** everywhere it is a brand/trading name — 19 Sep 2026, to match GBP and BRAND.md. Domains, emails and the registered legal name keep their own forms. "hosted" was dropped from the medium description — it read as a data-residency claim; the honest line is "records are stored in Sydney; the live voice platform runs in the US".)*
 
 **Long description (~600 chars):** use the Google Business Profile description (in docs / GBP).
+
+### LinkedIn — recorded page values (19 Sep 2026)
+
+The LinkedIn company page (`linkedin.com/company/biteperk`) deliberately differs from the paste-ready block in three places; recorded here so the difference is a decision, not drift. Full copy + edit checklist: `Socials/linkedin/` (gitignored).
+
+| Field | LinkedIn value | Why it differs |
+|---|---|---|
+| Website | `www.biteperk.com` | LinkedIn is a global-audience surface; `.com` is the neutral front door. (Directories still use `biteperk.com.au`.) |
+| Phone | **blank** | The Page phone field is not localised; a French viewer would see an AU number, which the Europe-truthful rule forbids. |
+| Locations | Sydney (primary HQ) **+ London "Registered office (UK)"** | **Recorded exception to BRAND.md §8** (UK details normally live on `/gb-en` only). A LinkedIn location shows to all viewers, so it is labelled "Registered office (UK)" and must never be described as an office/team/staff. Sam's decision, 19 Sep 2026. |
+| CTA button | `Request demo` → `biteperk.com/en/contact/` (+ UTMs) | Locale-neutral `/en` tree — no AU price, no phone. |
+
+French page/profile copy is **DRAFT until a dated Ludovic record exists** (`docs/ops-records/`); English is live.
 
 ---
 
@@ -103,7 +118,7 @@ Instagram:       https://www.instagram.com/biteperk/
 - [ ] GetApp
 - [ ] SaaSHub
 - [ ] Product Hunt (VoxTable launch)
-- [ ] LinkedIn (complete profile)
+- [ ] LinkedIn (complete profile) — in progress; page values recorded above, EN copy in `Socials/linkedin/`. Tick when the page edit-sheet is applied.
 - [ ] dLook / Aussie Web / Local Search
 - [ ] Business NSW
 - [ ] Restaurant & Catering Australia (supplier)

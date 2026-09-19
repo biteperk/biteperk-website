@@ -10,6 +10,45 @@ existing records*), so "after = before + this entry" always holds.
 
 ---
 
+## 2026-09-19 — LinkedIn presence: page/profile fixes + bilingual copy system
+
+Off-repo marketing work on the LinkedIn company page (`linkedin.com/company/biteperk`)
+and Sam's personal profile. Plan: `~/.claude/plans/can-you-make-a-delegated-kernighan.md`.
+Copy lives in `Socials/linkedin/` (gitignored). Operating rule reaffirmed: **Claude
+prepares copy as files; a human pastes and posts** — no agent-driven LinkedIn sessions.
+
+**Applied so far (in Page admin, via the browser earlier):** business name `BitePerk`,
+category `Software company` → later corrected to industry `Software Development`;
+overview rewritten; phone, year founded (2026) saved. **Still to press** (see
+`Socials/linkedin/page-edit-sheet.md`): tagline, blank the phone field, Sydney
+primary HQ, London as "Registered office (UK)", `Request demo` button → `/en/contact/`,
+remove "Loyalty Programs" specialty.
+
+**Recorded decisions (19 Sep, Sam):**
+- LinkedIn website = `www.biteperk.com` (global surface); directories stay `.com.au`.
+- Page phone field **blanked** — not localised, would show an AU number to FR viewers.
+- **Locations: Sydney (HQ) + London "Registered office (UK)" kept** — a deliberate
+  **exception to BRAND.md §8** (UK details normally `/gb-en`-only). Never describe it
+  as an office/team/staff. Full rationale in `docs/directory-citations.md`.
+- Insight Tag (`linkedInPartnerId`) **deferred** to when LinkedIn ads start — it is not
+  a one-line change (fails `tests/unit/analytics-config.test.mjs`, arms the consent
+  banner site-wide, ships no conversion wiring, needs privacy-notice + counsel work).
+- French replies/DMs: Sam writes them himself (fluent). Published French (profile,
+  page, posts, invite notes) still needs a dated Ludovic record before going live.
+
+**Tooling:** `Socials/check-pack.mjs` gained a French gate — files carrying
+`<!-- lang: fr -->` are swept for price/currency, `+33/+32/+44/+61` numbers, invented
+EU presence, AU data-residency claims, unshipped integrations/PMS names, AU NAP, and
+links outside `/fr/`·`/be-fr/`. `--self-test` extended with a planted fault per rule;
+passes. (Gate is local-only — `Socials/` is gitignored.)
+
+**Also in this docs change:** `docs/directory-citations.md` casing normalised to
+**BitePerk** for brand/trading-name uses (domains, emails and the registered legal
+name `BITEPERK PTY LTD` keep their own forms); "hosted … in Sydney" dropped from the
+medium description (read as a data-residency claim).
+
+---
+
 ## 2026-09-18 — Production release v2.6.0 (Resources content wave)
 
 Promoted the completed Resources hub content `integration` → `main`. Deployed
